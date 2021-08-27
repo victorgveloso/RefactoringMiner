@@ -18,9 +18,7 @@ import org.eclipse.jdt.core.dom.Type;
 
 public class AstUtils {
 
-	private AstUtils() {
-		//
-	}
+	private AstUtils() {/* Do nothing */}
 	
 	public static String getKeyFromTypeBinding(ITypeBinding binding) {
 	    return binding.getErasure().getQualifiedName();
