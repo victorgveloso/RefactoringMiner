@@ -459,39 +459,63 @@ public class UMLModelASTReader {
 		
 		if(methodDeclaration.isConstructor())
 			umlOperation.setConstructor(true);
-		
-		int methodModifiers = methodDeclaration.getModifiers();
-		if((methodModifiers & Modifier.PUBLIC) != 0)
-			umlOperation.setVisibility("public");
-		else if((methodModifiers & Modifier.PROTECTED) != 0)
-			umlOperation.setVisibility("protected");
-		else if((methodModifiers & Modifier.PRIVATE) != 0)
-			umlOperation.setVisibility("private");
-		else if(isInterfaceMethod)
-			umlOperation.setVisibility("public");
-		else
-			umlOperation.setVisibility("package");
-		
-		if((methodModifiers & Modifier.ABSTRACT) != 0)
-			umlOperation.setAbstract(true);
-		
-		if((methodModifiers & Modifier.FINAL) != 0)
-			umlOperation.setFinal(true);
-		
-		if((methodModifiers & Modifier.STATIC) != 0)
-			umlOperation.setStatic(true);
-		
-		if((methodModifiers & Modifier.SYNCHRONIZED) != 0)
-			umlOperation.setSynchronized(true);
-		
-		List<IExtendedModifier> extendedModifiers = methodDeclaration.modifiers();
-		for(IExtendedModifier extendedModifier : extendedModifiers) {
-			if(extendedModifier.isAnnotation()) {
-				Annotation annotation = (Annotation)extendedModifier;
-				umlOperation.addAnnotation(new UMLAnnotation(cu, sourceFile, annotation));
+		handleMethodModifiers(methodDeclaration, isInterfaceMethod, umlOperation);
+		handleMethodAnnotations(cu, methodDeclaration, sourceFile, umlOperation);
+		handleMethodGenerics(cu, methodDeclaration, sourceFile, umlOperation);
+		handleMethodReturnType(cu, methodDeclaration, sourceFile, umlOperation);
+		handleMethodParams(cu, methodDeclaration, sourceFile, umlOperation);
+		handleMethodExceptions(cu, methodDeclaration, sourceFile, umlOperation);
+		handleMethodBody(cu, methodDeclaration, sourceFile, umlOperation);
+
+		return umlOperation;
+	}
+
+	private void handleMethodBody(CompilationUnit cu, MethodDeclaration methodDeclaration, String sourceFile, UMLOperation umlOperation) {
+		Block block = methodDeclaration.getBody();
+		if(block != null) {
+			OperationBody body = new OperationBody(cu, sourceFile, block, umlOperation.getParameterDeclarationList());
+			umlOperation.setBody(body);
+			if(block.statements().size() == 0) {
+				umlOperation.setEmptyBody(true);
 			}
 		}
-		
+		else {
+			umlOperation.setBody(null);
+		}
+	}
+
+	private void handleMethodExceptions(CompilationUnit cu, MethodDeclaration methodDeclaration, String sourceFile, UMLOperation umlOperation) {
+		List<Type> thrownExceptionTypes = methodDeclaration.thrownExceptionTypes();
+		for(Type thrownExceptionType : thrownExceptionTypes) {
+			UMLType type = UMLType.extractTypeObject(cu, sourceFile, thrownExceptionType, 0);
+			umlOperation.addThrownExceptionType(type);
+		}
+	}
+
+	private void handleMethodParams(CompilationUnit cu, MethodDeclaration methodDeclaration, String sourceFile, UMLOperation umlOperation) {
+		List<SingleVariableDeclaration> parameters = methodDeclaration.parameters();
+		for(SingleVariableDeclaration parameter : parameters) {
+			Type parameterType = parameter.getType();
+			String parameterName = parameter.getName().getFullyQualifiedName();
+			UMLType type = UMLType.extractTypeObject(cu, sourceFile, parameterType, parameter.getExtraDimensions());
+			UMLParameter umlParameter = new UMLParameter(parameterName, type, "in", parameter.isVarargs());
+			VariableDeclaration variableDeclaration = new VariableDeclaration(cu, sourceFile, parameter, parameter.isVarargs());
+			variableDeclaration.setParameter(true);
+			umlParameter.setVariableDeclaration(variableDeclaration);
+			umlOperation.addParameter(umlParameter);
+		}
+	}
+
+	private void handleMethodReturnType(CompilationUnit cu, MethodDeclaration methodDeclaration, String sourceFile, UMLOperation umlOperation) {
+		Type returnType = methodDeclaration.getReturnType2();
+		if(returnType != null) {
+			UMLType type = UMLType.extractTypeObject(cu, sourceFile, returnType, methodDeclaration.getExtraDimensions());
+			UMLParameter returnParameter = new UMLParameter("return", type, "return", false);
+			umlOperation.addParameter(returnParameter);
+		}
+	}
+
+	private void handleMethodGenerics(CompilationUnit cu, MethodDeclaration methodDeclaration, String sourceFile, UMLOperation umlOperation) {
 		List<TypeParameter> typeParameters = methodDeclaration.typeParameters();
 		for(TypeParameter typeParameter : typeParameters) {
 			UMLTypeParameter umlTypeParameter = new UMLTypeParameter(typeParameter.getName().getFullyQualifiedName());
@@ -508,43 +532,40 @@ public class UMLModelASTReader {
 			}
 			umlOperation.addTypeParameter(umlTypeParameter);
 		}
-		
-		Type returnType = methodDeclaration.getReturnType2();
-		if(returnType != null) {
-			UMLType type = UMLType.extractTypeObject(cu, sourceFile, returnType, methodDeclaration.getExtraDimensions());
-			UMLParameter returnParameter = new UMLParameter("return", type, "return", false);
-			umlOperation.addParameter(returnParameter);
-		}
-		List<SingleVariableDeclaration> parameters = methodDeclaration.parameters();
-		for(SingleVariableDeclaration parameter : parameters) {
-			Type parameterType = parameter.getType();
-			String parameterName = parameter.getName().getFullyQualifiedName();
-			UMLType type = UMLType.extractTypeObject(cu, sourceFile, parameterType, parameter.getExtraDimensions());
-			UMLParameter umlParameter = new UMLParameter(parameterName, type, "in", parameter.isVarargs());
-			VariableDeclaration variableDeclaration = new VariableDeclaration(cu, sourceFile, parameter, parameter.isVarargs());
-			variableDeclaration.setParameter(true);
-			umlParameter.setVariableDeclaration(variableDeclaration);
-			umlOperation.addParameter(umlParameter);
-		}
-		List<Type> thrownExceptionTypes = methodDeclaration.thrownExceptionTypes();
-		for(Type thrownExceptionType : thrownExceptionTypes) {
-			UMLType type = UMLType.extractTypeObject(cu, sourceFile, thrownExceptionType, 0);
-			umlOperation.addThrownExceptionType(type);
-		}
-		
-		Block block = methodDeclaration.getBody();
-		if(block != null) {
-			OperationBody body = new OperationBody(cu, sourceFile, block, umlOperation.getParameterDeclarationList());
-			umlOperation.setBody(body);
-			if(block.statements().size() == 0) {
-				umlOperation.setEmptyBody(true);
+	}
+
+	private void handleMethodAnnotations(CompilationUnit cu, MethodDeclaration methodDeclaration, String sourceFile, UMLOperation umlOperation) {
+		List<IExtendedModifier> extendedModifiers = methodDeclaration.modifiers();
+		for(IExtendedModifier extendedModifier : extendedModifiers) {
+			if(extendedModifier.isAnnotation()) {
+				Annotation annotation = (Annotation)extendedModifier;
+				umlOperation.addAnnotation(new UMLAnnotation(cu, sourceFile, annotation));
 			}
 		}
-		else {
-			umlOperation.setBody(null);
-		}
-		
-		return umlOperation;
+	}
+
+	private void handleMethodModifiers(MethodDeclaration methodDeclaration, boolean isInterfaceMethod, UMLOperation umlOperation) {
+		int methodModifiers = methodDeclaration.getModifiers();
+		if((methodModifiers & Modifier.PUBLIC) != 0 || isInterfaceMethod)
+			umlOperation.setVisibility("public");
+		else if((methodModifiers & Modifier.PROTECTED) != 0)
+			umlOperation.setVisibility("protected");
+		else if((methodModifiers & Modifier.PRIVATE) != 0)
+			umlOperation.setVisibility("private");
+		else
+			umlOperation.setVisibility("package");
+
+		if((methodModifiers & Modifier.ABSTRACT) != 0)
+			umlOperation.setAbstract(true);
+
+		if((methodModifiers & Modifier.FINAL) != 0)
+			umlOperation.setFinal(true);
+
+		if((methodModifiers & Modifier.STATIC) != 0)
+			umlOperation.setStatic(true);
+
+		if((methodModifiers & Modifier.SYNCHRONIZED) != 0)
+			umlOperation.setSynchronized(true);
 	}
 
 	private void processEnumConstantDeclaration(CompilationUnit cu, EnumConstantDeclaration enumConstantDeclaration, String sourceFile, UMLClass umlClass, List<UMLComment> comments) {
