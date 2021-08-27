@@ -1,7 +1,16 @@
 package gr.uom.java.xmi;
 
+/**
+ * Model representation of the Generalization relationship from UML
+ */
 public class UMLGeneralization implements Comparable<UMLGeneralization> {
+	/**
+	 * The subclass (more specific classifier)
+	 */
     private UMLClass child;
+	/**
+	 * The superclass' name (more general classifier)
+	 */
     private String parent;
 
     public UMLGeneralization(UMLClass child, String parent) {
