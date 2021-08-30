@@ -50,31 +50,20 @@ public class UMLOperationDiff {
 	private void process(UMLOperation removedOperation, UMLOperation addedOperation) {
 		this.removedOperation = removedOperation;
 		this.addedOperation = addedOperation;
-		this.addedParameters = new ArrayList<UMLParameter>();
-		this.removedParameters = new ArrayList<UMLParameter>();
-		this.parameterDiffList = new ArrayList<UMLParameterDiff>();
-		this.addedExceptionTypes = new ArrayList<UMLType>();
-		this.removedExceptionTypes = new ArrayList<UMLType>();
-		this.visibilityChanged = false;
-		this.abstractionChanged = false;
-		this.returnTypeChanged = false;
-		this.operationRenamed = false;
-		if(!removedOperation.getName().equals(addedOperation.getName()))
-			operationRenamed = true;
-		if(!removedOperation.getVisibility().equals(addedOperation.getVisibility()))
-			visibilityChanged = true;
-		if(removedOperation.isAbstract() != addedOperation.isAbstract())
-			abstractionChanged = true;
-		if(removedOperation.isFinal() != addedOperation.isFinal())
-			finalChanged = true;
-		if(removedOperation.isStatic() != addedOperation.isStatic())
-			staticChanged = true;
-		if(removedOperation.isSynchronized() != addedOperation.isSynchronized())
-			synchronizedChanged = true;
-		if(!removedOperation.equalReturnParameter(addedOperation))
-			returnTypeChanged = true;
-		else if(!removedOperation.equalQualifiedReturnParameter(addedOperation))
-			qualifiedReturnTypeChanged = true;
+		this.addedParameters = new ArrayList<>();
+		this.removedParameters = new ArrayList<>();
+		this.parameterDiffList = new ArrayList<>();
+		this.addedExceptionTypes = new ArrayList<>();
+		this.removedExceptionTypes = new ArrayList<>();
+		operationRenamed = !removedOperation.getName().equals(addedOperation.getName());
+		visibilityChanged = !removedOperation.getVisibility().equals(addedOperation.getVisibility());
+		abstractionChanged = removedOperation.isAbstract() != addedOperation.isAbstract();
+		returnTypeChanged = !removedOperation.equalReturnParameter(addedOperation);
+		finalChanged = removedOperation.isFinal() != addedOperation.isFinal();
+		staticChanged = removedOperation.isStatic() != addedOperation.isStatic();
+		synchronizedChanged = removedOperation.isSynchronized() != addedOperation.isSynchronized();
+		if(!returnTypeChanged)
+			qualifiedReturnTypeChanged = !removedOperation.equalQualifiedReturnParameter(addedOperation);
 		processThrownExceptionTypes(removedOperation.getThrownExceptionTypes(), addedOperation.getThrownExceptionTypes());
 		this.annotationListDiff = new UMLAnnotationListDiff(removedOperation.getAnnotations(), addedOperation.getAnnotations());
 		List<SimpleEntry<UMLParameter, UMLParameter>> matchedParameters = updateAddedRemovedParameters(removedOperation, addedOperation);
