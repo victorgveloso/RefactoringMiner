@@ -1,19 +1,14 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringType;
-
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
 import gr.uom.java.xmi.decomposition.replacement.MethodInvocationReplacement;
 import gr.uom.java.xmi.decomposition.replacement.Replacement;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
+
+import java.util.*;
 
 public class RenameOperationRefactoring implements Refactoring {
 	private final UMLOperation originalOperation;
@@ -50,7 +45,7 @@ public class RenameOperationRefactoring implements Refactoring {
 		String targetClassName = renamedOperation.getClassName();
 		boolean targetIsAnonymousInsideSource = false;
 		if(targetClassName.startsWith(sourceClassName + ".")) {
-			String targetClassNameSuffix = targetClassName.substring(sourceClassName.length() + 1, targetClassName.length());
+			String targetClassNameSuffix = targetClassName.substring(sourceClassName.length() + 1);
 			targetIsAnonymousInsideSource = isNumeric(targetClassNameSuffix);
 		}
 		return sourceClassName.equals(targetClassName) || targetIsAnonymousInsideSource ? sourceClassName : targetClassName;
