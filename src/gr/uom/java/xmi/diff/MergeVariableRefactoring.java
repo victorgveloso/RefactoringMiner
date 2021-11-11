@@ -81,14 +81,13 @@ public class MergeVariableRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		String sb = getName() + "\t" +
+		return getName() + "\t" +
 				mergedVariables +
 				" to " +
 				newVariable +
 				" in method " +
 				operationAfter +
 				" from class " + operationAfter.getClassName();
-		return sb;
 	}
 
 	@Override

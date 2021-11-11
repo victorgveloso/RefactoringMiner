@@ -33,7 +33,7 @@ public class MoveOperationRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		String sb = getName() + "\t" +
+		return getName() + "\t" +
 				originalOperation +
 				" from class " +
 				originalOperation.getClassName() +
@@ -41,7 +41,6 @@ public class MoveOperationRefactoring implements Refactoring {
 				movedOperation +
 				" from class " +
 				movedOperation.getClassName();
-		return sb;
 	}
 
 	public String getName() {

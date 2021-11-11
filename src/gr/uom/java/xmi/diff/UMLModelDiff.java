@@ -349,7 +349,7 @@ public class UMLModelDiff {
    public UMLOperation findOperationInAddedClasses(OperationInvocation operationInvocation, UMLOperation callerOperation) {
 	   for(UMLClass umlClass : addedClasses) {
 		   String expression = operationInvocation.getExpression();
-		   if(expression != null && umlClass.getNonQualifiedName().equalsIgnoreCase(expression)) {
+		   if(umlClass.getNonQualifiedName().equalsIgnoreCase(expression)) {
 			   for(UMLOperation operation : umlClass.getOperations()) {
 				   if(operationInvocation.matchesOperation(operation, callerOperation, this)) {
 					   return operation;
@@ -2124,7 +2124,7 @@ public class UMLModelDiff {
 		   int originalDistance = StringDistance.editDistance(expression, addedOperation.getNonQualifiedClassName());
 		   for(UMLOperation operation : addedOperations) {
 			   UMLClassBaseDiff classDiff = getUMLClassDiff(operation.getClassName());
-			   boolean isInterface = classDiff != null ? classDiff.nextClass.isInterface() : false;
+			   boolean isInterface = classDiff != null && classDiff.nextClass.isInterface();
 			   if(!operation.equals(addedOperation) && addedOperation.equalSignature(operation) && !operation.isAbstract() && !isInterface) {
 				   int newDistance = StringDistance.editDistance(expression, operation.getNonQualifiedClassName());
 				   if(newDistance < originalDistance) {

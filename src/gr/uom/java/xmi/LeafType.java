@@ -132,15 +132,13 @@ public class LeafType extends UMLType {
 
 	@Override
 	public String toString() {
-		String sb = nonQualifiedClassType +
+		return nonQualifiedClassType +
 				typeArgumentsAndArrayDimensionToString();
-		return sb;
 	}
 
 	@Override
 	public String toQualifiedString() {
-		String sb = classType +
+		return classType +
 				typeArgumentsAndArrayDimensionToString();
-		return sb;
 	}
 }

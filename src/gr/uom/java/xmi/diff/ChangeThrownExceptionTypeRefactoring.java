@@ -94,14 +94,13 @@ public class ChangeThrownExceptionTypeRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		String sb = getName() + "\t" +
+		return getName() + "\t" +
 				(originalTypes.size() == 1 ? originalTypes.iterator().next() : originalTypes) +
 				" to " +
 				(changedTypes.size() == 1 ? changedTypes.iterator().next() : changedTypes) +
 				" in method " +
 				operationAfter.toString() +
 				" from class " + operationAfter.getClassName();
-		return sb;
 	}
 
 	@Override

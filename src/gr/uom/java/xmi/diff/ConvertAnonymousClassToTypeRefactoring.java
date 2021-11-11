@@ -29,11 +29,10 @@ public class ConvertAnonymousClassToTypeRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-        String sb = getName() + "\t" +
+        return getName() + "\t" +
                 anonymousClass +
                 " was converted to " +
                 addedClass;
-        return sb;
 	}
 
 	public String getName() {

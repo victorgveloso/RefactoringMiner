@@ -55,12 +55,11 @@ public class MergeAttributeRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		String sb = getName() + "\t" +
+		return getName() + "\t" +
 				getMergedVariables() +
 				" to " +
 				newAttribute.getVariableDeclaration() +
 				" in class " + classNameAfter;
-		return sb;
 	}
 
 	@Override

@@ -56,12 +56,11 @@ public class RenameAttributeRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		String sb = getName() + "\t" +
+		return getName() + "\t" +
 				originalAttribute.getVariableDeclaration() +
 				" to " +
 				renamedAttribute.getVariableDeclaration() +
 				" in class " + classNameAfter;
-		return sb;
 	}
 
 	@Override

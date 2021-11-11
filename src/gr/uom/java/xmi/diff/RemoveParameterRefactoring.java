@@ -82,13 +82,12 @@ public class RemoveParameterRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		String sb = getName() + "\t" +
+		return getName() + "\t" +
 				parameter.getVariableDeclaration() +
 				" in method " +
 				operationBefore +
 				" from class " +
 				operationBefore.getClassName();
-		return sb;
 	}
 
 	@Override

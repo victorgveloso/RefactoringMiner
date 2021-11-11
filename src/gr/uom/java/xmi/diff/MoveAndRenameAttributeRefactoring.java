@@ -22,7 +22,7 @@ public class MoveAndRenameAttributeRefactoring extends MoveAttributeRefactoring 
 	}
 
 	public String toString() {
-        String sb = getName() + "\t" +
+        return getName() + "\t" +
                 originalAttribute.toQualifiedString() +
                 " renamed to " +
                 movedAttribute.toQualifiedString() +
@@ -30,7 +30,6 @@ public class MoveAndRenameAttributeRefactoring extends MoveAttributeRefactoring 
                 getSourceClassName() +
                 " to class " +
                 getTargetClassName();
-        return sb;
 	}
 
 	public String getName() {

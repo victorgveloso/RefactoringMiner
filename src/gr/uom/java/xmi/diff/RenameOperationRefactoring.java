@@ -38,12 +38,11 @@ public class RenameOperationRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		String sb = getName() + "\t" +
+		return getName() + "\t" +
 				originalOperation +
 				" renamed to " +
 				renamedOperation +
 				" in class " + getClassName();
-		return sb;
 	}
 
 	private String getClassName() {

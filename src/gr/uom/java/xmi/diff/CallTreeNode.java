@@ -85,9 +85,8 @@ public class CallTreeNode {
 	}
 	
 	public String toString() {
-		String sb = invokedOperation +
+		return invokedOperation +
 				" called from " +
 				originalOperation;
-		return sb;
 	}
 }

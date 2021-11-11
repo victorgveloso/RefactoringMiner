@@ -81,11 +81,10 @@ public class RemoveClassAnnotationRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		String sb = getName() + "\t" +
+		return getName() + "\t" +
 				annotation +
 				" in class " +
 				classBefore.getName();
-		return sb;
 	}
 
 	@Override

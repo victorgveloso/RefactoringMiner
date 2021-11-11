@@ -61,14 +61,13 @@ public class CandidateMergeVariableRefactoring {
 	}
 
 	public String toString() {
-		String sb = "Merge Attribute" + "\t" +
+		return "Merge Attribute" + "\t" +
 				mergedVariables +
 				" to " +
 				newVariable +
 				" in method " +
 				operationAfter +
 				" from class " + operationAfter.getClassName();
-		return sb;
 	}
 
 	@Override

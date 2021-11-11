@@ -1,17 +1,16 @@
 package gr.uom.java.xmi.decomposition;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.UMLType;
+import gr.uom.java.xmi.diff.StringDistance;
 import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 
-import gr.uom.java.xmi.LocationInfo;
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.UMLType;
-import gr.uom.java.xmi.diff.StringDistance;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ObjectCreation extends AbstractCall {
 	private UMLType type;
@@ -139,8 +138,7 @@ public class ObjectCreation extends AbstractCall {
 	}
 
 	public String actualString() {
-		String sb = "new " +
+		return "new " +
 				super.actualString();
-		return sb;
 	}
 }

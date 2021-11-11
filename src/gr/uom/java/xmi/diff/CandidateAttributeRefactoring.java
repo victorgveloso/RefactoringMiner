@@ -88,14 +88,13 @@ public class CandidateAttributeRefactoring {
 	}
 
 	public String toString() {
-		String sb = "Rename Attribute" + "\t" +
+		return "Rename Attribute" + "\t" +
 				originalVariableName +
 				" to " +
 				renamedVariableName +
 				" in method " +
 				operationAfter +
 				" from class " + operationAfter.getClassName();
-		return sb;
 	}
 
 	@Override

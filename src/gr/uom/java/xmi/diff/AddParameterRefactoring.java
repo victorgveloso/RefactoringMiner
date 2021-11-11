@@ -80,13 +80,12 @@ public class AddParameterRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		String sb = getName() + "\t" +
+		return getName() + "\t" +
 				parameter.getVariableDeclaration() +
 				" in method " +
 				operationAfter +
 				" from class " +
 				operationAfter.getClassName();
-		return sb;
 	}
 
 	@Override

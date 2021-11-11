@@ -83,7 +83,7 @@ public class ChangeAttributeAccessModifierRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		String sb = getName() + "\t" +
+		return getName() + "\t" +
 				originalAccessModifier +
 				" to " +
 				changedAccessModifier +
@@ -91,7 +91,6 @@ public class ChangeAttributeAccessModifierRefactoring implements Refactoring {
 				attributeAfter +
 				" from class " +
 				attributeAfter.getClassName();
-		return sb;
 	}
 
 	@Override

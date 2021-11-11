@@ -61,14 +61,13 @@ public class CandidateSplitVariableRefactoring {
 	}
 
 	public String toString() {
-		String sb = "Split Attribute" + "\t" +
+		return "Split Attribute" + "\t" +
 				oldVariable +
 				" to " +
 				splitVariables +
 				" in method " +
 				operationAfter +
 				" from class " + operationAfter.getClassName();
-		return sb;
 	}
 
 	@Override

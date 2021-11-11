@@ -91,7 +91,7 @@ public class ModifyMethodAnnotationRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		String sb = getName() + "\t" +
+		return getName() + "\t" +
 				annotationBefore +
 				" to " +
 				annotationAfter +
@@ -99,7 +99,6 @@ public class ModifyMethodAnnotationRefactoring implements Refactoring {
 				operationAfter +
 				" from class " +
 				operationAfter.getClassName();
-		return sb;
 	}
 	@Override
 	public int hashCode() {

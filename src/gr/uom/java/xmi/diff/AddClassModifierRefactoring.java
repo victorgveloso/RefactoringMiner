@@ -76,11 +76,10 @@ public class AddClassModifierRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		String sb = getName() + "\t" +
+		return getName() + "\t" +
 				modifier +
 				" in class " +
 				classAfter.getName();
-		return sb;
 	}
 
 	@Override
