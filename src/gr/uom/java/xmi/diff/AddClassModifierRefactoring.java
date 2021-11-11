@@ -113,10 +113,7 @@ public class AddClassModifierRefactoring implements Refactoring {
 		} else if (!classBefore.equals(other.classBefore))
 			return false;
 		if (modifier == null) {
-			if (other.modifier != null)
-				return false;
-		} else if (!modifier.equals(other.modifier))
-			return false;
-		return true;
+			return other.modifier == null;
+		} else return modifier.equals(other.modifier);
 	}
 }

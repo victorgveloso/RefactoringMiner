@@ -123,10 +123,7 @@ public class MergePackageRefactoring implements Refactoring {
 		} else if (!mergedPackages.equals(other.mergedPackages))
 			return false;
 		if (newPackage == null) {
-			if (other.newPackage != null)
-				return false;
-		} else if (!newPackage.equals(other.newPackage))
-			return false;
-		return true;
+			return other.newPackage == null;
+		} else return newPackage.equals(other.newPackage);
 	}
 }

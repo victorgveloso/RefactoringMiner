@@ -155,13 +155,9 @@ public class MoveOperationRefactoring implements Refactoring {
 			return false;
 		}
 		if (originalOperation == null) {
-			if (other.originalOperation != null)
-				return false;
+			return other.originalOperation == null;
 		} else if (!originalOperation.equals(other.originalOperation)) {
 			return false;
-		} else if (!originalOperation.getLocationInfo().equals(other.originalOperation.getLocationInfo())) {
-			return false;
-		}
-		return true;
+		} else return originalOperation.getLocationInfo().equals(other.originalOperation.getLocationInfo());
 	}
 }

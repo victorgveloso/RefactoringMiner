@@ -316,10 +316,7 @@ public class UMLAttributeDiff {
 	private boolean enumConstantsDeclaredInTheSameEnumDeclarationType() {
 		VariableDeclaration removedVariableDeclaration = removedAttribute.getVariableDeclaration();
 		VariableDeclaration addedVariableDeclaration = addedAttribute.getVariableDeclaration();
-		if(removedVariableDeclaration.isEnumConstant() && addedVariableDeclaration.isEnumConstant() &&
-				removedVariableDeclaration.getType().equals(addedVariableDeclaration.getType())) {
-			return true;
-		}
-		return false;
-	}
+        return removedVariableDeclaration.isEnumConstant() && addedVariableDeclaration.isEnumConstant() &&
+                removedVariableDeclaration.getType().equals(addedVariableDeclaration.getType());
+    }
 }

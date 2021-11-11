@@ -80,11 +80,8 @@ public class CallTreeNode {
 		} else if (!invokedOperation.equals(other.invokedOperation))
 			return false;
 		if (originalOperation == null) {
-			if (other.originalOperation != null)
-				return false;
-		} else if (!originalOperation.equals(other.originalOperation))
-			return false;
-		return true;
+			return other.originalOperation == null;
+		} else return originalOperation.equals(other.originalOperation);
 	}
 	
 	public String toString() {

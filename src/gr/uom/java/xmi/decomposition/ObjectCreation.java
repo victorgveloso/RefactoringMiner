@@ -121,9 +121,7 @@ public class ObjectCreation extends AbstractCall {
     		if(this.anonymousClassDeclaration != null && other.anonymousClassDeclaration != null) {
     			return this.anonymousClassDeclaration.equals(other.anonymousClassDeclaration);
     		}
-    		else if(this.anonymousClassDeclaration == null && other.anonymousClassDeclaration == null) {
-    			return true;
-    		}
+    		else return this.anonymousClassDeclaration == null && other.anonymousClassDeclaration == null;
     	}
     	return false;
     }

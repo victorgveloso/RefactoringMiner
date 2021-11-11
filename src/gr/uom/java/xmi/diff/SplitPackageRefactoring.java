@@ -135,10 +135,7 @@ public class SplitPackageRefactoring implements Refactoring {
 		} else if (!originalPackage.equals(other.originalPackage))
 			return false;
 		if (splitPackages == null) {
-			if (other.splitPackages != null)
-				return false;
-		} else if (!splitPackages.equals(other.splitPackages))
-			return false;
-		return true;
+			return other.splitPackages == null;
+		} else return splitPackages.equals(other.splitPackages);
 	}
 }

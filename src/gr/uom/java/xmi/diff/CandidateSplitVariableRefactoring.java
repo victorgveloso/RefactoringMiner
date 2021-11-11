@@ -107,11 +107,8 @@ public class CandidateSplitVariableRefactoring {
 		} else if (!operationBefore.equals(other.operationBefore))
 			return false;
 		if (splitVariables == null) {
-			if (other.splitVariables != null)
-				return false;
-		} else if (!splitVariables.equals(other.splitVariables))
-			return false;
-		return true;
+			return other.splitVariables == null;
+		} else return splitVariables.equals(other.splitVariables);
 	}
 
 }

@@ -105,11 +105,8 @@ public class ChangeReturnTypeRefactoring implements Refactoring {
 		} else if (!operationBefore.equals(other.operationBefore))
 			return false;
 		if (originalType == null) {
-			if (other.originalType != null)
-				return false;
-		} else if (!originalType.equals(other.originalType))
-			return false;
-		return true;
+			return other.originalType == null;
+		} else return originalType.equals(other.originalType);
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {

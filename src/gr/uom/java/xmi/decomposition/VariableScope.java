@@ -80,9 +80,7 @@ public class VariableScope {
 			return false;
 		if (startLine != other.startLine)
 			return false;
-		if (startOffset != other.startOffset)
-			return false;
-		return true;
+		return startOffset == other.startOffset;
 	}
 
 	public String toString() {

@@ -108,9 +108,7 @@ public class SplitAttributeRefactoring implements Refactoring {
 			if (other.splitAttributes != null)
 				return false;
 		}
-		if (!this.getSplitVariables().equals(other.getSplitVariables()))
-				return false;
-		return true;
+		return this.getSplitVariables().equals(other.getSplitVariables());
 	}
 
 	@Override

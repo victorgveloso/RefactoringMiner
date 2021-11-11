@@ -120,14 +120,10 @@ public class ChangeAttributeTypeRefactoring implements Refactoring {
 		} else if (!classNameBefore.equals(other.classNameBefore))
 			return false;
 		if (originalAttribute == null) {
-			if (other.originalAttribute != null)
-				return false;
+			return other.originalAttribute == null;
 		} else if(originalAttribute.getVariableDeclaration() == null) {
-			if(other.originalAttribute.getVariableDeclaration() != null)
-				return false;
-		} else if (!originalAttribute.getVariableDeclaration().equals(other.originalAttribute.getVariableDeclaration()))
-			return false;
-		return true;
+			return other.originalAttribute.getVariableDeclaration() == null;
+		} else return originalAttribute.getVariableDeclaration().equals(other.originalAttribute.getVariableDeclaration());
 	}
 
 	@Override

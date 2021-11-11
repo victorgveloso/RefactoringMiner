@@ -117,11 +117,8 @@ public class ChangeVariableTypeRefactoring implements Refactoring {
 		} else if (!operationBefore.equals(other.operationBefore))
 			return false;
 		if (originalVariable == null) {
-			if (other.originalVariable != null)
-				return false;
-		} else if (!originalVariable.equals(other.originalVariable))
-			return false;
-		return true;
+			return other.originalVariable == null;
+		} else return originalVariable.equals(other.originalVariable);
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {

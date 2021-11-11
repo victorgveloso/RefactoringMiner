@@ -63,10 +63,7 @@ public class VariableDeclarationReplacement extends Replacement {
 		} else if (!v1.equals(other.v1))
 			return false;
 		if (v2 == null) {
-			if (other.v2 != null)
-				return false;
-		} else if (!v2.equals(other.v2))
-			return false;
-		return true;
+			return other.v2 == null;
+		} else return v2.equals(other.v2);
 	}
 }
