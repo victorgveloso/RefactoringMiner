@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Set;
 
 public class ExtractClassRefactoring implements Refactoring {
-	private UMLClass extractedClass;
-	private UMLClassBaseDiff classDiff;
-	private Set<UMLOperation> extractedOperations;
-	private Set<UMLAttribute> extractedAttributes;
-	private UMLAttribute attributeOfExtractedClassTypeInOriginalClass;
+	private final UMLClass extractedClass;
+	private final UMLClassBaseDiff classDiff;
+	private final Set<UMLOperation> extractedOperations;
+	private final Set<UMLAttribute> extractedAttributes;
+	private final UMLAttribute attributeOfExtractedClassTypeInOriginalClass;
 
 	public ExtractClassRefactoring(UMLClass extractedClass, UMLClassBaseDiff classDiff,
 			Set<UMLOperation> extractedOperations, Set<UMLAttribute> extractedAttributes, UMLAttribute attributeOfExtractedClassType) {

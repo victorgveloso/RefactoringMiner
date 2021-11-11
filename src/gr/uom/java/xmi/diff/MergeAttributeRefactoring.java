@@ -11,11 +11,11 @@ import gr.uom.java.xmi.decomposition.VariableDeclaration;
 import gr.uom.java.xmi.UMLAttribute;
 
 public class MergeAttributeRefactoring implements Refactoring {
-	private Set<UMLAttribute> mergedAttributes;
-	private UMLAttribute newAttribute;
-	private Set<CandidateMergeVariableRefactoring> attributeMerges;
-	private String classNameBefore;
-	private String classNameAfter;
+	private final Set<UMLAttribute> mergedAttributes;
+	private final UMLAttribute newAttribute;
+	private final Set<CandidateMergeVariableRefactoring> attributeMerges;
+	private final String classNameBefore;
+	private final String classNameAfter;
 
 	public MergeAttributeRefactoring(Set<UMLAttribute> mergedAttributes, UMLAttribute newAttribute,
 			String classNameBefore, String classNameAfter, Set<CandidateMergeVariableRefactoring> attributeMerges) {

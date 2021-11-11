@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Set;
 
 public class InlineVariableRefactoring implements Refactoring {
-	private VariableDeclaration variableDeclaration;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
-	private Set<AbstractCodeMapping> references;
+	private final VariableDeclaration variableDeclaration;
+	private final UMLOperation operationBefore;
+	private final UMLOperation operationAfter;
+	private final Set<AbstractCodeMapping> references;
 
 	public InlineVariableRefactoring(VariableDeclaration variableDeclaration, UMLOperation operationBefore, UMLOperation operationAfter) {
 		this.variableDeclaration = variableDeclaration;

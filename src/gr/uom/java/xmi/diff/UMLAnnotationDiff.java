@@ -10,15 +10,15 @@ import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.decomposition.AbstractExpression;
 
 public class UMLAnnotationDiff {
-	private UMLAnnotation removedAnnotation;
-	private UMLAnnotation addedAnnotation;
+	private final UMLAnnotation removedAnnotation;
+	private final UMLAnnotation addedAnnotation;
 	private boolean typeNameChanged = false;
 	private boolean valueChanged = false;
 	private boolean valueRemoved = false;
 	private boolean valueAdded = false;
-	private List<SimpleEntry<String, AbstractExpression>> removedMemberValuePairs;
-	private List<SimpleEntry<String, AbstractExpression>> addedMemberValuePairs;
-	private Map<SimpleEntry<String, AbstractExpression>, SimpleEntry<String, AbstractExpression>> matchedMemberValuePairsWithDifferentExpressions;
+	private final List<SimpleEntry<String, AbstractExpression>> removedMemberValuePairs;
+	private final List<SimpleEntry<String, AbstractExpression>> addedMemberValuePairs;
+	private final Map<SimpleEntry<String, AbstractExpression>, SimpleEntry<String, AbstractExpression>> matchedMemberValuePairsWithDifferentExpressions;
 	
 	public UMLAnnotationDiff(UMLAnnotation removedAnnotation, UMLAnnotation addedAnnotation) {
 		this.removedAnnotation = removedAnnotation;

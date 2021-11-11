@@ -1,17 +1,17 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.Set;
-
 import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 
+import java.util.Set;
+
 public class CandidateMergeVariableRefactoring {
-	private Set<String> mergedVariables;
-	private String newVariable;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
-	private Set<AbstractCodeMapping> variableReferences;
+	private final Set<String> mergedVariables;
+	private final String newVariable;
+	private final UMLOperation operationBefore;
+	private final UMLOperation operationAfter;
+	private final Set<AbstractCodeMapping> variableReferences;
 	private Set<UMLAttribute> mergedAttributes;
 	private UMLAttribute newAttribute;
 

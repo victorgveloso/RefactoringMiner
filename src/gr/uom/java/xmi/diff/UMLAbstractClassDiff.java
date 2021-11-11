@@ -10,15 +10,15 @@ import org.refactoringminer.api.RefactoringMinerTimedOutException;
 import java.util.*;
 
 public abstract class UMLAbstractClassDiff {
-	protected List<UMLOperation> addedOperations;
-	protected List<UMLOperation> removedOperations;
-	protected List<UMLAttribute> addedAttributes;
-	protected List<UMLAttribute> removedAttributes;
-	protected List<UMLOperationBodyMapper> operationBodyMapperList;
-	protected List<UMLOperationDiff> operationDiffList;
-	protected List<UMLAttributeDiff> attributeDiffList;
-	protected List<Refactoring> refactorings;
-	protected UMLModelDiff modelDiff;
+	protected final List<UMLOperation> addedOperations;
+	protected final List<UMLOperation> removedOperations;
+	protected final List<UMLAttribute> addedAttributes;
+	protected final List<UMLAttribute> removedAttributes;
+	protected final List<UMLOperationBodyMapper> operationBodyMapperList;
+	protected final List<UMLOperationDiff> operationDiffList;
+	protected final List<UMLAttributeDiff> attributeDiffList;
+	protected final List<Refactoring> refactorings;
+	protected final UMLModelDiff modelDiff;
 	
 	public UMLAbstractClassDiff(UMLModelDiff modelDiff) {
 		this.addedOperations = new ArrayList<>();

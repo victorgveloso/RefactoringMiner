@@ -12,8 +12,8 @@ import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.util.PrefixSuffixUtils;
 
 public class MoveClassRefactoring implements PackageLevelRefactoring {
-	private UMLClass originalClass;
-	private UMLClass movedClass;
+	private final UMLClass originalClass;
+	private final UMLClass movedClass;
 	
 	public MoveClassRefactoring(UMLClass originalClass,  UMLClass movedClass) {
 		this.originalClass = originalClass;

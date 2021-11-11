@@ -9,8 +9,8 @@ import java.util.ListIterator;
 import java.util.Set;
 
 public class UMLClass extends UMLAbstractClass implements Comparable<UMLClass>, Serializable, LocationInfoProvider {
-	private String qualifiedName;
-    private String sourceFile;
+	private final String qualifiedName;
+    private final String sourceFile;
     private String sourceFolder;
     private String visibility;
     private boolean isFinal;
@@ -20,12 +20,12 @@ public class UMLClass extends UMLAbstractClass implements Comparable<UMLClass>, 
 	private boolean isEnum;
 	private boolean topLevel;
     private UMLType superclass;
-    private List<UMLType> implementedInterfaces;
-    private List<String> importedTypes;
-    private List<UMLTypeParameter> typeParameters;
+    private final List<UMLType> implementedInterfaces;
+    private final List<String> importedTypes;
+    private final List<UMLTypeParameter> typeParameters;
     private UMLJavadoc javadoc;
-    private List<UMLAnnotation> annotations;
-    private List<UMLEnumConstant> enumConstants;
+    private final List<UMLAnnotation> annotations;
+    private final List<UMLEnumConstant> enumConstants;
     
     public UMLClass(String packageName, String name, LocationInfo locationInfo, boolean topLevel, List<String> importedTypes) {
     	super();

@@ -82,7 +82,7 @@ public class CompilationUnitMother {
         INT_VARIABLE_CREATION
         }
     public static class Builder {
-        AST ast = AST.newAST(AST.JLS_Latest, false);
+        final AST ast = AST.newAST(AST.JLS_Latest, false);
         CompilationUnit cu = ast.newCompilationUnit();
         Collection<ImportDeclaration> imports = new ArrayList<>();
         Collection<TypeDeclaration> type = new ArrayList<>();

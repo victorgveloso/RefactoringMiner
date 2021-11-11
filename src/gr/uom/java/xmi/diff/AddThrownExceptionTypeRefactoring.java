@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Set;
 
 public class AddThrownExceptionTypeRefactoring implements Refactoring {
-	private UMLType exceptionType;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
+	private final UMLType exceptionType;
+	private final UMLOperation operationBefore;
+	private final UMLOperation operationAfter;
 
 	public AddThrownExceptionTypeRefactoring(UMLType exceptionType, UMLOperation operationBefore, UMLOperation operationAfter) {
 		this.exceptionType = exceptionType;

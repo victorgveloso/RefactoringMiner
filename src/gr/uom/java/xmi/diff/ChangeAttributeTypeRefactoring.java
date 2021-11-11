@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Set;
 
 public class ChangeAttributeTypeRefactoring implements Refactoring {
-	private UMLAttribute originalAttribute;
-	private UMLAttribute changedTypeAttribute;
-	private String classNameBefore;
-	private String classNameAfter;
-	private Set<AbstractCodeMapping> attributeReferences;
-	private Set<Refactoring> relatedRefactorings;
+	private final UMLAttribute originalAttribute;
+	private final UMLAttribute changedTypeAttribute;
+	private final String classNameBefore;
+	private final String classNameAfter;
+	private final Set<AbstractCodeMapping> attributeReferences;
+	private final Set<Refactoring> relatedRefactorings;
 	
 	public ChangeAttributeTypeRefactoring(UMLAttribute originalAttribute,
 										  UMLAttribute changedTypeAttribute, Set<AbstractCodeMapping> attributeReferences) {

@@ -11,8 +11,8 @@ import org.refactoringminer.api.RefactoringType;
 
 public class SplitPackageRefactoring implements Refactoring {
 	private String originalPackage;
-	private Set<String> splitPackages;
-	private Set<RenamePackageRefactoring> renamePackageRefactorings;
+	private final Set<String> splitPackages;
+	private final Set<RenamePackageRefactoring> renamePackageRefactorings;
 	
 	public SplitPackageRefactoring(Set<RenamePackageRefactoring> renamePackageRefactorings) {
 		this.renamePackageRefactorings = renamePackageRefactorings;

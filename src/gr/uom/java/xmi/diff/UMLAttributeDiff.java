@@ -22,8 +22,8 @@ import gr.uom.java.xmi.decomposition.VariableDeclaration;
 import gr.uom.java.xmi.decomposition.VariableReferenceExtractor;
 
 public class UMLAttributeDiff {
-	private UMLAttribute removedAttribute;
-	private UMLAttribute addedAttribute;
+	private final UMLAttribute removedAttribute;
+	private final UMLAttribute addedAttribute;
 	private boolean visibilityChanged;
 	private boolean typeChanged;
 	private boolean qualifiedTypeChanged;
@@ -32,9 +32,9 @@ public class UMLAttributeDiff {
 	private boolean finalChanged;
 	private boolean volatileChanged;
 	private boolean transientChanged;
-	private List<UMLOperationBodyMapper> operationBodyMapperList;
-	private UMLAnnotationListDiff annotationListDiff;
-	private List<UMLAnonymousClassDiff> anonymousClassDiffList;
+	private final List<UMLOperationBodyMapper> operationBodyMapperList;
+	private final UMLAnnotationListDiff annotationListDiff;
+	private final List<UMLAnonymousClassDiff> anonymousClassDiffList;
 	private UMLOperation addedGetter;
 	private UMLOperation addedSetter;
 	private Set<AbstractCodeMapping> initializerMappings;

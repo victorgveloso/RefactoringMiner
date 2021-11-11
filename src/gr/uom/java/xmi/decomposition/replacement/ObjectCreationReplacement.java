@@ -3,8 +3,8 @@ package gr.uom.java.xmi.decomposition.replacement;
 import gr.uom.java.xmi.decomposition.ObjectCreation;
 
 public class ObjectCreationReplacement extends Replacement {
-	private ObjectCreation createdObjectBefore;
-	private ObjectCreation createdObjectAfter;
+	private final ObjectCreation createdObjectBefore;
+	private final ObjectCreation createdObjectAfter;
 
 	public ObjectCreationReplacement(String before, String after,
 			ObjectCreation createdObjectBefore, ObjectCreation createdObjectAfter,

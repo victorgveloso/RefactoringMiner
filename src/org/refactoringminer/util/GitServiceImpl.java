@@ -36,9 +36,9 @@ import java.util.stream.StreamSupport;
 public class GitServiceImpl implements GitService {
 
 	private static final String REMOTE_REFS_PREFIX = "refs/remotes/origin/";
-	Logger logger = LoggerFactory.getLogger(GitServiceImpl.class);
+	final Logger logger = LoggerFactory.getLogger(GitServiceImpl.class);
 
-	DefaultCommitsFilter commitsFilter = new DefaultCommitsFilter();
+	final DefaultCommitsFilter commitsFilter = new DefaultCommitsFilter();
 	
 	@Override
 	public Repository cloneIfNotExists(String projectPath, String cloneUrl/*, String branch*/) throws Exception {

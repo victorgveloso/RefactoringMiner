@@ -14,12 +14,12 @@ import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
 public class ModifyVariableAnnotationRefactoring implements Refactoring {
-	private UMLAnnotation annotationBefore;
-	private UMLAnnotation annotationAfter;
-	private VariableDeclaration variableBefore;
-	private VariableDeclaration variableAfter;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
+	private final UMLAnnotation annotationBefore;
+	private final UMLAnnotation annotationAfter;
+	private final VariableDeclaration variableBefore;
+	private final VariableDeclaration variableAfter;
+	private final UMLOperation operationBefore;
+	private final UMLOperation operationAfter;
 	
 	public ModifyVariableAnnotationRefactoring(UMLAnnotation annotationBefore, UMLAnnotation annotationAfter,
 			VariableDeclaration variableBefore, VariableDeclaration variableAfter, UMLOperation operationBefore,

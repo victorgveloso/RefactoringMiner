@@ -1,22 +1,21 @@
 package gr.uom.java.xmi.diff;
 
+import gr.uom.java.xmi.UMLAnnotation;
+import gr.uom.java.xmi.UMLClass;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringType;
-
-import gr.uom.java.xmi.UMLAnnotation;
-import gr.uom.java.xmi.UMLClass;
-
 public class ModifyClassAnnotationRefactoring implements Refactoring {
-	private UMLAnnotation annotationBefore;
-	private UMLAnnotation annotationAfter;
-	private UMLClass classBefore;
-	private UMLClass classAfter;
+	private final UMLAnnotation annotationBefore;
+	private final UMLAnnotation annotationAfter;
+	private final UMLClass classBefore;
+	private final UMLClass classAfter;
 
 	public ModifyClassAnnotationRefactoring(UMLAnnotation annotationBefore, UMLAnnotation annotationAfter,
 			UMLClass classBefore, UMLClass classAfter) {

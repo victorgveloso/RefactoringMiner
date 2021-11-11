@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Set;
 
 public class ExtractSuperclassRefactoring implements Refactoring {
-	private UMLClass extractedClass;
-	private Set<UMLClass> subclassSet;
+	private final UMLClass extractedClass;
+	private final Set<UMLClass> subclassSet;
 	
 	public ExtractSuperclassRefactoring(UMLClass extractedClass, Set<UMLClass> subclassSet) {
 		this.extractedClass = extractedClass;

@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Set;
 
 public class ChangeVariableTypeRefactoring implements Refactoring {
-	private VariableDeclaration originalVariable;
-	private VariableDeclaration changedTypeVariable;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
-	private Set<AbstractCodeMapping> variableReferences;
-	private Set<Refactoring> relatedRefactorings;
+	private final VariableDeclaration originalVariable;
+	private final VariableDeclaration changedTypeVariable;
+	private final UMLOperation operationBefore;
+	private final UMLOperation operationAfter;
+	private final Set<AbstractCodeMapping> variableReferences;
+	private final Set<Refactoring> relatedRefactorings;
 
 	public ChangeVariableTypeRefactoring(VariableDeclaration originalVariable, VariableDeclaration changedTypeVariable,
 			UMLOperation operationBefore, UMLOperation operationAfter, Set<AbstractCodeMapping> variableReferences) {

@@ -11,11 +11,11 @@ import gr.uom.java.xmi.decomposition.VariableDeclaration;
 import gr.uom.java.xmi.UMLAttribute;
 
 public class SplitAttributeRefactoring implements Refactoring {
-	private UMLAttribute oldAttribute;
-	private Set<UMLAttribute> splitAttributes;
-	private Set<CandidateSplitVariableRefactoring> attributeSplits;
-	private String classNameBefore;
-	private String classNameAfter;
+	private final UMLAttribute oldAttribute;
+	private final Set<UMLAttribute> splitAttributes;
+	private final Set<CandidateSplitVariableRefactoring> attributeSplits;
+	private final String classNameBefore;
+	private final String classNameAfter;
 
 	public SplitAttributeRefactoring(UMLAttribute oldAttribute, Set<UMLAttribute> splitAttributes,
 									 String classNameBefore, String classNameAfter, Set<CandidateSplitVariableRefactoring> attributeSplits) {

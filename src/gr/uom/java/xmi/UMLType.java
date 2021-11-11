@@ -15,7 +15,7 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 	private LocationInfo locationInfo;
 	private int arrayDimension;
 	private List<UMLType> typeArguments = new ArrayList<>();
-	protected List<UMLAnnotation> annotations = new ArrayList<>();
+	protected final List<UMLAnnotation> annotations = new ArrayList<>();
 
 	public LocationInfo getLocationInfo() {
 		return locationInfo;
@@ -62,8 +62,7 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 		StringBuilder sb = new StringBuilder();
 		if(isParameterized())
 			sb.append(typeArgumentsToString());
-		for(int i=0; i<getArrayDimension(); i++)
-			sb.append("[]");
+		sb.append("[]".repeat(Math.max(0, getArrayDimension())));
 		return sb.toString();
 	}
 

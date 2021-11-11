@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Set;
 
 public class AddParameterRefactoring implements Refactoring {
-	private UMLParameter parameter;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
+	private final UMLParameter parameter;
+	private final UMLOperation operationBefore;
+	private final UMLOperation operationAfter;
 	
 	public AddParameterRefactoring(UMLParameter parameter, UMLOperation operationBefore, UMLOperation operationAfter) {
 		this.parameter = parameter;

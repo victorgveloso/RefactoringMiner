@@ -98,7 +98,7 @@ public enum RefactoringType {
 	private final String displayName;
 	private final Pattern regex;
 	private final int[] aggregateGroups;
-	public static RefactoringType[] ALL = RefactoringType.values();
+	public static final RefactoringType[] ALL = RefactoringType.values();
 
 	RefactoringType(String displayName, String regex, int... aggregateGroups) {
 		this.displayName = displayName;

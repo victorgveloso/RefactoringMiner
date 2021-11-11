@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Set;
 
 public class ChangeReturnTypeRefactoring implements Refactoring {
-	private UMLType originalType;
-	private UMLType changedType;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
-	private Set<AbstractCodeMapping> returnReferences;
+	private final UMLType originalType;
+	private final UMLType changedType;
+	private final UMLOperation operationBefore;
+	private final UMLOperation operationAfter;
+	private final Set<AbstractCodeMapping> returnReferences;
 
 	public ChangeReturnTypeRefactoring(UMLType originalType, UMLType changedType,
 			UMLOperation operationBefore, UMLOperation operationAfter, Set<AbstractCodeMapping> returnReferences) {

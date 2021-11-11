@@ -14,10 +14,10 @@ import static org.refactoringminer.utils.RefactoringRelationship.parentOf;
 
 public class ResultComparator {
 
-    Set<String> groupIds = new LinkedHashSet<>();
-    Map<String, RefactoringSet> expectedMap = new LinkedHashMap<>();
-    Map<String, RefactoringSet> notExpectedMap = new LinkedHashMap<>();
-    Map<String, RefactoringSet> resultMap = new HashMap<>();
+    final Set<String> groupIds = new LinkedHashSet<>();
+    final Map<String, RefactoringSet> expectedMap = new LinkedHashMap<>();
+    final Map<String, RefactoringSet> notExpectedMap = new LinkedHashMap<>();
+    final Map<String, RefactoringSet> resultMap = new HashMap<>();
 
     private boolean groupRefactorings;
     private boolean ignoreMethodParams;

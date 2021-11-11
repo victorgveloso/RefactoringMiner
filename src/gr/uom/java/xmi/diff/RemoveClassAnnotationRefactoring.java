@@ -13,9 +13,9 @@ import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLClass;
 
 public class RemoveClassAnnotationRefactoring implements Refactoring {
-	private UMLAnnotation annotation;
-	private UMLClass classBefore;
-	private UMLClass classAfter;
+	private final UMLAnnotation annotation;
+	private final UMLClass classBefore;
+	private final UMLClass classAfter;
 
 	public RemoveClassAnnotationRefactoring(UMLAnnotation annotation, UMLClass classBefore, UMLClass classAfter) {
 		this.annotation = annotation;

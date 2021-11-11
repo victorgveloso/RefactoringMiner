@@ -14,11 +14,11 @@ import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
 public class MergeVariableRefactoring implements Refactoring {
-	private Set<VariableDeclaration> mergedVariables;
-	private VariableDeclaration newVariable;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
-	private Set<AbstractCodeMapping> variableReferences;
+	private final Set<VariableDeclaration> mergedVariables;
+	private final VariableDeclaration newVariable;
+	private final UMLOperation operationBefore;
+	private final UMLOperation operationAfter;
+	private final Set<AbstractCodeMapping> variableReferences;
 	
 	public MergeVariableRefactoring(Set<VariableDeclaration> mergedVariables, VariableDeclaration newVariable,
 			UMLOperation operationBefore, UMLOperation operationAfter, Set<AbstractCodeMapping> variableReferences) {

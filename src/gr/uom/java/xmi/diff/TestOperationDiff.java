@@ -10,8 +10,8 @@ import java.util.Set;
  * Compares two test methods and detect test-related refactorings
  */
 public class TestOperationDiff {
-    private UMLOperation removed;
-    private UMLOperation added;
+    private final UMLOperation removed;
+    private final UMLOperation added;
 
     public TestOperationDiff(UMLOperationDiff operationDiff) {
         this.removed = operationDiff.getRemovedOperation();

@@ -40,7 +40,7 @@ import gr.uom.java.xmi.LocationInfo.CodeElementType;
 
 public class OperationBody {
 
-	private CompositeStatementObject compositeStatement;
+	private final CompositeStatementObject compositeStatement;
 	private List<String> stringRepresentation;
 	private boolean containsAssertion;
 	private Set<VariableDeclaration> activeVariableDeclarations;

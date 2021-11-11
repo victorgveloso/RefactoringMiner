@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Set;
 
 public class AddClassModifierRefactoring implements Refactoring {
-	private String modifier;
-	private UMLClass classBefore;
-	private UMLClass classAfter;
+	private final String modifier;
+	private final UMLClass classBefore;
+	private final UMLClass classAfter;
 
 	public AddClassModifierRefactoring(String modifier, UMLClass classBefore, UMLClass classAfter) {
 		this.modifier = modifier;

@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 public class InlineOperationDetection {
-	private UMLOperationBodyMapper mapper;
-	private List<UMLOperation> removedOperations;
-	private UMLClassBaseDiff classDiff;
-	private UMLModelDiff modelDiff;
-	private List<OperationInvocation> operationInvocations;
-	private Map<CallTreeNode, CallTree> callTreeMap = new LinkedHashMap<>();
+	private final UMLOperationBodyMapper mapper;
+	private final List<UMLOperation> removedOperations;
+	private final UMLClassBaseDiff classDiff;
+	private final UMLModelDiff modelDiff;
+	private final List<OperationInvocation> operationInvocations;
+	private final Map<CallTreeNode, CallTree> callTreeMap = new LinkedHashMap<>();
 	
 	public InlineOperationDetection(UMLOperationBodyMapper mapper, List<UMLOperation> removedOperations, UMLClassBaseDiff classDiff, UMLModelDiff modelDiff) {
 		this.mapper = mapper;

@@ -13,9 +13,9 @@ public abstract class UMLAbstractClass {
 	protected LocationInfo locationInfo;
 	protected String packageName;
 	protected String name;
-	protected List<UMLOperation> operations;
-	protected List<UMLAttribute> attributes;
-	protected List<UMLComment> comments;
+	protected final List<UMLOperation> operations;
+	protected final List<UMLAttribute> attributes;
+	protected final List<UMLComment> comments;
 	private final List<UMLAnonymousClass> anonymousClassList;
 	private Map<String, VariableDeclaration> fieldDeclarationMap;
 

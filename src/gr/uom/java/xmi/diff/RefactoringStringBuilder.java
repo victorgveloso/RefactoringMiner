@@ -6,8 +6,8 @@ import org.refactoringminer.api.Refactoring;
 import java.util.Objects;
 
 class RefactoringStringBuilder {
-    StringBuilder sb = new StringBuilder();
-    Refactoring ref;
+    final StringBuilder sb = new StringBuilder();
+    final Refactoring ref;
     String umlNodeString;
     UMLOperation operation = null;
 

@@ -1,33 +1,20 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-
-import org.refactoringminer.api.RefactoringMinerTimedOutException;
-
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.UMLParameter;
-import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
-import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
-import gr.uom.java.xmi.decomposition.CompositeStatementObject;
-import gr.uom.java.xmi.decomposition.LambdaExpressionObject;
-import gr.uom.java.xmi.decomposition.OperationInvocation;
-import gr.uom.java.xmi.decomposition.StatementObject;
-import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
+import gr.uom.java.xmi.decomposition.*;
 import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
+import org.refactoringminer.api.RefactoringMinerTimedOutException;
+
+import java.util.*;
 
 public class ExtractOperationDetection {
-	private UMLOperationBodyMapper mapper;
-	private List<UMLOperation> addedOperations;
-	private UMLClassBaseDiff classDiff;
-	private UMLModelDiff modelDiff;
-	private List<OperationInvocation> operationInvocations;
-	private Map<CallTreeNode, CallTree> callTreeMap = new LinkedHashMap<>();
+	private final UMLOperationBodyMapper mapper;
+	private final List<UMLOperation> addedOperations;
+	private final UMLClassBaseDiff classDiff;
+	private final UMLModelDiff modelDiff;
+	private final List<OperationInvocation> operationInvocations;
+	private final Map<CallTreeNode, CallTree> callTreeMap = new LinkedHashMap<>();
 
 	public ExtractOperationDetection(UMLOperationBodyMapper mapper, List<UMLOperation> addedOperations, UMLClassBaseDiff classDiff, UMLModelDiff modelDiff) {
 		this.mapper = mapper;
@@ -312,12 +299,7 @@ public class ExtractOperationDetection {
 	private boolean argumentExtractedWithDefaultReturnAdded(UMLOperationBodyMapper operationBodyMapper) {
 		List<AbstractCodeMapping> totalMappings = new ArrayList<>(operationBodyMapper.getMappings());
 		List<CompositeStatementObject> nonMappedInnerNodesT2 = new ArrayList<>(operationBodyMapper.getNonMappedInnerNodesT2());
-		ListIterator<CompositeStatementObject> iterator = nonMappedInnerNodesT2.listIterator();
-		while(iterator.hasNext()) {
-			if(iterator.next().toString().equals("{")) {
-				iterator.remove();
-			}
-		}
+		nonMappedInnerNodesT2.removeIf(compositeStatementObject -> compositeStatementObject.toString().equals("{"));
 		List<StatementObject> nonMappedLeavesT2 = operationBodyMapper.getNonMappedLeavesT2();
 		return totalMappings.size() == 1 && totalMappings.get(0).containsReplacement(ReplacementType.ARGUMENT_REPLACED_WITH_RETURN_EXPRESSION) &&
 				nonMappedInnerNodesT2.size() == 1 && nonMappedInnerNodesT2.get(0).toString().startsWith("if") &&

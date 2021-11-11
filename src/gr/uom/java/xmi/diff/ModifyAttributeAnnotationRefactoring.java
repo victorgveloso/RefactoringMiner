@@ -14,10 +14,10 @@ import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLEnumConstant;
 
 public class ModifyAttributeAnnotationRefactoring implements Refactoring {
-	private UMLAnnotation annotationBefore;
-	private UMLAnnotation annotationAfter;
-	private UMLAttribute attributeBefore;
-	private UMLAttribute attributeAfter;
+	private final UMLAnnotation annotationBefore;
+	private final UMLAnnotation annotationAfter;
+	private final UMLAttribute attributeBefore;
+	private final UMLAttribute attributeAfter;
 
 	public ModifyAttributeAnnotationRefactoring(UMLAnnotation annotationBefore, UMLAnnotation annotationAfter,
 			UMLAttribute attributeBefore, UMLAttribute attributeAfter) {

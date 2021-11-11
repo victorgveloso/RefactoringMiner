@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Set;
 
 public class ChangeClassAccessModifierRefactoring implements Refactoring {
-	private String originalAccessModifier;
-	private String changedAccessModifier;
-	private UMLClass classBefore;
-	private UMLClass classAfter;
+	private final String originalAccessModifier;
+	private final String changedAccessModifier;
+	private final UMLClass classBefore;
+	private final UMLClass classAfter;
 
 	public ChangeClassAccessModifierRefactoring(String originalAccessModifier, String changedAccessModifier,
 			UMLClass classBefore, UMLClass classAfter) {

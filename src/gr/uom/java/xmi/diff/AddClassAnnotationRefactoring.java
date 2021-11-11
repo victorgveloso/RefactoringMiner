@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Set;
 
 public class AddClassAnnotationRefactoring implements Refactoring {
-	private UMLAnnotation annotation;
-	private UMLClass classBefore;
-	private UMLClass classAfter;
+	private final UMLAnnotation annotation;
+	private final UMLClass classBefore;
+	private final UMLClass classAfter;
 
 	public AddClassAnnotationRefactoring(UMLAnnotation annotation, UMLClass classBefore, UMLClass classAfter) {
 		this.annotation = annotation;

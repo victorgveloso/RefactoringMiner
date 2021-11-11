@@ -13,9 +13,9 @@ import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.UMLParameter;
 
 public class RemoveParameterRefactoring implements Refactoring {
-	private UMLParameter parameter;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
+	private final UMLParameter parameter;
+	private final UMLOperation operationBefore;
+	private final UMLOperation operationAfter;
 	
 	public RemoveParameterRefactoring(UMLParameter parameter, UMLOperation operationBefore,
 			UMLOperation operationAfter) {

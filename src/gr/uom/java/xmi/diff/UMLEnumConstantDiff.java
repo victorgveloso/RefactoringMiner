@@ -9,10 +9,10 @@ import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLEnumConstant;
 
 public class UMLEnumConstantDiff {
-	private UMLEnumConstant removedEnumConstant;
-	private UMLEnumConstant addedEnumConstant;
+	private final UMLEnumConstant removedEnumConstant;
+	private final UMLEnumConstant addedEnumConstant;
 	private boolean renamed;
-	private UMLAnnotationListDiff annotationListDiff;
+	private final UMLAnnotationListDiff annotationListDiff;
 
 	public UMLEnumConstantDiff(UMLEnumConstant removedEnumConstant, UMLEnumConstant addedEnumConstant) {
 		this.removedEnumConstant = removedEnumConstant;
