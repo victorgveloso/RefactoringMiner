@@ -1,13 +1,16 @@
 package org.kohsuke.github;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.commons.lang3.tuple.Triple;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+@Ignore
 public class GHRepositoryWrapperTest {
 	private final GitHistoryRefactoringMinerImpl gitHistoryRefactoringMiner = new GitHistoryRefactoringMinerImpl();
     private final static List<Triple<String, String, Integer>> TEST_CASES_LIST = new ArrayList<>();

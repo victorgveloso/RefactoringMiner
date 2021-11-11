@@ -1,12 +1,11 @@
 package org.refactoringminer.api;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.refactoringminer.util.AstUtils;
 import org.refactoringminer.utils.RefactoringRelationship;
+
+import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public enum RefactoringType {
 
@@ -96,9 +95,9 @@ public enum RefactoringType {
 	SPLIT_PACKAGE("Split Package", "Split Package (.+) to \\[(.+)\\]"),
 	MERGE_PACKAGE("Merge Package", "Merge Package \\[(.+)\\] to (.+)");
 
-	private String displayName;
-	private Pattern regex;
-	private int[] aggregateGroups;
+	private final String displayName;
+	private final Pattern regex;
+	private final int[] aggregateGroups;
 	public static RefactoringType[] ALL = RefactoringType.values();
 
 	RefactoringType(String displayName, String regex, int... aggregateGroups) {
@@ -216,18 +215,12 @@ public enum RefactoringType {
         return typeKey + "#" + AstUtils.normalizeAttribute(attribute);
     }
 
-    public List<RefactoringRelationship> parseRefactoring(String refactoringDescription) {
-        List<RefactoringRelationship> result;
+    public void parseRefactoring(String refactoringDescription) {
         Matcher m = regex.matcher(refactoringDescription);
         if (m.matches()) {
-            
-            for (int g = 1; g <= m.groupCount(); g++) {
-                
-            }
-            return null;
-        } else {
-            throw new RuntimeException("Pattern not matched: " + refactoringDescription);
+            return;
         }
+        throw new RuntimeException("Pattern not matched: " + refactoringDescription);
     }
 
     public static RefactoringType extractFromDescription(String refactoringDescription) {

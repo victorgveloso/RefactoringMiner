@@ -21,12 +21,11 @@ public class MoveClassRefactoring implements PackageLevelRefactoring {
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getName()).append("\t");
-		sb.append(originalClass.getName());
-		sb.append(" moved to ");
-		sb.append(movedClass.getName());
-		return sb.toString();
+        String sb = getName() + "\t" +
+                originalClass.getName() +
+                " moved to " +
+                movedClass.getName();
+        return sb;
 	}
 
 	public RenamePattern getRenamePattern() {
@@ -64,20 +63,20 @@ public class MoveClassRefactoring implements PackageLevelRefactoring {
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getOriginalClass().getLocationInfo().getFilePath(), getOriginalClass().getName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getOriginalClass().getLocationInfo().getFilePath(), getOriginalClass().getName()));
 		return pairs;
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getMovedClass().getLocationInfo().getFilePath(), getMovedClass().getName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getMovedClass().getLocationInfo().getFilePath(), getMovedClass().getName()));
 		return pairs;
 	}
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(originalClass.codeRange()
 				.setDescription("original type declaration")
 				.setCodeElement(originalClass.getName()));
@@ -86,7 +85,7 @@ public class MoveClassRefactoring implements PackageLevelRefactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(movedClass.codeRange()
 				.setDescription("moved type declaration")
 				.setCodeElement(movedClass.getName()));

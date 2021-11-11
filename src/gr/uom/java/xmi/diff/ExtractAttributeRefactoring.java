@@ -1,17 +1,16 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
+import gr.uom.java.xmi.UMLAttribute;
+import gr.uom.java.xmi.UMLClass;
+import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
 
-import gr.uom.java.xmi.UMLAttribute;
-import gr.uom.java.xmi.UMLClass;
-import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ExtractAttributeRefactoring implements Refactoring {
 	private UMLAttribute attributeDeclaration;
@@ -23,7 +22,7 @@ public class ExtractAttributeRefactoring implements Refactoring {
 		this.attributeDeclaration = variableDeclaration;
 		this.originalClass = originalClass;
 		this.nextClass = nextClass;
-		this.references = new LinkedHashSet<AbstractCodeMapping>();
+		this.references = new LinkedHashSet<>();
 	}
 
 	public void addReference(AbstractCodeMapping mapping) {
@@ -47,12 +46,11 @@ public class ExtractAttributeRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getName()).append("\t");
-		sb.append(attributeDeclaration);
-		sb.append(" in class ");
-		sb.append(attributeDeclaration.getClassName());
-		return sb.toString();
+		String sb = getName() + "\t" +
+				attributeDeclaration +
+				" in class " +
+				attributeDeclaration.getClassName();
+		return sb;
 	}
 
 	/**
@@ -96,20 +94,20 @@ public class ExtractAttributeRefactoring implements Refactoring {
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getOriginalClass().getLocationInfo().getFilePath(), getOriginalClass().getName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getOriginalClass().getLocationInfo().getFilePath(), getOriginalClass().getName()));
 		return pairs;
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getNextClass().getLocationInfo().getFilePath(), getNextClass().getName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getNextClass().getLocationInfo().getFilePath(), getNextClass().getName()));
 		return pairs;
 	}
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		for(AbstractCodeMapping mapping : references) {
 			ranges.add(mapping.getFragment1().codeRange().setDescription("statement with the initializer of the extracted attribute"));
 		}
@@ -118,7 +116,7 @@ public class ExtractAttributeRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(attributeDeclaration.codeRange()
 				.setDescription("extracted attribute declaration")
 				.setCodeElement(attributeDeclaration.toString()));

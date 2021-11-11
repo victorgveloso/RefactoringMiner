@@ -1,14 +1,14 @@
 package gr.uom.java.xmi.decomposition;
 
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.LocationInfoProvider;
+import gr.uom.java.xmi.decomposition.AbstractCall.StatementCoverageType;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.LocationInfoProvider;
-import gr.uom.java.xmi.decomposition.AbstractCall.StatementCoverageType;
 
 public abstract class AbstractCodeFragment implements LocationInfoProvider {
 	private int depth;
@@ -79,7 +79,7 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 							isArgument = true;
 						}
 						String beforeMatch = afterReplacements.substring(0, start);
-						String afterMatch = afterReplacements.substring(start+parameter.length(), afterReplacements.length());
+						String afterMatch = afterReplacements.substring(start+parameter.length());
 						if(quoteBefore(beforeMatch) && quoteAfter(afterMatch)) {
 							isInsideStringLiteral = true;
 						}
@@ -103,12 +103,7 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 			if(beforeMatch.contains("+")) {
 				int indexOfQuote = beforeMatch.lastIndexOf("\"");
 				int indexOfPlus = beforeMatch.lastIndexOf("+");
-				if(indexOfPlus > indexOfQuote) {
-					return false;
-				}
-				else {
-					return true;
-				}
+				return indexOfPlus <= indexOfQuote;
 			}
 			else {
 				return true;
@@ -122,12 +117,7 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 			if(afterMatch.contains("+")) {
 				int indexOfQuote = afterMatch.indexOf("\"");
 				int indexOfPlus = afterMatch.indexOf("+");
-				if(indexOfPlus < indexOfQuote) {
-					return false;
-				}
-				else {
-					return true;
-				}
+				return indexOfPlus >= indexOfQuote;
 			}
 			else {
 				return true;
@@ -247,9 +237,7 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 						!openingParenthesisInsideSingleQuotes && !closingParenthesisInsideSingleQuotes &&
 						!openingParenthesisInsideDoubleQuotes && !closingParenthesisIndideDoubleQuotes) {
 					String casting = prefix.substring(indexOfOpeningParenthesis, indexOfClosingParenthesis+1);
-					if(("return " + casting + expression + ";\n").equals(statement)) {
-						return true;
-					}
+					return ("return " + casting + expression + ";\n").equals(statement);
 				}
 			}
 		}
@@ -260,9 +248,7 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 		List<VariableDeclaration> variableDeclarations = getVariableDeclarations();
 		if(variableDeclarations.size() == 1 && variableDeclarations.get(0).getInitializer() != null) {
 			String initializer = variableDeclarations.get(0).getInitializer().toString();
-			if(expressions.contains(initializer)) {
-				return true;
-			}
+			return expressions.contains(initializer);
 		}
 		return false;
 	}
@@ -275,9 +261,8 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 				return true;
 			if(initializer.startsWith("(")) {
 				//ignore casting
-				String initializerWithoutCasting = initializer.substring(initializer.indexOf(")")+1,initializer.length());
-				if(initializerWithoutCasting.equals(expression))
-					return true;
+				String initializerWithoutCasting = initializer.substring(initializer.indexOf(")")+1);
+				return initializerWithoutCasting.equals(expression);
 			}
 		}
 		return false;
@@ -289,9 +274,7 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 			List<String> variables = getVariables();
 			if(variables.size() > 0) {
 				String s = variables.get(0) + "=" + expression + ";\n";
-				if(statement.equals(s)) {
-					return true;
-				}
+				return statement.equals(s);
 			}
 		}
 		return false;
@@ -308,8 +291,8 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 			return true;
 		}
 		//covers the cases of methods with only one statement in their body
-		if(this instanceof AbstractStatement && ((AbstractStatement)this).getParent() != null &&
-				((AbstractStatement)this).getParent().statementCount() == 1 && ((AbstractStatement)this).getParent().getParent() == null) {
+		if(this instanceof AbstractStatement && this.getParent() != null &&
+				this.getParent().statementCount() == 1 && this.getParent().getParent() == null) {
 			return true;
 		}
 		return !statement.equals("{") && !statement.startsWith("catch(") && !statement.startsWith("case ") && !statement.startsWith("default :") &&

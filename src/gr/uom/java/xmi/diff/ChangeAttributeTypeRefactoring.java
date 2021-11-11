@@ -1,17 +1,16 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
+import gr.uom.java.xmi.UMLAttribute;
+import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
+import gr.uom.java.xmi.decomposition.VariableDeclaration;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
 
-import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
-import gr.uom.java.xmi.decomposition.VariableDeclaration;
-import gr.uom.java.xmi.UMLAttribute;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ChangeAttributeTypeRefactoring implements Refactoring {
 	private UMLAttribute originalAttribute;
@@ -28,7 +27,7 @@ public class ChangeAttributeTypeRefactoring implements Refactoring {
 		this.classNameBefore = originalAttribute.getClassName();
 		this.classNameAfter = changedTypeAttribute.getClassName();
 		this.attributeReferences = attributeReferences;
-		this.relatedRefactorings = new LinkedHashSet<Refactoring>();
+		this.relatedRefactorings = new LinkedHashSet<>();
 	}
 
 	public void addRelatedRefactoring(Refactoring refactoring) {
@@ -133,21 +132,21 @@ public class ChangeAttributeTypeRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getOriginalAttribute().getLocationInfo().getFilePath(), getClassNameBefore()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getOriginalAttribute().getLocationInfo().getFilePath(), getClassNameBefore()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getChangedTypeAttribute().getLocationInfo().getFilePath(), getClassNameAfter()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getChangedTypeAttribute().getLocationInfo().getFilePath(), getClassNameAfter()));
 		return pairs;
 	}
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(originalAttribute.getVariableDeclaration().codeRange()
 				.setDescription("original attribute declaration")
 				.setCodeElement(originalAttribute.getVariableDeclaration().toString()));
@@ -156,7 +155,7 @@ public class ChangeAttributeTypeRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(changedTypeAttribute.getVariableDeclaration().codeRange()
 				.setDescription("changed-type attribute declaration")
 				.setCodeElement(changedTypeAttribute.getVariableDeclaration().toString()));

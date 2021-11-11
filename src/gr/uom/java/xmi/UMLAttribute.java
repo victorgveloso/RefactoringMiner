@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UMLAttribute implements Comparable<UMLAttribute>, Serializable, LocationInfoProvider, VariableDeclarationProvider {
-	private LocationInfo locationInfo;
-	private String name;
+	private final LocationInfo locationInfo;
+	private final String name;
 	private UMLType type;
 	private String visibility;
 	private String className;
@@ -21,16 +21,16 @@ public class UMLAttribute implements Comparable<UMLAttribute>, Serializable, Loc
 	private boolean isTransient;
 	private boolean isVolatile;
 	private VariableDeclaration variableDeclaration;
-	private List<UMLAnonymousClass> anonymousClassList;
+	private final List<UMLAnonymousClass> anonymousClassList;
 	private UMLJavadoc javadoc;
-	private List<UMLComment> comments;
+	private final List<UMLComment> comments;
 
 	public UMLAttribute(String name, UMLType type, LocationInfo locationInfo) {
 		this.locationInfo = locationInfo;
 		this.name = name;
 		this.type = type;
-		this.anonymousClassList = new ArrayList<UMLAnonymousClass>();
-		this.comments = new ArrayList<UMLComment>();
+		this.anonymousClassList = new ArrayList<>();
+		this.comments = new ArrayList<>();
 	}
 
 	public LocationInfo getLocationInfo() {
@@ -103,7 +103,7 @@ public class UMLAttribute implements Comparable<UMLAttribute>, Serializable, Loc
 	}
 
 	public String getNonQualifiedClassName() {
-		return className.contains(".") ? className.substring(className.lastIndexOf(".")+1, className.length()) : className;
+		return className.contains(".") ? className.substring(className.lastIndexOf(".")+1) : className;
 	}
 
 	public String getClassName() {
@@ -160,9 +160,7 @@ public class UMLAttribute implements Comparable<UMLAttribute>, Serializable, Loc
 	}
 
 	public boolean equalsIgnoringChangedVisibility(UMLAttribute attribute) {
-		if(this.name.equals(attribute.name) && this.type.equals(attribute.type))
-			return true;
-		return false;
+		return this.name.equals(attribute.name) && this.type.equals(attribute.type);
 	}
 
 	public CodeRange codeRange() {
@@ -191,23 +189,19 @@ public class UMLAttribute implements Comparable<UMLAttribute>, Serializable, Loc
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(visibility);
-		sb.append(" ");
-		sb.append(name);
-		sb.append(" : ");
-		sb.append(type);
-		return sb.toString();
+		return visibility +
+				" " +
+				name +
+				" : " +
+				type;
 	}
 
 	public String toQualifiedString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(visibility);
-		sb.append(" ");
-		sb.append(name);
-		sb.append(" : ");
-		sb.append(type.toQualifiedString());
-		return sb.toString();
+		return visibility +
+				" " +
+				name +
+				" : " +
+				type.toQualifiedString();
 	}
 
 	public int compareTo(UMLAttribute attribute) {

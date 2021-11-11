@@ -1,21 +1,17 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.refactoringminer.api.RefactoringMinerTimedOutException;
-
 import gr.uom.java.xmi.UMLAnonymousClass;
 import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.UMLType;
 import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 import gr.uom.java.xmi.decomposition.OperationInvocation;
 import gr.uom.java.xmi.decomposition.StatementObject;
 import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
-import gr.uom.java.xmi.decomposition.VariableDeclaration;
+import org.refactoringminer.api.RefactoringMinerTimedOutException;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class InlineOperationDetection {
 	private UMLOperationBodyMapper mapper;
@@ -23,7 +19,7 @@ public class InlineOperationDetection {
 	private UMLClassBaseDiff classDiff;
 	private UMLModelDiff modelDiff;
 	private List<OperationInvocation> operationInvocations;
-	private Map<CallTreeNode, CallTree> callTreeMap = new LinkedHashMap<CallTreeNode, CallTree>();
+	private Map<CallTreeNode, CallTree> callTreeMap = new LinkedHashMap<>();
 	
 	public InlineOperationDetection(UMLOperationBodyMapper mapper, List<UMLOperation> removedOperations, UMLClassBaseDiff classDiff, UMLModelDiff modelDiff) {
 		this.mapper = mapper;
@@ -34,14 +30,14 @@ public class InlineOperationDetection {
 	}
 
 	public List<InlineOperationRefactoring> check(UMLOperation removedOperation) throws RefactoringMinerTimedOutException {
-		List<InlineOperationRefactoring> refactorings = new ArrayList<InlineOperationRefactoring>();
+		List<InlineOperationRefactoring> refactorings = new ArrayList<>();
 		if(!mapper.getNonMappedLeavesT2().isEmpty() || !mapper.getNonMappedInnerNodesT2().isEmpty() ||
 			!mapper.getReplacementsInvolvingMethodInvocation().isEmpty()) {
 			List<OperationInvocation> removedOperationInvocations = matchingInvocations(removedOperation, operationInvocations, mapper.getOperation1());
 			if(removedOperationInvocations.size() > 0 && !invocationMatchesWithAddedOperation(removedOperationInvocations.get(0), mapper.getOperation1(), mapper.getOperation2().getAllOperationInvocations())) {
 				OperationInvocation removedOperationInvocation = removedOperationInvocations.get(0);
 				CallTreeNode root = new CallTreeNode(mapper.getOperation1(), removedOperation, removedOperationInvocation);
-				CallTree callTree = null;
+				CallTree callTree;
 				if(callTreeMap.containsKey(root)) {
 					callTree = callTreeMap.get(root);
 				}
@@ -51,7 +47,7 @@ public class InlineOperationDetection {
 					callTreeMap.put(root, callTree);
 				}
 				UMLOperationBodyMapper operationBodyMapper = createMapperForInlinedMethod(mapper, removedOperation, removedOperationInvocation);
-				List<AbstractCodeMapping> additionalExactMatches = new ArrayList<AbstractCodeMapping>();
+				List<AbstractCodeMapping> additionalExactMatches = new ArrayList<>();
 				List<CallTreeNode> nodesInBreadthFirstOrder = callTree.getNodesInBreadthFirstOrder();
 				for(int i=1; i<nodesInBreadthFirstOrder.size(); i++) {
 					CallTreeNode node = nodesInBreadthFirstOrder.get(i);
@@ -76,7 +72,7 @@ public class InlineOperationDetection {
 	}
 
 	private List<OperationInvocation> matchingInvocations(UMLOperation removedOperation, List<OperationInvocation> operationInvocations, UMLOperation callerOperation) {
-		List<OperationInvocation> removedOperationInvocations = new ArrayList<OperationInvocation>();
+		List<OperationInvocation> removedOperationInvocations = new ArrayList<>();
 		for(OperationInvocation invocation : operationInvocations) {
 			if(invocation.matchesOperation(removedOperation, callerOperation, modelDiff)) {
 				removedOperationInvocations.add(invocation);
@@ -89,13 +85,13 @@ public class InlineOperationDetection {
 			UMLOperation removedOperation, OperationInvocation removedOperationInvocation) throws RefactoringMinerTimedOutException {
 		List<String> arguments = removedOperationInvocation.getArguments();
 		List<String> parameters = removedOperation.getParameterNameList();
-		Map<String, String> parameterToArgumentMap = new LinkedHashMap<String, String>();
+		Map<String, String> parameterToArgumentMap = new LinkedHashMap<>();
 		//special handling for methods with varargs parameter for which no argument is passed in the matching invocation
 		int size = Math.min(arguments.size(), parameters.size());
 		for(int i=0; i<size; i++) {
 			parameterToArgumentMap.put(parameters.get(i), arguments.get(i));
 		}
-		UMLOperationBodyMapper operationBodyMapper = new UMLOperationBodyMapper(removedOperation, mapper, parameterToArgumentMap, new LinkedHashMap<String, String>(), classDiff);
+		UMLOperationBodyMapper operationBodyMapper = new UMLOperationBodyMapper(removedOperation, mapper, parameterToArgumentMap, new LinkedHashMap<>(), classDiff);
 		return operationBodyMapper;
 	}
 

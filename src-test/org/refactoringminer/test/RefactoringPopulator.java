@@ -1,8 +1,9 @@
 package org.refactoringminer.test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -10,17 +11,13 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class RefactoringPopulator {
 
 	public enum Systems {
 		FSE(1), All(2);
-		private int value;
+		private final int value;
 
-		private Systems(int value) {
+		Systems(int value) {
 			this.value = value;
 		}
 
@@ -114,9 +111,9 @@ public class RefactoringPopulator {
 		LocalizeParameter(new BigInteger("2417851639229258349412352")),
 		All(new BigInteger("4835703278458516698824703"));
 
-		private BigInteger value;
+		private final BigInteger value;
 
-		private Refactorings(BigInteger value) {
+		Refactorings(BigInteger value) {
 			this.value = value;
 		}
 
@@ -126,7 +123,7 @@ public class RefactoringPopulator {
 	}
 
 	public static void feedRefactoringsInstances(BigInteger refactoringsFlag, int systemsFlag, TestBuilder test)
-			throws JsonParseException, JsonMappingException, IOException {
+			throws IOException {
 
 		if ((systemsFlag & Systems.FSE.getValue()) > 0) {
 			prepareFSERefactorings(test, refactoringsFlag);
@@ -134,7 +131,7 @@ public class RefactoringPopulator {
 	}
 
 	private static void prepareFSERefactorings(TestBuilder test, BigInteger flag)
-			throws JsonParseException, JsonMappingException, IOException {
+			throws IOException {
 		List<Root> roots = getFSERefactorings(flag);
 		
 		for (Root root : roots) {
@@ -161,24 +158,22 @@ public class RefactoringPopulator {
 	}
 
 	private static List<String> getDeletedCommits() {
-		List<String> deletedCommits = new ArrayList<String>();
+		List<String> deletedCommits = new ArrayList<>();
 		String file = System.getProperty("user.dir") + "/src-test/Data/deleted_commits.txt";
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			String line;
 			while ((line = br.readLine()) != null) {
-				String sha1 = line.substring(line.lastIndexOf("/")+1, line.length());
+				String sha1 = line.substring(line.lastIndexOf("/")+1);
 				deletedCommits.add(sha1);
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return deletedCommits;
 	}
 
-	public static List<Root> getFSERefactorings(BigInteger flag) throws JsonParseException, JsonMappingException, IOException {
+	public static List<Root> getFSERefactorings(BigInteger flag) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 
 		String jsonFile = System.getProperty("user.dir") + "/src-test/Data/data.json";
@@ -244,10 +239,6 @@ public class RefactoringPopulator {
 			for (String key : result.keySet()) {
 				System.out.println(getInitials(key) + "\t" + buildResultMessage(result.get(key)));
 			}
-		} catch (JsonParseException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -278,7 +269,7 @@ public class RefactoringPopulator {
 		double recall = trueP / (double) (total);
 		try {
 			String mainResultMessage = String.format("TP: %2d  FP: %2d  FN: %2d  Unk.: %2d  Prec.: %.3f  Recall: %.3f",
-					(int) trueP, (int) falseP, (int) (total - trueP), ukn, precision, recall);
+					trueP, falseP, total - trueP, ukn, precision, recall);
 			return mainResultMessage;
 		} catch (Exception e) {
 			e.printStackTrace();

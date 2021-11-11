@@ -15,12 +15,12 @@ public class RenamePackageRefactoring implements Refactoring {
 	private RenamePattern pattern;
 	
 	public RenamePackageRefactoring(RenamePattern pattern) {
-		this.moveClassRefactorings = new ArrayList<PackageLevelRefactoring>();
+		this.moveClassRefactorings = new ArrayList<>();
 		this.pattern = pattern;
 	}
 
 	public RenamePackageRefactoring(PackageLevelRefactoring moveClassRefactoring) {
-		this.moveClassRefactorings = new ArrayList<PackageLevelRefactoring>();
+		this.moveClassRefactorings = new ArrayList<>();
 		this.moveClassRefactorings.add(moveClassRefactoring);
 		this.pattern = moveClassRefactoring.getRenamePattern();
 	}
@@ -69,24 +69,24 @@ public class RenamePackageRefactoring implements Refactoring {
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
 		for(PackageLevelRefactoring ref : moveClassRefactorings) {
-			pairs.add(new ImmutablePair<String, String>(ref.getOriginalClass().getLocationInfo().getFilePath(), ref.getOriginalClassName()));
+			pairs.add(new ImmutablePair<>(ref.getOriginalClass().getLocationInfo().getFilePath(), ref.getOriginalClassName()));
 		}
 		return pairs;
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
 		for(PackageLevelRefactoring ref : moveClassRefactorings) {
-			pairs.add(new ImmutablePair<String, String>(ref.getMovedClass().getLocationInfo().getFilePath(), ref.getMovedClassName()));
+			pairs.add(new ImmutablePair<>(ref.getMovedClass().getLocationInfo().getFilePath(), ref.getMovedClassName()));
 		}
 		return pairs;
 	}
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		for(PackageLevelRefactoring ref : moveClassRefactorings) {
 			ranges.add(ref.getOriginalClass().codeRange()
 					.setDescription("original type declaration")
@@ -97,7 +97,7 @@ public class RenamePackageRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		for(PackageLevelRefactoring ref : moveClassRefactorings) {
 			ranges.add(ref.getMovedClass().codeRange()
 					.setDescription("moved type declaration")

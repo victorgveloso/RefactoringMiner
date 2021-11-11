@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UMLTagElement {
-	private String tagName;
-	private List<String> fragments;
+	private final String tagName;
+	private final List<String> fragments;
 	
 	public UMLTagElement(String tagName) {
 		this.tagName = tagName;
-		this.fragments = new ArrayList<String>();
+		this.fragments = new ArrayList<>();
 	}
 	
 	public void addFragment(String fragment) {

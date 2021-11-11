@@ -27,7 +27,7 @@ public class ExtractOperationDetection {
 	private UMLClassBaseDiff classDiff;
 	private UMLModelDiff modelDiff;
 	private List<OperationInvocation> operationInvocations;
-	private Map<CallTreeNode, CallTree> callTreeMap = new LinkedHashMap<CallTreeNode, CallTree>();
+	private Map<CallTreeNode, CallTree> callTreeMap = new LinkedHashMap<>();
 
 	public ExtractOperationDetection(UMLOperationBodyMapper mapper, List<UMLOperation> addedOperations, UMLClassBaseDiff classDiff, UMLModelDiff modelDiff) {
 		this.mapper = mapper;
@@ -38,7 +38,7 @@ public class ExtractOperationDetection {
 	}
 
 	public List<ExtractOperationRefactoring> check(UMLOperation addedOperation) throws RefactoringMinerTimedOutException {
-		List<ExtractOperationRefactoring> refactorings = new ArrayList<ExtractOperationRefactoring>();
+		List<ExtractOperationRefactoring> refactorings = new ArrayList<>();
 		if(modelDiff != null && modelDiff.refactoringListContainsAnotherMoveRefactoringWithTheSameAddedOperation(addedOperation)) {
 			return refactorings;
 		}
@@ -71,8 +71,8 @@ public class ExtractOperationDetection {
 
 	private List<OperationInvocation> sortInvocationsBasedOnArgumentOccurrences(List<OperationInvocation> invocations) {
 		if(invocations.size() > 1) {
-			List<OperationInvocation> sorted = new ArrayList<OperationInvocation>();
-			List<String> allVariables = new ArrayList<String>();
+			List<OperationInvocation> sorted = new ArrayList<>();
+			List<String> allVariables = new ArrayList<>();
 			for(CompositeStatementObject composite : mapper.getNonMappedInnerNodesT1()) {
 				allVariables.addAll(composite.getVariables());
 			}
@@ -106,7 +106,7 @@ public class ExtractOperationDetection {
 			List<OperationInvocation> addedOperationInvocations, OperationInvocation addedOperationInvocation)
 			throws RefactoringMinerTimedOutException {
 		CallTreeNode root = new CallTreeNode(mapper.getOperation1(), addedOperation, addedOperationInvocation);
-		CallTree callTree = null;
+		CallTree callTree;
 		if(callTreeMap.containsKey(root)) {
 			callTree = callTreeMap.get(root);
 		}
@@ -117,7 +117,7 @@ public class ExtractOperationDetection {
 		}
 		UMLOperationBodyMapper operationBodyMapper = createMapperForExtractedMethod(mapper, mapper.getOperation1(), addedOperation, addedOperationInvocation);
 		if(operationBodyMapper != null && !containsRefactoringWithIdenticalMappings(refactorings, operationBodyMapper)) {
-			List<AbstractCodeMapping> additionalExactMatches = new ArrayList<AbstractCodeMapping>();
+			List<AbstractCodeMapping> additionalExactMatches = new ArrayList<>();
 			List<CallTreeNode> nodesInBreadthFirstOrder = callTree.getNodesInBreadthFirstOrder();
 			for(int i=1; i<nodesInBreadthFirstOrder.size(); i++) {
 				CallTreeNode node = nodesInBreadthFirstOrder.get(i);
@@ -125,7 +125,7 @@ public class ExtractOperationDetection {
 					UMLOperationBodyMapper nestedMapper = createMapperForExtractedMethod(mapper, node.getOriginalOperation(), node.getInvokedOperation(), node.getInvocation());
 					if(nestedMapper != null && !containsRefactoringWithIdenticalMappings(refactorings, nestedMapper)) {
 						additionalExactMatches.addAll(nestedMapper.getExactMatches());
-						if(extractMatchCondition(nestedMapper, new ArrayList<AbstractCodeMapping>()) && extractMatchCondition(operationBodyMapper, additionalExactMatches)) {
+						if(extractMatchCondition(nestedMapper, new ArrayList<>()) && extractMatchCondition(operationBodyMapper, additionalExactMatches)) {
 							List<OperationInvocation> nestedMatchingInvocations = matchingInvocations(node.getInvokedOperation(), node.getOriginalOperation().getAllOperationInvocations(), node.getOriginalOperation());
 							ExtractOperationRefactoring nestedRefactoring = new ExtractOperationRefactoring(nestedMapper, mapper.getOperation2(), nestedMatchingInvocations);
 							refactorings.add(nestedRefactoring);
@@ -152,7 +152,7 @@ public class ExtractOperationDetection {
 			}
 			UMLOperation delegateMethod = findDelegateMethod(mapper.getOperation1(), addedOperation, addedOperationInvocation);
 			if(extractMatchCondition(operationBodyMapper, additionalExactMatches)) {
-				ExtractOperationRefactoring extractOperationRefactoring = null;
+				ExtractOperationRefactoring extractOperationRefactoring;
 				if(delegateMethod == null) {
 					extractOperationRefactoring = new ExtractOperationRefactoring(operationBodyMapper, mapper.getOperation2(), addedOperationInvocations);
 				}
@@ -226,7 +226,7 @@ public class ExtractOperationDetection {
 
 	private List<OperationInvocation> matchingInvocations(UMLOperation operation,
 			List<OperationInvocation> operationInvocations, UMLOperation callerOperation) {
-		List<OperationInvocation> addedOperationInvocations = new ArrayList<OperationInvocation>();
+		List<OperationInvocation> addedOperationInvocations = new ArrayList<>();
 		for(OperationInvocation invocation : operationInvocations) {
 			if(invocation.matchesOperation(operation, callerOperation, modelDiff)) {
 				addedOperationInvocations.add(invocation);
@@ -253,10 +253,10 @@ public class ExtractOperationDetection {
 	private UMLOperationBodyMapper createMapperForExtractedMethod(UMLOperationBodyMapper mapper,
 			UMLOperation originalOperation, UMLOperation addedOperation, OperationInvocation addedOperationInvocation) throws RefactoringMinerTimedOutException {
 		List<UMLParameter> originalMethodParameters = originalOperation.getParametersWithoutReturnType();
-		Map<UMLParameter, UMLParameter> originalMethodParametersPassedAsArgumentsMappedToCalledMethodParameters = new LinkedHashMap<UMLParameter, UMLParameter>();
+		Map<UMLParameter, UMLParameter> originalMethodParametersPassedAsArgumentsMappedToCalledMethodParameters = new LinkedHashMap<>();
 		List<String> arguments = addedOperationInvocation.getArguments();
 		List<UMLParameter> parameters = addedOperation.getParametersWithoutReturnType();
-		Map<String, String> parameterToArgumentMap = new LinkedHashMap<String, String>();
+		Map<String, String> parameterToArgumentMap = new LinkedHashMap<>();
 		//special handling for methods with varargs parameter for which no argument is passed in the matching invocation
 		int size = Math.min(arguments.size(), parameters.size());
 		for(int i=0; i<size; i++) {
@@ -273,7 +273,7 @@ public class ExtractOperationDetection {
 			UMLOperation delegateMethod = findDelegateMethod(originalOperation, addedOperation, addedOperationInvocation);
 			return new UMLOperationBodyMapper(mapper,
 					delegateMethod != null ? delegateMethod : addedOperation,
-					new LinkedHashMap<String, String>(), parameterToArgumentMap, classDiff);
+                    new LinkedHashMap<>(), parameterToArgumentMap, classDiff);
 		}
 		return null;
 	}
@@ -282,7 +282,7 @@ public class ExtractOperationDetection {
 		int mappings = operationBodyMapper.mappingsWithoutBlocks();
 		int nonMappedElementsT1 = operationBodyMapper.nonMappedElementsT1();
 		int nonMappedElementsT2 = operationBodyMapper.nonMappedElementsT2();
-		List<AbstractCodeMapping> exactMatchList = new ArrayList<AbstractCodeMapping>(operationBodyMapper.getExactMatches());
+		List<AbstractCodeMapping> exactMatchList = new ArrayList<>(operationBodyMapper.getExactMatches());
 		boolean exceptionHandlingExactMatch = false;
 		boolean throwsNewExceptionExactMatch = false;
 		if(exactMatchList.size() == 1) {
@@ -310,8 +310,8 @@ public class ExtractOperationDetection {
 	}
 
 	private boolean argumentExtractedWithDefaultReturnAdded(UMLOperationBodyMapper operationBodyMapper) {
-		List<AbstractCodeMapping> totalMappings = new ArrayList<AbstractCodeMapping>(operationBodyMapper.getMappings());
-		List<CompositeStatementObject> nonMappedInnerNodesT2 = new ArrayList<CompositeStatementObject>(operationBodyMapper.getNonMappedInnerNodesT2());
+		List<AbstractCodeMapping> totalMappings = new ArrayList<>(operationBodyMapper.getMappings());
+		List<CompositeStatementObject> nonMappedInnerNodesT2 = new ArrayList<>(operationBodyMapper.getNonMappedInnerNodesT2());
 		ListIterator<CompositeStatementObject> iterator = nonMappedInnerNodesT2.listIterator();
 		while(iterator.hasNext()) {
 			if(iterator.next().toString().equals("{")) {

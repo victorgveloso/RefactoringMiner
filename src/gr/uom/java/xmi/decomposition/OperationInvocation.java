@@ -1,43 +1,23 @@
 package gr.uom.java.xmi.decomposition;
 
-import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.*;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.UMLAbstractClass;
-import gr.uom.java.xmi.UMLClass;
-import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.UMLParameter;
-import gr.uom.java.xmi.UMLType;
 import gr.uom.java.xmi.diff.StringDistance;
 import gr.uom.java.xmi.diff.UMLClassBaseDiff;
 import gr.uom.java.xmi.diff.UMLModelDiff;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.eclipse.jdt.core.dom.ClassInstanceCreation;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.ConstructorInvocation;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
-import org.eclipse.jdt.core.dom.SuperMethodInvocation;
+import org.eclipse.jdt.core.dom.*;
 import org.refactoringminer.util.PrefixSuffixUtils;
+
+import java.util.*;
 
 public class OperationInvocation extends AbstractCall {
 	private String methodName;
-	private List<String> subExpressions = new ArrayList<String>();
+	private List<String> subExpressions = new ArrayList<>();
 	private volatile int hashCode = 0;
 	private static Map<String, String> PRIMITIVE_WRAPPER_CLASS_MAP;
     private static Map<String, List<String>> PRIMITIVE_TYPE_WIDENING_MAP;
     private static Map<String, List<String>> PRIMITIVE_TYPE_NARROWING_MAP;
-    private static List<String> PRIMITIVE_TYPE_LIST;
+    private static final List<String> PRIMITIVE_TYPE_LIST;
 
     static {
     	PRIMITIVE_TYPE_LIST = new ArrayList<>(Arrays.asList("byte", "short", "int", "long", "float", "double", "char", "boolean"));
@@ -79,7 +59,7 @@ public class OperationInvocation extends AbstractCall {
 		this.locationInfo = new LocationInfo(cu, filePath, invocation, CodeElementType.METHOD_INVOCATION);
 		this.methodName = invocation.getName().getIdentifier();
 		this.typeArguments = invocation.arguments().size();
-		this.arguments = new ArrayList<String>();
+		this.arguments = new ArrayList<>();
 		List<Expression> args = invocation.arguments();
 		for(Expression argument : args) {
 			this.arguments.add(argument.toString());
@@ -96,7 +76,7 @@ public class OperationInvocation extends AbstractCall {
 			if(invocation.getExpression() != null) {
 				String expressionAsString = invocation.getExpression().toString();
 				String invocationAsString = invocation.toString();
-				String suffix = invocationAsString.substring(expressionAsString.length() + 1, invocationAsString.length());
+				String suffix = invocationAsString.substring(expressionAsString.length() + 1);
 				subExpressions.add(0, suffix);
 				processExpression(invocation.getExpression(), subExpressions);
 			}
@@ -109,7 +89,7 @@ public class OperationInvocation extends AbstractCall {
 			if(creation.getExpression() != null) {
 				String expressionAsString = creation.getExpression().toString();
 				String invocationAsString = creation.toString();
-				String suffix = invocationAsString.substring(expressionAsString.length() + 1, invocationAsString.length());
+				String suffix = invocationAsString.substring(expressionAsString.length() + 1);
 				subExpressions.add(0, suffix);
 				processExpression(creation.getExpression(), subExpressions);
 			}
@@ -123,7 +103,7 @@ public class OperationInvocation extends AbstractCall {
 		this.locationInfo = new LocationInfo(cu, filePath, invocation, CodeElementType.SUPER_METHOD_INVOCATION);
 		this.methodName = invocation.getName().getIdentifier();
 		this.typeArguments = invocation.arguments().size();
-		this.arguments = new ArrayList<String>();
+		this.arguments = new ArrayList<>();
 		this.expression = "super";
 		this.subExpressions.add("super");
 		List<Expression> args = invocation.arguments();
@@ -136,7 +116,7 @@ public class OperationInvocation extends AbstractCall {
 		this.locationInfo = new LocationInfo(cu, filePath, invocation, CodeElementType.SUPER_CONSTRUCTOR_INVOCATION);
 		this.methodName = "super";
 		this.typeArguments = invocation.arguments().size();
-		this.arguments = new ArrayList<String>();
+		this.arguments = new ArrayList<>();
 		List<Expression> args = invocation.arguments();
 		for(Expression argument : args) {
 			this.arguments.add(argument.toString());
@@ -151,7 +131,7 @@ public class OperationInvocation extends AbstractCall {
 		this.locationInfo = new LocationInfo(cu, filePath, invocation, CodeElementType.CONSTRUCTOR_INVOCATION);
 		this.methodName = "this";
 		this.typeArguments = invocation.arguments().size();
-		this.arguments = new ArrayList<String>();
+		this.arguments = new ArrayList<>();
 		List<Expression> args = invocation.arguments();
 		for(Expression argument : args) {
 			this.arguments.add(argument.toString());
@@ -167,7 +147,7 @@ public class OperationInvocation extends AbstractCall {
 		newOperationInvocation.methodName = this.methodName;
 		newOperationInvocation.locationInfo = this.locationInfo;
 		update(newOperationInvocation, oldExpression, newExpression);
-		newOperationInvocation.subExpressions = new ArrayList<String>();
+		newOperationInvocation.subExpressions = new ArrayList<>();
 		for(String argument : this.subExpressions) {
 			newOperationInvocation.subExpressions.add(
 				ReplacementUtil.performReplacement(argument, oldExpression, newExpression));
@@ -205,7 +185,7 @@ public class OperationInvocation extends AbstractCall {
     			childFieldDeclarationMap = childCallerClass.getFieldDeclarationMap();
     		}
     	}
-    	List<UMLType> inferredArgumentTypes = new ArrayList<UMLType>();
+    	List<UMLType> inferredArgumentTypes = new ArrayList<>();
     	for(String arg : arguments) {
     		int indexOfOpeningParenthesis = arg.indexOf("(");
     		int indexOfOpeningSquareBracket = arg.indexOf("[");
@@ -257,7 +237,7 @@ public class OperationInvocation extends AbstractCall {
     		else if(PrefixSuffixUtils.isNumeric(arg)) {
     			inferredArgumentTypes.add(UMLType.extractTypeObject("int"));
     		}
-    		else if(arg.startsWith("\'") && arg.endsWith("\'")) {
+    		else if(arg.startsWith("'") && arg.endsWith("'")) {
     			inferredArgumentTypes.add(UMLType.extractTypeObject("char"));
     		}
     		else if(arg.endsWith(".class")) {
@@ -274,16 +254,16 @@ public class OperationInvocation extends AbstractCall {
     			inferredArgumentTypes.add(UMLType.extractTypeObject(type));
     		}
     		else if(arg.startsWith("new ") && arg.contains("[") && openingSquareBracketBeforeParenthesis) {
-    			String type = arg.substring(4, arg.indexOf("["));
+    			StringBuilder type = new StringBuilder(arg.substring(4, arg.indexOf("[")));
     			for(int i=0; i<arg.length(); i++) {
     				if(arg.charAt(i) == '[') {
-    					type = type + "[]";
+    					type.append("[]");
     				}
     				else if(arg.charAt(i) == '\n' || arg.charAt(i) == '{') {
     					break;
     				}
     			}
-    			inferredArgumentTypes.add(UMLType.extractTypeObject(type));
+    			inferredArgumentTypes.add(UMLType.extractTypeObject(type.toString()));
     		}
     		else if(arg.endsWith(".getClassLoader()")) {
     			inferredArgumentTypes.add(UMLType.extractTypeObject("ClassLoader"));
@@ -381,11 +361,8 @@ public class OperationInvocation extends AbstractCall {
     	// the super type is available in the modelDiff, but not the subclass type
     	UMLClassBaseDiff subclassDiff = getUMLClassDiff(modelDiff, type);
     	UMLClassBaseDiff superclassDiff = getUMLClassDiff(modelDiff, parameter.getType());
-    	if(superclassDiff != null && subclassDiff == null) {
-    		return true;
-    	}
-    	return false;
-    }
+		return superclassDiff != null && subclassDiff == null;
+	}
 
 	public static boolean collectionMatch(UMLParameter parameter, UMLType type) {
 		if(parameter.getType().getClassType().equals("Iterable") || parameter.getType().getClassType().equals("Collection") ) {
@@ -395,9 +372,7 @@ public class OperationInvocation extends AbstractCall {
 				}
 				if(parameter.getType().getTypeArguments().size() == 1) {
 					UMLType typeArgument = parameter.getType().getTypeArguments().get(0);
-					if(typeArgument.toString().length() == 1 && Character.isUpperCase(typeArgument.toString().charAt(0))) {
-						return true;
-					}
+					return typeArgument.toString().length() == 1 && Character.isUpperCase(typeArgument.toString().charAt(0));
 				}
 			}
 		}
@@ -439,9 +414,7 @@ public class OperationInvocation extends AbstractCall {
 			if(lastParameterType.equals(lastInferredArgumentType)) {
 				return true;
 			}
-			if(lastInferredArgumentType != null && lastParameterType.getClassType().equals(lastInferredArgumentType.getClassType())) {
-				return true;
-			}
+			return lastInferredArgumentType != null && lastParameterType.getClassType().equals(lastInferredArgumentType.getClassType());
 		}
 		return false;
     }
@@ -461,19 +434,18 @@ public class OperationInvocation extends AbstractCall {
     		Set<String> intersection = subExpressionIntersection(other);
     		int thisUnmatchedSubExpressions = this.subExpressions().size() - intersection.size();
     		int otherUnmatchedSubExpressions = other.subExpressions().size() - intersection.size();
-    		if(thisUnmatchedSubExpressions > intersection.size() || otherUnmatchedSubExpressions > intersection.size())
-    			return false;
+			return thisUnmatchedSubExpressions <= intersection.size() && otherUnmatchedSubExpressions <= intersection.size();
     	}
     	return true;
     }
 
     public Set<String> callChainIntersection(OperationInvocation other) {
-    	Set<String> s1 = new LinkedHashSet<String>(this.subExpressions);
+    	Set<String> s1 = new LinkedHashSet<>(this.subExpressions);
     	s1.add(this.actualString());
-    	Set<String> s2 = new LinkedHashSet<String>(other.subExpressions);
+    	Set<String> s2 = new LinkedHashSet<>(other.subExpressions);
     	s2.add(other.actualString());
 
-    	Set<String> intersection = new LinkedHashSet<String>(s1);
+    	Set<String> intersection = new LinkedHashSet<>(s1);
     	intersection.retainAll(s2);
     	return intersection;
     }
@@ -481,7 +453,7 @@ public class OperationInvocation extends AbstractCall {
     private Set<String> subExpressionIntersection(OperationInvocation other) {
     	Set<String> subExpressions1 = this.subExpressions();
     	Set<String> subExpressions2 = other.subExpressions();
-    	Set<String> intersection = new LinkedHashSet<String>(subExpressions1);
+    	Set<String> intersection = new LinkedHashSet<>(subExpressions1);
     	intersection.retainAll(subExpressions2);
     	if(subExpressions1.size() == subExpressions2.size()) {
     		Iterator<String> it1 = subExpressions1.iterator();
@@ -501,9 +473,9 @@ public class OperationInvocation extends AbstractCall {
 		if(subExpression1.length() < subExpression2.length()) {
 			String modified = subExpression1;
 			String previousCommonPrefix = "";
-			String commonPrefix = null;
+			String commonPrefix;
 			while((commonPrefix = PrefixSuffixUtils.longestCommonPrefix(modified, subExpression2)).length() > previousCommonPrefix.length()) {
-				modified = commonPrefix + "this." + modified.substring(commonPrefix.length(), modified.length());
+				modified = commonPrefix + "this." + modified.substring(commonPrefix.length());
 				if(modified.equals(subExpression2)) {
 					return true;
 				}
@@ -513,9 +485,9 @@ public class OperationInvocation extends AbstractCall {
 		else if(subExpression1.length() > subExpression2.length()) {
 			String modified = subExpression2;
 			String previousCommonPrefix = "";
-			String commonPrefix = null;
+			String commonPrefix;
 			while((commonPrefix = PrefixSuffixUtils.longestCommonPrefix(modified, subExpression1)).length() > previousCommonPrefix.length()) {
-				modified = commonPrefix + "this." + modified.substring(commonPrefix.length(), modified.length());
+				modified = commonPrefix + "this." + modified.substring(commonPrefix.length());
 				if(modified.equals(subExpression1)) {
 					return true;
 				}
@@ -526,7 +498,7 @@ public class OperationInvocation extends AbstractCall {
 	}
 
 	private Set<String> subExpressions() {
-		Set<String> subExpressions = new LinkedHashSet<String>(this.subExpressions);
+		Set<String> subExpressions = new LinkedHashSet<>(this.subExpressions);
 		String thisExpression = this.expression;
 		if(thisExpression != null) {
 			if(thisExpression.contains(".")) {
@@ -536,9 +508,7 @@ public class OperationInvocation extends AbstractCall {
 					subExpressions.add(subString);
 				}
 			}
-			else if(!subExpressions.contains(thisExpression)) {
-				subExpressions.add(thisExpression);
-			}
+			else subExpressions.add(thisExpression);
 		}
 		return subExpressions;
 	}
@@ -588,8 +558,8 @@ public class OperationInvocation extends AbstractCall {
         sb.append("(");
         if(typeArguments > 0) {
             for(int i=0; i<typeArguments-1; i++)
-                sb.append("arg" + i).append(", ");
-            sb.append("arg" + (typeArguments-1));
+                sb.append("arg").append(i).append(", ");
+            sb.append("arg").append(typeArguments - 1);
         }
         sb.append(")");
         return sb.toString();
@@ -660,16 +630,14 @@ public class OperationInvocation extends AbstractCall {
 	}
 	
 	public boolean differentExpressionNameAndArguments(OperationInvocation other) {
-		boolean differentExpression = false;
-		if(this.expression == null && other.expression != null)
-			differentExpression = true;
+		boolean differentExpression = this.expression == null && other.expression != null;
 		if(this.expression != null && other.expression == null)
 			differentExpression = true;
 		if(this.expression != null && other.expression != null)
 			differentExpression = !this.expression.equals(other.expression) &&
 			!this.expression.startsWith(other.expression) && !other.expression.startsWith(this.expression);
 		boolean differentName = !this.methodName.equals(other.methodName);
-		Set<String> argumentIntersection = new LinkedHashSet<String>(this.arguments);
+		Set<String> argumentIntersection = new LinkedHashSet<>(this.arguments);
 		argumentIntersection.retainAll(other.arguments);
 		boolean argumentFoundInExpression = false;
 		if(this.expression != null) {

@@ -1,17 +1,16 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
+import gr.uom.java.xmi.UMLAnnotation;
+import gr.uom.java.xmi.UMLAttribute;
+import gr.uom.java.xmi.UMLEnumConstant;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
 
-import gr.uom.java.xmi.UMLAnnotation;
-import gr.uom.java.xmi.UMLAttribute;
-import gr.uom.java.xmi.UMLEnumConstant;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 public class AddAttributeAnnotationRefactoring implements Refactoring {
 	private UMLAnnotation annotation;
@@ -39,7 +38,7 @@ public class AddAttributeAnnotationRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(attributeBefore.codeRange()
 				.setDescription("original attribute declaration")
 				.setCodeElement(attributeBefore.toString()));
@@ -48,7 +47,7 @@ public class AddAttributeAnnotationRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(annotation.codeRange()
 				.setDescription("added annotation")
 				.setCodeElement(annotation.toString()));
@@ -70,15 +69,15 @@ public class AddAttributeAnnotationRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getAttributeBefore().getLocationInfo().getFilePath(), getAttributeBefore().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getAttributeBefore().getLocationInfo().getFilePath(), getAttributeBefore().getClassName()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getAttributeAfter().getLocationInfo().getFilePath(), getAttributeAfter().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getAttributeAfter().getLocationInfo().getFilePath(), getAttributeAfter().getClassName()));
 		return pairs;
 	}
 

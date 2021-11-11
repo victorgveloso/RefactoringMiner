@@ -1,19 +1,13 @@
 package gr.uom.java.xmi.decomposition;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfoProvider;
 import gr.uom.java.xmi.decomposition.replacement.MergeVariableReplacement;
 import gr.uom.java.xmi.decomposition.replacement.Replacement;
 import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
 import gr.uom.java.xmi.diff.CodeRange;
+
+import java.util.*;
 
 public abstract class AbstractCall implements LocationInfoProvider {
 	protected int typeArguments;
@@ -147,9 +141,9 @@ public abstract class AbstractCall implements LocationInfoProvider {
 			String argument2 = arguments2.get(i);
 			boolean argumentConcatenated = false;
 			if((argument1.contains("+") || argument2.contains("+")) && !argument1.contains("++") && !argument2.contains("++")) {
-				Set<String> tokens1 = new LinkedHashSet<String>(Arrays.asList(UMLOperationBodyMapper.SPLIT_CONCAT_STRING_PATTERN.split(argument1)));
-				Set<String> tokens2 = new LinkedHashSet<String>(Arrays.asList(UMLOperationBodyMapper.SPLIT_CONCAT_STRING_PATTERN.split(argument2)));
-				Set<String> intersection = new LinkedHashSet<String>(tokens1);
+				Set<String> tokens1 = new LinkedHashSet<>(Arrays.asList(UMLOperationBodyMapper.SPLIT_CONCAT_STRING_PATTERN.split(argument1)));
+				Set<String> tokens2 = new LinkedHashSet<>(Arrays.asList(UMLOperationBodyMapper.SPLIT_CONCAT_STRING_PATTERN.split(argument2)));
+				Set<String> intersection = new LinkedHashSet<>(tokens1);
 				intersection.retainAll(tokens2);
 				int size = intersection.size();
 				int threshold = Math.max(tokens1.size(), tokens2.size()) - size;
@@ -274,8 +268,8 @@ public abstract class AbstractCall implements LocationInfoProvider {
 
 	public boolean identicalWithMergedArguments(AbstractCall call, Set<Replacement> replacements) {
 		if(onlyArgumentsChanged(call, replacements)) {
-			List<String> updatedArguments1 = new ArrayList<String>(this.arguments);
-			Map<String, Set<Replacement>> commonVariableReplacementMap = new LinkedHashMap<String, Set<Replacement>>();
+			List<String> updatedArguments1 = new ArrayList<>(this.arguments);
+			Map<String, Set<Replacement>> commonVariableReplacementMap = new LinkedHashMap<>();
 			for(Replacement replacement : replacements) {
 				if(replacement.getType().equals(ReplacementType.VARIABLE_NAME)) {
 					String key = replacement.getAfter();
@@ -287,7 +281,7 @@ public abstract class AbstractCall implements LocationInfoProvider {
 						}
 					}
 					else {
-						Set<Replacement> r = new LinkedHashSet<Replacement>();
+						Set<Replacement> r = new LinkedHashSet<>();
 						r.add(replacement);
 						commonVariableReplacementMap.put(key, r);
 						int index = updatedArguments1.indexOf(replacement.getBefore());
@@ -303,7 +297,7 @@ public abstract class AbstractCall implements LocationInfoProvider {
 					Set<Replacement> r = commonVariableReplacementMap.get(key);
 					if(r.size() > 1) {
 						replacements.removeAll(r);
-						Set<String> mergedVariables = new LinkedHashSet<String>();
+						Set<String> mergedVariables = new LinkedHashSet<>();
 						for(Replacement replacement : r) {
 							mergedVariables.add(replacement.getBefore());
 						}
@@ -361,13 +355,13 @@ public abstract class AbstractCall implements LocationInfoProvider {
 	public Set<String> argumentIntersection(AbstractCall call) {
 		List<String> args1 = preprocessArguments(getArguments());
 		List<String> args2 = preprocessArguments(call.getArguments());
-		Set<String> argumentIntersection = new LinkedHashSet<String>(args1);
+		Set<String> argumentIntersection = new LinkedHashSet<>(args1);
 		argumentIntersection.retainAll(args2);
 		return argumentIntersection;
 	}
 
 	private List<String> preprocessArguments(List<String> arguments) {
-		List<String> args = new ArrayList<String>();
+		List<String> args = new ArrayList<>();
 		for(String arg : arguments) {
 			if(arg.contains("\n")) {
 				args.add(arg.substring(0, arg.indexOf("\n")));
@@ -479,7 +473,7 @@ public abstract class AbstractCall implements LocationInfoProvider {
 		else {
 			newCall.expression = this.expression;
 		}
-		newCall.arguments = new ArrayList<String>();
+		newCall.arguments = new ArrayList<>();
 		for(String argument : this.arguments) {
 			newCall.arguments.add(
 				ReplacementUtil.performReplacement(argument, oldExpression, newExpression));

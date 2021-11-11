@@ -1,20 +1,16 @@
 package org.refactoringminer.utils;
 
+import org.refactoringminer.api.RefactoringType;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
-
-import org.refactoringminer.api.RefactoringType;
 
 public class RefFinderResultReader {
 
-    private static Map<String, Function<List<String>, RefactoringRelationship>> mappers = initMappings();
+    private static final Map<String, Function<List<String>, RefactoringRelationship>> mappers = initMappings();
     
     public static RefactoringSet read(String project, String revision, String folderPath) {
         try {

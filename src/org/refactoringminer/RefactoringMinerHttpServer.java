@@ -38,7 +38,7 @@ public class RefactoringMinerHttpServer {
 		InetSocketAddress inetSocketAddress = new InetSocketAddress(InetAddress.getByName(hostName), port);
 		HttpServer server = HttpServer.create(inetSocketAddress, 0);
 		server.createContext("/RefactoringMiner", new MyHandler());
-		server.setExecutor(new ThreadPoolExecutor(4, 8, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100)));
+		server.setExecutor(new ThreadPoolExecutor(4, 8, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(100)));
 		server.start();
 		System.out.println(InetAddress.getLocalHost());
 	}
@@ -54,7 +54,7 @@ public class RefactoringMinerHttpServer {
 			String gitURL = queryToMap.get("gitURL");
 			String commitId = queryToMap.get("commitId");
 			int timeout = Integer.parseInt(queryToMap.get("timeout"));
-			List<Refactoring> detectedRefactorings = new ArrayList<Refactoring>();
+			List<Refactoring> detectedRefactorings = new ArrayList<>();
 
 			GitHistoryRefactoringMiner miner = new GitHistoryRefactoringMinerImpl();
 			miner.detectAtCommit(gitURL, commitId, new RefactoringHandler() {

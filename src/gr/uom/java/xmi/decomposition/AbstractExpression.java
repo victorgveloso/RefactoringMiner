@@ -1,39 +1,40 @@
 package gr.uom.java.xmi.decomposition;
 
-import java.util.List;
-import java.util.Map;
-
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
-
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.diff.CodeRange;
+import lombok.Getter;
+import lombok.Setter;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
+
+import java.util.List;
+import java.util.Map;
 
 public class AbstractExpression extends AbstractCodeFragment {
-	
-	private String expression;
-	private LocationInfo locationInfo;
-	private CompositeStatementObject owner;
-	private List<String> variables;
-	private List<String> types;
-	private List<VariableDeclaration> variableDeclarations;
-	private Map<String, List<OperationInvocation>> methodInvocationMap;
-	private List<AnonymousClassDeclarationObject> anonymousClassDeclarations;
-	private List<String> stringLiterals;
-	private List<String> numberLiterals;
-	private List<String> nullLiterals;
-	private List<String> booleanLiterals;
-	private List<String> typeLiterals;
-	private Map<String, List<ObjectCreation>> creationMap;
-	private List<String> infixExpressions;
-	private List<String> infixOperators;
-	private List<String> arrayAccesses;
-	private List<String> prefixExpressions;
-	private List<String> postfixExpressions;
-	private List<String> arguments;
-	private List<TernaryOperatorExpression> ternaryOperatorExpressions;
-	private List<LambdaExpressionObject> lambdas;
+
+	@Getter private final String expression;
+	@Getter private final LocationInfo locationInfo;
+	@Getter @Setter private CompositeStatementObject owner;
+	@Getter private final List<String> variables;
+	@Getter private final List<String> types;
+	@Getter private final List<VariableDeclaration> variableDeclarations;
+	@Getter private final Map<String, List<OperationInvocation>> methodInvocationMap;
+	@Getter private final List<AnonymousClassDeclarationObject> anonymousClassDeclarations;
+	@Getter private final List<String> stringLiterals;
+	@Getter private final List<String> numberLiterals;
+	@Getter private final List<String> nullLiterals;
+	@Getter private final List<String> booleanLiterals;
+	@Getter private final List<String> typeLiterals;
+	@Getter private final Map<String, List<ObjectCreation>> creationMap;
+	@Getter private final List<String> infixExpressions;
+	@Getter private final List<String> infixOperators;
+	@Getter private final List<String> arrayAccesses;
+	@Getter private final List<String> prefixExpressions;
+	@Getter private final List<String> postfixExpressions;
+	@Getter private final List<String> arguments;
+	@Getter private final List<TernaryOperatorExpression> ternaryOperatorExpressions;
+	@Getter private final List<LambdaExpressionObject> lambdas;
     
     public AbstractExpression(CompilationUnit cu, String filePath, Expression expression, CodeElementType codeElementType) {
     	this.locationInfo = new LocationInfo(cu, filePath, expression, codeElementType);
@@ -62,128 +63,17 @@ public class AbstractExpression extends AbstractCodeFragment {
     	this.owner = null;
     }
 
-    public void setOwner(CompositeStatementObject owner) {
-    	this.owner = owner;
-    }
-
-    public CompositeStatementObject getOwner() {
-    	return this.owner;
-    }
-
 	@Override
 	public CompositeStatementObject getParent() {
 		return getOwner();
 	}
-
-    public String getExpression() {
-    	return expression;
-    }
 
 	public String getString() {
     	return toString();
     }
   
 	public String toString() {
-		return getExpression().toString();
-	}
-
-	@Override
-	public List<String> getVariables() {
-		return variables;
-	}
-
-	@Override
-	public List<String> getTypes() {
-		return types;
-	}
-
-	@Override
-	public List<VariableDeclaration> getVariableDeclarations() {
-		return variableDeclarations;
-	}
-
-	@Override
-	public Map<String, List<OperationInvocation>> getMethodInvocationMap() {
-		return methodInvocationMap;
-	}
-
-	@Override
-	public List<AnonymousClassDeclarationObject> getAnonymousClassDeclarations() {
-		return anonymousClassDeclarations;
-	}
-
-	@Override
-	public List<String> getStringLiterals() {
-		return stringLiterals;
-	}
-
-	@Override
-	public List<String> getNumberLiterals() {
-		return numberLiterals;
-	}
-
-	@Override
-	public List<String> getNullLiterals() {
-		return nullLiterals;
-	}
-
-	@Override
-	public List<String> getBooleanLiterals() {
-		return booleanLiterals;
-	}
-
-	@Override
-	public List<String> getTypeLiterals() {
-		return typeLiterals;
-	}
-
-	@Override
-	public Map<String, List<ObjectCreation>> getCreationMap() {
-		return creationMap;
-	}
-
-	@Override
-	public List<String> getInfixExpressions() {
-		return infixExpressions;
-	}
-
-	@Override
-	public List<String> getInfixOperators() {
-		return infixOperators;
-	}
-
-	@Override
-	public List<String> getArrayAccesses() {
-		return arrayAccesses;
-	}
-
-	@Override
-	public List<String> getPrefixExpressions() {
-		return prefixExpressions;
-	}
-
-	@Override
-	public List<String> getPostfixExpressions() {
-		return postfixExpressions;
-	}
-
-	@Override
-	public List<String> getArguments() {
-		return arguments;
-	}
-
-	@Override
-	public List<TernaryOperatorExpression> getTernaryOperatorExpressions() {
-		return ternaryOperatorExpressions;
-	}
-
-	@Override
-	public List<LambdaExpressionObject> getLambdas() {
-		return lambdas;
-	}
-
-	public LocationInfo getLocationInfo() {
-		return locationInfo;
+		return getExpression();
 	}
 
 	public VariableDeclaration searchVariableDeclaration(String variableName) {

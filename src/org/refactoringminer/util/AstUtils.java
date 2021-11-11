@@ -1,20 +1,9 @@
 package org.refactoringminer.util;
 
+import org.eclipse.jdt.core.dom.*;
+
 import java.util.Iterator;
 import java.util.List;
-
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.IMethodBinding;
-import org.eclipse.jdt.core.dom.ITypeBinding;
-import org.eclipse.jdt.core.dom.IVariableBinding;
-import org.eclipse.jdt.core.dom.Javadoc;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jdt.core.dom.TagElement;
-import org.eclipse.jdt.core.dom.Type;
 
 public class AstUtils {
 
@@ -84,9 +73,7 @@ public class AstUtils {
 //	    String rawTypeName = stripQualifiedTypeName(stripTypeParamsFromTypeName(type.toString()));
 	    String rawTypeName = stripTypeParamsFromTypeName(type.toString());
         sb.append(rawTypeName);
-        for (int i = extraDimensions; i > 0; i--) {
-            sb.append("[]");
-        }
+		sb.append("[]".repeat(Math.max(0, extraDimensions)));
         if (varargs) {
             sb.append("[]");
         }

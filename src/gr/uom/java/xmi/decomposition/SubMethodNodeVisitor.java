@@ -1,59 +1,20 @@
 package gr.uom.java.xmi.decomposition;
 
-import java.util.*;
-import java.util.regex.Pattern;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import lombok.Builder;
 import lombok.Getter;
-
 import lombok.Singular;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
-import org.eclipse.jdt.core.dom.ArrayAccess;
-import org.eclipse.jdt.core.dom.ArrayCreation;
-import org.eclipse.jdt.core.dom.ArrayInitializer;
-import org.eclipse.jdt.core.dom.ArrayType;
-import org.eclipse.jdt.core.dom.BooleanLiteral;
-import org.eclipse.jdt.core.dom.CastExpression;
-import org.eclipse.jdt.core.dom.ClassInstanceCreation;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.ConditionalExpression;
-import org.eclipse.jdt.core.dom.ConstructorInvocation;
-import org.eclipse.jdt.core.dom.EnhancedForStatement;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.FieldAccess;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.LambdaExpression;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.Name;
-import org.eclipse.jdt.core.dom.NullLiteral;
-import org.eclipse.jdt.core.dom.NumberLiteral;
-import org.eclipse.jdt.core.dom.ParameterizedType;
-import org.eclipse.jdt.core.dom.PostfixExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
-import org.eclipse.jdt.core.dom.PrimitiveType;
-import org.eclipse.jdt.core.dom.QualifiedName;
-import org.eclipse.jdt.core.dom.QualifiedType;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.SimpleType;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.StringLiteral;
-import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
-import org.eclipse.jdt.core.dom.SuperMethodInvocation;
-import org.eclipse.jdt.core.dom.ThisExpression;
-import org.eclipse.jdt.core.dom.TypeLiteral;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.WildcardType;
+import org.eclipse.jdt.core.dom.*;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class SubMethodNodeVisitor extends ASTVisitor {
 	static final Pattern METHOD_INVOCATION_PATTERN = Pattern.compile("!(\\w|\\.)*@\\w*");
 	static final Pattern METHOD_SIGNATURE_PATTERN = Pattern.compile("(public|protected|private|static|\\s) +[\\w<>\\[\\]]+\\s+(\\w+) *\\([^)]*\\) *(\\{?|[^;])");
-	private CompilationUnit cu;
-	private String filePath;
+	private final CompilationUnit cu;
+	private final String filePath;
 	@Getter private List<String> variables = new ArrayList<>();
 	@Getter private List<String> types = new ArrayList<>();
 	@Getter private Map<String, List<OperationInvocation>> methodInvocationMap = new LinkedHashMap<>();
@@ -126,7 +87,7 @@ public class SubMethodNodeVisitor extends ASTVisitor {
 		this.current = this.root;
 	}
 
-
+	public static class SubMethodNodeVisitorBuilder {}
 
 	SubMethodNodeVisitor(CompilationUnit cu, String filePath) {
 		this.cu = cu;
@@ -319,7 +280,7 @@ public class SubMethodNodeVisitor extends ASTVisitor {
 	}
 
 	private DefaultMutableTreeNode deleteNode(AnonymousClassDeclaration childAnonymous) {
-		Enumeration enumeration = root.postorderEnumeration();
+		Enumeration<TreeNode> enumeration = root.postorderEnumeration();
 		DefaultMutableTreeNode childNode = findNode(childAnonymous);
 		DefaultMutableTreeNode parentNode = findParent(childAnonymous, enumeration);
 		assert childNode != null;
@@ -330,7 +291,7 @@ public class SubMethodNodeVisitor extends ASTVisitor {
 	}
 
 	private DefaultMutableTreeNode insertNode(AnonymousClassDeclaration childAnonymous) {
-		Enumeration enumeration = root.postorderEnumeration();
+		Enumeration<TreeNode> enumeration = root.postorderEnumeration();
 		AnonymousClassDeclarationObject anonymousObject = new AnonymousClassDeclarationObject(cu, filePath, childAnonymous);
 		DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(anonymousObject);
 
@@ -340,7 +301,7 @@ public class SubMethodNodeVisitor extends ASTVisitor {
 	}
 
 	private DefaultMutableTreeNode findNode(AnonymousClassDeclaration anonymous) {
-		Enumeration enumeration = root.postorderEnumeration();
+		Enumeration<TreeNode> enumeration = root.postorderEnumeration();
 
 		while(enumeration.hasMoreElements()) {
 			DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode)enumeration.nextElement();
