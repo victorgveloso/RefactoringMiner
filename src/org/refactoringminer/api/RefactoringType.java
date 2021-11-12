@@ -93,7 +93,8 @@ public enum RefactoringType {
 	ADD_CLASS_MODIFIER("Add Class Modifier", "Add Class Modifier (.+) in class (.+)"),
 	REMOVE_CLASS_MODIFIER("Remove Class Modifier", "Remove Class Modifier (.+) in class (.+)"),
 	SPLIT_PACKAGE("Split Package", "Split Package (.+) to \\[(.+)\\]"),
-	MERGE_PACKAGE("Merge Package", "Merge Package \\[(.+)\\] to (.+)");
+	MERGE_PACKAGE("Merge Package", "Merge Package \\[(.+)\\] to (.+)"),
+    EXPECTED_WITH_ASSERT_THROWS("Expect Annotation With Assert Throws", "Expect Annotation With Assert Throws (.+) from method (.+) in class (.+)");
 
 	private final String displayName;
 	private final Pattern regex;

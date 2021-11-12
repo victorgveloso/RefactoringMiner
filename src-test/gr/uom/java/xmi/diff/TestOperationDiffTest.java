@@ -70,10 +70,12 @@ public class TestOperationDiffTest {
 
         private ModifyMethodAnnotationRefactoring detectModifyMethodAnnotationRefactoring() throws RefactoringMinerTimedOutException {
             var refactorings = modelDiff.getRefactorings();
-            Assert.assertEquals("There should be only one refactoring in the example test method", 1, refactorings.size());
-            var refactoring = refactorings.get(0);
-            Assert.assertEquals("@Test memberValuePair change not detected", RefactoringType.MODIFY_METHOD_ANNOTATION, refactoring.getRefactoringType());
-            return (ModifyMethodAnnotationRefactoring) refactoring;
+            Assert.assertEquals("There should be two refactorings in the example test method", 2, refactorings.size());
+            var refactoring = refactorings.stream().filter(r->r.getRefactoringType().equals(RefactoringType.EXPECTED_WITH_ASSERT_THROWS)).findAny();
+            Assert.assertTrue("Migration from @Test(expected) to assertThrows not detected", refactoring.isPresent());
+            refactoring = refactorings.stream().filter(r->r.getRefactoringType().equals(RefactoringType.MODIFY_METHOD_ANNOTATION)).findAny();
+            Assert.assertTrue("@Test memberValuePair change not detected", refactoring.isPresent());
+            return (ModifyMethodAnnotationRefactoring) refactoring.get();
         }
 
         private String detectExpectedExceptionTypeLiteral(UMLAnnotation before) {

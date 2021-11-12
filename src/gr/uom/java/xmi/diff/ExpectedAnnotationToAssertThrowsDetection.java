@@ -65,10 +65,18 @@ public class ExpectedAnnotationToAssertThrowsDetection {
     private boolean containsAtLeastOneLineInCommon(UMLOperation operation, String lambda) {
         return lambda
                 .lines()
-                .skip(1)
                 .map(String::strip)
+                .map(line -> lambdaBodyIsExpression(line) ? extractExpressionAndConvertToStatement(line) : line)
                 .filter(line -> line.length() > 1) // Ignore "{" and "}" lines
                 .anyMatch(lambdaLine -> operationContainsLine(operation, lambdaLine));
+    }
+
+    private String extractExpressionAndConvertToStatement(String line) {
+        return line.replaceFirst("\\(\\) -> ", "") + ";";
+    }
+
+    private boolean lambdaBodyIsExpression(String line) {
+        return line.endsWith(")");
     }
 
     private boolean operationContainsLine(UMLOperation operation, String line) {
