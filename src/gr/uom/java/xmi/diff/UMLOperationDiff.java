@@ -37,7 +37,8 @@ public class UMLOperationDiff {
 	private List<UMLType> addedExceptionTypes;
 	private List<UMLType> removedExceptionTypes;
 	private SimpleEntry<Set<UMLType>, Set<UMLType>> changedExceptionTypes;
-	
+	@Getter private TestOperationDiff testOperationDiff;
+
 	public UMLOperationDiff(UMLOperation removedOperation, UMLOperation addedOperation) {
 		process(removedOperation, addedOperation);
 	}
@@ -96,10 +97,14 @@ public class UMLOperationDiff {
 		refactorings.addAll(getModifierRefactorings());
 		/* Extension point for test-related refactorings */
 		if(TestOperationDiff.isTestOperation((removedOperation)) && TestOperationDiff.isTestOperation((addedOperation))) {
-			var testMethod = new TestOperationDiff(this);
-			refactorings.addAll(testMethod.getRefactorings());
+			testOperationDiff = new TestOperationDiff(removedOperation, addedOperation, refactorings);
+			refactorings.addAll(testOperationDiff.getRefactorings());
 		}
 
+		return refactorings;
+	}
+
+	public Set<Refactoring> getRefactoringsAfterPostProcessing() {
 		return refactorings;
 	}
 
