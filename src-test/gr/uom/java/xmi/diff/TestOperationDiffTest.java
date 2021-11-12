@@ -2,19 +2,17 @@ package gr.uom.java.xmi.diff;
 
 import gr.uom.java.xmi.UMLModelASTReader;
 import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.decomposition.AbstractStatement;
-import gr.uom.java.xmi.decomposition.CompositeStatementObject;
 import gr.uom.java.xmi.decomposition.OperationInvocation;
-import gr.uom.java.xmi.decomposition.StatementObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.refactoringminer.api.RefactoringMinerTimedOutException;
 import org.refactoringminer.api.RefactoringType;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 
 public class TestOperationDiffTest {
@@ -32,46 +30,51 @@ public class TestOperationDiffTest {
     @Test
     public void testFromInlineToAssertThrows() throws RefactoringMinerTimedOutException {
         var refactorings = modelDiff.getRefactorings();
-        Assert.assertEquals(refactorings.toString(), 1, refactorings.size());
+        Assert.assertEquals("There should be only one refactoring in the example test method", 1, refactorings.size());
         var refactoring = refactorings.get(0);
-        Assert.assertEquals(RefactoringType.MODIFY_METHOD_ANNOTATION, refactoring.getRefactoringType());
+        Assert.assertEquals("@Test memberValuePair change not detected", RefactoringType.MODIFY_METHOD_ANNOTATION, refactoring.getRefactoringType());
+
         var modifyAnnotationRefactoring = (ModifyMethodAnnotationRefactoring) refactoring;
         var before = modifyAnnotationRefactoring.getAnnotationBefore();
-        Assert.assertTrue(hasExpectedException(before));
+        var after = modifyAnnotationRefactoring.getOperationAfter();
+
+        Assert.assertTrue("@Test(expected) normalAnnotation not found", hasExpectedException(before));
         var expectedException = before.getMemberValuePairs().get("expected");
-        Assert.assertEquals(1, expectedException.getTypeLiterals().size());
-        Assert.assertTrue(hasAssertThrows(modifyAnnotationRefactoring.getOperationAfter()));
+        Assert.assertEquals("@Test(expected) should contain a single type literal",1, expectedException.getTypeLiterals().size());
+        var assertThrows = getAssertThrows(after);
+        Assert.assertEquals("Number of found assertThrows call is not 1", 1, assertThrows.size());
+
+        var args = assertThrows.get(0).getArguments();
+        var exceptionClassLiteral = args.get(0);
+        Assert.assertEquals(expectedException.getExpression(), exceptionClassLiteral);
+        var lambdaExpression = args.get(1);
+        var allLambdas = after.getBody().getAllLambdas();
+        Assert.assertEquals(1, allLambdas.size());
+        var lambda = allLambdas.get(0);
+        var expectedLines = lambdaExpression.lines().collect(Collectors.toList());
+        expectedLines.remove(0);
+        expectedLines.remove(expectedLines.size() - 1);
+        var lines = lambda.getBody().stringRepresentation();
+        lines.remove(0);
+        lines.remove(lines.size() - 1);
+        var expectedIter = expectedLines.iterator();
+        var linesIter = lines.iterator();
+        for (String expectedLine = expectedIter.next(), line = linesIter.next();
+             expectedIter.hasNext() && linesIter.hasNext();
+             expectedLine = expectedIter.next(), line = linesIter.next()) {
+            Assert.assertEquals(expectedLine.strip(), line.strip());
+        }
     }
 
     private boolean hasExpectedException(gr.uom.java.xmi.UMLAnnotation before) {
         return before.isNormalAnnotation() && before.getTypeName().equals("Test") && before.getMemberValuePairs().containsKey("expected");
     }
 
-    private boolean hasAssertThrows(UMLOperation operation) {
-        return operation.hasTestAnnotation() && recurseThroughStmtTree(
-                operation.getBody().getCompositeStatement(),
-                (i) -> i.getMethodName().equals("assertThrows") && i.getExpression().equals("Assert")
-        );
-    }
 
-    private boolean recurseThroughStmtTree(AbstractStatement stmt, Predicate<OperationInvocation> cb) {
-        if (stmt instanceof CompositeStatementObject) {
-            var composite = (CompositeStatementObject) stmt;
-            for (var childStmt : composite.getStatements()) {
-                return recurseThroughStmtTree(childStmt, cb);
-            }
-        }
-        else if (stmt instanceof StatementObject) {
-            var simple = (StatementObject) stmt;
-            var methodInvocations = simple.getMethodInvocationMap();
-            for (var mapping: methodInvocations.keySet()) {
-                for (var invocation: methodInvocations.get(mapping)) {
-                    if (cb.test(invocation)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+
+    private List<OperationInvocation> getAssertThrows(UMLOperation operation) {
+        return operation.getAllOperationInvocations().stream()
+                .filter((op) -> op.getMethodName().equals("assertThrows") && op.getExpression().equals("Assert"))
+                .collect(Collectors.toList());
     }
 }
