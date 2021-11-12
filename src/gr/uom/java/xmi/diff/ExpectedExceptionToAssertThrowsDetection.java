@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * Detects expecting exception test encoding migration (from JUnit 4 to JUnit 5)
- * JUnit4 usually relies on @ExpectedException, a Single Member annotation, with an exception type as its only member
+ * JUnit4 usually relies on @Rule ExpectedException, a Single Member annotated field, which provides an expect method
  * JUnit5 introduces the assertThrows method that expects both an exception type and a lambda function
  */
 public class ExpectedExceptionToAssertThrowsDetection {
