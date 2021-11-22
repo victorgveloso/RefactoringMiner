@@ -32,6 +32,27 @@ public class TryWithFailToExpectedExceptionRuleTest {
             modelDiff = before.diff(after);
         }
     }
+    public static class ImplementationTest extends ModelDiffFieldSetUp {
+        @Test
+        public void testFromTryFailToRule() {
+            var classDiff = modelDiff.getUMLClassDiff("ca.concordia.victor.exception.ExampleClassTest");
+            Assert.assertNotNull(classDiff);
+            var operationMappers = classDiff.getOperationBodyMapperList();
+            Assert.assertEquals(2, operationMappers.size());
+            var possibleMapper = operationMappers.stream().filter(op-> !(op.operationNameEditDistance() == 0 && op.getOperation1().getName().equals("setUp"))).findAny();
+            Assert.assertTrue(possibleMapper.isPresent());
+            var mapper = possibleMapper.get();
+            var detector = new TryWithFailToExpectedExceptionRuleDetection(mapper, classDiff.addedAttributes);
+            var refactoring = detector.check();
+            Assert.assertNotNull(refactoring);
+            Assert.assertNotNull(detector.getExpectedExceptionFieldDeclaration());
+            Assert.assertEquals(1, detector.getTryStatements().size());
+            Assert.assertEquals(1, detector.getAssertFailInvocationsFound().size());
+            Assert.assertEquals(1, detector.getCapturedExceptions().size());
+            Assert.assertEquals(1, detector.getExpectInvocations().size());
+        }
+
+    }
     public static class ExploringTest extends ModelDiffFieldSetUp {
 
         @Test
@@ -88,15 +109,13 @@ public class TryWithFailToExpectedExceptionRuleTest {
         }
 
         private List<String> getExceptions(TryStatementObject tryStatement) {
-            var capturedExceptions = tryStatement.getCatchClauses().stream().flatMap(clause -> clause.getVariableDeclarations().stream().map(variable -> variable.getType().getClassType())).filter(classType -> classType.endsWith("Exception")).collect(Collectors.toList());
-            return capturedExceptions;
+            return tryStatement.getCatchClauses().stream().flatMap(clause -> clause.getVariableDeclarations().stream().map(variable -> variable.getType().getClassType())).filter(classType -> classType.endsWith("Exception")).collect(Collectors.toList());
         }
 
         private TryStatementObject getTryStatement(List<CompositeStatementObject> a1) {
             Optional<TryStatementObject> possibleTry = a1.stream().filter(st->st instanceof TryStatementObject).map(st -> (TryStatementObject)st).findAny();
             Assert.assertTrue(possibleTry.isPresent());
-            var tryStatement = possibleTry.get();
-            return tryStatement;
+            return possibleTry.get();
         }
 
     }
