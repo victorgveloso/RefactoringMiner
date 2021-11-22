@@ -6,6 +6,7 @@ import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.OperationInvocation;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -18,7 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RunWith(Enclosed.class)
-public class TestOperationDiffTest {
+public class ExpectedAnnotationToAssertThrowsTest {
     abstract public static class ModelDiffFieldSetUp {
         UMLModelDiff modelDiff;
 
@@ -33,9 +34,10 @@ public class TestOperationDiffTest {
             modelDiff = before.diff(after);
         }
     }
+
     public static class ImplementationTest extends ModelDiffFieldSetUp {
         @Test
-        public void testInitOnRefactoring() {
+        public void testFromInlineToAssertThrows() {
             var classDiff = modelDiff.getUMLClassDiff("ca.concordia.victor.exception.ExampleClassTest");
             Assert.assertNotNull(classDiff);
             Assert.assertEquals(2, classDiff.operationBodyMapperList.size());
@@ -51,7 +53,9 @@ public class TestOperationDiffTest {
             Assert.assertTrue(expectedClassNames.containsAll(refactorings.stream().map(Object::getClass).map(Class::getName).collect(Collectors.toUnmodifiableSet())));
         }
     }
-    public static class ExploringTest extends ModelDiffFieldSetUp{
+
+    @Ignore("The base from what the implementation emerged (Do not test implementation but the implementation's dependencies)")
+    public static class ExploringTest extends ModelDiffFieldSetUp {
 
         @Test
         public void testFromInlineToAssertThrows() throws RefactoringMinerTimedOutException {
@@ -71,9 +75,9 @@ public class TestOperationDiffTest {
         private ModifyMethodAnnotationRefactoring detectModifyMethodAnnotationRefactoring() throws RefactoringMinerTimedOutException {
             var refactorings = modelDiff.getRefactorings();
             Assert.assertEquals("There should be two refactorings in the example test method", 2, refactorings.size());
-            var refactoring = refactorings.stream().filter(r->r.getRefactoringType().equals(RefactoringType.EXPECTED_WITH_ASSERT_THROWS)).findAny();
+            var refactoring = refactorings.stream().filter(r -> r.getRefactoringType().equals(RefactoringType.EXPECTED_WITH_ASSERT_THROWS)).findAny();
             Assert.assertTrue("Migration from @Test(expected) to assertThrows not detected", refactoring.isPresent());
-            refactoring = refactorings.stream().filter(r->r.getRefactoringType().equals(RefactoringType.MODIFY_METHOD_ANNOTATION)).findAny();
+            refactoring = refactorings.stream().filter(r -> r.getRefactoringType().equals(RefactoringType.MODIFY_METHOD_ANNOTATION)).findAny();
             Assert.assertTrue("@Test memberValuePair change not detected", refactoring.isPresent());
             return (ModifyMethodAnnotationRefactoring) refactoring.get();
         }

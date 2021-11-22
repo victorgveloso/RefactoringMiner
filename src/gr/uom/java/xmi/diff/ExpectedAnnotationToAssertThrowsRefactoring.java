@@ -15,7 +15,7 @@ import java.util.Set;
 
 /**
  * Represents expecting exception test encoding migration (from JUnit 4 to JUnit 5)
- * JUnit4 usually relies on @Rule ExpectedException, a Single Member annotated field, which provides an expect method
+ * JUnit4 usually relies on @Test(expected), a member value pair which receives an exception type literal
  * JUnit5 introduces the assertThrows method that expects both an exception type and a lambda function
  */
 public class ExpectedAnnotationToAssertThrowsRefactoring implements Refactoring {

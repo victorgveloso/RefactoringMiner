@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 /**
  * Detects expecting exception test encoding migration (from JUnit 4 to JUnit 5)
- * JUnit4 usually relies on @Rule ExpectedException, a Single Member annotated field, which provides an expect method
+ * JUnit4 usually relies on @Test(expected), a member value pair which receives an exception type literal
  * JUnit5 introduces the assertThrows method that expects both an exception type and a lambda function
  */
 public class ExpectedAnnotationToAssertThrowsDetection {
@@ -36,17 +36,17 @@ public class ExpectedAnnotationToAssertThrowsDetection {
     public ExpectedAnnotationToAssertThrowsRefactoring check() {
         var expectedRemovalFromTestAnnotation = getRemovedExpectedAttributeFromTestAnnotation();
         try {
-            annotationChange = expectedRemovalFromTestAnnotation.get();
+            annotationChange = expectedRemovalFromTestAnnotation.orElseThrow();
             exception = annotationChange.getAnnotationBefore().getMemberValuePairs().get("expected");
-            var assertThrows = getAssertThrows(operationAfter).stream()
+            operationInvocation = getAssertThrows(operationAfter).stream()
                     .filter(i -> i.getArguments().get(0).equals(exception.getExpression()))
                     .filter(i -> containsAtLeastOneLineInCommon(operationBefore, i.getArguments().get(1)))
-                    .findAny();
-            operationInvocation = assertThrows.get();
-            var expr = operationAfter.getAllLambdas().stream()
+                    .findAny()
+                    .orElseThrow();
+            lambda = operationAfter.getAllLambdas().stream()
                     .filter(lambda -> isEnclosedBy(lambda, operationInvocation))
-                    .findAny();
-            lambda = expr.get();
+                    .findAny()
+                    .orElseThrow();
             return new ExpectedAnnotationToAssertThrowsRefactoring(operationBefore, operationAfter, annotationChange, exception, lambda, operationInvocation);
         } catch (NoSuchElementException ex) {
             return null;
@@ -54,12 +54,12 @@ public class ExpectedAnnotationToAssertThrowsDetection {
     }
 
     private boolean isEnclosedBy(LambdaExpressionObject lambda, OperationInvocation invocation) {
-        var assertThrowsRange = invocation.codeRange();
-        var range = lambda.codeRange();
-        return assertThrowsRange.getStartLine() <= range.getStartLine() &&
-                assertThrowsRange.getEndLine() >= range.getEndLine() &&
-                assertThrowsRange.getStartColumn() <= range.getStartColumn() &&
-                assertThrowsRange.getEndColumn() >= range.getEndColumn();
+        var invocationRange = invocation.codeRange();
+        var lambdaRange = lambda.codeRange();
+        return invocationRange.getStartLine() <= lambdaRange.getStartLine() &&
+                invocationRange.getEndLine() >= lambdaRange.getEndLine() &&
+                invocationRange.getStartColumn() <= lambdaRange.getStartColumn() &&
+                invocationRange.getEndColumn() >= lambdaRange.getEndColumn();
     }
 
     private boolean containsAtLeastOneLineInCommon(UMLOperation operation, String lambda) {
