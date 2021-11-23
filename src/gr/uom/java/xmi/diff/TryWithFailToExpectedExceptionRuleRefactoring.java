@@ -20,19 +20,19 @@ import java.util.Set;
 public class TryWithFailToExpectedExceptionRuleRefactoring implements Refactoring {
     private UMLOperation operationBefore;
     private UMLOperation operationAfter;
-    private final List<TryStatementObject> tryStatement;
-    private final List<OperationInvocation> assertFailInvocations;
-    private final List<String> capturedExceptions;
-    private final List<OperationInvocation> thrownExpectInvocations;
+    private final TryStatementObject tryStatement;
+    private final OperationInvocation assertFailInvocation;
+    private final String capturedExceptions;
+    private final OperationInvocation thrownExpectInvocations;
     private final UMLAttribute ruleFieldDeclaration;
 
-    public TryWithFailToExpectedExceptionRuleRefactoring(UMLOperation operationBefore, UMLOperation operationAfter, List<TryStatementObject> tryStatement, List<OperationInvocation> assertFailInvocations, List<String> capturedExceptions, List<OperationInvocation> thrownExpectInvocations, UMLAttribute ruleFieldDeclaration) {
+    public TryWithFailToExpectedExceptionRuleRefactoring(UMLOperation operationBefore, UMLOperation operationAfter, TryStatementObject tryStatement, OperationInvocation assertFailInvocation, String capturedException, OperationInvocation thrownExpectInvocation, UMLAttribute ruleFieldDeclaration) {
         this.operationBefore = operationBefore;
         this.operationAfter = operationAfter;
         this.tryStatement = tryStatement;
-        this.assertFailInvocations = assertFailInvocations;
-        this.capturedExceptions = capturedExceptions;
-        this.thrownExpectInvocations = thrownExpectInvocations;
+        this.assertFailInvocation = assertFailInvocation;
+        this.capturedExceptions = capturedException;
+        this.thrownExpectInvocations = thrownExpectInvocation;
         this.ruleFieldDeclaration = ruleFieldDeclaration;
     }
 

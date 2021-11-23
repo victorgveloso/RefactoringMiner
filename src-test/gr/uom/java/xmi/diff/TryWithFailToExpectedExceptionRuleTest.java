@@ -50,6 +50,12 @@ public class TryWithFailToExpectedExceptionRuleTest {
             Assert.assertEquals(1, detector.getAssertFailInvocationsFound().size());
             Assert.assertEquals(1, detector.getCapturedExceptions().size());
             Assert.assertEquals(1, detector.getExpectInvocations().size());
+            Assert.assertEquals("ExpectedException", detector.getExpectedExceptionFieldDeclaration().getType().getClassType());
+            Assert.assertEquals(1, detector.getExpectInvocations().size());
+            Assert.assertEquals(1, detector.getExpectInvocations().get(0).getArguments().size());
+            Assert.assertEquals("IllegalArgumentException.class", detector.getExpectInvocations().get(0).getArguments().get(0));
+            Assert.assertEquals(1, detector.getCapturedExceptions().size());
+            Assert.assertEquals("IllegalArgumentException.class", detector.getCapturedExceptions().get(0));
         }
 
     }
@@ -72,7 +78,7 @@ public class TryWithFailToExpectedExceptionRuleTest {
             TryStatementObject tryStatement = getTryStatement(removedCompositeStmts);
             List<String> capturedExceptions = getExceptions(tryStatement);
             Assert.assertEquals(1, capturedExceptions.size());
-            Assert.assertEquals("IllegalArgumentException", capturedExceptions.get(0));
+            Assert.assertEquals("IllegalArgumentException.class", capturedExceptions.get(0));
             Assert.assertEquals(2, tryStatement.getStatements().size());
             Assert.assertTrue("Assert fail should be invoked at the end of TryStatement", hasAssertFailInvocationAtTheEnd(tryStatement));
 
@@ -94,7 +100,7 @@ public class TryWithFailToExpectedExceptionRuleTest {
         }
 
         private boolean isAnyArgumentPassedTo(List<String> arguments, OperationInvocation invocation) {
-            return arguments.contains(invocation.getArguments().get(0).replace(".class",""));
+            return arguments.contains(invocation.getArguments().get(0));
         }
 
         private Stream<OperationInvocation> extractMethodInvocations(List<StatementObject> addedStmts) {
@@ -104,16 +110,26 @@ public class TryWithFailToExpectedExceptionRuleTest {
         private boolean hasAssertFailInvocationAtTheEnd(TryStatementObject tryStatement) {
             var lastStatement = tryStatement.getStatements().get(tryStatement.getStatements().size() - 1);
             var operationInvocationsInLastStatement = new ArrayList<>(lastStatement.getMethodInvocationMap().values()).get(0);
-            var assertFailInvocations = operationInvocationsInLastStatement.stream().filter(invocation -> invocation.getExpression().equals("Assert") && invocation.getMethodName().equals("fail")).collect(Collectors.toList());
+            var assertFailInvocations = operationInvocationsInLastStatement.stream()
+                    .filter(invocation -> invocation.getExpression().equals("Assert") && invocation.getMethodName().equals("fail"))
+                    .collect(Collectors.toList());
             return assertFailInvocations.size() > 0;
         }
 
         private List<String> getExceptions(TryStatementObject tryStatement) {
-            return tryStatement.getCatchClauses().stream().flatMap(clause -> clause.getVariableDeclarations().stream().map(variable -> variable.getType().getClassType())).filter(classType -> classType.endsWith("Exception")).collect(Collectors.toList());
+            return tryStatement.getCatchClauses().stream()
+                    .flatMap(clause -> clause.getVariableDeclarations().stream()
+                            .map(variable -> variable.getType().getClassType()))
+                    .filter(classType -> classType.endsWith("Exception"))
+                    .map(classType -> classType.concat(".class"))
+                    .collect(Collectors.toList());
         }
 
-        private TryStatementObject getTryStatement(List<CompositeStatementObject> a1) {
-            Optional<TryStatementObject> possibleTry = a1.stream().filter(st->st instanceof TryStatementObject).map(st -> (TryStatementObject)st).findAny();
+        private TryStatementObject getTryStatement(List<CompositeStatementObject> stmt) {
+            Optional<TryStatementObject> possibleTry = stmt.stream()
+                    .filter(st->st instanceof TryStatementObject)
+                    .map(st -> (TryStatementObject)st)
+                    .findAny();
             Assert.assertTrue(possibleTry.isPresent());
             return possibleTry.get();
         }

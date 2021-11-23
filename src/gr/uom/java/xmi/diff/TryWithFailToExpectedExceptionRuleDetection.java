@@ -52,8 +52,11 @@ public class TryWithFailToExpectedExceptionRuleDetection {
     }
 
     private TryWithFailToExpectedExceptionRuleRefactoring createRefactoring() {
-        // TODO: Filter data relevant to refactoring
-        return new TryWithFailToExpectedExceptionRuleRefactoring(operationBefore, operationAfter, tryStatements, assertFailInvocationsFound, capturedExceptions, expectInvocations, expectedExceptionFieldDeclaration);
+        var tryStmt = tryStatements.get(0);
+        var assertFailInvocation = assertFailInvocationsFound.get(0);
+        var expectInvocation = expectInvocations.stream().filter(op -> capturedExceptions.contains(op.getArguments().get(0))).findAny().orElseThrow();
+        var capturedException = expectInvocation.getArguments().get(0);
+        return new TryWithFailToExpectedExceptionRuleRefactoring(operationBefore, operationAfter, tryStmt, assertFailInvocation, capturedException, expectInvocation, expectedExceptionFieldDeclaration);
     }
 
     private boolean checkFromTryWithFail() {
@@ -61,6 +64,7 @@ public class TryWithFailToExpectedExceptionRuleDetection {
         capturedExceptions = tryStatements.stream()
                 .filter(stmt -> detectAssertFailInvocationAtTheEndOf(stmt).findAny().isPresent())
                 .flatMap(TryWithFailToExpectedExceptionRuleDetection::detectCatchExceptions)
+                .map(exception -> exception.concat(".class"))
                 .collect(Collectors.toList());
         assertFailInvocationsFound = tryStatements.stream()
                 .flatMap(TryWithFailToExpectedExceptionRuleDetection::detectAssertFailInvocationAtTheEndOf)
@@ -83,7 +87,7 @@ public class TryWithFailToExpectedExceptionRuleDetection {
                 .filter(invocation -> isExpectedExceptionExpectInvocation(capturedExceptions, invocation))
                 .filter(expectInvocation -> expectedExceptionRuleFieldDeclaration.getName().equals(expectInvocation.getExpression()))
                 .filter(expectInvocation -> expectInvocation.getArguments().size() == 1)
-                .filter(expectInvocation -> capturedExceptions.contains(expectInvocation.getArguments().get(0).replace(".class", "")));
+                .filter(expectInvocation -> capturedExceptions.contains(expectInvocation.getArguments().get(0)));
     }
 
     private static boolean isExpectedExceptionExpectInvocation(List<String> candidateExceptions, OperationInvocation invocation) {
@@ -91,7 +95,7 @@ public class TryWithFailToExpectedExceptionRuleDetection {
     }
 
     private static boolean isAnyArgumentPassedTo(List<String> arguments, OperationInvocation invocation) {
-        return arguments.contains(invocation.getArguments().get(0).replace(".class",""));
+        return arguments.contains(invocation.getArguments().get(0));
     }
 
     private static Stream<OperationInvocation> extractMethodInvocationsStream(List<StatementObject> addedStmts) {
