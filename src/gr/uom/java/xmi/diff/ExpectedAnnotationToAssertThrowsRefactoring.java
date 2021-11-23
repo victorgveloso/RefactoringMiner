@@ -4,6 +4,7 @@ import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.AbstractExpression;
 import gr.uom.java.xmi.decomposition.LambdaExpressionObject;
 import gr.uom.java.xmi.decomposition.OperationInvocation;
+import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
@@ -19,12 +20,12 @@ import java.util.Set;
  * JUnit5 introduces the assertThrows method that expects both an exception type and a lambda function
  */
 public class ExpectedAnnotationToAssertThrowsRefactoring implements Refactoring {
-    private final UMLOperation operationBefore;
-    private final UMLOperation operationAfter;
-    private final ModifyMethodAnnotationRefactoring expectedExceptionAnnotation;
-    private final AbstractExpression exception;
-    private final LambdaExpressionObject lambda;
-    private final OperationInvocation assertThrows;
+    @Getter private final UMLOperation operationBefore;
+    @Getter private final UMLOperation operationAfter;
+    @Getter private final ModifyMethodAnnotationRefactoring expectedExceptionAnnotation;
+    @Getter private final AbstractExpression exception;
+    @Getter private final LambdaExpressionObject lambda;
+    @Getter private final OperationInvocation assertThrows;
 
     public ExpectedAnnotationToAssertThrowsRefactoring(UMLOperation operationBefore,
                                                        UMLOperation operationAfter,
@@ -86,7 +87,7 @@ public class ExpectedAnnotationToAssertThrowsRefactoring implements Refactoring 
 
     @Override
     public RefactoringType getRefactoringType() {
-        return RefactoringType.EXPECTED_WITH_ASSERT_THROWS;
+        return RefactoringType.REPLACE_EXPECTED_WITH_ASSERT_THROWS;
     }
 
     @Override

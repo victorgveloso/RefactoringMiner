@@ -93,7 +93,7 @@ public class ExpectedAnnotationToAssertThrowsTest {
         private ModifyMethodAnnotationRefactoring detectModifyMethodAnnotationRefactoring() throws RefactoringMinerTimedOutException {
             var refactorings = modelDiff.getRefactorings();
             Assert.assertEquals("There should be two refactorings in the example test method", 2, refactorings.size());
-            var refactoring = refactorings.stream().filter(r -> r.getRefactoringType().equals(RefactoringType.EXPECTED_WITH_ASSERT_THROWS)).findAny();
+            var refactoring = refactorings.stream().filter(r -> r.getRefactoringType().equals(RefactoringType.REPLACE_EXPECTED_WITH_ASSERT_THROWS)).findAny();
             Assert.assertTrue("Migration from @Test(expected) to assertThrows not detected", refactoring.isPresent());
             refactoring = refactorings.stream().filter(r -> r.getRefactoringType().equals(RefactoringType.MODIFY_METHOD_ANNOTATION)).findAny();
             Assert.assertTrue("@Test memberValuePair change not detected", refactoring.isPresent());

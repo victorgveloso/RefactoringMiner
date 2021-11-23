@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.refactoringminer.api.RefactoringMinerTimedOutException;
+import org.refactoringminer.api.RefactoringType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,6 +46,8 @@ public class TryWithFailToExpectedExceptionRuleTest {
             var detector = new TryWithFailToExpectedExceptionRuleDetection(mapper, classDiff.addedAttributes);
             var refactoring = detector.check();
             Assert.assertNotNull(refactoring);
+            Assert.assertEquals(mapper.getOperation2(), refactoring.getOperationAfter());
+            Assert.assertEquals(mapper.getOperation1(), refactoring.getOperationBefore());
             Assert.assertNotNull(detector.getExpectedExceptionFieldDeclaration());
             Assert.assertEquals(1, detector.getTryStatements().size());
             Assert.assertEquals(1, detector.getAssertFailInvocationsFound().size());
@@ -70,6 +73,17 @@ public class TryWithFailToExpectedExceptionRuleTest {
             var refactorings = modelDiff.getRefactorings();
             Assert.assertEquals(1, refactorings.size());
             Assert.assertTrue(refactorings.stream().anyMatch(r->r instanceof TryWithFailToExpectedExceptionRuleRefactoring));
+            TryWithFailToExpectedExceptionRuleRefactoring r = (TryWithFailToExpectedExceptionRuleRefactoring) refactorings.get(0);
+            Assert.assertEquals("IllegalArgumentException.class",r.getException());
+            Assert.assertEquals("Replace Try-Fail With Rule",r.getName());
+            Assert.assertEquals(RefactoringType.REPLACE_TRY_FAIL_WITH_RULE,r.getRefactoringType());
+            Assert.assertEquals(1,r.getInvolvedClassesAfterRefactoring().size());
+            Assert.assertEquals("testClass",new ArrayList<>(r.getInvolvedClassesAfterRefactoring()).get(0).left);
+            Assert.assertEquals("ca.concordia.victor.exception.ExampleClassTest",new ArrayList<>(r.getInvolvedClassesAfterRefactoring()).get(0).right);
+            Assert.assertEquals(1,r.getInvolvedClassesBeforeRefactoring().size());
+            Assert.assertEquals("testClass",new ArrayList<>(r.getInvolvedClassesBeforeRefactoring()).get(0).left);
+            Assert.assertEquals("ca.concordia.victor.exception.ExampleClassTest",new ArrayList<>(r.getInvolvedClassesBeforeRefactoring()).get(0).right);
+            Assert.assertEquals("Replace Try-Fail With Rule\tIllegalArgumentException.class from method public testExampleMethod_WrongGuess() : void in class ca.concordia.victor.exception.ExampleClassTest", r.toString());
         }
 
     }
