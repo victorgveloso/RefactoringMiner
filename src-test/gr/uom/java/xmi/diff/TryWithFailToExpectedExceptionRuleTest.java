@@ -57,6 +57,20 @@ public class TryWithFailToExpectedExceptionRuleTest {
             Assert.assertEquals(1, detector.getCapturedExceptions().size());
             Assert.assertEquals("IllegalArgumentException.class", detector.getCapturedExceptions().get(0));
         }
+        @Test
+        public void testFromTryFailToRule_ClassBaseDiff_getRefactorings() throws RefactoringMinerTimedOutException {
+            var classDiff = modelDiff.getUMLClassDiff("ca.concordia.victor.exception.ExampleClassTest");
+            Assert.assertNotNull(classDiff);
+            var refactorings = classDiff.getRefactorings();
+            Assert.assertEquals(1, refactorings.size());
+            Assert.assertTrue(refactorings.stream().anyMatch(r->r instanceof TryWithFailToExpectedExceptionRuleRefactoring));
+        }
+        @Test
+        public void testFromTryFailToRule_ModelDiff_getRefactorings() throws RefactoringMinerTimedOutException {
+            var refactorings = modelDiff.getRefactorings();
+            Assert.assertEquals(1, refactorings.size());
+            Assert.assertTrue(refactorings.stream().anyMatch(r->r instanceof TryWithFailToExpectedExceptionRuleRefactoring));
+        }
 
     }
     public static class ExploringTest extends ModelDiffFieldSetUp {

@@ -7,10 +7,7 @@ import gr.uom.java.xmi.decomposition.OperationInvocation;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -19,7 +16,7 @@ import java.util.stream.Collectors;
  * JUnit5 introduces the assertThrows method that expects both an exception type and a lambda function
  */
 public class ExpectedAnnotationToAssertThrowsDetection {
-    private final Set<Refactoring> refactorings;
+    private final Collection<Refactoring> refactorings;
     private OperationInvocation operationInvocation;
     private ModifyMethodAnnotationRefactoring annotationChange;
     private AbstractExpression exception;
@@ -27,7 +24,7 @@ public class ExpectedAnnotationToAssertThrowsDetection {
     private final UMLOperation operationBefore;
     private final UMLOperation operationAfter;
 
-    public ExpectedAnnotationToAssertThrowsDetection(UMLOperation operationBefore, UMLOperation operationAfter, Set<Refactoring> refactorings) {
+    public ExpectedAnnotationToAssertThrowsDetection(UMLOperation operationBefore, UMLOperation operationAfter, Collection<Refactoring> refactorings) {
         this.operationBefore = operationBefore;
         this.operationAfter = operationAfter;
         this.refactorings = refactorings;

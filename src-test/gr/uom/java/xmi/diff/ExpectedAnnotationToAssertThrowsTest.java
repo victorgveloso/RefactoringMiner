@@ -4,6 +4,7 @@ import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLModelASTReader;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.OperationInvocation;
+import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -36,18 +37,35 @@ public class ExpectedAnnotationToAssertThrowsTest {
     }
 
     public static class ImplementationTest extends ModelDiffFieldSetUp {
+        @Ignore("Replaced by testFromInlineToAssertThrows_classDiff since TestOperationDiff depends on UMLClassBaseDiff")
         @Test
         public void testFromInlineToAssertThrows() {
             var classDiff = modelDiff.getUMLClassDiff("ca.concordia.victor.exception.ExampleClassTest");
             Assert.assertNotNull(classDiff);
             Assert.assertEquals(2, classDiff.operationBodyMapperList.size());
-            var testMethodMapperOptional = classDiff.operationBodyMapperList.stream().filter(i -> i.getOperation1().hasTestAnnotation() && i.getOperation2().hasTestAnnotation()).findAny();
+            var testMethodMapperOptional = classDiff.operationBodyMapperList.stream().filter(UMLOperationBodyMapper::involvesTestMethods).findAny();
             Assert.assertTrue(testMethodMapperOptional.isPresent());
             var mapper = testMethodMapperOptional.get();
             var opDiff = new UMLOperationDiff(mapper);
             Assert.assertNull(opDiff.getTestOperationDiff());
             var refactorings = opDiff.getRefactorings();
             Assert.assertNotNull(opDiff.getTestOperationDiff());
+            Assert.assertEquals(2, refactorings.size());
+            var expectedClassNames = Set.of("gr.uom.java.xmi.diff.ModifyMethodAnnotationRefactoring", "gr.uom.java.xmi.diff.ExpectedAnnotationToAssertThrowsRefactoring");
+            Assert.assertTrue(expectedClassNames.containsAll(refactorings.stream().map(Object::getClass).map(Class::getName).collect(Collectors.toUnmodifiableSet())));
+        }
+        @Test
+        public void testFromInlineToAssertThrows_classDiff() throws RefactoringMinerTimedOutException {
+            var classDiff = modelDiff.getUMLClassDiff("ca.concordia.victor.exception.ExampleClassTest");
+            Assert.assertNotNull(classDiff);
+            var refactorings = classDiff.getRefactorings();
+            Assert.assertEquals(2, refactorings.size());
+            var expectedClassNames = Set.of("gr.uom.java.xmi.diff.ModifyMethodAnnotationRefactoring", "gr.uom.java.xmi.diff.ExpectedAnnotationToAssertThrowsRefactoring");
+            Assert.assertTrue(expectedClassNames.containsAll(refactorings.stream().map(Object::getClass).map(Class::getName).collect(Collectors.toUnmodifiableSet())));
+        }
+        @Test
+        public void testFromInlineToAssertThrows_modelDiff() throws RefactoringMinerTimedOutException {
+            var refactorings = modelDiff.getRefactorings();
             Assert.assertEquals(2, refactorings.size());
             var expectedClassNames = Set.of("gr.uom.java.xmi.diff.ModifyMethodAnnotationRefactoring", "gr.uom.java.xmi.diff.ExpectedAnnotationToAssertThrowsRefactoring");
             Assert.assertTrue(expectedClassNames.containsAll(refactorings.stream().map(Object::getClass).map(Class::getName).collect(Collectors.toUnmodifiableSet())));

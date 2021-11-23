@@ -95,11 +95,6 @@ public class UMLOperationDiff {
 		refactorings.addAll(getAnnotationRefactorings());
 		refactorings.addAll(getExceptionRefactorings());
 		refactorings.addAll(getModifierRefactorings());
-		/* Extension point for test-related refactorings */
-		if(TestOperationDiff.isTestOperation((removedOperation)) && TestOperationDiff.isTestOperation((addedOperation))) {
-			testOperationDiff = new TestOperationDiff(removedOperation, addedOperation, refactorings);
-			refactorings.addAll(testOperationDiff.getRefactorings());
-		}
 
 		return refactorings;
 	}

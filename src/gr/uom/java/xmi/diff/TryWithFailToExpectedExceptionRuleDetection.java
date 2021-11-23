@@ -32,11 +32,15 @@ public class TryWithFailToExpectedExceptionRuleDetection {
     }
 
     public TryWithFailToExpectedExceptionRuleDetection(UMLOperationBodyMapper mapper, List<UMLAttribute> addedAttributes) {
-        this.operationBefore = mapper.getOperation1();
-        this.operationAfter = mapper.getOperation2();
+        this(mapper.getOperation1(), mapper.getOperation2(), mapper.getNonMappedInnerNodesT1(), mapper.getNonMappedLeavesT2(), addedAttributes);
+    }
+
+    public TryWithFailToExpectedExceptionRuleDetection(UMLOperation operationBefore, UMLOperation operationAfter, List<CompositeStatementObject> removedCompositeStmts, List<StatementObject> addedStmts, List<UMLAttribute> addedAttributes) {
+        this.operationBefore = operationBefore;
+        this.operationAfter = operationAfter;
+        this.removedCompositeStmts = removedCompositeStmts;
+        this.addedStmts = addedStmts;
         this.addedAttributes = addedAttributes;
-        removedCompositeStmts = mapper.getNonMappedInnerNodesT1();
-        addedStmts = mapper.getNonMappedLeavesT2();
     }
 
     public TryWithFailToExpectedExceptionRuleRefactoring check() {

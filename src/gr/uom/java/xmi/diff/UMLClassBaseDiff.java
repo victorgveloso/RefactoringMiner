@@ -10,6 +10,7 @@ import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.util.PrefixSuffixUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements Comparable<UMLClassBaseDiff> {
 
@@ -630,7 +631,16 @@ public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements C
 				}
 			}
 		}
+		/* Extension point for test-related refactorings */
+		getTestRelatedRefactorings(refactorings);
 		return refactorings;
+	}
+
+	private void getTestRelatedRefactorings(List<Refactoring> refactorings) {
+		refactorings.addAll(operationBodyMapperList.stream()
+				.map(mapper -> new TestOperationDiff(mapper, this, refactorings))
+				.flatMap(testDiff -> testDiff.getRefactorings().stream())
+				.collect(Collectors.toList()));
 	}
 
 	private void processMapperRefactorings(UMLOperationBodyMapper mapper, List<Refactoring> refactorings) {
