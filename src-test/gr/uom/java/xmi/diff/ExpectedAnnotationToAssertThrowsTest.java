@@ -1,5 +1,6 @@
 package gr.uom.java.xmi.diff;
 
+import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLModelASTReader;
 import gr.uom.java.xmi.UMLOperation;
@@ -14,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.refactoringminer.api.RefactoringMinerTimedOutException;
 import org.refactoringminer.api.RefactoringType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,20 +57,64 @@ public class ExpectedAnnotationToAssertThrowsTest {
             Assert.assertTrue(expectedClassNames.containsAll(refactorings.stream().map(Object::getClass).map(Class::getName).collect(Collectors.toUnmodifiableSet())));
         }
         @Test
+        public void testFromInlineToAssertThrows_detector() {
+            var classDiff = modelDiff.getUMLClassDiff("ca.concordia.victor.exception.ExampleClassTest");
+            Assert.assertNotNull(classDiff);
+            Assert.assertEquals(2, classDiff.operationBodyMapperList.size());
+            var testMethodMapperOptional = classDiff.operationBodyMapperList.stream().filter(UMLOperationBodyMapper::involvesTestMethods).findAny();
+            Assert.assertTrue(testMethodMapperOptional.isPresent());
+            var mapper = testMethodMapperOptional.get();
+            var detector = new ExpectedAnnotationToAssertThrowsDetection(mapper.getOperation1(), mapper.getOperation2(), mapper.getRefactoringsAfterPostProcessing());
+            var refactoring = detector.check();
+            Assert.assertNotNull(refactoring);
+            Assert.assertEquals(mapper.getOperation2(), refactoring.getOperationAfter());
+            Assert.assertEquals(mapper.getOperation1(), refactoring.getOperationBefore());
+        }
+        @Test
         public void testFromInlineToAssertThrows_classDiff() throws RefactoringMinerTimedOutException {
             var classDiff = modelDiff.getUMLClassDiff("ca.concordia.victor.exception.ExampleClassTest");
             Assert.assertNotNull(classDiff);
             var refactorings = classDiff.getRefactorings();
             Assert.assertEquals(2, refactorings.size());
-            var expectedClassNames = Set.of("gr.uom.java.xmi.diff.ModifyMethodAnnotationRefactoring", "gr.uom.java.xmi.diff.ExpectedAnnotationToAssertThrowsRefactoring");
-            Assert.assertTrue(expectedClassNames.containsAll(refactorings.stream().map(Object::getClass).map(Class::getName).collect(Collectors.toUnmodifiableSet())));
+            Assert.assertTrue(refactorings.stream().allMatch(r->r instanceof ModifyMethodAnnotationRefactoring || r instanceof ExpectedAnnotationToAssertThrowsRefactoring));
         }
         @Test
         public void testFromInlineToAssertThrows_modelDiff() throws RefactoringMinerTimedOutException {
             var refactorings = modelDiff.getRefactorings();
             Assert.assertEquals(2, refactorings.size());
-            var expectedClassNames = Set.of("gr.uom.java.xmi.diff.ModifyMethodAnnotationRefactoring", "gr.uom.java.xmi.diff.ExpectedAnnotationToAssertThrowsRefactoring");
-            Assert.assertTrue(expectedClassNames.containsAll(refactorings.stream().map(Object::getClass).map(Class::getName).collect(Collectors.toUnmodifiableSet())));
+            Assert.assertTrue(refactorings.stream().allMatch(r->r instanceof ModifyMethodAnnotationRefactoring || r instanceof ExpectedAnnotationToAssertThrowsRefactoring));
+            var possibleRefactoring = refactorings.stream()
+                    .filter(r -> r instanceof ExpectedAnnotationToAssertThrowsRefactoring)
+                    .findAny();
+            Assert.assertTrue(possibleRefactoring.isPresent());
+            var refactoring = (ExpectedAnnotationToAssertThrowsRefactoring) possibleRefactoring.get();
+            Assert.assertEquals("IllegalArgumentException.class",refactoring.getException().getExpression());
+            Assert.assertEquals("Replace Expect Annotation With Assert Throws",refactoring.getName());
+            Assert.assertEquals(RefactoringType.REPLACE_EXPECTED_WITH_ASSERT_THROWS,refactoring.getRefactoringType());
+            Assert.assertEquals(1,refactoring.getInvolvedClassesAfterRefactoring().size());
+            Assert.assertEquals("testClass",new ArrayList<>(refactoring.getInvolvedClassesAfterRefactoring()).get(0).left);
+            Assert.assertEquals("ca.concordia.victor.exception.ExampleClassTest",new ArrayList<>(refactoring.getInvolvedClassesAfterRefactoring()).get(0).right);
+            Assert.assertEquals(1,refactoring.getInvolvedClassesBeforeRefactoring().size());
+            Assert.assertEquals("testClass",new ArrayList<>(refactoring.getInvolvedClassesBeforeRefactoring()).get(0).left);
+            Assert.assertEquals("ca.concordia.victor.exception.ExampleClassTest",new ArrayList<>(refactoring.getInvolvedClassesBeforeRefactoring()).get(0).right);
+            Assert.assertEquals("Replace Expect Annotation With Assert Throws\tIllegalArgumentException.class from method public testExampleMethod_WrongGuess() : void in class ca.concordia.victor.exception.ExampleClassTest", refactoring.toString());
+            var leftSideDescriptions = new String[]{"source method declaration before migration", "source method's annotations before migration"};
+            Assert.assertArrayEquals(leftSideDescriptions, refactoring.leftSide().stream().map(CodeRange::getDescription).toArray());
+            var leftSideCodeElementTypes = new LocationInfo.CodeElementType[]{LocationInfo.CodeElementType.METHOD_DECLARATION,LocationInfo.CodeElementType.ANNOTATION,LocationInfo.CodeElementType.METHOD_INVOCATION,LocationInfo.CodeElementType.LAMBDA_EXPRESSION};
+            Assert.assertArrayEquals(leftSideCodeElementTypes, refactoring.rightSide().stream().map(CodeRange::getCodeElementType).toArray());
+            var rightSideDescriptions = new String[]{"method declaration after migration", "method's annotations after migration", "added Assert.assertThrows call","extracted lambda from method's body"};
+            Assert.assertArrayEquals(rightSideDescriptions, refactoring.rightSide().stream().map(CodeRange::getDescription).toArray());
+            var rightSideCodeElementTypes = new LocationInfo.CodeElementType[]{LocationInfo.CodeElementType.METHOD_DECLARATION,LocationInfo.CodeElementType.ANNOTATION,LocationInfo.CodeElementType.METHOD_INVOCATION,LocationInfo.CodeElementType.LAMBDA_EXPRESSION};
+            Assert.assertArrayEquals(rightSideCodeElementTypes, refactoring.rightSide().stream().map(CodeRange::getCodeElementType).toArray());
+            Assert.assertEquals("Modify Method Annotation\t@Test(expected = IllegalArgumentException.class) to @Test in method public testExampleMethod_WrongGuess() : void from class ca.concordia.victor.exception.ExampleClassTest",refactoring.getExpectedExceptionAnnotation().toString());
+            Assert.assertEquals("IllegalArgumentException.class",refactoring.getException().getExpression());
+            Assert.assertEquals(1,refactoring.getLambda().getBody().getCompositeStatement().getStatements().size());
+            Assert.assertEquals(LocationInfo.CodeElementType.EXPRESSION_STATEMENT,refactoring.getLambda().getBody().getCompositeStatement().getStatements().get(0).codeRange().getCodeElementType());
+            Assert.assertEquals(2,refactoring.getAssertThrows().getArguments().size());
+            Assert.assertEquals("IllegalArgumentException.class",refactoring.getAssertThrows().getArguments().get(0));
+            Assert.assertEquals("() -> {\n" +
+                    "  exampleObj.exampleMethod(0);\n" +
+                    "}\n",refactoring.getAssertThrows().getArguments().get(1));
         }
     }
 

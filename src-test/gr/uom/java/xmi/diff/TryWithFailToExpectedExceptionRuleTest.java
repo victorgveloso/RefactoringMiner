@@ -1,5 +1,6 @@
 package gr.uom.java.xmi.diff;
 
+import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLModelASTReader;
 import gr.uom.java.xmi.decomposition.CompositeStatementObject;
 import gr.uom.java.xmi.decomposition.OperationInvocation;
@@ -84,6 +85,20 @@ public class TryWithFailToExpectedExceptionRuleTest {
             Assert.assertEquals("testClass",new ArrayList<>(r.getInvolvedClassesBeforeRefactoring()).get(0).left);
             Assert.assertEquals("ca.concordia.victor.exception.ExampleClassTest",new ArrayList<>(r.getInvolvedClassesBeforeRefactoring()).get(0).right);
             Assert.assertEquals("Replace Try-Fail With Rule\tIllegalArgumentException.class from method public testExampleMethod_WrongGuess() : void in class ca.concordia.victor.exception.ExampleClassTest", r.toString());
+            var leftSideDescriptions = new String[]{"source method declaration before migration", "source method's try-statement", "source method's catch clause capturing the expected exception", "source method's assertFail invocation from the try-statement before migration"};
+            Assert.assertArrayEquals(leftSideDescriptions, r.leftSide().stream().map(CodeRange::getDescription).toArray());
+            var leftSideCodeElementTypes = new LocationInfo.CodeElementType[]{LocationInfo.CodeElementType.METHOD_DECLARATION,LocationInfo.CodeElementType.FIELD_DECLARATION,LocationInfo.CodeElementType.METHOD_INVOCATION};
+            Assert.assertArrayEquals(leftSideCodeElementTypes, r.rightSide().stream().map(CodeRange::getCodeElementType).toArray());
+            var rightSideDescriptions = new String[]{"method declaration after migration", "ExpectedException field annotated with @Rule", "method's statement invoking ExpectedException's expect method"};
+            Assert.assertArrayEquals(rightSideDescriptions, r.rightSide().stream().map(CodeRange::getDescription).toArray());
+            var rightSideCodeElementTypes = new LocationInfo.CodeElementType[]{LocationInfo.CodeElementType.METHOD_DECLARATION,LocationInfo.CodeElementType.FIELD_DECLARATION,LocationInfo.CodeElementType.METHOD_INVOCATION};
+            Assert.assertArrayEquals(rightSideCodeElementTypes, r.rightSide().stream().map(CodeRange::getCodeElementType).toArray());
+            Assert.assertEquals("fail", r.getAssertFailInvocation().getName());
+            Assert.assertEquals("thrown", r.getRuleFieldDeclaration().getName());
+            Assert.assertEquals("public", r.getRuleFieldDeclaration().getVisibility());
+            Assert.assertEquals("ExpectedException", r.getRuleFieldDeclaration().getType().getClassType());
+            Assert.assertEquals(2, r.getTryStatement().getStatements().size());
+            Assert.assertEquals("IllegalArgumentException.class", r.getThrownExpectInvocations().getArguments().get(0));
         }
 
     }
