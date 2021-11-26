@@ -1,22 +1,22 @@
 package gr.uom.java.xmi.diff;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringType;
-
 public class MergePackageRefactoring implements Refactoring {
-	private Set<String> mergedPackages;
+	private final Set<String> mergedPackages;
 	private String newPackage;
-	private Set<RenamePackageRefactoring> renamePackageRefactorings;
+	private final Set<RenamePackageRefactoring> renamePackageRefactorings;
 
 	public MergePackageRefactoring(Set<RenamePackageRefactoring> renamePackageRefactorings) {
 		this.renamePackageRefactorings = renamePackageRefactorings;
-		this.mergedPackages = new LinkedHashSet<String>();
+		this.mergedPackages = new LinkedHashSet<>();
 		for(RenamePackageRefactoring refactoring : renamePackageRefactorings) {
 			RenamePattern pattern = refactoring.getPattern();
 			if(newPackage == null) {
@@ -28,7 +28,7 @@ public class MergePackageRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		for(RenamePackageRefactoring renamePackage : renamePackageRefactorings) {
 			for(PackageLevelRefactoring ref : renamePackage.getMoveClassRefactorings()) {
 				ranges.add(ref.getOriginalClass().codeRange()
@@ -41,7 +41,7 @@ public class MergePackageRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		for(RenamePackageRefactoring renamePackage : renamePackageRefactorings) {
 			for(PackageLevelRefactoring ref : renamePackage.getMoveClassRefactorings()) {
 				ranges.add(ref.getMovedClass().codeRange()
@@ -64,10 +64,10 @@ public class MergePackageRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
 		for(RenamePackageRefactoring renamePackage : renamePackageRefactorings) {
 			for(PackageLevelRefactoring ref : renamePackage.getMoveClassRefactorings()) {
-				pairs.add(new ImmutablePair<String, String>(ref.getOriginalClass().getLocationInfo().getFilePath(), ref.getOriginalClassName()));
+				pairs.add(new ImmutablePair<>(ref.getOriginalClass().getLocationInfo().getFilePath(), ref.getOriginalClassName()));
 			}
 		}
 		return pairs;
@@ -75,10 +75,10 @@ public class MergePackageRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
 		for(RenamePackageRefactoring renamePackage : renamePackageRefactorings) {
 			for(PackageLevelRefactoring ref : renamePackage.getMoveClassRefactorings()) {
-				pairs.add(new ImmutablePair<String, String>(ref.getMovedClass().getLocationInfo().getFilePath(), ref.getMovedClassName()));
+				pairs.add(new ImmutablePair<>(ref.getMovedClass().getLocationInfo().getFilePath(), ref.getMovedClassName()));
 			}
 		}
 		return pairs;
@@ -87,7 +87,7 @@ public class MergePackageRefactoring implements Refactoring {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getName()).append("\t");
-		Set<String> mergedPaths = new LinkedHashSet<String>();
+		Set<String> mergedPaths = new LinkedHashSet<>();
 		for(String mergePackage : mergedPackages) {
 			String mergePath = mergePackage.endsWith(".") ? mergePackage.substring(0, mergePackage.length()-1) : mergePackage;
 			mergedPaths.add(mergePath);
@@ -123,10 +123,7 @@ public class MergePackageRefactoring implements Refactoring {
 		} else if (!mergedPackages.equals(other.mergedPackages))
 			return false;
 		if (newPackage == null) {
-			if (other.newPackage != null)
-				return false;
-		} else if (!newPackage.equals(other.newPackage))
-			return false;
-		return true;
+			return other.newPackage == null;
+		} else return newPackage.equals(other.newPackage);
 	}
 }

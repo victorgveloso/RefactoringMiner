@@ -62,7 +62,7 @@ public class ReplacementUtil {
 	}
 
 	public static String performArgumentReplacement(String completeString, String subString, String replacement) {
-		String temp = new String(completeString);
+		String temp = completeString;
 		for(String character : SPECIAL_ARGUMENT_CHARACTERS) {
 			if(completeString.contains(subString + character)) {
 				temp = temp.replace(subString + character, replacement + character);
@@ -72,7 +72,7 @@ public class ReplacementUtil {
 	}
 
 	public static String performReplacement(String completeString, String subString, String replacement) {
-		String temp = new String(completeString);
+		String temp = completeString;
 		if(completeString.equals(subString)) {
 			temp = temp.replace(subString, replacement);
 			return temp;
@@ -95,7 +95,7 @@ public class ReplacementUtil {
 	}
 
 	public static String performReplacement(String completeString1, String completeString2, String subString1, String subString2) {	
-		String temp = new String(completeString1);
+		String temp = completeString1;
 		boolean replacementOccurred = false;
 		for(String character : SPECIAL_CHARACTERS) {
 			if(temp.contains(subString1 + character) && completeString2.contains(subString2 + character)) {
@@ -154,8 +154,7 @@ public class ReplacementUtil {
 				return true;
 			if(characterBefore1.equals(" ") && characterBefore2.equals(""))
 				return true;
-			if(characterBefore1.equals("") && characterBefore2.equals(" "))
-				return true;
+            return characterBefore1.equals("") && characterBefore2.equals(" ");
 		}
 		return false;
 	}
@@ -166,8 +165,7 @@ public class ReplacementUtil {
 				return true;
 			if(characterAfter1.equals(",") && characterAfter2.equals(")"))
 				return true;
-			if(characterAfter1.equals(")") && characterAfter2.equals(","))
-				return true;
+            return characterAfter1.equals(")") && characterAfter2.equals(",");
 		}
 		return false;
 	}

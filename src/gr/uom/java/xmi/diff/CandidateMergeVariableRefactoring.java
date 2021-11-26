@@ -1,17 +1,17 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.Set;
-
 import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 
+import java.util.Set;
+
 public class CandidateMergeVariableRefactoring {
-	private Set<String> mergedVariables;
-	private String newVariable;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
-	private Set<AbstractCodeMapping> variableReferences;
+	private final Set<String> mergedVariables;
+	private final String newVariable;
+	private final UMLOperation operationBefore;
+	private final UMLOperation operationAfter;
+	private final Set<AbstractCodeMapping> variableReferences;
 	private Set<UMLAttribute> mergedAttributes;
 	private UMLAttribute newAttribute;
 
@@ -61,15 +61,13 @@ public class CandidateMergeVariableRefactoring {
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Merge Attribute").append("\t");
-		sb.append(mergedVariables);
-		sb.append(" to ");
-		sb.append(newVariable);
-		sb.append(" in method ");
-		sb.append(operationAfter);
-		sb.append(" from class ").append(operationAfter.getClassName());
-		return sb.toString();
+		return "Merge Attribute" + "\t" +
+				mergedVariables +
+				" to " +
+				newVariable +
+				" in method " +
+				operationAfter +
+				" from class " + operationAfter.getClassName();
 	}
 
 	@Override
@@ -108,10 +106,7 @@ public class CandidateMergeVariableRefactoring {
 		} else if (!operationAfter.equals(other.operationAfter))
 			return false;
 		if (operationBefore == null) {
-			if (other.operationBefore != null)
-				return false;
-		} else if (!operationBefore.equals(other.operationBefore))
-			return false;
-		return true;
+			return other.operationBefore == null;
+		} else return operationBefore.equals(other.operationBefore);
 	}
 }

@@ -1,17 +1,16 @@
 package gr.uom.java.xmi.decomposition;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.UMLType;
+import gr.uom.java.xmi.diff.StringDistance;
 import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 
-import gr.uom.java.xmi.LocationInfo;
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.UMLType;
-import gr.uom.java.xmi.diff.StringDistance;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ObjectCreation extends AbstractCall {
 	private UMLType type;
@@ -23,7 +22,7 @@ public class ObjectCreation extends AbstractCall {
 		this.locationInfo = new LocationInfo(cu, filePath, creation, CodeElementType.CLASS_INSTANCE_CREATION);
 		this.type = UMLType.extractTypeObject(cu, filePath, creation.getType(), 0);
 		this.typeArguments = creation.arguments().size();
-		this.arguments = new ArrayList<String>();
+		this.arguments = new ArrayList<>();
 		List<Expression> args = creation.arguments();
 		for(Expression argument : args) {
 			this.arguments.add(argument.toString());
@@ -41,7 +40,7 @@ public class ObjectCreation extends AbstractCall {
 		this.isArray = true;
 		this.type = UMLType.extractTypeObject(cu, filePath, creation.getType(), 0);
 		this.typeArguments = creation.dimensions().size();
-		this.arguments = new ArrayList<String>();
+		this.arguments = new ArrayList<>();
 		List<Expression> args = creation.dimensions();
 		for(Expression argument : args) {
 			this.arguments.add(argument.toString());
@@ -121,9 +120,7 @@ public class ObjectCreation extends AbstractCall {
     		if(this.anonymousClassDeclaration != null && other.anonymousClassDeclaration != null) {
     			return this.anonymousClassDeclaration.equals(other.anonymousClassDeclaration);
     		}
-    		else if(this.anonymousClassDeclaration == null && other.anonymousClassDeclaration == null) {
-    			return true;
-    		}
+    		else return this.anonymousClassDeclaration == null && other.anonymousClassDeclaration == null;
     	}
     	return false;
     }
@@ -141,9 +138,7 @@ public class ObjectCreation extends AbstractCall {
 	}
 
 	public String actualString() {
-		StringBuilder sb = new StringBuilder();
-        sb.append("new ");
-        sb.append(super.actualString());
-        return sb.toString();
+		return "new " +
+				super.actualString();
 	}
 }

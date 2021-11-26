@@ -10,24 +10,24 @@ import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.decomposition.AbstractExpression;
 
 public class UMLAnnotationDiff {
-	private UMLAnnotation removedAnnotation;
-	private UMLAnnotation addedAnnotation;
+	private final UMLAnnotation removedAnnotation;
+	private final UMLAnnotation addedAnnotation;
 	private boolean typeNameChanged = false;
 	private boolean valueChanged = false;
 	private boolean valueRemoved = false;
 	private boolean valueAdded = false;
-	private List<SimpleEntry<String, AbstractExpression>> removedMemberValuePairs;
-	private List<SimpleEntry<String, AbstractExpression>> addedMemberValuePairs;
-	private Map<SimpleEntry<String, AbstractExpression>, SimpleEntry<String, AbstractExpression>> matchedMemberValuePairsWithDifferentExpressions;
+	private final List<SimpleEntry<String, AbstractExpression>> removedMemberValuePairs;
+	private final List<SimpleEntry<String, AbstractExpression>> addedMemberValuePairs;
+	private final Map<SimpleEntry<String, AbstractExpression>, SimpleEntry<String, AbstractExpression>> matchedMemberValuePairsWithDifferentExpressions;
 	
 	public UMLAnnotationDiff(UMLAnnotation removedAnnotation, UMLAnnotation addedAnnotation) {
 		this.removedAnnotation = removedAnnotation;
 		this.addedAnnotation = addedAnnotation;
-		this.removedMemberValuePairs = new ArrayList<SimpleEntry<String,AbstractExpression>>();
-		this.addedMemberValuePairs = new ArrayList<SimpleEntry<String,AbstractExpression>>();
-		this.matchedMemberValuePairsWithDifferentExpressions = new LinkedHashMap<SimpleEntry<String,AbstractExpression>, SimpleEntry<String,AbstractExpression>>();
+		this.removedMemberValuePairs = new ArrayList<>();
+		this.addedMemberValuePairs = new ArrayList<>();
+		this.matchedMemberValuePairsWithDifferentExpressions = new LinkedHashMap<>();
 		Map<SimpleEntry<String,AbstractExpression>, SimpleEntry<String,AbstractExpression>> matchedMemberValuePairs =
-				new LinkedHashMap<SimpleEntry<String,AbstractExpression>, SimpleEntry<String,AbstractExpression>>();
+                new LinkedHashMap<>();
 		if(!removedAnnotation.getTypeName().equals(addedAnnotation.getTypeName())) {
 			typeNameChanged = true;
 		}

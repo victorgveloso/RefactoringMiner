@@ -1,28 +1,27 @@
 package gr.uom.java.xmi.diff;
 
+import gr.uom.java.xmi.UMLOperation;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringType;
-
-import gr.uom.java.xmi.UMLOperation;
-
 public class AddMethodModifierRefactoring implements Refactoring {
-	private String modifier;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
+	private final Modifier modifier;
+	private final UMLOperation operationBefore;
+	private final UMLOperation operationAfter;
 
-	public AddMethodModifierRefactoring(String modifier, UMLOperation operationBefore, UMLOperation operationAfter) {
+	public AddMethodModifierRefactoring(Modifier modifier, UMLOperation operationBefore, UMLOperation operationAfter) {
 		this.modifier = modifier;
 		this.operationBefore = operationBefore;
 		this.operationAfter = operationAfter;
 	}
 
-	public String getModifier() {
+	public Modifier getModifier() {
 		return modifier;
 	}
 
@@ -36,7 +35,7 @@ public class AddMethodModifierRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(operationBefore.codeRange()
 				.setDescription("original method declaration")
 				.setCodeElement(operationBefore.toString()));
@@ -45,7 +44,7 @@ public class AddMethodModifierRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(operationAfter.codeRange()
 				.setDescription("method declaration with added modifier")
 				.setCodeElement(operationAfter.toString()));
@@ -64,27 +63,23 @@ public class AddMethodModifierRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
 		return pairs;
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getName()).append("\t");
-		sb.append(modifier);
-		sb.append(" in method ");
-		sb.append(operationAfter);
-		sb.append(" from class ");
-		sb.append(operationAfter.getClassName());
-		return sb.toString();
+		return new RefactoringStringBuilder(this)
+				.addNode(modifier)
+				.inMethod(operationAfter)
+				.fromClass().build();
 	}
 
 	@Override
@@ -117,10 +112,7 @@ public class AddMethodModifierRefactoring implements Refactoring {
 		} else if (!operationAfter.equals(other.operationAfter))
 			return false;
 		if (operationBefore == null) {
-			if (other.operationBefore != null)
-				return false;
-		} else if (!operationBefore.equals(other.operationBefore))
-			return false;
-		return true;
+			return other.operationBefore == null;
+		} else return operationBefore.equals(other.operationBefore);
 	}
 }

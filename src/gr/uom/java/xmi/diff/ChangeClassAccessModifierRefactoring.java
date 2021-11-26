@@ -1,21 +1,20 @@
 package gr.uom.java.xmi.diff;
 
+import gr.uom.java.xmi.UMLClass;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringType;
-
-import gr.uom.java.xmi.UMLClass;
-
 public class ChangeClassAccessModifierRefactoring implements Refactoring {
-	private String originalAccessModifier;
-	private String changedAccessModifier;
-	private UMLClass classBefore;
-	private UMLClass classAfter;
+	private final String originalAccessModifier;
+	private final String changedAccessModifier;
+	private final UMLClass classBefore;
+	private final UMLClass classAfter;
 
 	public ChangeClassAccessModifierRefactoring(String originalAccessModifier, String changedAccessModifier,
 			UMLClass classBefore, UMLClass classAfter) {
@@ -43,7 +42,7 @@ public class ChangeClassAccessModifierRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(classBefore.codeRange()
 				.setDescription("original class declaration")
 				.setCodeElement(classBefore.toString()));
@@ -52,7 +51,7 @@ public class ChangeClassAccessModifierRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(classAfter.codeRange()
 				.setDescription("class declaration with changed access modifier")
 				.setCodeElement(classAfter.toString()));
@@ -71,27 +70,25 @@ public class ChangeClassAccessModifierRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getClassBefore().getLocationInfo().getFilePath(), getClassBefore().getName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getClassBefore().getLocationInfo().getFilePath(), getClassBefore().getName()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getClassAfter().getLocationInfo().getFilePath(), getClassAfter().getName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getClassAfter().getLocationInfo().getFilePath(), getClassAfter().getName()));
 		return pairs;
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getName()).append("\t");
-		sb.append(originalAccessModifier);
-		sb.append(" to ");
-		sb.append(changedAccessModifier);
-		sb.append(" in class ");
-		sb.append(classAfter.getName());
-		return sb.toString();
+		return getName() + "\t" +
+				originalAccessModifier +
+				" to " +
+				changedAccessModifier +
+				" in class " +
+				classAfter.getName();
 	}
 
 	@Override
@@ -130,10 +127,7 @@ public class ChangeClassAccessModifierRefactoring implements Refactoring {
 		} else if (!classBefore.equals(other.classBefore))
 			return false;
 		if (originalAccessModifier == null) {
-			if (other.originalAccessModifier != null)
-				return false;
-		} else if (!originalAccessModifier.equals(other.originalAccessModifier))
-			return false;
-		return true;
+			return other.originalAccessModifier == null;
+		} else return originalAccessModifier.equals(other.originalAccessModifier);
 	}
 }

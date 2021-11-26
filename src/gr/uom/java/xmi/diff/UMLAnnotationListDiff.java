@@ -7,20 +7,20 @@ import java.util.ArrayList;
 import gr.uom.java.xmi.UMLAnnotation;
 
 public class UMLAnnotationListDiff {
-	private List<UMLAnnotation> removedAnnotations;
-	private List<UMLAnnotation> addedAnnotations;
-	private List<UMLAnnotationDiff> annotationDiffList;
+	private final List<UMLAnnotation> removedAnnotations;
+	private final List<UMLAnnotation> addedAnnotations;
+	private final List<UMLAnnotationDiff> annotationDiffList;
 
 	public UMLAnnotationListDiff(List<UMLAnnotation> annotations1, List<UMLAnnotation> annotations2) {
-		this.removedAnnotations = new ArrayList<UMLAnnotation>();
-		this.addedAnnotations = new ArrayList<UMLAnnotation>();
-		this.annotationDiffList = new ArrayList<UMLAnnotationDiff>();
-		List<SimpleEntry<UMLAnnotation, UMLAnnotation>> matchedAnnotations = new ArrayList<SimpleEntry<UMLAnnotation,UMLAnnotation>>();
+		this.removedAnnotations = new ArrayList<>();
+		this.addedAnnotations = new ArrayList<>();
+		this.annotationDiffList = new ArrayList<>();
+		List<SimpleEntry<UMLAnnotation, UMLAnnotation>> matchedAnnotations = new ArrayList<>();
 		for(UMLAnnotation annotation1 : annotations1) {
 			boolean found = false;
 			for(UMLAnnotation annotation2 : annotations2) {
 				if(annotation1.equals(annotation2)) {
-					matchedAnnotations.add(new SimpleEntry<UMLAnnotation, UMLAnnotation>(annotation1, annotation2));
+					matchedAnnotations.add(new SimpleEntry<>(annotation1, annotation2));
 					found = true;
 					break;
 				}
@@ -28,7 +28,7 @@ public class UMLAnnotationListDiff {
 			if(!found) {
 				for(UMLAnnotation annotation2 : annotations2) {
 					if(annotation1.getTypeName().equals(annotation2.getTypeName())) {
-						matchedAnnotations.add(new SimpleEntry<UMLAnnotation, UMLAnnotation>(annotation1, annotation2));
+						matchedAnnotations.add(new SimpleEntry<>(annotation1, annotation2));
 						found = true;
 						break;
 					}
@@ -42,7 +42,7 @@ public class UMLAnnotationListDiff {
 			boolean found = false;
 			for(UMLAnnotation annotation1 : annotations1) {
 				if(annotation1.equals(annotation2)) {
-					matchedAnnotations.add(new SimpleEntry<UMLAnnotation, UMLAnnotation>(annotation1, annotation2));
+					matchedAnnotations.add(new SimpleEntry<>(annotation1, annotation2));
 					found = true;
 					break;
 				}
@@ -50,7 +50,7 @@ public class UMLAnnotationListDiff {
 			if(!found) {
 				for(UMLAnnotation annotation1 : annotations1) {
 					if(annotation1.getTypeName().equals(annotation2.getTypeName())) {
-						matchedAnnotations.add(new SimpleEntry<UMLAnnotation, UMLAnnotation>(annotation1, annotation2));
+						matchedAnnotations.add(new SimpleEntry<>(annotation1, annotation2));
 						found = true;
 						break;
 					}

@@ -1,17 +1,18 @@
 package gr.uom.java.xmi.decomposition;
 
+import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.LocationInfoProvider;
+import gr.uom.java.xmi.diff.CodeRange;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.LambdaExpression;
 
-import gr.uom.java.xmi.LocationInfo;
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.diff.CodeRange;
-import gr.uom.java.xmi.LocationInfoProvider;
+import java.util.Objects;
 
 public class LambdaExpressionObject implements LocationInfoProvider {
-	private LocationInfo locationInfo;
+	private final LocationInfo locationInfo;
 	private OperationBody body;
 	private AbstractExpression expression;
 	
@@ -23,6 +24,11 @@ public class LambdaExpressionObject implements LocationInfoProvider {
 		else if(lambda.getBody() instanceof Expression) {
 			this.expression = new AbstractExpression(cu, filePath, (Expression)lambda.getBody(), CodeElementType.LAMBDA_EXPRESSION_BODY);
 		}
+	}
+
+	@Override
+	public String toString() {
+		return Objects.isNull(expression) ? String.join("\n", body.stringRepresentation()) : expression.toString();
 	}
 
 	public OperationBody getBody() {

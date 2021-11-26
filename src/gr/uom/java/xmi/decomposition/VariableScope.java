@@ -1,22 +1,21 @@
 package gr.uom.java.xmi.decomposition;
 
+import gr.uom.java.xmi.LocationInfo;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.CompilationUnit;
-
-import gr.uom.java.xmi.LocationInfo;
-
 public class VariableScope {
-	private String filePath;
-	private int startOffset;
-	private int endOffset;
-	private int startLine;
+	private final String filePath;
+	private final int startOffset;
+	private final int endOffset;
+	private final int startLine;
 	private int startColumn;
-	private int endLine;
+	private final int endLine;
 	private int endColumn;
-	private List<AbstractCodeFragment> statementsInScope = new ArrayList<>();
-	private List<AbstractCodeFragment> statementsInScopeUsingVariable = new ArrayList<>();
+	private final List<AbstractCodeFragment> statementsInScope = new ArrayList<>();
+	private final List<AbstractCodeFragment> statementsInScopeUsingVariable = new ArrayList<>();
 	
 	public VariableScope(CompilationUnit cu, String filePath, int startOffset, int endOffset) {
 		//ASTNode parent = node.getParent();
@@ -80,17 +79,13 @@ public class VariableScope {
 			return false;
 		if (startLine != other.startLine)
 			return false;
-		if (startOffset != other.startOffset)
-			return false;
-		return true;
+		return startOffset == other.startOffset;
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(startLine).append(":").append(startColumn);
-		sb.append("-");
-		sb.append(endLine).append(":").append(endColumn);
-		return sb.toString();
+		return startLine + ":" + startColumn +
+				"-" +
+				endLine + ":" + endColumn;
 	}
 
 	public void addStatement(AbstractCodeFragment statement) {

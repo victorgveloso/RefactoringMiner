@@ -1,23 +1,17 @@
 package gr.uom.java.xmi.diff;
 
+import gr.uom.java.xmi.*;
+import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
+import org.refactoringminer.api.RefactoringMinerTimedOutException;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.refactoringminer.api.RefactoringMinerTimedOutException;
-
-import gr.uom.java.xmi.UMLAnonymousClass;
-import gr.uom.java.xmi.UMLAttribute;
-import gr.uom.java.xmi.UMLClass;
-import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.UMLType;
-import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
-import gr.uom.java.xmi.decomposition.replacement.MethodInvocationReplacement;
-
 public class UMLClassDiff extends UMLClassBaseDiff {
 	
-	private String className;
+	private final String className;
 	public UMLClassDiff(UMLClass originalClass, UMLClass nextClass, UMLModelDiff modelDiff) {
 		super(originalClass, nextClass, modelDiff);
 		this.className = originalClass.getName();
@@ -133,8 +127,8 @@ public class UMLClassDiff extends UMLClassBaseDiff {
     			this.addOperationBodyMapper(operationBodyMapper);
     		}
     	}
-		List<UMLOperation> removedOperationsToBeRemoved = new ArrayList<UMLOperation>();
-		List<UMLOperation> addedOperationsToBeRemoved = new ArrayList<UMLOperation>();
+		List<UMLOperation> removedOperationsToBeRemoved = new ArrayList<>();
+		List<UMLOperation> addedOperationsToBeRemoved = new ArrayList<>();
 		for(UMLOperation removedOperation : removedOperations) {
 			for(UMLOperation addedOperation : addedOperations) {
 				if(removedOperation.equalsIgnoringVisibility(addedOperation)) {
@@ -147,7 +141,7 @@ public class UMLClassDiff extends UMLClassBaseDiff {
 					UMLOperationBodyMapper operationBodyMapper = new UMLOperationBodyMapper(removedOperation, addedOperation, this);
 					if(!removedOperation.getName().equals(addedOperation.getName()) &&
 							!(removedOperation.isConstructor() && addedOperation.isConstructor())) {
-						RenameOperationRefactoring rename = new RenameOperationRefactoring(operationBodyMapper, new HashSet<MethodInvocationReplacement>());
+						RenameOperationRefactoring rename = new RenameOperationRefactoring(operationBodyMapper, new HashSet<>());
 						refactorings.add(rename);
 					}
 					this.addOperationBodyMapper(operationBodyMapper);

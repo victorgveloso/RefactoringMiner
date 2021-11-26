@@ -3,8 +3,8 @@ package gr.uom.java.xmi.decomposition.replacement;
 import gr.uom.java.xmi.decomposition.OperationInvocation;
 
 public class MethodInvocationReplacement extends Replacement {
-	private OperationInvocation invokedOperationBefore;
-	private OperationInvocation invokedOperationAfter;
+	private final OperationInvocation invokedOperationBefore;
+	private final OperationInvocation invokedOperationAfter;
 	
 	public MethodInvocationReplacement(String before, String after,
 			OperationInvocation invokedOperationBefore, OperationInvocation invokedOperationAfter,
@@ -50,10 +50,7 @@ public class MethodInvocationReplacement extends Replacement {
 		} else if (!invokedOperationAfter.getLocationInfo().equals(other.invokedOperationAfter.getLocationInfo()))
 			return false;
 		if (invokedOperationBefore == null) {
-			if (other.invokedOperationBefore != null)
-				return false;
-		} else if (!invokedOperationBefore.getLocationInfo().equals(other.invokedOperationBefore.getLocationInfo()))
-			return false;
-		return true;
+			return other.invokedOperationBefore == null;
+		} else return invokedOperationBefore.getLocationInfo().equals(other.invokedOperationBefore.getLocationInfo());
 	}
 }

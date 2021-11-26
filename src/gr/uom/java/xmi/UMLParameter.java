@@ -1,15 +1,15 @@
 package gr.uom.java.xmi;
 
+import gr.uom.java.xmi.decomposition.VariableDeclaration;
+
 import java.io.Serializable;
 import java.util.List;
 
-import gr.uom.java.xmi.decomposition.VariableDeclaration;
-
 public class UMLParameter implements Serializable, VariableDeclarationProvider {
-	private String name;
-	private UMLType type;
-	private String kind;
-	private boolean varargs;
+	private final String name;
+	private final UMLType type;
+	private final String kind;
+	private final boolean varargs;
 	private VariableDeclaration variableDeclaration;
 
 	public UMLParameter(String name, UMLType type, String kind, boolean varargs) {

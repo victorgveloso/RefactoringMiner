@@ -17,7 +17,7 @@ public class PrefixSuffixUtils {
 		while (i<minLength && s1.charAt(s1.length() - i - 1) == s2.charAt(s2.length() - i - 1)) {
 			i++;
 		}
-		return s1.substring(s1.length() - i, s1.length());
+		return s1.substring(s1.length() - i);
 	}
 
 	public static int separatorPosOfCommonSuffix(char separator, String s1, String s2) {
@@ -38,9 +38,9 @@ public class PrefixSuffixUtils {
 	}
 
 	public static String normalize(String input) {
-		String output = null;
+		String output;
 		if(input.startsWith("this.")) {
-			output = input.substring(5, input.length());
+			output = input.substring(5);
 		}
 		else {
 			output = input;

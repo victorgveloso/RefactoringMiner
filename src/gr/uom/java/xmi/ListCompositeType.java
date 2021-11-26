@@ -1,18 +1,30 @@
 package gr.uom.java.xmi;
 
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Model representation of composite types used within a catch clause.
+ */
 public class ListCompositeType extends UMLType {
+	/**
+	 * The kind of a composition between types within a catch clause.
+	 */
 	public enum Kind {
 		UNION("|"), INTERSECTION("&");
-		private String operand;
-		private Kind(String operand) {
+		private final String operand;
+		Kind(String operand) {
 			this.operand = operand;
 		}
 	}
-	private List<UMLType> types = new ArrayList<UMLType>();
-	private Kind kind;
+
+	/**
+	 * Each type belonging to the composite
+	 */
+	private final List<UMLType> types;
+	/**
+	 * Composition kind.
+	 */
+	private final Kind kind;
 
 	public ListCompositeType(List<UMLType> types, Kind kind) {
 		this.types = types;
@@ -48,11 +60,8 @@ public class ListCompositeType extends UMLType {
 		if (kind != other.kind)
 			return false;
 		if (types == null) {
-			if (other.types != null)
-				return false;
-		} else if (!types.equals(other.types))
-			return false;
-		return true;
+			return other.types == null;
+		} else return types.equals(other.types);
 	}
 
 	@Override

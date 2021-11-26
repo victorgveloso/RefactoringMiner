@@ -1,41 +1,40 @@
 package gr.uom.java.xmi.decomposition;
 
+import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.LocationInfoProvider;
+import gr.uom.java.xmi.diff.CodeRange;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-
-import gr.uom.java.xmi.LocationInfo;
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.diff.CodeRange;
-import gr.uom.java.xmi.LocationInfoProvider;
-
 public class AnonymousClassDeclarationObject implements LocationInfoProvider {
-	private LocationInfo locationInfo;
+	private final LocationInfo locationInfo;
 	private AnonymousClassDeclaration astNode;
-	private String astNodeString;
-	private List<String> variables = new ArrayList<String>();
-	private List<String> types = new ArrayList<String>();
-	private Map<String, List<OperationInvocation>> methodInvocationMap = new LinkedHashMap<String, List<OperationInvocation>>();
-	private List<VariableDeclaration> variableDeclarations = new ArrayList<VariableDeclaration>();
-	private List<AnonymousClassDeclarationObject> anonymousClassDeclarations = new ArrayList<AnonymousClassDeclarationObject>();
-	private List<String> stringLiterals = new ArrayList<String>();
-	private List<String> numberLiterals = new ArrayList<String>();
-	private List<String> nullLiterals = new ArrayList<String>();
-	private List<String> booleanLiterals = new ArrayList<String>();
-	private List<String> typeLiterals = new ArrayList<String>();
-	private Map<String, List<ObjectCreation>> creationMap = new LinkedHashMap<String, List<ObjectCreation>>();
-	private List<String> infixExpressions = new ArrayList<String>();
-	private List<String> infixOperators = new ArrayList<String>();
-	private List<String> arrayAccesses = new ArrayList<String>();
-	private List<String> prefixExpressions = new ArrayList<String>();
-	private List<String> postfixExpressions = new ArrayList<String>();
-	private List<String> arguments = new ArrayList<String>();
-	private List<TernaryOperatorExpression> ternaryOperatorExpressions = new ArrayList<TernaryOperatorExpression>();
-	private List<LambdaExpressionObject> lambdas = new ArrayList<LambdaExpressionObject>();
+	private final String astNodeString;
+	private final List<String> variables = new ArrayList<>();
+	private final List<String> types = new ArrayList<>();
+	private final Map<String, List<OperationInvocation>> methodInvocationMap = new LinkedHashMap<>();
+	private final List<VariableDeclaration> variableDeclarations = new ArrayList<>();
+	private final List<AnonymousClassDeclarationObject> anonymousClassDeclarations = new ArrayList<>();
+	private final List<String> stringLiterals = new ArrayList<>();
+	private final List<String> numberLiterals = new ArrayList<>();
+	private final List<String> nullLiterals = new ArrayList<>();
+	private final List<String> booleanLiterals = new ArrayList<>();
+	private final List<String> typeLiterals = new ArrayList<>();
+	private final Map<String, List<ObjectCreation>> creationMap = new LinkedHashMap<>();
+	private final List<String> infixExpressions = new ArrayList<>();
+	private final List<String> infixOperators = new ArrayList<>();
+	private final List<String> arrayAccesses = new ArrayList<>();
+	private final List<String> prefixExpressions = new ArrayList<>();
+	private final List<String> postfixExpressions = new ArrayList<>();
+	private final List<String> arguments = new ArrayList<>();
+	private final List<TernaryOperatorExpression> ternaryOperatorExpressions = new ArrayList<>();
+	private final List<LambdaExpressionObject> lambdas = new ArrayList<>();
 	
 	public AnonymousClassDeclarationObject(CompilationUnit cu, String filePath, AnonymousClassDeclaration anonymous) {
 		this.locationInfo = new LocationInfo(cu, filePath, anonymous, CodeElementType.ANONYMOUS_CLASS_DECLARATION);

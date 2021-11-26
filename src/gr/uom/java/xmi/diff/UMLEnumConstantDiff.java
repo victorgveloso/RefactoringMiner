@@ -9,10 +9,10 @@ import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLEnumConstant;
 
 public class UMLEnumConstantDiff {
-	private UMLEnumConstant removedEnumConstant;
-	private UMLEnumConstant addedEnumConstant;
+	private final UMLEnumConstant removedEnumConstant;
+	private final UMLEnumConstant addedEnumConstant;
 	private boolean renamed;
-	private UMLAnnotationListDiff annotationListDiff;
+	private final UMLAnnotationListDiff annotationListDiff;
 
 	public UMLEnumConstantDiff(UMLEnumConstant removedEnumConstant, UMLEnumConstant addedEnumConstant) {
 		this.removedEnumConstant = removedEnumConstant;
@@ -57,7 +57,7 @@ public class UMLEnumConstantDiff {
 	}
 
 	private Set<Refactoring> getAnnotationRefactorings() {
-		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
+		Set<Refactoring> refactorings = new LinkedHashSet<>();
 		for(UMLAnnotation annotation : annotationListDiff.getAddedAnnotations()) {
 			AddAttributeAnnotationRefactoring refactoring = new AddAttributeAnnotationRefactoring(annotation, removedEnumConstant, addedEnumConstant);
 			refactorings.add(refactoring);
@@ -74,7 +74,7 @@ public class UMLEnumConstantDiff {
 	}
 
 	public Set<Refactoring> getRefactorings() {
-		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
+		Set<Refactoring> refactorings = new LinkedHashSet<>();
 		refactorings.addAll(getAnnotationRefactorings());
 		return refactorings;
 	}

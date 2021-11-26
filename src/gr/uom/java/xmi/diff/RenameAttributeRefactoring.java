@@ -12,18 +12,18 @@ import org.refactoringminer.api.RefactoringType;
 import gr.uom.java.xmi.UMLAttribute;
 
 public class RenameAttributeRefactoring implements Refactoring {
-	private UMLAttribute originalAttribute;
-	private UMLAttribute renamedAttribute;
-	private Set<CandidateAttributeRefactoring> attributeRenames;
-	private String classNameBefore;
-	private String classNameAfter;
+	private final UMLAttribute originalAttribute;
+	private final UMLAttribute renamedAttribute;
+	private final Set<CandidateAttributeRefactoring> attributeRenames;
+	private final String classNameBefore;
+	private final String classNameAfter;
 
 	public RenameAttributeRefactoring(UMLAttribute originalAttribute, UMLAttribute renamedAttribute,
 			Set<CandidateAttributeRefactoring> attributeRenames) {
 		this.originalAttribute = originalAttribute;
 		this.renamedAttribute = renamedAttribute;
-		this.classNameBefore = originalAttribute.getClassName();;
-		this.classNameAfter = renamedAttribute.getClassName();;
+		this.classNameBefore = originalAttribute.getClassName();
+		this.classNameAfter = renamedAttribute.getClassName();
 		this.attributeRenames = attributeRenames;
 	}
 
@@ -56,13 +56,11 @@ public class RenameAttributeRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getName()).append("\t");
-		sb.append(originalAttribute.getVariableDeclaration());
-		sb.append(" to ");
-		sb.append(renamedAttribute.getVariableDeclaration());
-		sb.append(" in class ").append(classNameAfter);
-		return sb.toString();
+		return getName() + "\t" +
+				originalAttribute.getVariableDeclaration() +
+				" to " +
+				renamedAttribute.getVariableDeclaration() +
+				" in class " + classNameAfter;
 	}
 
 	@Override
@@ -104,31 +102,27 @@ public class RenameAttributeRefactoring implements Refactoring {
 		} else if (!originalAttribute.getVariableDeclaration().equals(other.originalAttribute.getVariableDeclaration()))
 			return false;
 		if (renamedAttribute == null) {
-			if (other.renamedAttribute != null)
-				return false;
+			return other.renamedAttribute == null;
 		} else if(renamedAttribute.getVariableDeclaration() == null) {
-			if(other.renamedAttribute.getVariableDeclaration() != null)
-				return false;
-		} else if (!renamedAttribute.getVariableDeclaration().equals(other.renamedAttribute.getVariableDeclaration()))
-			return false;
-		return true;
+			return other.renamedAttribute.getVariableDeclaration() == null;
+		} else return renamedAttribute.getVariableDeclaration().equals(other.renamedAttribute.getVariableDeclaration());
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getOriginalAttribute().getLocationInfo().getFilePath(), getClassNameBefore()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getOriginalAttribute().getLocationInfo().getFilePath(), getClassNameBefore()));
 		return pairs;
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getRenamedAttribute().getLocationInfo().getFilePath(), getClassNameAfter()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getRenamedAttribute().getLocationInfo().getFilePath(), getClassNameAfter()));
 		return pairs;
 	}
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(originalAttribute.getVariableDeclaration().codeRange()
 				.setDescription("original attribute declaration")
 				.setCodeElement(originalAttribute.getVariableDeclaration().toString()));
@@ -137,7 +131,7 @@ public class RenameAttributeRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(renamedAttribute.getVariableDeclaration().codeRange()
 				.setDescription("renamed attribute declaration")
 				.setCodeElement(renamedAttribute.getVariableDeclaration().toString()));

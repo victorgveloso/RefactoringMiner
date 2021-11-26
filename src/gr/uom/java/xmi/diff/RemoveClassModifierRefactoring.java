@@ -12,9 +12,9 @@ import org.refactoringminer.api.RefactoringType;
 import gr.uom.java.xmi.UMLClass;
 
 public class RemoveClassModifierRefactoring implements Refactoring {
-	private String modifier;
-	private UMLClass classBefore;
-	private UMLClass classAfter;
+	private final String modifier;
+	private final UMLClass classBefore;
+	private final UMLClass classAfter;
 
 	public RemoveClassModifierRefactoring(String modifier, UMLClass classBefore, UMLClass classAfter) {
 		this.modifier = modifier;
@@ -36,7 +36,7 @@ public class RemoveClassModifierRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(classBefore.codeRange()
 				.setDescription("original class declaration")
 				.setCodeElement(classBefore.toString()));
@@ -45,7 +45,7 @@ public class RemoveClassModifierRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(classAfter.codeRange()
 				.setDescription("class declaration with removed modifier")
 				.setCodeElement(classAfter.toString()));
@@ -64,25 +64,23 @@ public class RemoveClassModifierRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getClassBefore().getLocationInfo().getFilePath(), getClassBefore().getName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getClassBefore().getLocationInfo().getFilePath(), getClassBefore().getName()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getClassAfter().getLocationInfo().getFilePath(), getClassAfter().getName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getClassAfter().getLocationInfo().getFilePath(), getClassAfter().getName()));
 		return pairs;
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getName()).append("\t");
-		sb.append(modifier);
-		sb.append(" in class ");
-		sb.append(classBefore.getName());
-		return sb.toString();
+		return getName() + "\t" +
+				modifier +
+				" in class " +
+				classBefore.getName();
 	}
 
 	@Override
@@ -115,10 +113,7 @@ public class RemoveClassModifierRefactoring implements Refactoring {
 		} else if (!classBefore.equals(other.classBefore))
 			return false;
 		if (modifier == null) {
-			if (other.modifier != null)
-				return false;
-		} else if (!modifier.equals(other.modifier))
-			return false;
-		return true;
+			return other.modifier == null;
+		} else return modifier.equals(other.modifier);
 	}
 }

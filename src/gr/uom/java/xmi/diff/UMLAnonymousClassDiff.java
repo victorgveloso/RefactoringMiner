@@ -1,21 +1,20 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringMinerTimedOutException;
-
 import gr.uom.java.xmi.UMLAnonymousClass;
 import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringMinerTimedOutException;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class UMLAnonymousClassDiff extends UMLAbstractClassDiff {
-	private UMLAnonymousClass anonymousClass1;
-	private UMLAnonymousClass anonymousClass2;
-	private UMLClassBaseDiff classDiff;
+	private final UMLAnonymousClass anonymousClass1;
+	private final UMLAnonymousClass anonymousClass2;
+	private final UMLClassBaseDiff classDiff;
 	
 	public UMLAnonymousClassDiff(UMLAnonymousClass anonymousClass1, UMLAnonymousClass anonymousClass2, UMLClassBaseDiff classDiff, UMLModelDiff modelDiff) throws RefactoringMinerTimedOutException {
 		super(modelDiff);
@@ -123,13 +122,12 @@ public class UMLAnonymousClassDiff extends UMLAbstractClassDiff {
 	}
 
 	private void checkForExtractedOperations() throws RefactoringMinerTimedOutException {
-		List<UMLOperation> operationsToBeRemoved = new ArrayList<UMLOperation>();
-		for(Iterator<UMLOperation> addedOperationIterator = addedOperations.iterator(); addedOperationIterator.hasNext();) {
-			UMLOperation addedOperation = addedOperationIterator.next();
-			for(UMLOperationBodyMapper mapper : getOperationBodyMapperList()) {
+		List<UMLOperation> operationsToBeRemoved = new ArrayList<>();
+		for (UMLOperation addedOperation : addedOperations) {
+			for (UMLOperationBodyMapper mapper : getOperationBodyMapperList()) {
 				ExtractOperationDetection detection = new ExtractOperationDetection(mapper, addedOperations, classDiff, modelDiff);
 				List<ExtractOperationRefactoring> refs = detection.check(addedOperation);
-				for(ExtractOperationRefactoring refactoring : refs) {
+				for (ExtractOperationRefactoring refactoring : refs) {
 					refactorings.add(refactoring);
 					UMLOperationBodyMapper operationBodyMapper = refactoring.getBodyMapper();
 					mapper.addChildMapper(operationBodyMapper);
@@ -141,13 +139,12 @@ public class UMLAnonymousClassDiff extends UMLAbstractClassDiff {
 	}
 
 	private void checkForInlinedOperations() throws RefactoringMinerTimedOutException {
-		List<UMLOperation> operationsToBeRemoved = new ArrayList<UMLOperation>();
-		for(Iterator<UMLOperation> removedOperationIterator = removedOperations.iterator(); removedOperationIterator.hasNext();) {
-			UMLOperation removedOperation = removedOperationIterator.next();
-			for(UMLOperationBodyMapper mapper : getOperationBodyMapperList()) {
+		List<UMLOperation> operationsToBeRemoved = new ArrayList<>();
+		for (UMLOperation removedOperation : removedOperations) {
+			for (UMLOperationBodyMapper mapper : getOperationBodyMapperList()) {
 				InlineOperationDetection detection = new InlineOperationDetection(mapper, removedOperations, classDiff, modelDiff);
 				List<InlineOperationRefactoring> refs = detection.check(removedOperation);
-				for(InlineOperationRefactoring refactoring : refs) {
+				for (InlineOperationRefactoring refactoring : refs) {
 					refactorings.add(refactoring);
 					UMLOperationBodyMapper operationBodyMapper = refactoring.getBodyMapper();
 					mapper.addChildMapper(operationBodyMapper);

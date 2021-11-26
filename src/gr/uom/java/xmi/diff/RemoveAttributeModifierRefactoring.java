@@ -13,9 +13,9 @@ import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLEnumConstant;
 
 public class RemoveAttributeModifierRefactoring implements Refactoring {
-	private String modifier;
-	private UMLAttribute attributeBefore;
-	private UMLAttribute attributeAfter;
+	private final String modifier;
+	private final UMLAttribute attributeBefore;
+	private final UMLAttribute attributeAfter;
 
 	public RemoveAttributeModifierRefactoring(String modifier, UMLAttribute attributeBefore, UMLAttribute attributeAfter) {
 		this.modifier = modifier;
@@ -37,7 +37,7 @@ public class RemoveAttributeModifierRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(attributeBefore.codeRange()
 				.setDescription("original attribute declaration")
 				.setCodeElement(attributeBefore.toString()));
@@ -46,7 +46,7 @@ public class RemoveAttributeModifierRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(attributeAfter.codeRange()
 				.setDescription("attribute declaration with removed modifier")
 				.setCodeElement(attributeAfter.toString()));
@@ -65,15 +65,15 @@ public class RemoveAttributeModifierRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getAttributeBefore().getLocationInfo().getFilePath(), getAttributeBefore().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getAttributeBefore().getLocationInfo().getFilePath(), getAttributeBefore().getClassName()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getAttributeAfter().getLocationInfo().getFilePath(), getAttributeAfter().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getAttributeAfter().getLocationInfo().getFilePath(), getAttributeAfter().getClassName()));
 		return pairs;
 	}
 
@@ -126,13 +126,9 @@ public class RemoveAttributeModifierRefactoring implements Refactoring {
 		} else if (!attributeBefore.getVariableDeclaration().equals(other.attributeBefore.getVariableDeclaration()))
 			return false;
 		if (attributeAfter == null) {
-			if (other.attributeAfter != null)
-				return false;
+			return other.attributeAfter == null;
 		} else if(attributeAfter.getVariableDeclaration() == null) {
-			if(other.attributeAfter.getVariableDeclaration() != null)
-				return false;
-		} else if (!attributeAfter.getVariableDeclaration().equals(other.attributeAfter.getVariableDeclaration()))
-			return false;
-		return true;
+			return other.attributeAfter.getVariableDeclaration() == null;
+		} else return attributeAfter.getVariableDeclaration().equals(other.attributeAfter.getVariableDeclaration());
 	}
 }

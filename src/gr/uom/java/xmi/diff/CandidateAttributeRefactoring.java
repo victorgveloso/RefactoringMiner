@@ -8,11 +8,11 @@ import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
 public class CandidateAttributeRefactoring {
-	private String originalVariableName;
-	private String renamedVariableName;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
-	private Set<AbstractCodeMapping> attributeReferences;
+	private final String originalVariableName;
+	private final String renamedVariableName;
+	private final UMLOperation operationBefore;
+	private final UMLOperation operationAfter;
+	private final Set<AbstractCodeMapping> attributeReferences;
 	private VariableDeclaration originalVariableDeclaration;
 	private VariableDeclaration renamedVariableDeclaration;
 	private UMLAttribute originalAttribute;
@@ -88,15 +88,13 @@ public class CandidateAttributeRefactoring {
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Rename Attribute").append("\t");
-		sb.append(originalVariableName);
-		sb.append(" to ");
-		sb.append(renamedVariableName);
-		sb.append(" in method ");
-		sb.append(operationAfter);
-		sb.append(" from class ").append(operationAfter.getClassName());
-		return sb.toString();
+		return "Rename Attribute" + "\t" +
+				originalVariableName +
+				" to " +
+				renamedVariableName +
+				" in method " +
+				operationAfter +
+				" from class " + operationAfter.getClassName();
 	}
 
 	@Override
@@ -135,11 +133,8 @@ public class CandidateAttributeRefactoring {
 		} else if (!originalVariableName.equals(other.originalVariableName))
 			return false;
 		if (renamedVariableName == null) {
-			if (other.renamedVariableName != null)
-				return false;
-		} else if (!renamedVariableName.equals(other.renamedVariableName))
-			return false;
-		return true;
+			return other.renamedVariableName == null;
+		} else return renamedVariableName.equals(other.renamedVariableName);
 	}
 
 }

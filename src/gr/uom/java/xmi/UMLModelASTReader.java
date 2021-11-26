@@ -1,65 +1,28 @@
 package gr.uom.java.xmi;
 
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.decomposition.OperationBody;
+import gr.uom.java.xmi.decomposition.VariableDeclaration;
+import org.apache.commons.io.FileUtils;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.*;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
-
-import org.apache.commons.io.FileUtils;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
-import org.eclipse.jdt.core.dom.Annotation;
-import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.BodyDeclaration;
-import org.eclipse.jdt.core.dom.Comment;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
-import org.eclipse.jdt.core.dom.EnumDeclaration;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.IExtendedModifier;
-import org.eclipse.jdt.core.dom.ImportDeclaration;
-import org.eclipse.jdt.core.dom.Javadoc;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.Modifier;
-import org.eclipse.jdt.core.dom.PackageDeclaration;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.SuperMethodInvocation;
-import org.eclipse.jdt.core.dom.TagElement;
-import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jdt.core.dom.TypeParameter;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
-
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.decomposition.OperationBody;
-import gr.uom.java.xmi.decomposition.VariableDeclaration;
-
 public class UMLModelASTReader {
 	private static final String FREE_MARKER_GENERATED = "generated using freemarker";
 	private static final String systemFileSeparator = Matcher.quoteReplacement(File.separator);
-	private UMLModel umlModel;
+	private final UMLModel umlModel;
 
 	public UMLModelASTReader(Map<String, String> javaFileContents, Set<String> repositoryDirectories) {
 		this.umlModel = new UMLModel(repositoryDirectories);
@@ -95,13 +58,13 @@ public class UMLModelASTReader {
 
 	public UMLModelASTReader(File rootFolder) throws IOException {
 		List<String> javaFilePaths = getJavaFilePaths(rootFolder);
-		Map<String, String> javaFileContents = new LinkedHashMap<String, String>();
-		Set<String> repositoryDirectories = new LinkedHashSet<String>();
+		Map<String, String> javaFileContents = new LinkedHashMap<>();
+		Set<String> repositoryDirectories = new LinkedHashSet<>();
 		for(String path : javaFilePaths) {
 			String fullPath = rootFolder + File.separator + path.replaceAll("/", systemFileSeparator);
 			String contents = FileUtils.readFileToString(new File(fullPath));
 			javaFileContents.put(path, contents);
-			String directory = new String(path);
+			String directory = path;
 			while(directory.contains("/")) {
 				directory = directory.substring(0, directory.lastIndexOf("/"));
 				repositoryDirectories.add(directory);
@@ -113,7 +76,7 @@ public class UMLModelASTReader {
 
 	private static List<String> getJavaFilePaths(File folder) throws IOException {
 		Stream<Path> walk = Files.walk(Paths.get(folder.toURI()));
-		List<String> paths = walk.map(x -> x.toString())
+		List<String> paths = walk.map(Path::toString)
 				.filter(f -> f.endsWith(".java"))
 				.map(x -> x.substring(folder.getPath().length()+1).replaceAll(systemFileSeparator, "/"))
 				.collect(Collectors.toList());
@@ -128,14 +91,14 @@ public class UMLModelASTReader {
 	protected void processCompilationUnit(String sourceFilePath, CompilationUnit compilationUnit, String javaFileContent) {
 		List<UMLComment> comments = extractInternalComments(compilationUnit, sourceFilePath, javaFileContent);
 		PackageDeclaration packageDeclaration = compilationUnit.getPackage();
-		String packageName = null;
+		String packageName;
 		if(packageDeclaration != null)
 			packageName = packageDeclaration.getName().getFullyQualifiedName();
 		else
 			packageName = "";
 		
 		List<ImportDeclaration> imports = compilationUnit.imports();
-		List<String> importedTypes = new ArrayList<String>();
+		List<String> importedTypes = new ArrayList<>();
 		for(ImportDeclaration importDeclaration : imports) {
 			importedTypes.add(importDeclaration.getName().getFullyQualifiedName());
 		}
@@ -154,7 +117,7 @@ public class UMLModelASTReader {
 
 	private List<UMLComment> extractInternalComments(CompilationUnit cu, String sourceFile, String javaFileContent) {
 		List<Comment> astComments = cu.getCommentList();
-		List<UMLComment> comments = new ArrayList<UMLComment>();
+		List<UMLComment> comments = new ArrayList<>();
 		for(Comment comment : astComments) {
 			LocationInfo locationInfo = null;
 			if(comment.isLineComment()) {
@@ -369,8 +332,8 @@ public class UMLModelASTReader {
     		insertNode(anonymous, root);
     	}
     	
-    	List<UMLAnonymousClass> createdAnonymousClasses = new ArrayList<UMLAnonymousClass>();
-    	Enumeration enumeration = root.postorderEnumeration();
+    	List<UMLAnonymousClass> createdAnonymousClasses = new ArrayList<>();
+    	Enumeration<TreeNode> enumeration = root.postorderEnumeration();
     	while(enumeration.hasMoreElements()) {
     		DefaultMutableTreeNode node = (DefaultMutableTreeNode)enumeration.nextElement();
     		if(node.getUserObject() != null) {
@@ -459,39 +422,63 @@ public class UMLModelASTReader {
 		
 		if(methodDeclaration.isConstructor())
 			umlOperation.setConstructor(true);
-		
-		int methodModifiers = methodDeclaration.getModifiers();
-		if((methodModifiers & Modifier.PUBLIC) != 0)
-			umlOperation.setVisibility("public");
-		else if((methodModifiers & Modifier.PROTECTED) != 0)
-			umlOperation.setVisibility("protected");
-		else if((methodModifiers & Modifier.PRIVATE) != 0)
-			umlOperation.setVisibility("private");
-		else if(isInterfaceMethod)
-			umlOperation.setVisibility("public");
-		else
-			umlOperation.setVisibility("package");
-		
-		if((methodModifiers & Modifier.ABSTRACT) != 0)
-			umlOperation.setAbstract(true);
-		
-		if((methodModifiers & Modifier.FINAL) != 0)
-			umlOperation.setFinal(true);
-		
-		if((methodModifiers & Modifier.STATIC) != 0)
-			umlOperation.setStatic(true);
-		
-		if((methodModifiers & Modifier.SYNCHRONIZED) != 0)
-			umlOperation.setSynchronized(true);
-		
-		List<IExtendedModifier> extendedModifiers = methodDeclaration.modifiers();
-		for(IExtendedModifier extendedModifier : extendedModifiers) {
-			if(extendedModifier.isAnnotation()) {
-				Annotation annotation = (Annotation)extendedModifier;
-				umlOperation.addAnnotation(new UMLAnnotation(cu, sourceFile, annotation));
+		handleMethodModifiers(methodDeclaration, isInterfaceMethod, umlOperation);
+		handleMethodAnnotations(cu, methodDeclaration, sourceFile, umlOperation);
+		handleMethodGenerics(cu, methodDeclaration, sourceFile, umlOperation);
+		handleMethodReturnType(cu, methodDeclaration, sourceFile, umlOperation);
+		handleMethodParams(cu, methodDeclaration, sourceFile, umlOperation);
+		handleMethodExceptions(cu, methodDeclaration, sourceFile, umlOperation);
+		handleMethodBody(cu, methodDeclaration, sourceFile, umlOperation);
+
+		return umlOperation;
+	}
+
+	private void handleMethodBody(CompilationUnit cu, MethodDeclaration methodDeclaration, String sourceFile, UMLOperation umlOperation) {
+		Block block = methodDeclaration.getBody();
+		if(block != null) {
+			OperationBody body = new OperationBody(cu, sourceFile, block, umlOperation.getParameterDeclarationList());
+			umlOperation.setBody(body);
+			if(block.statements().size() == 0) {
+				umlOperation.setEmptyBody(true);
 			}
 		}
-		
+		else {
+			umlOperation.setBody(null);
+		}
+	}
+
+	private void handleMethodExceptions(CompilationUnit cu, MethodDeclaration methodDeclaration, String sourceFile, UMLOperation umlOperation) {
+		List<Type> thrownExceptionTypes = methodDeclaration.thrownExceptionTypes();
+		for(Type thrownExceptionType : thrownExceptionTypes) {
+			UMLType type = UMLType.extractTypeObject(cu, sourceFile, thrownExceptionType, 0);
+			umlOperation.addThrownExceptionType(type);
+		}
+	}
+
+	private void handleMethodParams(CompilationUnit cu, MethodDeclaration methodDeclaration, String sourceFile, UMLOperation umlOperation) {
+		List<SingleVariableDeclaration> parameters = methodDeclaration.parameters();
+		for(SingleVariableDeclaration parameter : parameters) {
+			Type parameterType = parameter.getType();
+			String parameterName = parameter.getName().getFullyQualifiedName();
+			UMLType type = UMLType.extractTypeObject(cu, sourceFile, parameterType, parameter.getExtraDimensions());
+			UMLParameter umlParameter = new UMLParameter(parameterName, type, "in", parameter.isVarargs());
+			VariableDeclaration variableDeclaration = new VariableDeclaration(cu, sourceFile, parameter, parameter.isVarargs());
+			variableDeclaration.setParameter(true);
+			umlParameter.setVariableDeclaration(variableDeclaration);
+			umlOperation.addParameter(umlParameter);
+		}
+	}
+
+	private void handleMethodReturnType(CompilationUnit cu, MethodDeclaration methodDeclaration, String sourceFile, UMLOperation umlOperation) {
+		Type returnType = methodDeclaration.getReturnType2();
+		if(returnType != null) {
+			UMLType type = UMLType.extractTypeObject(cu, sourceFile, returnType, methodDeclaration.getExtraDimensions());
+			UMLParameter returnParameter = new UMLParameter("return", type, "return", false);
+			umlOperation.addParameter(returnParameter);
+		}
+	}
+
+	private void handleMethodGenerics(CompilationUnit cu, MethodDeclaration methodDeclaration, String sourceFile, UMLOperation umlOperation) {
 		List<TypeParameter> typeParameters = methodDeclaration.typeParameters();
 		for(TypeParameter typeParameter : typeParameters) {
 			UMLTypeParameter umlTypeParameter = new UMLTypeParameter(typeParameter.getName().getFullyQualifiedName());
@@ -508,43 +495,40 @@ public class UMLModelASTReader {
 			}
 			umlOperation.addTypeParameter(umlTypeParameter);
 		}
-		
-		Type returnType = methodDeclaration.getReturnType2();
-		if(returnType != null) {
-			UMLType type = UMLType.extractTypeObject(cu, sourceFile, returnType, methodDeclaration.getExtraDimensions());
-			UMLParameter returnParameter = new UMLParameter("return", type, "return", false);
-			umlOperation.addParameter(returnParameter);
-		}
-		List<SingleVariableDeclaration> parameters = methodDeclaration.parameters();
-		for(SingleVariableDeclaration parameter : parameters) {
-			Type parameterType = parameter.getType();
-			String parameterName = parameter.getName().getFullyQualifiedName();
-			UMLType type = UMLType.extractTypeObject(cu, sourceFile, parameterType, parameter.getExtraDimensions());
-			UMLParameter umlParameter = new UMLParameter(parameterName, type, "in", parameter.isVarargs());
-			VariableDeclaration variableDeclaration = new VariableDeclaration(cu, sourceFile, parameter, parameter.isVarargs());
-			variableDeclaration.setParameter(true);
-			umlParameter.setVariableDeclaration(variableDeclaration);
-			umlOperation.addParameter(umlParameter);
-		}
-		List<Type> thrownExceptionTypes = methodDeclaration.thrownExceptionTypes();
-		for(Type thrownExceptionType : thrownExceptionTypes) {
-			UMLType type = UMLType.extractTypeObject(cu, sourceFile, thrownExceptionType, 0);
-			umlOperation.addThrownExceptionType(type);
-		}
-		
-		Block block = methodDeclaration.getBody();
-		if(block != null) {
-			OperationBody body = new OperationBody(cu, sourceFile, block, umlOperation.getParameterDeclarationList());
-			umlOperation.setBody(body);
-			if(block.statements().size() == 0) {
-				umlOperation.setEmptyBody(true);
+	}
+
+	private void handleMethodAnnotations(CompilationUnit cu, MethodDeclaration methodDeclaration, String sourceFile, UMLOperation umlOperation) {
+		List<IExtendedModifier> extendedModifiers = methodDeclaration.modifiers();
+		for(IExtendedModifier extendedModifier : extendedModifiers) {
+			if(extendedModifier.isAnnotation()) {
+				Annotation annotation = (Annotation)extendedModifier;
+				umlOperation.addAnnotation(new UMLAnnotation(cu, sourceFile, annotation));
 			}
 		}
-		else {
-			umlOperation.setBody(null);
-		}
-		
-		return umlOperation;
+	}
+
+	private void handleMethodModifiers(MethodDeclaration methodDeclaration, boolean isInterfaceMethod, UMLOperation umlOperation) {
+		int methodModifiers = methodDeclaration.getModifiers();
+		if((methodModifiers & Modifier.PUBLIC) != 0 || isInterfaceMethod)
+			umlOperation.setVisibility("public");
+		else if((methodModifiers & Modifier.PROTECTED) != 0)
+			umlOperation.setVisibility("protected");
+		else if((methodModifiers & Modifier.PRIVATE) != 0)
+			umlOperation.setVisibility("private");
+		else
+			umlOperation.setVisibility("package");
+
+		if((methodModifiers & Modifier.ABSTRACT) != 0)
+			umlOperation.setAbstract(true);
+
+		if((methodModifiers & Modifier.FINAL) != 0)
+			umlOperation.setFinal(true);
+
+		if((methodModifiers & Modifier.STATIC) != 0)
+			umlOperation.setStatic(true);
+
+		if((methodModifiers & Modifier.SYNCHRONIZED) != 0)
+			umlOperation.setSynchronized(true);
 	}
 
 	private void processEnumConstantDeclaration(CompilationUnit cu, EnumConstantDeclaration enumConstantDeclaration, String sourceFile, UMLClass umlClass, List<UMLComment> comments) {
@@ -568,7 +552,7 @@ public class UMLModelASTReader {
 
 	private List<UMLAttribute> processFieldDeclaration(CompilationUnit cu, FieldDeclaration fieldDeclaration, boolean isInterfaceField, String sourceFile, List<UMLComment> comments) {
 		UMLJavadoc javadoc = generateJavadoc(cu, fieldDeclaration, sourceFile);
-		List<UMLAttribute> attributes = new ArrayList<UMLAttribute>();
+		List<UMLAttribute> attributes = new ArrayList<>();
 		Type fieldType = fieldDeclaration.getType();
 		List<VariableDeclarationFragment> fragments = fieldDeclaration.fragments();
 		for(VariableDeclarationFragment fragment : fragments) {
@@ -638,7 +622,7 @@ public class UMLModelASTReader {
 	}
 	
 	private void insertNode(AnonymousClassDeclaration childAnonymous, DefaultMutableTreeNode root) {
-		Enumeration enumeration = root.postorderEnumeration();
+		Enumeration<TreeNode> enumeration = root.postorderEnumeration();
 		DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(childAnonymous);
 		
 		DefaultMutableTreeNode parentNode = root;
@@ -655,45 +639,45 @@ public class UMLModelASTReader {
 
 	private String getAnonymousCodePath(DefaultMutableTreeNode node) {
 		AnonymousClassDeclaration anonymous = (AnonymousClassDeclaration)node.getUserObject();
-		String name = "";
+		StringBuilder name = new StringBuilder();
 		ASTNode parent = anonymous.getParent();
 		while(parent != null) {
 			if(parent instanceof MethodDeclaration) {
 				String methodName = ((MethodDeclaration)parent).getName().getIdentifier();
-				if(name.isEmpty()) {
-					name = methodName;
+				if(name.length() == 0) {
+					name = new StringBuilder(methodName);
 				}
 				else {
-					name = methodName + "." + name;
+					name.insert(0, methodName + ".");
 				}
 			}
 			else if(parent instanceof VariableDeclarationFragment &&
 					(parent.getParent() instanceof FieldDeclaration ||
 					parent.getParent() instanceof VariableDeclarationStatement)) {
 				String fieldName = ((VariableDeclarationFragment)parent).getName().getIdentifier();
-				if(name.isEmpty()) {
-					name = fieldName;
+				if(name.length() == 0) {
+					name = new StringBuilder(fieldName);
 				}
 				else {
-					name = fieldName + "." + name;
+					name.insert(0, fieldName + ".");
 				}
 			}
 			else if(parent instanceof MethodInvocation) {
 				String invocationName = ((MethodInvocation)parent).getName().getIdentifier();
-				if(name.isEmpty()) {
-					name = invocationName;
+				if(name.length() == 0) {
+					name = new StringBuilder(invocationName);
 				}
 				else {
-					name = invocationName + "." + name;
+					name.insert(0, invocationName + ".");
 				}
 			}
 			else if(parent instanceof SuperMethodInvocation) {
 				String invocationName = ((SuperMethodInvocation)parent).getName().getIdentifier();
-				if(name.isEmpty()) {
-					name = invocationName;
+				if(name.length() == 0) {
+					name = new StringBuilder(invocationName);
 				}
 				else {
-					name = invocationName + "." + name;
+					name.insert(0, invocationName + ".");
 				}
 			}
 			parent = parent.getParent();

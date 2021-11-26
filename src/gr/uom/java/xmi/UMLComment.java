@@ -4,8 +4,8 @@ import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.diff.CodeRange;
 
 public class UMLComment implements LocationInfoProvider {
-	private String text;
-	private LocationInfo locationInfo;
+	private final String text;
+	private final LocationInfo locationInfo;
 
 	public UMLComment(String text, LocationInfo locationInfo) {
 		this.text = text;

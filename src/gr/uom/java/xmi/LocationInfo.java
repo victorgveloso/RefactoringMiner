@@ -6,15 +6,15 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import gr.uom.java.xmi.diff.CodeRange;
 
 public class LocationInfo {
-	private String filePath;
-	private int startOffset;
-	private int endOffset; 
-	private int length;
-	private int startLine;
+	private final String filePath;
+	private final int startOffset;
+	private final int endOffset;
+	private final int length;
+	private final int startLine;
 	private int startColumn;
-	private int endLine;
+	private final int endLine;
 	private int endColumn;
-	private CodeElementType codeElementType;
+	private final CodeElementType codeElementType;
 	
 	public LocationInfo(CompilationUnit cu, String filePath, ASTNode node, CodeElementType codeElementType) {
 		this.filePath = filePath;
@@ -139,9 +139,7 @@ public class LocationInfo {
 			return false;
 		if (startLine != other.startLine)
 			return false;
-		if (startOffset != other.startOffset)
-			return false;
-		return true;
+		return startOffset == other.startOffset;
 	}
 	
 	public enum CodeElementType {
@@ -208,11 +206,11 @@ public class LocationInfo {
 		
 		private String name;
 		
-		private CodeElementType() {
+		CodeElementType() {
 			
 		}
 		
-		private CodeElementType(String name) {
+		CodeElementType(String name) {
 			this.name = name;
 		}
 

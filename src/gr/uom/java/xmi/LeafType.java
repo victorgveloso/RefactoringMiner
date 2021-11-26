@@ -3,8 +3,8 @@ package gr.uom.java.xmi;
 import java.util.regex.Pattern;
 
 public class LeafType extends UMLType {
-	private String classType;
-	private String nonQualifiedClassType;
+	private final String classType;
+	private final String nonQualifiedClassType;
 	private volatile int hashCode = 0;
 	private static final Pattern CAMEL_CASE_SPLIT_PATTERN = Pattern.compile("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
 	
@@ -48,9 +48,7 @@ public class LeafType extends UMLType {
 		if (o instanceof LeafType) {
 			LeafType typeObject = (LeafType)o;
 
-			if(equalClassType(typeObject) && equalTypeArgumentsAndArrayDimension(typeObject)) {
-				return true;
-			}
+			return equalClassType(typeObject) && equalTypeArgumentsAndArrayDimension(typeObject);
 		}
 		return false;
 	}
@@ -58,9 +56,7 @@ public class LeafType extends UMLType {
 	@Override
 	public boolean equalsQualified(UMLType type) {
 		if(this.getClass() == type.getClass()) {
-			if(this.classType.equals(((LeafType)type).classType) && equalTypeArgumentsAndArrayDimension(type)) {
-				return true;
-			}
+			return this.classType.equals(((LeafType) type).classType) && equalTypeArgumentsAndArrayDimension(type);
 		}
 		return false;
 	}
@@ -68,9 +64,7 @@ public class LeafType extends UMLType {
 	@Override
 	public boolean equalsWithSubType(UMLType type) {
 		if(this.getClass() == type.getClass()) {
-			if(firstOrLastCamelCaseTokenMatch(this.nonQualifiedClassType, ((LeafType)type).nonQualifiedClassType) && equalTypeArgumentsAndArrayDimensionForSubType(type)) {
-				return true;
-			}
+			return firstOrLastCamelCaseTokenMatch(this.nonQualifiedClassType, ((LeafType) type).nonQualifiedClassType) && equalTypeArgumentsAndArrayDimensionForSubType(type);
 		}
 		return false;
 	}
@@ -138,17 +132,13 @@ public class LeafType extends UMLType {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(nonQualifiedClassType);
-		sb.append(typeArgumentsAndArrayDimensionToString());
-		return sb.toString();
+		return nonQualifiedClassType +
+				typeArgumentsAndArrayDimensionToString();
 	}
 
 	@Override
 	public String toQualifiedString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(classType);
-		sb.append(typeArgumentsAndArrayDimensionToString());
-		return sb.toString();
+		return classType +
+				typeArgumentsAndArrayDimensionToString();
 	}
 }

@@ -1,17 +1,17 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.OperationInvocation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CallTreeNode {
-	private UMLOperation originalOperation;
-	private UMLOperation invokedOperation;
-	private OperationInvocation invocation;
+	private final UMLOperation originalOperation;
+	private final UMLOperation invokedOperation;
+	private final OperationInvocation invocation;
 	private CallTreeNode parent;
-	private List<CallTreeNode> children = new ArrayList<CallTreeNode>();
+	private final List<CallTreeNode> children = new ArrayList<>();
 
 	public CallTreeNode(UMLOperation originalOperation, UMLOperation invokedOperation,
 			OperationInvocation invocation) {
@@ -80,18 +80,13 @@ public class CallTreeNode {
 		} else if (!invokedOperation.equals(other.invokedOperation))
 			return false;
 		if (originalOperation == null) {
-			if (other.originalOperation != null)
-				return false;
-		} else if (!originalOperation.equals(other.originalOperation))
-			return false;
-		return true;
+			return other.originalOperation == null;
+		} else return originalOperation.equals(other.originalOperation);
 	}
 	
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(invokedOperation);
-		sb.append(" called from ");
-		sb.append(originalOperation);
-		return sb.toString();
+		return invokedOperation +
+				" called from " +
+				originalOperation;
 	}
 }

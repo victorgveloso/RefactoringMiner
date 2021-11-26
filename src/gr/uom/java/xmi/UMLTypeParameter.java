@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UMLTypeParameter {
-	private String name;
-	private List<UMLType> typeBounds;
-	private List<UMLAnnotation> annotations;
+	private final String name;
+	private final List<UMLType> typeBounds;
+	private final List<UMLAnnotation> annotations;
 
 	public UMLTypeParameter(String name) {
 		this.name = name;
-		this.typeBounds = new ArrayList<UMLType>();
-		this.annotations = new ArrayList<UMLAnnotation>();
+		this.typeBounds = new ArrayList<>();
+		this.annotations = new ArrayList<>();
 	}
 
 	public String getName() {
@@ -36,10 +36,7 @@ public class UMLTypeParameter {
 
 	protected String typeBoundsToString() {
 		StringBuilder sb = new StringBuilder();
-		if(typeBounds.isEmpty()) {
-			sb.append("");
-		}
-		else {
+		if (!typeBounds.isEmpty()) {
 			sb.append("<");
 			for(int i = 0; i < typeBounds.size(); i++) {
 				sb.append(typeBounds.get(i).toQualifiedString());
@@ -52,10 +49,8 @@ public class UMLTypeParameter {
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(name);
-		sb.append(typeBoundsToString());
-		return sb.toString();
+		return name +
+				typeBoundsToString();
 	}
 
 	@Override
@@ -82,10 +77,7 @@ public class UMLTypeParameter {
 		} else if (!name.equals(other.name))
 			return false;
 		if (typeBounds == null) {
-			if (other.typeBounds != null)
-				return false;
-		} else if (!typeBounds.equals(other.typeBounds))
-			return false;
-		return true;
+			return other.typeBounds == null;
+		} else return typeBounds.equals(other.typeBounds);
 	}
 }

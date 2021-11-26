@@ -9,7 +9,7 @@ import org.refactoringminer.api.RefactoringType;
 import gr.uom.java.xmi.UMLAttribute;
 
 public class MoveAndRenameAttributeRefactoring extends MoveAttributeRefactoring {
-	private Set<CandidateAttributeRefactoring> attributeRenames;
+	private final Set<CandidateAttributeRefactoring> attributeRenames;
 	
 	public MoveAndRenameAttributeRefactoring(UMLAttribute originalAttribute, UMLAttribute movedAttribute,
 			Set<CandidateAttributeRefactoring> attributeRenames) {
@@ -22,16 +22,14 @@ public class MoveAndRenameAttributeRefactoring extends MoveAttributeRefactoring 
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getName()).append("\t");
-		sb.append(originalAttribute.toQualifiedString());
-		sb.append(" renamed to ");
-		sb.append(movedAttribute.toQualifiedString());
-		sb.append(" and moved from class ");
-		sb.append(getSourceClassName());
-		sb.append(" to class ");
-		sb.append(getTargetClassName());
-		return sb.toString();
+        return getName() + "\t" +
+                originalAttribute.toQualifiedString() +
+                " renamed to " +
+                movedAttribute.toQualifiedString() +
+                " and moved from class " +
+                getSourceClassName() +
+                " to class " +
+                getTargetClassName();
 	}
 
 	public String getName() {
@@ -44,7 +42,7 @@ public class MoveAndRenameAttributeRefactoring extends MoveAttributeRefactoring 
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(movedAttribute.codeRange()
 				.setDescription("moved and renamed attribute declaration")
 				.setCodeElement(movedAttribute.toString()));

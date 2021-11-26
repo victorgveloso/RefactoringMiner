@@ -1,31 +1,30 @@
 package org.refactoringminer.api;
 
+import com.fasterxml.jackson.core.io.JsonStringEncoder;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+
 import java.io.Serializable;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-
-import com.fasterxml.jackson.core.io.JsonStringEncoder;
-
 public interface Refactoring extends Serializable, CodeRangeProvider {
 
-	public RefactoringType getRefactoringType();
+	RefactoringType getRefactoringType();
 	
-	public String getName();
+	String getName();
 
-	public String toString();
+	String toString();
 	
 	/**
 	 * @return a Set of ImmutablePair where left is the file path of a program element, and right is the qualified name of the class containing the program element
 	 */
-	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring();
+    Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring();
 	
 	/**
 	 * @return a Set of ImmutablePair where left is the file path of a program element, and right is the qualified name of the class containing the program element
 	 */
-	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring();
+    Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring();
 	
-	default public String toJSON() {
+	default String toJSON() {
 		StringBuilder sb = new StringBuilder();
 		JsonStringEncoder encoder = JsonStringEncoder.getInstance();
 		sb.append("{").append("\n");

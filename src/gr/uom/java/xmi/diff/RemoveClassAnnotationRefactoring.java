@@ -13,9 +13,9 @@ import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLClass;
 
 public class RemoveClassAnnotationRefactoring implements Refactoring {
-	private UMLAnnotation annotation;
-	private UMLClass classBefore;
-	private UMLClass classAfter;
+	private final UMLAnnotation annotation;
+	private final UMLClass classBefore;
+	private final UMLClass classAfter;
 
 	public RemoveClassAnnotationRefactoring(UMLAnnotation annotation, UMLClass classBefore, UMLClass classAfter) {
 		this.annotation = annotation;
@@ -37,7 +37,7 @@ public class RemoveClassAnnotationRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(annotation.codeRange()
 				.setDescription("removed annotation")
 				.setCodeElement(annotation.toString()));
@@ -49,7 +49,7 @@ public class RemoveClassAnnotationRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(classAfter.codeRange()
 				.setDescription("class declaration with removed annotation")
 				.setCodeElement(classAfter.toString()));
@@ -68,25 +68,23 @@ public class RemoveClassAnnotationRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getClassBefore().getLocationInfo().getFilePath(), getClassBefore().getName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getClassBefore().getLocationInfo().getFilePath(), getClassBefore().getName()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getClassAfter().getLocationInfo().getFilePath(), getClassAfter().getName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getClassAfter().getLocationInfo().getFilePath(), getClassAfter().getName()));
 		return pairs;
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getName()).append("\t");
-		sb.append(annotation);
-		sb.append(" in class ");
-		sb.append(classBefore.getName());
-		return sb.toString();
+		return getName() + "\t" +
+				annotation +
+				" in class " +
+				classBefore.getName();
 	}
 
 	@Override
@@ -119,10 +117,7 @@ public class RemoveClassAnnotationRefactoring implements Refactoring {
 		} else if (!classAfter.equals(other.classAfter))
 			return false;
 		if (classBefore == null) {
-			if (other.classBefore != null)
-				return false;
-		} else if (!classBefore.equals(other.classBefore))
-			return false;
-		return true;
+			return other.classBefore == null;
+		} else return classBefore.equals(other.classBefore);
 	}
 }

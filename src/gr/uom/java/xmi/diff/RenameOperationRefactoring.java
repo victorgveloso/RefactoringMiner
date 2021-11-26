@@ -1,26 +1,21 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringType;
-
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
 import gr.uom.java.xmi.decomposition.replacement.MethodInvocationReplacement;
 import gr.uom.java.xmi.decomposition.replacement.Replacement;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
+
+import java.util.*;
 
 public class RenameOperationRefactoring implements Refactoring {
-	private UMLOperation originalOperation;
-	private UMLOperation renamedOperation;
-	private Set<Replacement> replacements;
+	private final UMLOperation originalOperation;
+	private final UMLOperation renamedOperation;
+	private final Set<Replacement> replacements;
 	private UMLOperationBodyMapper bodyMapper;
-	private Set<MethodInvocationReplacement> callReferences;
+	private final Set<MethodInvocationReplacement> callReferences;
 	
 	public RenameOperationRefactoring(UMLOperationBodyMapper bodyMapper, Set<MethodInvocationReplacement> callReferences) {
 		this.bodyMapper = bodyMapper;
@@ -33,18 +28,16 @@ public class RenameOperationRefactoring implements Refactoring {
 	public RenameOperationRefactoring(UMLOperation originalOperation, UMLOperation renamedOperation) {
 		this.originalOperation = originalOperation;
 		this.renamedOperation = renamedOperation;
-		this.replacements = new HashSet<Replacement>();
-		this.callReferences = new HashSet<MethodInvocationReplacement>();
+		this.replacements = new HashSet<>();
+		this.callReferences = new HashSet<>();
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getName()).append("\t");
-		sb.append(originalOperation);
-		sb.append(" renamed to ");
-		sb.append(renamedOperation);
-		sb.append(" in class ").append(getClassName());
-		return sb.toString();
+		return getName() + "\t" +
+				originalOperation +
+				" renamed to " +
+				renamedOperation +
+				" in class " + getClassName();
 	}
 
 	private String getClassName() {
@@ -52,7 +45,7 @@ public class RenameOperationRefactoring implements Refactoring {
 		String targetClassName = renamedOperation.getClassName();
 		boolean targetIsAnonymousInsideSource = false;
 		if(targetClassName.startsWith(sourceClassName + ".")) {
-			String targetClassNameSuffix = targetClassName.substring(sourceClassName.length() + 1, targetClassName.length());
+			String targetClassNameSuffix = targetClassName.substring(sourceClassName.length() + 1);
 			targetIsAnonymousInsideSource = isNumeric(targetClassNameSuffix);
 		}
 		return sourceClassName.equals(targetClassName) || targetIsAnonymousInsideSource ? sourceClassName : targetClassName;
@@ -108,20 +101,20 @@ public class RenameOperationRefactoring implements Refactoring {
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getOriginalOperation().getLocationInfo().getFilePath(), getOriginalOperation().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getOriginalOperation().getLocationInfo().getFilePath(), getOriginalOperation().getClassName()));
 		return pairs;
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getRenamedOperation().getLocationInfo().getFilePath(), getRenamedOperation().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getRenamedOperation().getLocationInfo().getFilePath(), getRenamedOperation().getClassName()));
 		return pairs;
 	}
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(originalOperation.codeRange()
 				.setDescription("original method declaration")
 				.setCodeElement(originalOperation.toString()));
@@ -130,7 +123,7 @@ public class RenameOperationRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(renamedOperation.codeRange()
 				.setDescription("renamed method declaration")
 				.setCodeElement(renamedOperation.toString()));
@@ -166,13 +159,9 @@ public class RenameOperationRefactoring implements Refactoring {
 			return false;
 		}
 		if (originalOperation == null) {
-			if (other.originalOperation != null)
-				return false;
+			return other.originalOperation == null;
 		} else if (!originalOperation.equals(other.originalOperation)) {
 			return false;
-		} else if (!originalOperation.getLocationInfo().equals(other.originalOperation.getLocationInfo())) {
-			return false;
-		}
-		return true;
+		} else return originalOperation.getLocationInfo().equals(other.originalOperation.getLocationInfo());
 	}
 }

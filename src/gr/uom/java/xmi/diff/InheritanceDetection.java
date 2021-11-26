@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.Set;
 
 public class InheritanceDetection {
-	private Map<String, LinkedHashSet<String>> subclassMap;
+	private final Map<String, LinkedHashSet<String>> subclassMap;
 
 	public InheritanceDetection(UMLModelDiff modelDiff) {
-		this.subclassMap = new LinkedHashMap<String, LinkedHashSet<String>>();
+		this.subclassMap = new LinkedHashMap<>();
 		generateNewInheritanceHierarchies(modelDiff);
 	}
 
@@ -23,7 +23,7 @@ public class InheritanceDetection {
 			subclasses.add(subclass);
 		}
 		else {
-			LinkedHashSet<String> subclasses = new LinkedHashSet<String>();
+			LinkedHashSet<String> subclasses = new LinkedHashSet<>();
 			subclasses.add(subclass);
 			subclassMap.put(superclass, subclasses);
 		}

@@ -1,25 +1,24 @@
 package gr.uom.java.xmi.diff;
 
+import gr.uom.java.xmi.UMLAttribute;
+import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
+import gr.uom.java.xmi.decomposition.VariableDeclaration;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringType;
-
-import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
-import gr.uom.java.xmi.decomposition.VariableDeclaration;
-import gr.uom.java.xmi.UMLAttribute;
-
 public class ChangeAttributeTypeRefactoring implements Refactoring {
-	private UMLAttribute originalAttribute;
-	private UMLAttribute changedTypeAttribute;
-	private String classNameBefore;
-	private String classNameAfter;
-	private Set<AbstractCodeMapping> attributeReferences;
-	private Set<Refactoring> relatedRefactorings;
+	private final UMLAttribute originalAttribute;
+	private final UMLAttribute changedTypeAttribute;
+	private final String classNameBefore;
+	private final String classNameAfter;
+	private final Set<AbstractCodeMapping> attributeReferences;
+	private final Set<Refactoring> relatedRefactorings;
 	
 	public ChangeAttributeTypeRefactoring(UMLAttribute originalAttribute,
 										  UMLAttribute changedTypeAttribute, Set<AbstractCodeMapping> attributeReferences) {
@@ -28,7 +27,7 @@ public class ChangeAttributeTypeRefactoring implements Refactoring {
 		this.classNameBefore = originalAttribute.getClassName();
 		this.classNameAfter = changedTypeAttribute.getClassName();
 		this.attributeReferences = attributeReferences;
-		this.relatedRefactorings = new LinkedHashSet<Refactoring>();
+		this.relatedRefactorings = new LinkedHashSet<>();
 	}
 
 	public void addRelatedRefactoring(Refactoring refactoring) {
@@ -121,33 +120,29 @@ public class ChangeAttributeTypeRefactoring implements Refactoring {
 		} else if (!classNameBefore.equals(other.classNameBefore))
 			return false;
 		if (originalAttribute == null) {
-			if (other.originalAttribute != null)
-				return false;
+			return other.originalAttribute == null;
 		} else if(originalAttribute.getVariableDeclaration() == null) {
-			if(other.originalAttribute.getVariableDeclaration() != null)
-				return false;
-		} else if (!originalAttribute.getVariableDeclaration().equals(other.originalAttribute.getVariableDeclaration()))
-			return false;
-		return true;
+			return other.originalAttribute.getVariableDeclaration() == null;
+		} else return originalAttribute.getVariableDeclaration().equals(other.originalAttribute.getVariableDeclaration());
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getOriginalAttribute().getLocationInfo().getFilePath(), getClassNameBefore()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getOriginalAttribute().getLocationInfo().getFilePath(), getClassNameBefore()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getChangedTypeAttribute().getLocationInfo().getFilePath(), getClassNameAfter()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getChangedTypeAttribute().getLocationInfo().getFilePath(), getClassNameAfter()));
 		return pairs;
 	}
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(originalAttribute.getVariableDeclaration().codeRange()
 				.setDescription("original attribute declaration")
 				.setCodeElement(originalAttribute.getVariableDeclaration().toString()));
@@ -156,7 +151,7 @@ public class ChangeAttributeTypeRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(changedTypeAttribute.getVariableDeclaration().codeRange()
 				.setDescription("changed-type attribute declaration")
 				.setCodeElement(changedTypeAttribute.getVariableDeclaration().toString()));

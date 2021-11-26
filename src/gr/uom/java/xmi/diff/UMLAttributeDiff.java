@@ -22,8 +22,8 @@ import gr.uom.java.xmi.decomposition.VariableDeclaration;
 import gr.uom.java.xmi.decomposition.VariableReferenceExtractor;
 
 public class UMLAttributeDiff {
-	private UMLAttribute removedAttribute;
-	private UMLAttribute addedAttribute;
+	private final UMLAttribute removedAttribute;
+	private final UMLAttribute addedAttribute;
 	private boolean visibilityChanged;
 	private boolean typeChanged;
 	private boolean qualifiedTypeChanged;
@@ -32,9 +32,9 @@ public class UMLAttributeDiff {
 	private boolean finalChanged;
 	private boolean volatileChanged;
 	private boolean transientChanged;
-	private List<UMLOperationBodyMapper> operationBodyMapperList;
-	private UMLAnnotationListDiff annotationListDiff;
-	private List<UMLAnonymousClassDiff> anonymousClassDiffList;
+	private final List<UMLOperationBodyMapper> operationBodyMapperList;
+	private final UMLAnnotationListDiff annotationListDiff;
+	private final List<UMLAnonymousClassDiff> anonymousClassDiffList;
 	private UMLOperation addedGetter;
 	private UMLOperation addedSetter;
 	private Set<AbstractCodeMapping> initializerMappings;
@@ -108,7 +108,7 @@ public class UMLAttributeDiff {
 		this.removedAttribute = removedAttribute;
 		this.addedAttribute = addedAttribute;
 		this.operationBodyMapperList = operationBodyMapperList;
-		this.anonymousClassDiffList = new ArrayList<UMLAnonymousClassDiff>();
+		this.anonymousClassDiffList = new ArrayList<>();
 		this.visibilityChanged = false;
 		this.typeChanged = false;
 		this.renamed = false;
@@ -194,7 +194,7 @@ public class UMLAttributeDiff {
 	}
 
 	private Set<Refactoring> getAnnotationRefactorings() {
-		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
+		Set<Refactoring> refactorings = new LinkedHashSet<>();
 		for(UMLAnnotation annotation : annotationListDiff.getAddedAnnotations()) {
 			AddAttributeAnnotationRefactoring refactoring = new AddAttributeAnnotationRefactoring(annotation, removedAttribute, addedAttribute);
 			refactorings.add(refactoring);
@@ -211,7 +211,7 @@ public class UMLAttributeDiff {
 	}
 
 	private Set<Refactoring> getAnonymousClassRefactorings() {
-		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
+		Set<Refactoring> refactorings = new LinkedHashSet<>();
 		for(UMLAnonymousClassDiff anonymousClassDiff : anonymousClassDiffList) {
 			refactorings.addAll(anonymousClassDiff.getRefactorings());
 		}
@@ -219,7 +219,7 @@ public class UMLAttributeDiff {
 	}
 
 	public Set<Refactoring> getRefactorings() {
-		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
+		Set<Refactoring> refactorings = new LinkedHashSet<>();
 		if(changeTypeCondition()) {
 			ChangeAttributeTypeRefactoring ref = new ChangeAttributeTypeRefactoring(removedAttribute, addedAttribute,
 					VariableReferenceExtractor.findReferences(removedAttribute.getVariableDeclaration(), addedAttribute.getVariableDeclaration(), operationBodyMapperList));
@@ -232,7 +232,7 @@ public class UMLAttributeDiff {
 	}
 
 	private Set<Refactoring> getModifierRefactorings() {
-		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
+		Set<Refactoring> refactorings = new LinkedHashSet<>();
 		if(isVisibilityChanged()) {
 			ChangeAttributeAccessModifierRefactoring ref = new ChangeAttributeAccessModifierRefactoring(removedAttribute.getVisibility(), addedAttribute.getVisibility(), removedAttribute, addedAttribute);
 			refactorings.add(ref);
@@ -285,7 +285,7 @@ public class UMLAttributeDiff {
 	}
 	
 	public Set<Refactoring> getRefactorings(Set<CandidateAttributeRefactoring> set) {
-		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
+		Set<Refactoring> refactorings = new LinkedHashSet<>();
 		RenameAttributeRefactoring rename = null;
 		if(isRenamed()) {
 			rename = new RenameAttributeRefactoring(removedAttribute, addedAttribute, set);
@@ -316,10 +316,7 @@ public class UMLAttributeDiff {
 	private boolean enumConstantsDeclaredInTheSameEnumDeclarationType() {
 		VariableDeclaration removedVariableDeclaration = removedAttribute.getVariableDeclaration();
 		VariableDeclaration addedVariableDeclaration = addedAttribute.getVariableDeclaration();
-		if(removedVariableDeclaration.isEnumConstant() && addedVariableDeclaration.isEnumConstant() &&
-				removedVariableDeclaration.getType().equals(addedVariableDeclaration.getType())) {
-			return true;
-		}
-		return false;
-	}
+        return removedVariableDeclaration.isEnumConstant() && addedVariableDeclaration.isEnumConstant() &&
+                removedVariableDeclaration.getType().equals(addedVariableDeclaration.getType());
+    }
 }

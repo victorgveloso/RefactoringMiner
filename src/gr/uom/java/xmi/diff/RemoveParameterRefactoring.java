@@ -13,9 +13,9 @@ import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.UMLParameter;
 
 public class RemoveParameterRefactoring implements Refactoring {
-	private UMLParameter parameter;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
+	private final UMLParameter parameter;
+	private final UMLOperation operationBefore;
+	private final UMLOperation operationAfter;
 	
 	public RemoveParameterRefactoring(UMLParameter parameter, UMLOperation operationBefore,
 			UMLOperation operationAfter) {
@@ -38,7 +38,7 @@ public class RemoveParameterRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(parameter.getVariableDeclaration().codeRange()
 				.setDescription("removed parameter")
 				.setCodeElement(parameter.getVariableDeclaration().toString()));
@@ -50,7 +50,7 @@ public class RemoveParameterRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(operationAfter.codeRange()
 				.setDescription("method declaration with removed parameter")
 				.setCodeElement(operationAfter.toString()));
@@ -69,27 +69,25 @@ public class RemoveParameterRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
 		return pairs;
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getName()).append("\t");
-		sb.append(parameter.getVariableDeclaration());
-		sb.append(" in method ");
-		sb.append(operationBefore);
-		sb.append(" from class ");
-		sb.append(operationBefore.getClassName());
-		return sb.toString();
+		return getName() + "\t" +
+				parameter.getVariableDeclaration() +
+				" in method " +
+				operationBefore +
+				" from class " +
+				operationBefore.getClassName();
 	}
 
 	@Override
@@ -122,10 +120,7 @@ public class RemoveParameterRefactoring implements Refactoring {
 		} else if (!operationAfter.equals(other.operationAfter))
 			return false;
 		if (operationBefore == null) {
-			if (other.operationBefore != null)
-				return false;
-		} else if (!operationBefore.equals(other.operationBefore))
-			return false;
-		return true;
+			return other.operationBefore == null;
+		} else return operationBefore.equals(other.operationBefore);
 	}
 }

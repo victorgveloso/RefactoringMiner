@@ -14,12 +14,12 @@ import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
 public class ModifyVariableAnnotationRefactoring implements Refactoring {
-	private UMLAnnotation annotationBefore;
-	private UMLAnnotation annotationAfter;
-	private VariableDeclaration variableBefore;
-	private VariableDeclaration variableAfter;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
+	private final UMLAnnotation annotationBefore;
+	private final UMLAnnotation annotationAfter;
+	private final VariableDeclaration variableBefore;
+	private final VariableDeclaration variableAfter;
+	private final UMLOperation operationBefore;
+	private final UMLOperation operationAfter;
 	
 	public ModifyVariableAnnotationRefactoring(UMLAnnotation annotationBefore, UMLAnnotation annotationAfter,
 			VariableDeclaration variableBefore, VariableDeclaration variableAfter, UMLOperation operationBefore,
@@ -57,7 +57,7 @@ public class ModifyVariableAnnotationRefactoring implements Refactoring {
 	}
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(annotationBefore.codeRange()
 				.setDescription("original annotation")
 				.setCodeElement(annotationBefore.toString()));
@@ -72,7 +72,7 @@ public class ModifyVariableAnnotationRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<CodeRange>();
+		List<CodeRange> ranges = new ArrayList<>();
 		ranges.add(annotationAfter.codeRange()
 				.setDescription("modified annotation")
 				.setCodeElement(annotationAfter.toString()));
@@ -101,15 +101,15 @@ public class ModifyVariableAnnotationRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
-		pairs.add(new ImmutablePair<String, String>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		pairs.add(new ImmutablePair<>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
 		return pairs;
 	}
 
@@ -179,10 +179,7 @@ public class ModifyVariableAnnotationRefactoring implements Refactoring {
 		} else if (!variableAfter.equals(other.variableAfter))
 			return false;
 		if (variableBefore == null) {
-			if (other.variableBefore != null)
-				return false;
-		} else if (!variableBefore.equals(other.variableBefore))
-			return false;
-		return true;
+			return other.variableBefore == null;
+		} else return variableBefore.equals(other.variableBefore);
 	}
 }

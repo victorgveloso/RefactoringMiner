@@ -1,31 +1,23 @@
 package org.refactoringminer.utils;
 
-import static org.refactoringminer.utils.RefactoringRelationship.parentOf;
-
-import java.io.File;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.jgit.lib.Repository;
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
 import org.refactoringminer.api.GitService;
 import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.util.GitServiceImpl;
 
+import java.io.File;
+import java.io.PrintStream;
+import java.util.*;
+
+import static org.refactoringminer.utils.RefactoringRelationship.parentOf;
+
 public class ResultComparator {
 
-    Set<String> groupIds = new LinkedHashSet<>();
-    Map<String, RefactoringSet> expectedMap = new LinkedHashMap<>();
-    Map<String, RefactoringSet> notExpectedMap = new LinkedHashMap<>();
-    Map<String, RefactoringSet> resultMap = new HashMap<>();
+    final Set<String> groupIds = new LinkedHashSet<>();
+    final Map<String, RefactoringSet> expectedMap = new LinkedHashMap<>();
+    final Map<String, RefactoringSet> notExpectedMap = new LinkedHashMap<>();
+    final Map<String, RefactoringSet> resultMap = new HashMap<>();
 
     private boolean groupRefactorings;
     private boolean ignoreMethodParams;
@@ -78,7 +70,7 @@ public class ResultComparator {
                 int fpRt = r.getFPCount(refType);
                 int fnRt = r.getFNCount(refType);
                 if (tpRt > 0 || fpRt > 0 || fnRt > 0) {
-                    out.println(String.format("%-7s" + getResultLine(tpRt, fpRt, fnRt), refType.getAbbreviation()));
+                    out.printf("%-7s" + getResultLine(tpRt, fpRt, fnRt) + "%n", refType.getAbbreviation());
                 }
             }
             out.println();
@@ -113,9 +105,7 @@ public class ResultComparator {
                         }
                     }
                 }
-                for (Object r : expectedRefactorings) {
-                    falseNegatives.add(r);
-                }
+                falseNegatives.addAll(expectedRefactorings);
             }
         }
         return new CompareResult(truePositives, falsePositives, falseNegatives);
@@ -148,10 +138,9 @@ public class ResultComparator {
         EnumSet<RefactoringType> ignore = EnumSet.complementOf(refTypesToConsider);
         boolean headerPrinted = false;
         for (RefactoringSet expected : expectedMap.values()) {
-            Set<RefactoringRelationship> all = new HashSet<>();
             Set<RefactoringRelationship> expectedRefactorings = expected.ignoring(ignore).ignoringMethodParameters(ignoreMethodParams).getRefactorings();
             Set<RefactoringRelationship> expectedUnfiltered = expected.getRefactorings();
-            all.addAll(expectedRefactorings); //
+            Set<RefactoringRelationship> all = new HashSet<>(expectedRefactorings); //
 
             StringBuilder header = new StringBuilder("Ref Type\tEntity before\tEntity after");
             for (String groupId : groupIds) {
@@ -163,13 +152,12 @@ public class ResultComparator {
                 }
             }
             if (!headerPrinted) {
-                out.println(header.toString());
+                out.println(header);
                 headerPrinted = true;
             }
             if (!all.isEmpty()) {
                 out.println(getProjectRevisionId(expected.getProject(), expected.getRevision()));
-                ArrayList<RefactoringRelationship> allList = new ArrayList<>();
-                allList.addAll(all);
+                ArrayList<RefactoringRelationship> allList = new ArrayList<>(all);
                 Collections.sort(allList);
                 for (RefactoringRelationship r : allList) {
                     out.print(r.toString());
@@ -226,9 +214,7 @@ public class ResultComparator {
             if (expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.EXTRACT_SUPERCLASS, parentOf(r.getEntityBefore()), parentOf(r.getEntityAfter())))) {
                 return true;
             }
-            if (expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.EXTRACT_INTERFACE, parentOf(r.getEntityBefore()), parentOf(r.getEntityAfter())))) {
-                return true;
-            }
+            return expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.EXTRACT_INTERFACE, parentOf(r.getEntityBefore()), parentOf(r.getEntityAfter())));
         }
         return false;
     }
@@ -238,9 +224,7 @@ public class ResultComparator {
             if (expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.RENAME_CLASS, parentOf(r.getEntityBefore()), parentOf(r.getEntityAfter())))) {
                 return true;
             }
-            if (expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.RENAME_CLASS, parentOf(parentOf(r.getEntityBefore())), parentOf(parentOf(r.getEntityAfter()))))) {
-                return true;
-            }
+            return expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.RENAME_CLASS, parentOf(parentOf(r.getEntityBefore())), parentOf(parentOf(r.getEntityAfter()))));
         }
         return false;
     }
@@ -253,9 +237,7 @@ public class ResultComparator {
             if (expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.MOVE_CLASS, parentOf(parentOf(r.getEntityBefore())), parentOf(parentOf(r.getEntityAfter()))))) {
                 return true;
             }
-            if (expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.MOVE_SOURCE_FOLDER, parentOf(r.getEntityBefore()), parentOf(r.getEntityAfter())))) {
-                return true;
-            }
+            return expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.MOVE_SOURCE_FOLDER, parentOf(r.getEntityBefore()), parentOf(r.getEntityAfter())));
         }
         return false;
     }
