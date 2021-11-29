@@ -1,6 +1,7 @@
 package gr.uom.java.xmi.diff;
 
 import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.decomposition.AbstractCall;
 import gr.uom.java.xmi.decomposition.AbstractExpression;
 import gr.uom.java.xmi.decomposition.LambdaExpressionObject;
 import gr.uom.java.xmi.decomposition.OperationInvocation;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
  */
 public class ExpectedAnnotationToAssertThrowsDetection {
     private final Collection<Refactoring> refactorings;
-    private OperationInvocation operationInvocation;
+    private AbstractCall operationInvocation;
     private ModifyMethodAnnotationRefactoring annotationChange;
     private AbstractExpression exception;
     private LambdaExpressionObject lambda;
@@ -50,7 +51,7 @@ public class ExpectedAnnotationToAssertThrowsDetection {
         }
     }
 
-    private boolean isEnclosedBy(LambdaExpressionObject lambda, OperationInvocation invocation) {
+    private boolean isEnclosedBy(LambdaExpressionObject lambda, AbstractCall invocation) {
         var invocationRange = invocation.codeRange();
         var lambdaRange = lambda.codeRange();
         return invocationRange.getStartLine() <= lambdaRange.getStartLine() &&
@@ -96,9 +97,9 @@ public class ExpectedAnnotationToAssertThrowsDetection {
         return before.isNormalAnnotation() && before.getTypeName().equals("Test") && before.getMemberValuePairs().containsKey("expected");
     }
 
-    private List<OperationInvocation> getAssertThrows(UMLOperation operation) {
+    private List<AbstractCall> getAssertThrows(UMLOperation operation) {
         return operation.getAllOperationInvocations().stream()
-                .filter((op) -> op.getMethodName().equals("assertThrows") &&
+                .filter((op) -> op.getName().equals("assertThrows") &&
                         (op.getExpression().equals("Assert") || op.getExpression().equals("Assertions")))
                 .collect(Collectors.toList());
     }

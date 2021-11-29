@@ -20,12 +20,12 @@ public class TryWithFailToExpectedExceptionRuleDetection {
     private final UMLOperation operationAfter;
     private final List<UMLAttribute> addedAttributes;
     private final List<CompositeStatementObject> removedCompositeStmts;
-    private final List<StatementObject> addedStmts;
+    private final List<AbstractCodeFragment> addedStmts;
     private @Getter(AccessLevel.PACKAGE) List<TryStatementObject> tryStatements;
     private @Getter(AccessLevel.PACKAGE) List<String> capturedExceptions;
-    private @Getter(AccessLevel.PACKAGE) List<OperationInvocation> assertFailInvocationsFound;
+    private @Getter(AccessLevel.PACKAGE) List<AbstractCall> assertFailInvocationsFound;
     private @Getter(AccessLevel.PACKAGE) UMLAttribute expectedExceptionFieldDeclaration;
-    private @Getter(AccessLevel.PACKAGE) List<OperationInvocation> expectInvocations;
+    private @Getter(AccessLevel.PACKAGE) List<AbstractCall> expectInvocations;
 
     public TryWithFailToExpectedExceptionRuleDetection(UMLOperationBodyMapper mapper, UMLClassBaseDiff classDiff) {
         this(mapper,classDiff.addedAttributes);
@@ -35,7 +35,7 @@ public class TryWithFailToExpectedExceptionRuleDetection {
         this(mapper.getOperation1(), mapper.getOperation2(), mapper.getNonMappedInnerNodesT1(), mapper.getNonMappedLeavesT2(), addedAttributes);
     }
 
-    public TryWithFailToExpectedExceptionRuleDetection(UMLOperation operationBefore, UMLOperation operationAfter, List<CompositeStatementObject> removedCompositeStmts, List<StatementObject> addedStmts, List<UMLAttribute> addedAttributes) {
+    public TryWithFailToExpectedExceptionRuleDetection(UMLOperation operationBefore, UMLOperation operationAfter, List<CompositeStatementObject> removedCompositeStmts, List<AbstractCodeFragment> addedStmts, List<UMLAttribute> addedAttributes) {
         this.operationBefore = operationBefore;
         this.operationAfter = operationAfter;
         this.removedCompositeStmts = removedCompositeStmts;
@@ -86,7 +86,7 @@ public class TryWithFailToExpectedExceptionRuleDetection {
         return expectInvocations.size() > 0;
     }
 
-    private static Stream<OperationInvocation> detectAddedExpectInvocations(List<StatementObject> addedStmts, List<String> capturedExceptions, UMLAttribute expectedExceptionRuleFieldDeclaration) {
+    private static Stream<AbstractCall> detectAddedExpectInvocations(List<AbstractCodeFragment> addedStmts, List<String> capturedExceptions, UMLAttribute expectedExceptionRuleFieldDeclaration) {
         return extractMethodInvocationsStream(addedStmts)
                 .filter(invocation -> isExpectedExceptionExpectInvocation(capturedExceptions, invocation))
                 .filter(expectInvocation -> expectedExceptionRuleFieldDeclaration.getName().equals(expectInvocation.getExpression()))
@@ -94,22 +94,22 @@ public class TryWithFailToExpectedExceptionRuleDetection {
                 .filter(expectInvocation -> capturedExceptions.contains(expectInvocation.getArguments().get(0)));
     }
 
-    private static boolean isExpectedExceptionExpectInvocation(List<String> candidateExceptions, OperationInvocation invocation) {
-        return invocation.getMethodName().equals("expect") && isAnyArgumentPassedTo(candidateExceptions, invocation);
+    private static boolean isExpectedExceptionExpectInvocation(List<String> candidateExceptions, AbstractCall invocation) {
+        return invocation.getName().equals("expect") && isAnyArgumentPassedTo(candidateExceptions, invocation);
     }
 
-    private static boolean isAnyArgumentPassedTo(List<String> arguments, OperationInvocation invocation) {
+    private static boolean isAnyArgumentPassedTo(List<String> arguments, AbstractCall invocation) {
         return arguments.contains(invocation.getArguments().get(0));
     }
 
-    private static Stream<OperationInvocation> extractMethodInvocationsStream(List<StatementObject> addedStmts) {
+    private static Stream<AbstractCall> extractMethodInvocationsStream(List<AbstractCodeFragment> addedStmts) {
         return addedStmts.stream().flatMap(st -> st.getMethodInvocationMap().values().stream().flatMap(Collection::stream));
     }
 
-    private static Stream<OperationInvocation> detectAssertFailInvocationAtTheEndOf(TryStatementObject tryStatement) {
+    private static Stream<AbstractCall> detectAssertFailInvocationAtTheEndOf(TryStatementObject tryStatement) {
         var lastStatement = tryStatement.getStatements().get(tryStatement.getStatements().size() - 1);
         var operationInvocationsInLastStatement = new ArrayList<>(lastStatement.getMethodInvocationMap().values()).get(0);
-        return operationInvocationsInLastStatement.stream().filter(invocation -> invocation.getExpression().equals("Assert") && invocation.getMethodName().equals("fail"));
+        return operationInvocationsInLastStatement.stream().filter(invocation -> invocation.getExpression().equals("Assert") && invocation.getName().equals("fail"));
     }
 
     private static Stream<String> detectCatchExceptions(TryStatementObject tryStatement) {

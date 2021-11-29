@@ -1,51 +1,9 @@
 package org.refactoringminer.rm1;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.difflib.DiffUtils;
-import com.github.difflib.patch.AbstractDelta;
-import com.github.difflib.patch.Chunk;
-import com.github.difflib.patch.Patch;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLModelASTReader;
-import gr.uom.java.xmi.diff.MoveSourceFolderRefactoring;
-import gr.uom.java.xmi.diff.MovedClassToAnotherSourceFolder;
-import gr.uom.java.xmi.diff.RenamePattern;
-import gr.uom.java.xmi.diff.StringDistance;
-import gr.uom.java.xmi.diff.UMLModelDiff;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.regex.Matcher;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
+import gr.uom.java.xmi.diff.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jgit.errors.MissingObjectException;
@@ -62,11 +20,13 @@ import org.refactoringminer.util.GitServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.difflib.DiffUtils;
-import com.github.difflib.patch.AbstractDelta;
-import com.github.difflib.patch.Chunk;
-import com.github.difflib.patch.Patch;
+import java.io.*;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMiner {
 
@@ -162,14 +122,14 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 				String renamedFile = renamedFilesHint.get(key);
 				String fileBefore = fileContentsBefore.get(key);
 				String fileAfter = fileContentsCurrent.get(renamedFile);
-				if(fileBefore.equals(fileAfter) || trivialCommentChange(fileBefore, fileAfter)) {
+				if(fileBefore.equals(fileAfter) || StringDistance.trivialCommentChange(fileBefore, fileAfter)) {
 					identicalFiles.put(key, renamedFile);
 				}
 			}
 			if(fileContentsCurrent.containsKey(key)) {
 				String fileBefore = fileContentsBefore.get(key);
 				String fileAfter = fileContentsCurrent.get(key);
-				if(fileBefore.equals(fileAfter) || trivialCommentChange(fileBefore, fileAfter)) {
+				if(fileBefore.equals(fileAfter) || StringDistance.trivialCommentChange(fileBefore, fileAfter)) {
 					identicalFiles.put(key, key);
 				}
 			}

@@ -2,7 +2,7 @@ package gr.uom.java.xmi.diff;
 
 import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.decomposition.OperationInvocation;
+import gr.uom.java.xmi.decomposition.AbstractCall;
 import gr.uom.java.xmi.decomposition.TryStatementObject;
 import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -23,12 +23,12 @@ public class TryWithFailToExpectedExceptionRuleRefactoring implements Refactorin
     @Getter  private final UMLOperation operationBefore;
     @Getter  private final UMLOperation operationAfter;
     @Getter  private final TryStatementObject tryStatement;
-    @Getter  private final OperationInvocation assertFailInvocation;
+    @Getter  private final AbstractCall assertFailInvocation;
     @Getter  private final String exception;
-    @Getter  private final OperationInvocation thrownExpectInvocations;
+    @Getter  private final AbstractCall thrownExpectInvocations;
     @Getter  private final UMLAttribute ruleFieldDeclaration;
 
-    public TryWithFailToExpectedExceptionRuleRefactoring(UMLOperation operationBefore, UMLOperation operationAfter, TryStatementObject tryStatement, OperationInvocation assertFailInvocation, String capturedException, OperationInvocation thrownExpectInvocation, UMLAttribute ruleFieldDeclaration) {
+    public TryWithFailToExpectedExceptionRuleRefactoring(UMLOperation operationBefore, UMLOperation operationAfter, TryStatementObject tryStatement, AbstractCall assertFailInvocation, String capturedException, AbstractCall thrownExpectInvocation, UMLAttribute ruleFieldDeclaration) {
         this.operationBefore = operationBefore;
         this.operationAfter = operationAfter;
         this.tryStatement = tryStatement;

@@ -1,28 +1,27 @@
 package gr.uom.java.xmi.diff;
 
+import gr.uom.java.xmi.UMLOperation;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringType;
-
-import gr.uom.java.xmi.UMLOperation;
-
 public class RemoveMethodModifierRefactoring implements Refactoring {
-	private String modifier;
+	private Modifier modifier;
 	private UMLOperation operationBefore;
 	private UMLOperation operationAfter;
 
-	public RemoveMethodModifierRefactoring(String modifier, UMLOperation operationBefore, UMLOperation operationAfter) {
+	public RemoveMethodModifierRefactoring(Modifier modifier, UMLOperation operationBefore, UMLOperation operationAfter) {
 		this.modifier = modifier;
 		this.operationBefore = operationBefore;
 		this.operationAfter = operationAfter;
 	}
 
-	public String getModifier() {
+	public Modifier getModifier() {
 		return modifier;
 	}
 

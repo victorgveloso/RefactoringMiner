@@ -71,9 +71,9 @@ public class VariableReplacementAnalysis {
     private Set<VariableDeclaration> addedVariablesStoringTheReturnOfExtractedMethod = new LinkedHashSet<>();
     private Set<Pair<VariableDeclaration, VariableDeclaration>> matchedVariables = new LinkedHashSet<>();
     private Set<Pair<VariableDeclaration, VariableDeclaration>> movedVariables = new LinkedHashSet<>();
-	private Set<RenameVariableRefactoring> variableRenames = new LinkedHashSet<RenameVariableRefactoring>();
-	private Set<MergeVariableRefactoring> variableMerges = new LinkedHashSet<MergeVariableRefactoring>();
-	private Set<SplitVariableRefactoring> variableSplits = new LinkedHashSet<SplitVariableRefactoring>();
+	private Set<RenameVariableRefactoring> variableRenames = new LinkedHashSet<>();
+	private Set<MergeVariableRefactoring> variableMerges = new LinkedHashSet<>();
+	private Set<SplitVariableRefactoring> variableSplits = new LinkedHashSet<>();
 	private Set<CandidateAttributeRefactoring> candidateAttributeRenames = new LinkedHashSet<CandidateAttributeRefactoring>();
 	private Set<CandidateMergeVariableRefactoring> candidateAttributeMerges = new LinkedHashSet<CandidateMergeVariableRefactoring>();
 	private Set<CandidateSplitVariableRefactoring> candidateAttributeSplits = new LinkedHashSet<CandidateSplitVariableRefactoring>();
@@ -1313,7 +1313,7 @@ public class VariableReplacementAnalysis {
 			String[] lines1 = fragment1.getString().split("\\n");
 			for(String line : lines1) {
 				line = prepareLine(line);
-				if(!Visitor.METHOD_SIGNATURE_PATTERN.matcher(line).matches() &&
+				if(!SubMethodNodeVisitor.METHOD_SIGNATURE_PATTERN.matcher(line).matches() &&
 						ReplacementUtil.contains(line, replacement.getBefore())) {
 					replacementBeforeNotFoundInMethodSignature = true;
 					break;
@@ -1323,7 +1323,7 @@ public class VariableReplacementAnalysis {
 			String[] lines2 = fragment2.getString().split("\\n");
 			for(String line : lines2) {
 				line = prepareLine(line);
-				if(!Visitor.METHOD_SIGNATURE_PATTERN.matcher(line).matches() &&
+				if(!SubMethodNodeVisitor.METHOD_SIGNATURE_PATTERN.matcher(line).matches() &&
 						ReplacementUtil.contains(line, replacement.getAfter())) {
 					replacementAfterNotFoundInMethodSignature = true;
 					break;

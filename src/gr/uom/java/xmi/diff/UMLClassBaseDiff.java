@@ -1,42 +1,16 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
+import gr.uom.java.xmi.*;
+import gr.uom.java.xmi.decomposition.*;
+import gr.uom.java.xmi.decomposition.replacement.*;
+import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringMinerTimedOutException;
 import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.util.PrefixSuffixUtils;
 
-import gr.uom.java.xmi.UMLAnnotation;
-import gr.uom.java.xmi.UMLAnonymousClass;
-import gr.uom.java.xmi.UMLAttribute;
-import gr.uom.java.xmi.UMLClass;
-import gr.uom.java.xmi.UMLEnumConstant;
-import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.UMLType;
-import gr.uom.java.xmi.decomposition.AbstractCall;
-import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
-import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
-import gr.uom.java.xmi.decomposition.CompositeStatementObject;
-import gr.uom.java.xmi.decomposition.OperationBody;
-import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
-import gr.uom.java.xmi.decomposition.VariableDeclaration;
-import gr.uom.java.xmi.decomposition.replacement.MethodInvocationReplacement;
-import gr.uom.java.xmi.decomposition.replacement.Replacement;
-import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
-import gr.uom.java.xmi.decomposition.replacement.SplitVariableReplacement;
-import gr.uom.java.xmi.decomposition.replacement.CompositeReplacement;
-import gr.uom.java.xmi.decomposition.replacement.ConsistentReplacementDetector;
-import gr.uom.java.xmi.decomposition.replacement.MergeVariableReplacement;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements Comparable<UMLClassBaseDiff> {
 
