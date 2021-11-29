@@ -44,6 +44,7 @@ public class OperationBody {
 	private List<String> stringRepresentation;
 	private boolean containsAssertion;
 	private Set<VariableDeclaration> activeVariableDeclarations;
+	private int bodyHashCode;
 
 	public OperationBody(CompilationUnit cu, String filePath, Block methodBody) {
 		this(cu, filePath, methodBody, Collections.emptyList());
@@ -51,13 +52,14 @@ public class OperationBody {
 
 	public OperationBody(CompilationUnit cu, String filePath, Block methodBody, List<VariableDeclaration> parameters) {
 		this.compositeStatement = new CompositeStatementObject(cu, filePath, methodBody, 0, CodeElementType.BLOCK);
+		this.bodyHashCode = methodBody.toString().hashCode();
 		this.activeVariableDeclarations = new HashSet<>();
 		this.activeVariableDeclarations.addAll(parameters);
 		List<Statement> statements = methodBody.statements();
 		for(Statement statement : statements) {
 			processStatement(cu, filePath, compositeStatement, statement);
 		}
-		for(OperationInvocation invocation : getAllOperationInvocations()) {
+		for(AbstractCall invocation : getAllOperationInvocations()) {
 			if(invocation.getName().startsWith("assert")) {
 				containsAssertion = true;
 				break;
@@ -82,9 +84,9 @@ public class OperationBody {
 		return new ArrayList<>(compositeStatement.getAllAnonymousClassDeclarations());
 	}
 
-	public List<OperationInvocation> getAllOperationInvocations() {
-		List<OperationInvocation> invocations = new ArrayList<>();
-		Map<String, List<OperationInvocation>> invocationMap = compositeStatement.getAllMethodInvocations();
+	public List<AbstractCall> getAllOperationInvocations() {
+		List<AbstractCall> invocations = new ArrayList<>();
+		Map<String, List<AbstractCall>> invocationMap = compositeStatement.getAllMethodInvocations();
 		for(String key : invocationMap.keySet()) {
 			invocations.addAll(invocationMap.get(key));
 		}
@@ -360,6 +362,10 @@ public class OperationBody {
 
 	public CompositeStatementObject loopWithVariables(String currentElementName, String collectionName) {
 		return compositeStatement.loopWithVariables(currentElementName, collectionName);
+	}
+
+	public int getBodyHashCode() {
+		return bodyHashCode;
 	}
 
 	public List<String> stringRepresentation() {

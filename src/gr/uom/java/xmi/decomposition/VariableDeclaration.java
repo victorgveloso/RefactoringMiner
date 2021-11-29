@@ -1,28 +1,46 @@
 package gr.uom.java.xmi.decomposition;
 
-import gr.uom.java.xmi.*;
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.diff.CodeRange;
-import org.eclipse.jdt.core.dom.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.IExtendedModifier;
+import org.eclipse.jdt.core.dom.LambdaExpression;
+import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+
+import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.LocationInfoProvider;
+import gr.uom.java.xmi.UMLAnnotation;
+import gr.uom.java.xmi.UMLType;
+import gr.uom.java.xmi.VariableDeclarationProvider;
+import gr.uom.java.xmi.diff.CodeRange;
+
 public class VariableDeclaration implements LocationInfoProvider, VariableDeclarationProvider {
-	private final String variableName;
-	private final AbstractExpression initializer;
+	private String variableName;
+	private AbstractExpression initializer;
 	private UMLType type;
 	private boolean varargsParameter;
-	private final LocationInfo locationInfo;
+	private LocationInfo locationInfo;
 	private boolean isParameter;
 	private boolean isAttribute;
 	private boolean isEnumConstant;
-	private final VariableScope scope;
+	private VariableScope scope;
 	private boolean isFinal;
-	private final List<UMLAnnotation> annotations;
+	private List<UMLAnnotation> annotations;
 	
 	public VariableDeclaration(CompilationUnit cu, String filePath, VariableDeclarationFragment fragment) {
-		this.annotations = new ArrayList<>();
+		this.annotations = new ArrayList<UMLAnnotation>();
 		List<IExtendedModifier> extendedModifiers = null;
 		if(fragment.getParent() instanceof VariableDeclarationStatement) {
 			VariableDeclarationStatement parent = (VariableDeclarationStatement)fragment.getParent();
@@ -60,9 +78,11 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 		this.variableName = fragment.getName().getIdentifier();
 		this.initializer = fragment.getInitializer() != null ? new AbstractExpression(cu, filePath, fragment.getInitializer(), CodeElementType.VARIABLE_DECLARATION_INITIALIZER) : null;
 		Type astType = extractType(fragment);
-		this.type = UMLType.extractTypeObject(cu, filePath, astType, fragment.getExtraDimensions());
+		if(astType != null) {
+			this.type = UMLType.extractTypeObject(cu, filePath, astType, fragment.getExtraDimensions());
+		}
 		ASTNode scopeNode = getScopeNode(fragment);
-		int startOffset;
+		int startOffset = 0;
 		if(locationInfo.getCodeElementType().equals(CodeElementType.FIELD_DECLARATION)) {
 			//field declarations have the entire type declaration as scope, regardless of the location they are declared
 			startOffset = scopeNode.getStartPosition();
@@ -75,7 +95,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 	}
 
 	public VariableDeclaration(CompilationUnit cu, String filePath, SingleVariableDeclaration fragment) {
-		this.annotations = new ArrayList<>();
+		this.annotations = new ArrayList<UMLAnnotation>();
 		int modifiers = fragment.getModifiers();
 		if((modifiers & Modifier.FINAL) != 0) {
 			this.isFinal = true;
@@ -104,7 +124,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 	}
 
 	public VariableDeclaration(CompilationUnit cu, String filePath, EnumConstantDeclaration fragment) {
-		this.annotations = new ArrayList<>();
+		this.annotations = new ArrayList<UMLAnnotation>();
 		int modifiers = fragment.getModifiers();
 		if((modifiers & Modifier.FINAL) != 0) {
 			this.isFinal = true;
@@ -206,8 +226,11 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 		} else if (!scope.equals(other.scope))
 			return false;
 		if (variableName == null) {
-			return other.variableName == null;
-		} else return variableName.equals(other.variableName);
+			if (other.variableName != null)
+				return false;
+		} else if (!variableName.equals(other.variableName))
+			return false;
+		return true;
 	}
 
 	public boolean sameKind(VariableDeclaration other) {
@@ -264,6 +287,9 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 			}
 			else if(fragment.getParent() instanceof FieldDeclaration) {
 				return CodeElementType.FIELD_DECLARATION;
+			}
+			else if(fragment.getParent() instanceof LambdaExpression) {
+				return CodeElementType.LAMBDA_EXPRESSION_PARAMETER;
 			}
 		}
 		return null;

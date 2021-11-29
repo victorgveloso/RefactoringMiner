@@ -8,6 +8,7 @@ import gr.uom.java.xmi.diff.StringDistance;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class LeafMapping extends AbstractCodeMapping implements Comparable<LeafMapping> {
@@ -50,8 +51,8 @@ public class LeafMapping extends AbstractCodeMapping implements Comparable<LeafM
 				distance1 = 0;
 			}
 			else {
-				String s1 = this.getFragment1().getString().toLowerCase();
-				String s2 = this.getFragment2().getString().toLowerCase();
+				String s1 = removeGenericTypeAfterDot(this.getFragment1().getString().toLowerCase());
+				String s2 = removeGenericTypeAfterDot(this.getFragment2().getString().toLowerCase());
 				int distance = StringDistance.editDistance(s1, s2);
 				distance1 = (double)distance/(double)Math.max(s1.length(), s2.length());
 			}
@@ -60,8 +61,8 @@ public class LeafMapping extends AbstractCodeMapping implements Comparable<LeafM
 				distance2 = 0;
 			}
 			else {
-				String s1 = o.getFragment1().getString().toLowerCase();
-				String s2 = o.getFragment2().getString().toLowerCase();
+				String s1 = removeGenericTypeAfterDot(o.getFragment1().getString().toLowerCase());
+				String s2 = removeGenericTypeAfterDot(o.getFragment2().getString().toLowerCase());
 				int distance = StringDistance.editDistance(s1, s2);
 				distance2 = (double)distance/(double)Math.max(s1.length(), s2.length());
 			}
@@ -78,6 +79,18 @@ public class LeafMapping extends AbstractCodeMapping implements Comparable<LeafM
 				}
 				else if(!this.isIdenticalWithInlinedVariable() && o.isIdenticalWithInlinedVariable()) {
 					return 1;
+				}
+				if(this.identicalDepthIndexAndParentType() && !o.identicalDepthIndexAndParentType()) {
+					return -1;
+				}
+				else if(!this.identicalDepthIndexAndParentType() && o.identicalDepthIndexAndParentType()) {
+					return 1;
+				}
+				if(this.referencesMapping(o)) {
+					return 1;
+				}
+				else if(o.referencesMapping(this)) {
+					return -1;
 				}
 				return Double.compare(distance1, distance2);
 			}
@@ -112,6 +125,65 @@ public class LeafMapping extends AbstractCodeMapping implements Comparable<LeafM
 				}
 			}
 		}
+	}
+
+	private boolean referencesMapping(LeafMapping o) {
+		if(getFragment1().getLocationInfo().getCodeElementType().equals(CodeElementType.VARIABLE_DECLARATION_STATEMENT) &&
+				getFragment2().getLocationInfo().getCodeElementType().equals(CodeElementType.VARIABLE_DECLARATION_STATEMENT) &&
+				o.getFragment1().getLocationInfo().getCodeElementType().equals(CodeElementType.VARIABLE_DECLARATION_STATEMENT) &&
+				o.getFragment2().getLocationInfo().getCodeElementType().equals(CodeElementType.VARIABLE_DECLARATION_STATEMENT) &&
+				this.getFragment1().equals(o.getFragment1()) &&
+				o.getFragment2().getLocationInfo().getEndOffset() < this.getFragment2().getLocationInfo().getStartOffset()) {
+			List<VariableDeclaration> variableDeclarations2 = o.getFragment2().getVariableDeclarations();
+			Map<String, List<ObjectCreation>> creationMap2 = this.getFragment2().getCreationMap();
+			for(VariableDeclaration declaration2 : variableDeclarations2) {
+				for(String key : creationMap2.keySet()) {
+					List<ObjectCreation> creations = creationMap2.get(key);
+					for(ObjectCreation creation : creations) {
+						if(creation.getAnonymousClassDeclaration() != null) {
+							return false;
+						}
+						List<String> arguments = creation.getArguments();
+						if(arguments.size() == 1 && arguments.contains(declaration2.getVariableName())) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	private static String removeGenericTypeAfterDot(String s) {
+		if(s.contains(".<")) {
+			int indexOfGenericTypeStart = s.indexOf(".<");
+			int indexOfGenericTypeEnd = s.indexOf(">", indexOfGenericTypeStart);
+			if(indexOfGenericTypeStart < indexOfGenericTypeEnd) {
+				s = s.substring(0, indexOfGenericTypeStart) + "." + s.substring(indexOfGenericTypeEnd + 1, s.length());
+			}
+		}
+		return s;
+	}
+
+	private boolean identicalDepthIndexAndParentType() {
+		if(getFragment1().getLocationInfo().getCodeElementType().equals(CodeElementType.VARIABLE_DECLARATION_STATEMENT) &&
+				getFragment2().getLocationInfo().getCodeElementType().equals(CodeElementType.VARIABLE_DECLARATION_STATEMENT)) {
+			return false;
+		}
+		CompositeStatementObject parent1 = getFragment1().getParent();
+		while(parent1 != null && parent1.getLocationInfo().getCodeElementType().equals(CodeElementType.BLOCK)) {
+			parent1 = parent1.getParent();
+		}
+		CompositeStatementObject parent2 = getFragment2().getParent();
+		while(parent2 != null && parent2.getLocationInfo().getCodeElementType().equals(CodeElementType.BLOCK)) {
+			parent2 = parent2.getParent();
+		}
+		if(parent1 != null && parent2 != null) {
+			return parent1.getLocationInfo().getCodeElementType().equals(parent2.getLocationInfo().getCodeElementType()) &&
+					!parent1.getLocationInfo().getCodeElementType().equals(CodeElementType.CATCH_CLAUSE) &&
+					getFragment1().getDepth() == getFragment2().getDepth() && getFragment1().getIndex() == getFragment2().getIndex();
+		}
+		return false;
 	}
 
 	private boolean sameVariableDeclarationTypeInParent() {
@@ -173,10 +245,10 @@ public class LeafMapping extends AbstractCodeMapping implements Comparable<LeafM
 	}
 
 	public Set<String> callChainIntersection() {
-		OperationInvocation invocation1 = this.getFragment1().invocationCoveringEntireFragment();
-		OperationInvocation invocation2 = this.getFragment2().invocationCoveringEntireFragment();
-		if(invocation1 != null && invocation2 != null) {
-			return invocation1.callChainIntersection(invocation2);
+		AbstractCall invocation1 = this.getFragment1().invocationCoveringEntireFragment();
+		AbstractCall invocation2 = this.getFragment2().invocationCoveringEntireFragment();
+		if(invocation1 instanceof OperationInvocation && invocation2 instanceof OperationInvocation) {
+			return ((OperationInvocation)invocation1).callChainIntersection((OperationInvocation)invocation2);
 		}
 		return new LinkedHashSet<>();
 	}

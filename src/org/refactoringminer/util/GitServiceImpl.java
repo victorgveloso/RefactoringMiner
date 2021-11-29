@@ -45,9 +45,17 @@ public class GitServiceImpl implements GitService {
 		File folder = new File(projectPath);
 		Repository repository;
 		if (folder.exists()) {
+			String[] contents = folder.list();
+			boolean dotGitFound = false;
+			for(String content : contents) {
+				if(content.equals(".git")) {
+					dotGitFound = true;
+					break;
+				}
+			}
 			RepositoryBuilder builder = new RepositoryBuilder();
 			repository = builder
-					.setGitDir(new File(folder, ".git"))
+					.setGitDir(dotGitFound ? new File(folder, ".git") : folder)
 					.readEnvironment()
 					.findGitDir()
 					.build();
@@ -64,52 +72,32 @@ public class GitServiceImpl implements GitService {
 			repository = git.getRepository();
 			//logger.info("Done cloning {}, current branch is {}", cloneUrl, repository.getBranch());
 		}
-
-//		if (branch != null && !repository.getBranch().equals(branch)) {
-//			Git git = new Git(repository);
-//			
-//			String localBranch = "refs/heads/" + branch;
-//			List<Ref> refs = git.branchList().call();
-//			boolean branchExists = false;
-//			for (Ref ref : refs) {
-//				if (ref.getName().equals(localBranch)) {
-//					branchExists = true;
-//				}
-//			}
-//			
-//			if (branchExists) {
-//				git.checkout()
-//					.setName(branch)
-//					.call();
-//			} else {
-//				git.checkout()
-//					.setCreateBranch(true)
-//					.setName(branch)
-//					.setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
-//					.setStartPoint("origin/" + branch)
-//					.call();
-//			}
-//			
-//			logger.info("Project {} switched to {}", cloneUrl, repository.getBranch());
-//		}
 		return repository;
 	}
 
 	@Override
 	public Repository openRepository(String repositoryPath) throws Exception {
-	    File folder = new File(repositoryPath);
-	    Repository repository;
-	    if (folder.exists()) {
-	        RepositoryBuilder builder = new RepositoryBuilder();
-	        repository = builder
-	            .setGitDir(new File(folder, ".git"))
-	            .readEnvironment()
-	            .findGitDir()
-	            .build();
-	    } else {
-	        throw new FileNotFoundException(repositoryPath);
-	    }
-	    return repository;
+		File folder = new File(repositoryPath);
+		Repository repository;
+		if (folder.exists()) {
+			String[] contents = folder.list();
+			boolean dotGitFound = false;
+			for(String content : contents) {
+				if(content.equals(".git")) {
+					dotGitFound = true;
+					break;
+				}
+			}
+			RepositoryBuilder builder = new RepositoryBuilder();
+			repository = builder
+					.setGitDir(dotGitFound ? new File(folder, ".git") : folder)
+					.readEnvironment()
+					.findGitDir()
+					.build();
+		} else {
+			throw new FileNotFoundException(repositoryPath);
+		}
+		return repository;
 	}
 
 	public void checkout(Repository repository, String commitId) throws Exception {
@@ -291,7 +279,7 @@ public class GitServiceImpl implements GitService {
         	tw.addTree(newTree);
 
         	final RenameDetector rd = new RenameDetector(repository);
-        	rd.setRenameScore(80);
+        	rd.setRenameScore(55);
         	rd.addAll(DiffEntry.scan(tw));
 
         	for (DiffEntry diff : rd.compute(tw.getObjectReader(), null)) {

@@ -3,6 +3,14 @@ package gr.uom.java.xmi.diff;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.UMLParameter;
 import gr.uom.java.xmi.decomposition.*;
+import gr.uom.java.xmi.decomposition.AbstractCall;
+import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
+import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
+import gr.uom.java.xmi.decomposition.CompositeStatementObject;
+import gr.uom.java.xmi.decomposition.LambdaExpressionObject;
+import gr.uom.java.xmi.decomposition.OperationInvocation;
+import gr.uom.java.xmi.decomposition.StatementObject;
+import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
 import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
 import org.refactoringminer.api.RefactoringMinerTimedOutException;
 
@@ -13,7 +21,7 @@ public class ExtractOperationDetection {
 	private final List<UMLOperation> addedOperations;
 	private final UMLClassBaseDiff classDiff;
 	private final UMLModelDiff modelDiff;
-	private final List<OperationInvocation> operationInvocations;
+	private final List<AbstractCall> operationInvocations;
 	private final Map<CallTreeNode, CallTree> callTreeMap = new LinkedHashMap<>();
 
 	public ExtractOperationDetection(UMLOperationBodyMapper mapper, List<UMLOperation> addedOperations, UMLClassBaseDiff classDiff, UMLModelDiff modelDiff) {
@@ -21,7 +29,7 @@ public class ExtractOperationDetection {
 		this.addedOperations = addedOperations;
 		this.classDiff = classDiff;
 		this.modelDiff = modelDiff;
-		this.operationInvocations = getInvocationsInSourceOperationAfterExtraction(mapper);
+		this.operationInvocations = getInvocationsInSourceOperationAfterExtractionExcludingInvocationsInExactlyMappedStatements(mapper);
 	}
 
 	public List<ExtractOperationRefactoring> check(UMLOperation addedOperation) throws RefactoringMinerTimedOutException {
@@ -31,20 +39,20 @@ public class ExtractOperationDetection {
 		}
 		if(!mapper.getNonMappedLeavesT1().isEmpty() || !mapper.getNonMappedInnerNodesT1().isEmpty() ||
 			!mapper.getReplacementsInvolvingMethodInvocation().isEmpty()) {
-			List<OperationInvocation> addedOperationInvocations = matchingInvocations(addedOperation, operationInvocations, mapper.getOperation2());
+			List<AbstractCall> addedOperationInvocations = matchingInvocations(addedOperation, operationInvocations, mapper.getOperation2());
 			if(addedOperationInvocations.size() > 0) {
 				int otherAddedMethodsCalled = 0;
 				for(UMLOperation addedOperation2 : this.addedOperations) {
 					if(!addedOperation.equals(addedOperation2)) {
-						List<OperationInvocation> addedOperationInvocations2 = matchingInvocations(addedOperation2, operationInvocations, mapper.getOperation2());
+						List<AbstractCall> addedOperationInvocations2 = matchingInvocations(addedOperation2, operationInvocations, mapper.getOperation2());
 						if(addedOperationInvocations2.size() > 0) {
 							otherAddedMethodsCalled++;
 						}
 					}
 				}
 				if(otherAddedMethodsCalled == 0) {
-					List<OperationInvocation> sortedInvocations = sortInvocationsBasedOnArgumentOccurrences(addedOperationInvocations);
-					for(OperationInvocation addedOperationInvocation : sortedInvocations) {
+					List<AbstractCall> sortedInvocations = sortInvocationsBasedOnArgumentOccurrences(addedOperationInvocations);
+					for(AbstractCall addedOperationInvocation : sortedInvocations) {
 						processAddedOperation(mapper, addedOperation, refactorings, addedOperationInvocations, addedOperationInvocation);
 					}
 				}
@@ -56,18 +64,18 @@ public class ExtractOperationDetection {
 		return refactorings;
 	}
 
-	private List<OperationInvocation> sortInvocationsBasedOnArgumentOccurrences(List<OperationInvocation> invocations) {
+	private List<AbstractCall> sortInvocationsBasedOnArgumentOccurrences(List<AbstractCall> invocations) {
 		if(invocations.size() > 1) {
-			List<OperationInvocation> sorted = new ArrayList<>();
+			List<AbstractCall> sorted = new ArrayList<>();
 			List<String> allVariables = new ArrayList<>();
 			for(CompositeStatementObject composite : mapper.getNonMappedInnerNodesT1()) {
 				allVariables.addAll(composite.getVariables());
 			}
-			for(StatementObject leaf : mapper.getNonMappedLeavesT1()) {
+			for(AbstractCodeFragment leaf : mapper.getNonMappedLeavesT1()) {
 				allVariables.addAll(leaf.getVariables());
 			}
 			int max = 0;
-			for(OperationInvocation invocation : invocations) {
+			for(AbstractCall invocation : invocations) {
 				List<String> arguments = invocation.getArguments();
 				int occurrences = 0;
 				for(String argument : arguments) {
@@ -90,7 +98,7 @@ public class ExtractOperationDetection {
 
 	private void processAddedOperation(UMLOperationBodyMapper mapper, UMLOperation addedOperation,
 			List<ExtractOperationRefactoring> refactorings,
-			List<OperationInvocation> addedOperationInvocations, OperationInvocation addedOperationInvocation)
+			List<AbstractCall> addedOperationInvocations, AbstractCall addedOperationInvocation)
 			throws RefactoringMinerTimedOutException {
 		CallTreeNode root = new CallTreeNode(mapper.getOperation1(), addedOperation, addedOperationInvocation);
 		CallTree callTree;
@@ -112,8 +120,8 @@ public class ExtractOperationDetection {
 					UMLOperationBodyMapper nestedMapper = createMapperForExtractedMethod(mapper, node.getOriginalOperation(), node.getInvokedOperation(), node.getInvocation());
 					if(nestedMapper != null && !containsRefactoringWithIdenticalMappings(refactorings, nestedMapper)) {
 						additionalExactMatches.addAll(nestedMapper.getExactMatches());
-						if(extractMatchCondition(nestedMapper, new ArrayList<>()) && extractMatchCondition(operationBodyMapper, additionalExactMatches)) {
-							List<OperationInvocation> nestedMatchingInvocations = matchingInvocations(node.getInvokedOperation(), node.getOriginalOperation().getAllOperationInvocations(), node.getOriginalOperation());
+						if(extractMatchCondition(nestedMapper, new ArrayList<AbstractCodeMapping>()) && extractMatchCondition(operationBodyMapper, additionalExactMatches)) {
+							List<AbstractCall> nestedMatchingInvocations = matchingInvocations(node.getInvokedOperation(), node.getOriginalOperation().getAllOperationInvocations(), node.getOriginalOperation());
 							ExtractOperationRefactoring nestedRefactoring = new ExtractOperationRefactoring(nestedMapper, mapper.getOperation2(), nestedMatchingInvocations);
 							refactorings.add(nestedRefactoring);
 							operationBodyMapper.addChildMapper(nestedMapper);
@@ -163,18 +171,62 @@ public class ExtractOperationDetection {
 		return false;
 	}
 
-	public static List<OperationInvocation> getInvocationsInSourceOperationAfterExtraction(UMLOperationBodyMapper mapper) {
-		List<OperationInvocation> operationInvocations = mapper.getOperation2().getAllOperationInvocations();
-		for(StatementObject statement : mapper.getNonMappedLeavesT2()) {
+	private static List<AbstractCall> getInvocationsInSourceOperationAfterExtractionExcludingInvocationsInExactlyMappedStatements(UMLOperationBodyMapper mapper) {
+		List<AbstractCall> operationInvocations = mapper.getOperation2().getAllOperationInvocations();
+		for(AbstractCodeMapping mapping : mapper.getMappings()) {
+			if(mapping.isExact()) {
+				Map<String, List<AbstractCall>> methodInvocationMap = mapping.getFragment2().getMethodInvocationMap();
+				for(String key : methodInvocationMap.keySet()) {
+					List<AbstractCall> invocations = methodInvocationMap.get(key);
+					for(AbstractCall invocation : invocations) {
+						for(ListIterator<AbstractCall> iterator = operationInvocations.listIterator(); iterator.hasNext();) {
+							AbstractCall matchingInvocation = iterator.next();
+							if(invocation == matchingInvocation) {
+								iterator.remove();
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		for(AbstractCodeFragment statement : mapper.getNonMappedLeavesT2()) {
 			addStatementInvocations(operationInvocations, statement);
 		}
 		return operationInvocations;
 	}
 
-	public static void addStatementInvocations(List<OperationInvocation> operationInvocations, StatementObject statement) {
-		Map<String, List<OperationInvocation>> statementMethodInvocationMap = statement.getMethodInvocationMap();
+	public static List<AbstractCall> getInvocationsInSourceOperationAfterExtraction(UMLOperationBodyMapper mapper) {
+		List<AbstractCall> operationInvocations = getInvocationsInSourceOperationAfterExtractionExcludingInvocationsInExactlyMappedStatements(mapper);
+		if(operationInvocations.isEmpty()) {
+			return operationInvocations;
+		}
+		List<AbstractCall> invocationsInSourceOperationBeforeExtraction = mapper.getOperation1().getAllOperationInvocations();
+		for(AbstractCall invocation : invocationsInSourceOperationBeforeExtraction) {
+			for(ListIterator<AbstractCall> iterator = operationInvocations.listIterator(); iterator.hasNext();) {
+				AbstractCall matchingInvocation = iterator.next();
+				if(invocation.getName().equals(matchingInvocation.getName())) {
+					boolean matchingInvocationFound = false;
+					for(String argument : invocation.getArguments()) {
+						if(argument.equals(matchingInvocation.getExpression())) {
+							iterator.remove();
+							matchingInvocationFound = true;
+							break;
+						}
+					}
+					if(matchingInvocationFound) {
+						break;
+					}
+				}
+			}
+		}
+		return operationInvocations;
+	}
+
+	public static void addStatementInvocations(List<AbstractCall> operationInvocations, AbstractCodeFragment statement) {
+		Map<String, List<AbstractCall>> statementMethodInvocationMap = statement.getMethodInvocationMap();
 		for(String key : statementMethodInvocationMap.keySet()) {
-			for(OperationInvocation statementInvocation : statementMethodInvocationMap.get(key)) {
+			for(AbstractCall statementInvocation : statementMethodInvocationMap.get(key)) {
 				if(!containsInvocation(operationInvocations, statementInvocation)) {
 					operationInvocations.add(statementInvocation);
 				}
@@ -183,16 +235,16 @@ public class ExtractOperationDetection {
 		List<LambdaExpressionObject> lambdas = statement.getLambdas();
 		for(LambdaExpressionObject lambda : lambdas) {
 			if(lambda.getBody() != null) {
-				for(OperationInvocation statementInvocation : lambda.getBody().getAllOperationInvocations()) {
+				for(AbstractCall statementInvocation : lambda.getBody().getAllOperationInvocations()) {
 					if(!containsInvocation(operationInvocations, statementInvocation)) {
 						operationInvocations.add(statementInvocation);
 					}
 				}
 			}
 			if(lambda.getExpression() != null) {
-				Map<String, List<OperationInvocation>> methodInvocationMap = lambda.getExpression().getMethodInvocationMap();
+				Map<String, List<AbstractCall>> methodInvocationMap = lambda.getExpression().getMethodInvocationMap();
 				for(String key : methodInvocationMap.keySet()) {
-					for(OperationInvocation statementInvocation : methodInvocationMap.get(key)) {
+					for(AbstractCall statementInvocation : methodInvocationMap.get(key)) {
 						if(!containsInvocation(operationInvocations, statementInvocation)) {
 							operationInvocations.add(statementInvocation);
 						}
@@ -202,8 +254,8 @@ public class ExtractOperationDetection {
 		}
 	}
 
-	public static boolean containsInvocation(List<OperationInvocation> operationInvocations, OperationInvocation invocation) {
-		for(OperationInvocation operationInvocation : operationInvocations) {
+	public static boolean containsInvocation(List<AbstractCall> operationInvocations, AbstractCall invocation) {
+		for(AbstractCall operationInvocation : operationInvocations) {
 			if(operationInvocation.getLocationInfo().equals(invocation.getLocationInfo())) {
 				return true;
 			}
@@ -211,10 +263,10 @@ public class ExtractOperationDetection {
 		return false;
 	}
 
-	private List<OperationInvocation> matchingInvocations(UMLOperation operation,
-			List<OperationInvocation> operationInvocations, UMLOperation callerOperation) {
-		List<OperationInvocation> addedOperationInvocations = new ArrayList<>();
-		for(OperationInvocation invocation : operationInvocations) {
+	private List<AbstractCall> matchingInvocations(UMLOperation operation,
+			List<AbstractCall> operationInvocations, UMLOperation callerOperation) {
+		List<AbstractCall> addedOperationInvocations = new ArrayList<>();
+		for(var invocation : operationInvocations) {
 			if(invocation.matchesOperation(operation, callerOperation, modelDiff)) {
 				addedOperationInvocations.add(invocation);
 			}
@@ -223,9 +275,9 @@ public class ExtractOperationDetection {
 	}
 
 	private void generateCallTree(UMLOperation operation, CallTreeNode parent, CallTree callTree) {
-		List<OperationInvocation> invocations = operation.getAllOperationInvocations();
+		List<AbstractCall> invocations = operation.getAllOperationInvocations();
 		for(UMLOperation addedOperation : addedOperations) {
-			for(OperationInvocation invocation : invocations) {
+			for(AbstractCall invocation : invocations) {
 				if(invocation.matchesOperation(addedOperation, operation, modelDiff)) {
 					if(!callTree.containsInPathToRootOrSibling(parent, addedOperation)) {
 						CallTreeNode node = new CallTreeNode(parent, operation, addedOperation, invocation);
@@ -238,7 +290,7 @@ public class ExtractOperationDetection {
 	}
 
 	private UMLOperationBodyMapper createMapperForExtractedMethod(UMLOperationBodyMapper mapper,
-			UMLOperation originalOperation, UMLOperation addedOperation, OperationInvocation addedOperationInvocation) throws RefactoringMinerTimedOutException {
+			UMLOperation originalOperation, UMLOperation addedOperation, AbstractCall addedOperationInvocation) throws RefactoringMinerTimedOutException {
 		List<UMLParameter> originalMethodParameters = originalOperation.getParametersWithoutReturnType();
 		Map<UMLParameter, UMLParameter> originalMethodParametersPassedAsArgumentsMappedToCalledMethodParameters = new LinkedHashMap<>();
 		List<String> arguments = addedOperationInvocation.getArguments();
@@ -300,14 +352,14 @@ public class ExtractOperationDetection {
 		List<AbstractCodeMapping> totalMappings = new ArrayList<>(operationBodyMapper.getMappings());
 		List<CompositeStatementObject> nonMappedInnerNodesT2 = new ArrayList<>(operationBodyMapper.getNonMappedInnerNodesT2());
 		nonMappedInnerNodesT2.removeIf(compositeStatementObject -> compositeStatementObject.toString().equals("{"));
-		List<StatementObject> nonMappedLeavesT2 = operationBodyMapper.getNonMappedLeavesT2();
+		List<AbstractCodeFragment> nonMappedLeavesT2 = operationBodyMapper.getNonMappedLeavesT2();
 		return totalMappings.size() == 1 && totalMappings.get(0).containsReplacement(ReplacementType.ARGUMENT_REPLACED_WITH_RETURN_EXPRESSION) &&
 				nonMappedInnerNodesT2.size() == 1 && nonMappedInnerNodesT2.get(0).toString().startsWith("if") &&
 				nonMappedLeavesT2.size() == 1 && nonMappedLeavesT2.get(0).toString().startsWith("return ");
 	}
 
-	private UMLOperation findDelegateMethod(UMLOperation originalOperation, UMLOperation addedOperation, OperationInvocation addedOperationInvocation) {
-		OperationInvocation delegateMethodInvocation = addedOperation.isDelegate();
+	private UMLOperation findDelegateMethod(UMLOperation originalOperation, UMLOperation addedOperation, AbstractCall addedOperationInvocation) {
+		AbstractCall delegateMethodInvocation = addedOperation.isDelegate();
 		if(originalOperation.isDelegate() == null && delegateMethodInvocation != null && !originalOperation.getAllOperationInvocations().contains(addedOperationInvocation)) {
 			for(UMLOperation operation : addedOperations) {
 				if(delegateMethodInvocation.matchesOperation(operation, addedOperation, modelDiff)) {

@@ -13,19 +13,22 @@ import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
 public class RemoveVariableModifierRefactoring implements Refactoring {
-	private final String modifier;
-	private final VariableDeclaration variableBefore;
-	private final VariableDeclaration variableAfter;
-	private final UMLOperation operationBefore;
-	private final UMLOperation operationAfter;
+	private String modifier;
+	private VariableDeclaration variableBefore;
+	private VariableDeclaration variableAfter;
+	private UMLOperation operationBefore;
+	private UMLOperation operationAfter;
+	private boolean insideExtractedOrInlinedMethod;
 
 	public RemoveVariableModifierRefactoring(String modifier, VariableDeclaration variableBefore,
-			VariableDeclaration variableAfter, UMLOperation operationBefore, UMLOperation operationAfter) {
+			VariableDeclaration variableAfter, UMLOperation operationBefore, UMLOperation operationAfter,
+			boolean insideExtractedOrInlinedMethod) {
 		this.modifier = modifier;
 		this.variableBefore = variableBefore;
 		this.variableAfter = variableAfter;
 		this.operationBefore = operationBefore;
 		this.operationAfter = operationAfter;
+		this.insideExtractedOrInlinedMethod = insideExtractedOrInlinedMethod;
 	}
 
 	public String getModifier() {
@@ -48,9 +51,13 @@ public class RemoveVariableModifierRefactoring implements Refactoring {
 		return operationAfter;
 	}
 
+	public boolean isInsideExtractedOrInlinedMethod() {
+		return insideExtractedOrInlinedMethod;
+	}
+
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(variableBefore.codeRange()
 				.setDescription("original variable declaration")
 				.setCodeElement(variableBefore.toString()));
@@ -62,7 +69,7 @@ public class RemoveVariableModifierRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(variableAfter.codeRange()
 				.setDescription("variable declaration with removed modifier")
 				.setCodeElement(variableAfter.toString()));
@@ -89,15 +96,15 @@ public class RemoveVariableModifierRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
 		return pairs;
 	}
 
@@ -159,7 +166,10 @@ public class RemoveVariableModifierRefactoring implements Refactoring {
 		} else if (!variableAfter.equals(other.variableAfter))
 			return false;
 		if (variableBefore == null) {
-			return other.variableBefore == null;
-		} else return variableBefore.equals(other.variableBefore);
+			if (other.variableBefore != null)
+				return false;
+		} else if (!variableBefore.equals(other.variableBefore))
+			return false;
+		return true;
 	}
 }

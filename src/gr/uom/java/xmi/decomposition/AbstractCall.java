@@ -2,10 +2,12 @@ package gr.uom.java.xmi.decomposition;
 
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfoProvider;
+import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.replacement.MergeVariableReplacement;
 import gr.uom.java.xmi.decomposition.replacement.Replacement;
 import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
 import gr.uom.java.xmi.diff.CodeRange;
+import gr.uom.java.xmi.diff.UMLModelDiff;
 
 import java.util.*;
 
@@ -36,6 +38,57 @@ public abstract class AbstractCall implements LocationInfoProvider {
 	public abstract String getName();
 	public abstract double normalizedNameDistance(AbstractCall call);
 	public abstract AbstractCall update(String oldExpression, String newExpression);
+	
+	public boolean matchesOperation(UMLOperation operation, UMLOperation callerOperation, UMLModelDiff modelDiff) {
+		if(this instanceof OperationInvocation) {
+			return ((OperationInvocation)this).matchesOperation(operation, callerOperation, modelDiff);
+		}
+		return false;
+	}
+
+	public boolean compatibleExpression(AbstractCall other) {
+		if(this instanceof OperationInvocation && other instanceof OperationInvocation) {
+			return ((OperationInvocation)this).compatibleExpression((OperationInvocation)other);
+		}
+		else {
+			if(this.expression != null && other.expression != null) {
+				return this.expression.equals(other.expression);
+			}
+			return false;
+		}
+	}
+
+	public boolean differentExpressionNameAndArguments(AbstractCall other) {
+		boolean differentExpression = false;
+		if(this.expression == null && other.expression != null)
+			differentExpression = true;
+		if(this.expression != null && other.expression == null)
+			differentExpression = true;
+		if(this.expression != null && other.expression != null)
+			differentExpression = !this.expression.equals(other.expression) &&
+			!this.expression.startsWith(other.expression) && !other.expression.startsWith(this.expression);
+		boolean differentName = !this.getName().equals(other.getName());
+		Set<String> argumentIntersection = new LinkedHashSet<String>(this.arguments);
+		argumentIntersection.retainAll(other.arguments);
+		boolean argumentFoundInExpression = false;
+		if(this.expression != null) {
+			for(String argument : other.arguments) {
+				if(this.expression.contains(argument)) {
+					argumentFoundInExpression = true;
+				}
+			}
+		}
+		if(other.expression != null) {
+			for(String argument : this.arguments) {
+				if(other.expression.contains(argument)) {
+					argumentFoundInExpression = true;
+				}
+			}
+		}
+		boolean differentArguments = !this.arguments.equals(other.arguments) &&
+				argumentIntersection.isEmpty() && !argumentFoundInExpression;
+		return differentExpression && differentName && differentArguments;
+	}
 
 	public String actualString() {
 		StringBuilder sb = new StringBuilder();
@@ -216,6 +269,13 @@ public abstract class AbstractCall implements LocationInfoProvider {
 				(equalArguments(call) || (allArgumentsReplaced && normalizedNameDistance(call) <= distance) || (identicalOrReplacedArguments && !allArgumentsReplaced));
 	}
 
+	public boolean variableDeclarationInitializersRenamedWithIdenticalArguments(AbstractCall call) {
+		return this.coverage.equals(StatementCoverageType.VARIABLE_DECLARATION_INITIALIZER_CALL) &&
+				call.coverage.equals(StatementCoverageType.VARIABLE_DECLARATION_INITIALIZER_CALL) &&
+				getExpression() != null && call.getExpression() != null &&
+				!identicalName(call) && equalArguments(call);
+	}
+
 	public boolean renamedWithDifferentExpressionAndIdenticalArguments(AbstractCall call) {
 		return (this.getName().contains(call.getName()) || call.getName().contains(this.getName())) &&
 				equalArguments(call) && this.arguments.size() > 0 &&
@@ -246,9 +306,28 @@ public abstract class AbstractCall implements LocationInfoProvider {
 		}
 		return getExpression() != null && call.getExpression() != null &&
 				identicalExpression(call, replacements) &&
-				(normalizedNameDistance(call) <= distance || allExactLambdaMappers) &&
+				(normalizedNameDistance(call) <= distance || allExactLambdaMappers || (this.methodNameContainsArgumentName() && call.methodNameContainsArgumentName())) &&
 				!equalArguments(call) &&
-				getArguments().size() != call.getArguments().size();
+				(getArguments().size() != call.getArguments().size() ||
+				(getArguments().size() == call.getArguments().size() && !this.argumentContainsAnonymousClassDeclaration() && !call.argumentContainsAnonymousClassDeclaration()));
+	}
+
+	private boolean argumentContainsAnonymousClassDeclaration() {
+		for(String argument : arguments) {
+			if(argument.contains("{\n")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean methodNameContainsArgumentName() {
+		for(String argument : arguments) {
+			if(getName().toLowerCase().endsWith(argument.toLowerCase())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean onlyArgumentsChanged(AbstractCall call, Set<Replacement> replacements) {
@@ -381,11 +460,23 @@ public abstract class AbstractCall implements LocationInfoProvider {
 		return argumentIntersectionSize;
 	}
 
-	private boolean argumentIsEqual(String statement) {
+	private boolean argumentIsStatement(String statement) {
 		if(statement.endsWith(";\n")) {
 			for(String argument : getArguments()) {
 				//length()-2 to remove ";\n" from the end of the statement
 				if(equalsIgnoringExtraParenthesis(argument, statement.substring(0, statement.length()-2))) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean argumentIsExpression(String expression) {
+		if(!expression.endsWith(";\n")) {
+			//statement is actually an expression
+			for(String argument : getArguments()) {
+				if(equalsIgnoringExtraParenthesis(argument, expression)) {
 					return true;
 				}
 			}
@@ -406,25 +497,33 @@ public abstract class AbstractCall implements LocationInfoProvider {
 	}
 
 	public Replacement makeReplacementForReturnedArgument(String statement) {
-		if(argumentIsReturned(statement)) {
+		if(argumentIsReturned(statement) && (getArguments().size() == 1 || (statement.contains("?") && statement.contains(":")))) {
 			return new Replacement(getArguments().get(0), statement.substring(7, statement.length()-2),
 					ReplacementType.ARGUMENT_REPLACED_WITH_RETURN_EXPRESSION);
 		}
-		else if(argumentIsEqual(statement)) {
+		else if(argumentIsStatement(statement) && (getArguments().size() == 1 || (statement.contains("?") && statement.contains(":")))) {
 			return new Replacement(getArguments().get(0), statement.substring(0, statement.length()-2),
 					ReplacementType.ARGUMENT_REPLACED_WITH_STATEMENT);
+		}
+		else if(argumentIsExpression(statement) && (getArguments().size() == 1 || (statement.contains("?") && statement.contains(":")))) {
+			return new Replacement(getArguments().get(0), statement,
+					ReplacementType.ARGUMENT_REPLACED_WITH_EXPRESSION);
 		}
 		return null;
 	}
 
 	public Replacement makeReplacementForWrappedCall(String statement) {
-		if(argumentIsReturned(statement)) {
+		if(argumentIsReturned(statement) && (getArguments().size() == 1 || (statement.contains("?") && statement.contains(":")))) {
 			return new Replacement(statement.substring(7, statement.length()-2), getArguments().get(0),
 					ReplacementType.ARGUMENT_REPLACED_WITH_RETURN_EXPRESSION);
 		}
-		else if(argumentIsEqual(statement)) {
+		else if(argumentIsStatement(statement) && (getArguments().size() == 1 || (statement.contains("?") && statement.contains(":")))) {
 			return new Replacement(statement.substring(0, statement.length()-2), getArguments().get(0),
 					ReplacementType.ARGUMENT_REPLACED_WITH_STATEMENT);
+		}
+		else if(argumentIsExpression(statement) && (getArguments().size() == 1 || (statement.contains("?") && statement.contains(":")))) {
+			return new Replacement(statement, getArguments().get(0),
+					ReplacementType.ARGUMENT_REPLACED_WITH_EXPRESSION);
 		}
 		return null;
 	}

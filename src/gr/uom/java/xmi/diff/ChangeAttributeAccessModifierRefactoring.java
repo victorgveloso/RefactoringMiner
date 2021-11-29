@@ -1,20 +1,21 @@
 package gr.uom.java.xmi.diff;
 
-import gr.uom.java.xmi.UMLAttribute;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringType;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
+
+import gr.uom.java.xmi.UMLAttribute;
+
 public class ChangeAttributeAccessModifierRefactoring implements Refactoring {
-	private final String originalAccessModifier;
-	private final String changedAccessModifier;
-	private final UMLAttribute attributeBefore;
-	private final UMLAttribute attributeAfter;
+	private String originalAccessModifier;
+	private String changedAccessModifier;
+	private UMLAttribute attributeBefore;
+	private UMLAttribute attributeAfter;
 
 	public ChangeAttributeAccessModifierRefactoring(String originalAccessModifier, String changedAccessModifier,
 			UMLAttribute attributeBefore, UMLAttribute attributeAfter) {
@@ -42,7 +43,7 @@ public class ChangeAttributeAccessModifierRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(attributeBefore.codeRange()
 				.setDescription("original attribute declaration")
 				.setCodeElement(attributeBefore.toString()));
@@ -51,7 +52,7 @@ public class ChangeAttributeAccessModifierRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(attributeAfter.codeRange()
 				.setDescription("attribute declaration with changed access modifier")
 				.setCodeElement(attributeAfter.toString()));
@@ -70,27 +71,29 @@ public class ChangeAttributeAccessModifierRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getAttributeBefore().getLocationInfo().getFilePath(), getAttributeBefore().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getAttributeBefore().getLocationInfo().getFilePath(), getAttributeBefore().getClassName()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getAttributeAfter().getLocationInfo().getFilePath(), getAttributeAfter().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getAttributeAfter().getLocationInfo().getFilePath(), getAttributeAfter().getClassName()));
 		return pairs;
 	}
 
 	public String toString() {
-		return getName() + "\t" +
-				originalAccessModifier +
-				" to " +
-				changedAccessModifier +
-				" in attribute " +
-				attributeAfter +
-				" from class " +
-				attributeAfter.getClassName();
+		StringBuilder sb = new StringBuilder();
+		sb.append(getName()).append("\t");
+		sb.append(originalAccessModifier);
+		sb.append(" to ");
+		sb.append(changedAccessModifier);
+		sb.append(" in attribute ");
+		sb.append(attributeAfter);
+		sb.append(" from class ");
+		sb.append(attributeAfter.getClassName());
+		return sb.toString();
 	}
 
 	@Override
@@ -120,9 +123,13 @@ public class ChangeAttributeAccessModifierRefactoring implements Refactoring {
 		} else if (!attributeBefore.getVariableDeclaration().equals(other.attributeBefore.getVariableDeclaration()))
 			return false;
 		if (attributeAfter == null) {
-			return other.attributeAfter == null;
+			if (other.attributeAfter != null)
+				return false;
 		} else if(attributeAfter.getVariableDeclaration() == null) {
-			return other.attributeAfter.getVariableDeclaration() == null;
-		} else return attributeAfter.getVariableDeclaration().equals(other.attributeAfter.getVariableDeclaration());
+			if(other.attributeAfter.getVariableDeclaration() != null)
+				return false;
+		} else if (!attributeAfter.getVariableDeclaration().equals(other.attributeAfter.getVariableDeclaration()))
+			return false;
+		return true;
 	}
 }

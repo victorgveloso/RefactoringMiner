@@ -19,7 +19,7 @@ public class AbstractExpression extends AbstractCodeFragment {
 	@Getter private final List<String> variables;
 	@Getter private final List<String> types;
 	@Getter private final List<VariableDeclaration> variableDeclarations;
-	@Getter private final Map<String, List<OperationInvocation>> methodInvocationMap;
+	@Getter private final Map<String, List<AbstractCall>> methodInvocationMap;
 	@Getter private final List<AnonymousClassDeclarationObject> anonymousClassDeclarations;
 	@Getter private final List<String> stringLiterals;
 	@Getter private final List<String> numberLiterals;

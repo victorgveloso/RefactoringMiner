@@ -51,8 +51,8 @@ public class CompositeStatementObject extends AbstractStatement {
 	}
 
 	@Override
-	public List<StatementObject> getLeaves() {
-		List<StatementObject> leaves = new ArrayList<>();
+	public List<AbstractCodeFragment> getLeaves() {
+		List<AbstractCodeFragment> leaves = new ArrayList<>();
 		for(AbstractStatement statement : statementList) {
 			leaves.addAll(statement.getLeaves());
 		}
@@ -200,16 +200,16 @@ public class CompositeStatementObject extends AbstractStatement {
 	}
 
 	@Override
-	public Map<String, List<OperationInvocation>> getMethodInvocationMap() {
-		Map<String, List<OperationInvocation>> map = new LinkedHashMap<>();
+	public Map<String, List<AbstractCall>> getMethodInvocationMap() {
+		Map<String, List<AbstractCall>> map = new LinkedHashMap<>();
 		for(AbstractExpression expression : expressionList) {
-			Map<String, List<OperationInvocation>> expressionMap = expression.getMethodInvocationMap();
+			Map<String, List<AbstractCall>> expressionMap = expression.getMethodInvocationMap();
 			for(String key : expressionMap.keySet()) {
 				if(map.containsKey(key)) {
 					map.get(key).addAll(expressionMap.get(key));
 				}
 				else {
-					List<OperationInvocation> list = new ArrayList<>(expressionMap.get(key));
+					List<AbstractCall> list = new ArrayList<>(expressionMap.get(key));
 					map.put(key, list);
 				}
 			}
@@ -361,36 +361,36 @@ public class CompositeStatementObject extends AbstractStatement {
 		return map;
 	}
 
-	public Map<String, List<OperationInvocation>> getAllMethodInvocations() {
-		Map<String, List<OperationInvocation>> map = new LinkedHashMap<>(getMethodInvocationMap());
+	public Map<String, List<AbstractCall>> getAllMethodInvocations() {
+		Map<String, List<AbstractCall>> map = new LinkedHashMap<>(getMethodInvocationMap());
 		for(AbstractStatement statement : statementList) {
 			if(statement instanceof CompositeStatementObject) {
 				CompositeStatementObject composite = (CompositeStatementObject)statement;
-				Map<String, List<OperationInvocation>> compositeMap = composite.getAllMethodInvocations();
+				Map<String, List<AbstractCall>> compositeMap = composite.getAllMethodInvocations();
 				for(String key : compositeMap.keySet()) {
 					if(map.containsKey(key)) {
 						map.get(key).addAll(compositeMap.get(key));
 					}
 					else {
-						List<OperationInvocation> list = new ArrayList<>(compositeMap.get(key));
+						List<AbstractCall> list = new ArrayList<>(compositeMap.get(key));
 						map.put(key, list);
 					}
 				}
 			}
 			else if(statement instanceof StatementObject) {
 				StatementObject statementObject = (StatementObject)statement;
-				Map<String, List<OperationInvocation>> statementMap = statementObject.getMethodInvocationMap();
+				Map<String, List<AbstractCall>> statementMap = statementObject.getMethodInvocationMap();
 				for(String key : statementMap.keySet()) {
 					if(map.containsKey(key)) {
 						map.get(key).addAll(statementMap.get(key));
 					}
 					else {
-						List<OperationInvocation> list = new ArrayList<>(statementMap.get(key));
+						List<AbstractCall> list = new ArrayList<>(statementMap.get(key));
 						map.put(key, list);
 					}
 				}
 				for(LambdaExpressionObject lambda : statementObject.getLambdas()) {
-					Map<String, List<OperationInvocation>> lambdaMap = null;
+					Map<String, List<AbstractCall>> lambdaMap = null;
 					if(lambda.getBody() != null) {
 						lambdaMap = lambda.getBody().getCompositeStatement().getAllMethodInvocations();
 					}
@@ -402,7 +402,7 @@ public class CompositeStatementObject extends AbstractStatement {
 							map.get(key).addAll(lambdaMap.get(key));
 						}
 						else {
-							List<OperationInvocation> list = new ArrayList<>(lambdaMap.get(key));
+							List<AbstractCall> list = new ArrayList<>(lambdaMap.get(key));
 							map.put(key, list);
 						}
 					}
@@ -514,7 +514,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	public Map<String, Set<String>> aliasedAttributes() {
 		Map<String, Set<String>> map = new LinkedHashMap<>();
-		for(StatementObject statement : getLeaves()) {
+		for(AbstractCodeFragment statement : getLeaves()) {
 			String s = statement.getString();
 			if(s.startsWith("this.") && s.endsWith(";\n")) {
 				String firstLine = s.substring(0, s.indexOf("\n"));
@@ -586,7 +586,7 @@ public class CompositeStatementObject extends AbstractStatement {
 					}
 				}
 				boolean currentElementNameMatched = false;
-				for(StatementObject statement : innerNode.getLeaves()) {
+				for(AbstractCodeFragment statement : innerNode.getLeaves()) {
 					VariableDeclaration variableDeclaration = statement.getVariableDeclaration(currentElementName);
 					if(variableDeclaration != null && statement.getVariables().contains(collectionName)) {
 						currentElementNameMatched = true;

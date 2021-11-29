@@ -1,5 +1,20 @@
 package gr.uom.java.xmi.decomposition;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.IExtendedModifier;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.diff.CodeRange;
@@ -16,7 +31,7 @@ public class StatementObject extends AbstractStatement {
 	private final List<String> variables;
 	private final List<String> types;
 	private final List<VariableDeclaration> variableDeclarations;
-	private final Map<String, List<OperationInvocation>> methodInvocationMap;
+	private final Map<String, List<AbstractCall>> methodInvocationMap;
 	private final List<AnonymousClassDeclarationObject> anonymousClassDeclarations;
 	private final List<String> stringLiterals;
 	private final List<String> numberLiterals;
@@ -124,8 +139,8 @@ public class StatementObject extends AbstractStatement {
 	}
 
 	@Override
-	public List<StatementObject> getLeaves() {
-		List<StatementObject> leaves = new ArrayList<>();
+	public List<AbstractCodeFragment> getLeaves() {
+		List<AbstractCodeFragment> leaves = new ArrayList<>();
 		leaves.add(this);
 		return leaves;
 	}
@@ -150,7 +165,7 @@ public class StatementObject extends AbstractStatement {
 	}
 
 	@Override
-	public Map<String, List<OperationInvocation>> getMethodInvocationMap() {
+	public Map<String, List<AbstractCall>> getMethodInvocationMap() {
 		return methodInvocationMap;
 	}
 

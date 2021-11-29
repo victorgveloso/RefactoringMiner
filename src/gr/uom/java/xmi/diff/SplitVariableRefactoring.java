@@ -14,19 +14,22 @@ import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
 public class SplitVariableRefactoring implements Refactoring {
-	private final Set<VariableDeclaration> splitVariables;
-	private final VariableDeclaration oldVariable;
-	private final UMLOperation operationBefore;
-	private final UMLOperation operationAfter;
-	private final Set<AbstractCodeMapping> variableReferences;
+	private Set<VariableDeclaration> splitVariables;
+	private VariableDeclaration oldVariable;
+	private UMLOperation operationBefore;
+	private UMLOperation operationAfter;
+	private Set<AbstractCodeMapping> variableReferences;
+	private boolean insideExtractedOrInlinedMethod;
 	
 	public SplitVariableRefactoring(VariableDeclaration oldVariable, Set<VariableDeclaration> splitVariables,
-			UMLOperation operationBefore, UMLOperation operationAfter, Set<AbstractCodeMapping> variableReferences) {
+			UMLOperation operationBefore, UMLOperation operationAfter, Set<AbstractCodeMapping> variableReferences,
+			boolean insideExtractedOrInlinedMethod) {
 		this.splitVariables = splitVariables;
 		this.oldVariable = oldVariable;
 		this.operationBefore = operationBefore;
 		this.operationAfter = operationAfter;
 		this.variableReferences = variableReferences;
+		this.insideExtractedOrInlinedMethod = insideExtractedOrInlinedMethod;
 	}
 
 	public Set<VariableDeclaration> getSplitVariables() {
@@ -47,6 +50,10 @@ public class SplitVariableRefactoring implements Refactoring {
 
 	public Set<AbstractCodeMapping> getVariableReferences() {
 		return variableReferences;
+	}
+
+	public boolean isInsideExtractedOrInlinedMethod() {
+		return insideExtractedOrInlinedMethod;
 	}
 
 	private boolean allVariablesAreParameters() {
@@ -72,26 +79,28 @@ public class SplitVariableRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
 		return pairs;
 	}
 
 	public String toString() {
-		return getName() + "\t" +
-				oldVariable +
-				" to " +
-				splitVariables +
-				" in method " +
-				operationAfter +
-				" from class " + operationAfter.getClassName();
+		StringBuilder sb = new StringBuilder();
+		sb.append(getName()).append("\t");
+		sb.append(oldVariable);
+		sb.append(" to ");
+		sb.append(splitVariables);
+		sb.append(" in method ");
+		sb.append(operationAfter);
+		sb.append(" from class ").append(operationAfter.getClassName());
+		return sb.toString();
 	}
 
 	@Override
@@ -130,13 +139,16 @@ public class SplitVariableRefactoring implements Refactoring {
 		} else if (!operationBefore.equals(other.operationBefore))
 			return false;
 		if (splitVariables == null) {
-			return other.splitVariables == null;
-		} else return splitVariables.equals(other.splitVariables);
+			if (other.splitVariables != null)
+				return false;
+		} else if (!splitVariables.equals(other.splitVariables))
+			return false;
+		return true;
 	}
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(oldVariable.codeRange()
 				.setDescription("original variable declaration")
 				.setCodeElement(oldVariable.toString()));
@@ -148,7 +160,7 @@ public class SplitVariableRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		for(VariableDeclaration splitVariable : splitVariables) {
 			ranges.add(splitVariable.codeRange()
 					.setDescription("split variable declaration")
