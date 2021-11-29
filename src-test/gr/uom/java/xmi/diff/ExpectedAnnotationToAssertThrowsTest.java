@@ -12,6 +12,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringMinerTimedOutException;
 import org.refactoringminer.api.RefactoringType;
 
@@ -39,23 +40,6 @@ public class ExpectedAnnotationToAssertThrowsTest {
     }
 
     public static class ImplementationTest extends ModelDiffFieldSetUp {
-        @Ignore("Replaced by testFromInlineToAssertThrows_classDiff since TestOperationDiff depends on UMLClassBaseDiff")
-        @Test
-        public void testFromInlineToAssertThrows() {
-            var classDiff = modelDiff.getUMLClassDiff("ca.concordia.victor.exception.ExampleClassTest");
-            Assert.assertNotNull(classDiff);
-            Assert.assertEquals(2, classDiff.operationBodyMapperList.size());
-            var testMethodMapperOptional = classDiff.operationBodyMapperList.stream().filter(UMLOperationBodyMapper::involvesTestMethods).findAny();
-            Assert.assertTrue(testMethodMapperOptional.isPresent());
-            var mapper = testMethodMapperOptional.get();
-            var opDiff = new UMLOperationDiff(mapper);
-            Assert.assertNull(opDiff.getTestOperationDiff());
-            var refactorings = opDiff.getRefactorings();
-            Assert.assertNotNull(opDiff.getTestOperationDiff());
-            Assert.assertEquals(2, refactorings.size());
-            var expectedClassNames = Set.of("gr.uom.java.xmi.diff.ModifyMethodAnnotationRefactoring", "gr.uom.java.xmi.diff.ExpectedAnnotationToAssertThrowsRefactoring");
-            Assert.assertTrue(expectedClassNames.containsAll(refactorings.stream().map(Object::getClass).map(Class::getName).collect(Collectors.toUnmodifiableSet())));
-        }
         @Test
         public void testFromInlineToAssertThrows_detector() {
             var classDiff = modelDiff.getUMLClassDiff("ca.concordia.victor.exception.ExampleClassTest");
@@ -64,7 +48,14 @@ public class ExpectedAnnotationToAssertThrowsTest {
             var testMethodMapperOptional = classDiff.operationBodyMapperList.stream().filter(UMLOperationBodyMapper::involvesTestMethods).findAny();
             Assert.assertTrue(testMethodMapperOptional.isPresent());
             var mapper = testMethodMapperOptional.get();
-            var detector = new ExpectedAnnotationToAssertThrowsDetection(mapper.getOperation1(), mapper.getOperation2(), mapper.getRefactoringsAfterPostProcessing());
+            var annotationsBefore = mapper.getOperation1().getAnnotations();
+            Assert.assertEquals(annotationsBefore.size(), 1);
+            UMLAnnotation annotationBefore = annotationsBefore.get(0);
+            var annotationsAfter = mapper.getOperation2().getAnnotations();
+            Assert.assertEquals(annotationsAfter.size(), 1);
+            UMLAnnotation annotationAfter = annotationsAfter.get(0);
+            List<Refactoring> annotations = List.of(new ModifyMethodAnnotationRefactoring(annotationBefore, annotationAfter, mapper.getOperation1(), mapper.getOperation2()));
+            var detector = new ExpectedAnnotationToAssertThrowsDetection(mapper.getOperation1(), mapper.getOperation2(), annotations);
             var refactoring = detector.check();
             Assert.assertNotNull(refactoring);
             Assert.assertEquals(mapper.getOperation2(), refactoring.getOperationAfter());

@@ -37,7 +37,6 @@ public class UMLOperationDiff {
 	private List<UMLType> addedExceptionTypes;
 	private List<UMLType> removedExceptionTypes;
 	private SimpleEntry<Set<UMLType>, Set<UMLType>> changedExceptionTypes;
-	@Getter private TestOperationDiff testOperationDiff;
 
 	public UMLOperationDiff(UMLOperation removedOperation, UMLOperation addedOperation) {
 		process(removedOperation, addedOperation);
