@@ -54,7 +54,7 @@ import java.util.regex.Pattern;
 
 public class UMLModelDiff {
 	private static final Pattern RETURN_NUMBER_LITERAL = Pattern.compile("return \\d+;\n");
-	private static final int MAXIMUM_NUMBER_OF_COMPARED_METHODS = 200;
+	private final int MAXIMUM_NUMBER_OF_COMPARED_METHODS;
 	private final UMLModel parentModel;
 	private final UMLModel childModel;
 	private final List<UMLClass> addedClasses;
@@ -78,6 +78,12 @@ public class UMLModelDiff {
 	public UMLModelDiff(UMLModel parentModel, UMLModel childModel) {
 		this.parentModel = parentModel;
 		this.childModel = childModel;
+		if(parentModel.isPartial() || childModel.isPartial()) {
+			MAXIMUM_NUMBER_OF_COMPARED_METHODS = 100;
+		}
+		else {
+			MAXIMUM_NUMBER_OF_COMPARED_METHODS = 200;
+		}
 		this.addedClasses = new ArrayList<>();
 		this.removedClasses = new ArrayList<>();
 		this.addedGeneralizations = new ArrayList<>();

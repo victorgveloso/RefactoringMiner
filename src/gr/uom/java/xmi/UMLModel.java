@@ -2,15 +2,22 @@ package gr.uom.java.xmi;
 
 import gr.uom.java.xmi.diff.UMLClassDiff;
 import gr.uom.java.xmi.diff.UMLModelDiff;
-import org.refactoringminer.api.RefactoringMinerTimedOutException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+
+import org.refactoringminer.api.RefactoringMinerTimedOutException;
 
 public class UMLModel {
 	private final Set<String> repositoryDirectories;
     private final List<UMLClass> classList;
     private final List<UMLGeneralization> generalizationList;
     private final List<UMLRealization> realizationList;
+    private boolean partial;
 
     public UMLModel(Set<String> repositoryDirectories) {
     	this.repositoryDirectories = repositoryDirectories;
@@ -18,6 +25,14 @@ public class UMLModel {
         generalizationList = new ArrayList<>();
         realizationList = new ArrayList<>();
     }
+
+	public boolean isPartial() {
+		return partial;
+	}
+
+	public void setPartial(boolean partial) {
+		this.partial = partial;
+	}
 
 	public void addClass(UMLClass umlClass) {
         classList.add(umlClass);
