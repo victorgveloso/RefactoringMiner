@@ -78,4 +78,5 @@ public class TestOperationDiffMother {
                 "        exampleObj.exampleMethod(42);\n" +
                 "    }";
     }
+
 }

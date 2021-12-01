@@ -95,7 +95,7 @@ public enum RefactoringType {
 	SPLIT_PACKAGE("Split Package", "Split Package (.+) to \\[(.+)\\]"),
 	MERGE_PACKAGE("Merge Package", "Merge Package \\[(.+)\\] to (.+)"),
     REPLACE_EXPECTED_WITH_ASSERT_THROWS("Replace Expect Annotation With Assert Throws", "Replace Expect Annotation With Assert Throws (.+) from method (.+) in class (.+)"),
-    REPLACE_TRY_FAIL_WITH_RULE("Replace Try-Fail With Rule", "Replace Try-Fail With Rule (.+) from method (.+) in class (.+)"),
+    REPLACE_TRY_FAIL_WITH_RULE("Replace Try And Fail With Rule", "Replace Try-Fail With Rule (.+) from method (.+) in class (.+)"),
 	CHANGE_TYPE_DECLARATION_KIND("Change Type Declaration Kind", "Change Type Declaration Kind (.+) to (.+) in type (.+)"),
 	COLLAPSE_HIERARCHY("Collapse Hierarchy", "Collapse Hierarchy (.+) to (.+)"),
 	REPLACE_LOOP_WITH_PIPELINE("Replace Loop With Pipeline", "Replace Loop With Pipeline (.+) with (.+) in method (.+) from class (.+)"),
