@@ -107,8 +107,13 @@ public class TryWithFailToExpectedExceptionRuleDetection {
     }
 
     private static Stream<OperationInvocation> detectAssertFailInvocationAtTheEndOf(TryStatementObject tryStatement) {
-        var lastStatement = tryStatement.getStatements().get(tryStatement.getStatements().size() - 1);
-        var operationInvocationsInLastStatement = new ArrayList<>(lastStatement.getMethodInvocationMap().values()).get(0);
+        List<OperationInvocation> operationInvocationsInLastStatement;
+        try {
+            var lastStatement = tryStatement.getStatements().get(tryStatement.getStatements().size() - 1);
+            operationInvocationsInLastStatement = new ArrayList<>(lastStatement.getMethodInvocationMap().values()).get(0);
+        } catch (IndexOutOfBoundsException e) {
+            return Stream.empty();
+        }
         var nonNullInvocations = operationInvocationsInLastStatement.stream().filter(Objects::nonNull);
         var nonNullFailInvocations = nonNullInvocations.filter(invocation -> Objects.nonNull(invocation.getMethodName()) && invocation.getMethodName().equals("fail"));
         return nonNullFailInvocations.filter(invocation -> Objects.isNull(invocation.getExpression()) || invocation.getExpression().equals("Assert"));

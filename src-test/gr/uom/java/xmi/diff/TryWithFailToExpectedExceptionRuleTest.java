@@ -1,6 +1,7 @@
 package gr.uom.java.xmi.diff;
 
 import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLModelASTReader;
 import gr.uom.java.xmi.decomposition.CompositeStatementObject;
 import gr.uom.java.xmi.decomposition.OperationInvocation;
@@ -36,9 +37,54 @@ public class TryWithFailToExpectedExceptionRuleTest {
     }
     public static class RegressionTest  {
         UMLModelDiff modelDiff;
+        UMLModel after;
 
         @Before
-        public void setUp() throws RefactoringMinerTimedOutException {
+        public void setUp() {
+            var ruleVersionTestClass = "package android.support.test.espresso.intent.matcher;\n" +
+                    "\n" +
+                    "public class IntentMatchersTest {\n" +
+                    "    @Rule\n" +
+                    "    public ExpectedException expectedException = none();\n" +
+                    "    @Test\n" +
+                    "    public void toPackageTesting() {\n" +
+                    "        final String pkg = \"pkg1\";\n" +
+                    "        ResolvedIntent intent = new FakeResolvedIntent(pkg);\n" +
+                    "        assertTrue(toPackage(pkg).matches(intent));\n" +
+                    "        assertFalse(toPackage(\"notpkg1\").matches(intent));\n" +
+                    "        expectedException.expect(RuntimeException.class);\n" +
+                    "        toPackage(\"whatever\").matches(new Intent(Intent.ACTION_VIEW));\n" +
+                    "    }\n" +
+                    "}";
+            after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", ruleVersionTestClass), Set.of()).getUmlModel();
+        }
+
+        @Test
+        public void testFromTryFailToRule_LastTryChildStatementContainingZeroMethodInvocation_ShouldNotThrowIndexOutOfBoundsException() throws RefactoringMinerTimedOutException {
+            var tryCatchVersionTestClass = "package android.support.test.espresso.intent.matcher;\n" +
+                    "\n" +
+                    "public class IntentMatchersTest {\n" +
+                    "    public void testToPackage() {\n" +
+                    "        final String pkg = \"pkg1\";\n" +
+                    "        ResolvedIntent intent = new FakeResolvedIntent(pkg);\n" +
+                    "        assertTrue(toPackage(pkg).matches(intent));\n" +
+                    "        assertFalse(toPackage(\"notpkg1\").matches(intent));\n" +
+                    "        try {\n" +
+                    "            toPackage(\"whatever\").matches(new Intent(Intent.ACTION_VIEW));\n" +
+                    "            pkg = \"pkg2\";\n" +
+                    "        } catch (RuntimeException expected) {\n" +
+                    "\n" +
+                    "        }\n" +
+                    "        assertEquals(pkg, \"pkg1\");\n" +
+                    "    }\n" +
+                    "}";
+            var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", tryCatchVersionTestClass), Set.of()).getUmlModel();
+            modelDiff = before.diff(after);
+            modelDiff.getRefactorings();
+        }
+
+        @Test
+        public void testFromTryFailToRule_StaticallyImportedAssertFail_ShouldThrowNullPointerException() throws RefactoringMinerTimedOutException {
             var tryCatchVersionTestClass = "package android.support.test.espresso.intent.matcher;\n" +
                     "\n" +
                     "public class IntentMatchersTest {\n" +
@@ -56,32 +102,8 @@ public class TryWithFailToExpectedExceptionRuleTest {
                     "    }\n" +
                     "}";
             var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", tryCatchVersionTestClass), Set.of()).getUmlModel();
-            var ruleVersionTestClass = "package android.support.test.espresso.intent.matcher;\n" +
-                    "\n" +
-                    "public class IntentMatchersTest {\n" +
-                    "    @Rule\n" +
-                    "    public ExpectedException expectedException = none();\n" +
-                    "    @Test\n" +
-                    "    public void toPackageTesting() {\n" +
-                    "        final String pkg = \"pkg1\";\n" +
-                    "        ResolvedIntent intent = new FakeResolvedIntent(pkg);\n" +
-                    "        assertTrue(toPackage(pkg).matches(intent));\n" +
-                    "        assertFalse(toPackage(\"notpkg1\").matches(intent));\n" +
-                    "        expectedException.expect(RuntimeException.class);\n" +
-                    "        toPackage(\"whatever\").matches(new Intent(Intent.ACTION_VIEW));\n" +
-                    "    }\n" +
-                    "}";
-            var after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", ruleVersionTestClass), Set.of()).getUmlModel();
             modelDiff = before.diff(after);
-        }
-        @Test
-        public void testFromTryFailToRule_ModelDiff_getRefactorings() throws RefactoringMinerTimedOutException {
-            try {
-                var refactorings = modelDiff.getRefactorings();
-                Assert.fail();
-            } catch (NullPointerException e) {
-
-            }
+            modelDiff.getRefactorings();
         }
 
     }

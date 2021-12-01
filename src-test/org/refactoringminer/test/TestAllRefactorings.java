@@ -16,6 +16,16 @@ public class TestAllRefactorings {
 	}
 
 	@Test
+	public void testARefactoring_ReplaceTryAndFailWithRule() throws Exception {
+		GitHistoryRefactoringMinerImpl detector = new GitHistoryRefactoringMinerImpl();
+		TestBuilder test = new TestBuilder(detector, "tmp1", Refactorings.All.getValue());
+		test.project("https://github.com/bootstraponline/platform_frameworks_testing.git", "master")
+				.atCommit("fd4f188953811d124fdbad55b233cbc50f9105c7")
+				.contains("Replace Try And Fail With Rule RuntimeException.class from method public testToPackage() : void in class android.support.test.espresso.intent.matcher.IntentMatchersTest");
+		test.assertExpectations(1,0,0);
+	}
+
+	@Test
 	public void testARefactoring_ReplaceExpectAnnotationWithAssertThrows() throws Exception {
 		GitHistoryRefactoringMinerImpl detector = new GitHistoryRefactoringMinerImpl();
 		TestBuilder test = new TestBuilder(detector, "tmp1", Refactorings.All.getValue());
