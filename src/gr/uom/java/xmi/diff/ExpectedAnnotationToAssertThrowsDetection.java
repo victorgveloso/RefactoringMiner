@@ -101,7 +101,7 @@ public class ExpectedAnnotationToAssertThrowsDetection {
     private List<OperationInvocation> getAssertThrows(UMLOperation operation) {
         return operation.getAllOperationInvocations().stream()
                 .filter((op) -> op.getMethodName().equals("assertThrows") &&
-                        (op.getExpression().equals("Assert") || op.getExpression().equals("Assertions") || Objects.isNull(op.getExpression())))
+                        (Objects.isNull(op.getExpression()) || op.getExpression().equals("Assert") || op.getExpression().equals("Assertions")))
                 .collect(Collectors.toList());
     }
 }
