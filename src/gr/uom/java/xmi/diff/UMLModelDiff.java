@@ -49,9 +49,6 @@ import org.refactoringminer.api.RefactoringMinerTimedOutException;
 import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.util.PrefixSuffixUtils;
 
-import java.util.*;
-import java.util.regex.Pattern;
-
 public class UMLModelDiff {
 	private static final Pattern RETURN_NUMBER_LITERAL = Pattern.compile("return \\d+;\n");
 	private final int MAXIMUM_NUMBER_OF_COMPARED_METHODS;
