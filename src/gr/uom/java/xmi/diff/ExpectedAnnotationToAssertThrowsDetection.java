@@ -87,6 +87,8 @@ public class ExpectedAnnotationToAssertThrowsDetection {
         return refactorings.stream()
                 .filter(r -> r.getRefactoringType().equals(RefactoringType.MODIFY_METHOD_ANNOTATION))
                 .map(r -> (ModifyMethodAnnotationRefactoring) r)
+                .filter(r -> r.getOperationBefore().equals(operationBefore))
+                .filter(r -> r.getOperationAfter().equals(operationAfter))
                 .filter(r -> hasExpectedException(r.getAnnotationBefore()))
                 .filter(r -> !hasExpectedException(r.getAnnotationAfter()))
                 .findAny();
@@ -99,7 +101,7 @@ public class ExpectedAnnotationToAssertThrowsDetection {
     private List<OperationInvocation> getAssertThrows(UMLOperation operation) {
         return operation.getAllOperationInvocations().stream()
                 .filter((op) -> op.getMethodName().equals("assertThrows") &&
-                        (op.getExpression().equals("Assert") || op.getExpression().equals("Assertions")))
+                        (op.getExpression().equals("Assert") || op.getExpression().equals("Assertions") || Objects.isNull(op.getExpression())))
                 .collect(Collectors.toList());
     }
 }

@@ -38,6 +38,24 @@ public class ExpectedAnnotationToAssertThrowsTest {
             modelDiff = before.diff(after);
         }
     }
+    public static class RegressionTest {
+        UMLModelDiff modelDiff;
+
+        @Before
+        public void setUp() throws RefactoringMinerTimedOutException {
+            var inlineVersionTestClass = TestOperationDiffMother.createExampleTestClass_InlineVersion2();
+            var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", inlineVersionTestClass), Set.of()).getUmlModel();
+            var assertVersionTestClass = TestOperationDiffMother.createExampleTestClass_AssertVersion2();
+            var after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", assertVersionTestClass), Set.of()).getUmlModel();
+            modelDiff = before.diff(after);
+        }
+        @Test
+        public void testFromInlineToAssertThrows_firstModifiedMethodAnnotationBelongsToOtherMethod() throws RefactoringMinerTimedOutException {
+            var refactorings = modelDiff.getRefactorings();
+            Assert.assertEquals(3, refactorings.size());
+            Assert.assertTrue(refactorings.stream().allMatch(r -> r instanceof ModifyMethodAnnotationRefactoring || r instanceof ExpectedAnnotationToAssertThrowsRefactoring));
+        }
+    }
 
     public static class ImplementationTest extends ModelDiffFieldSetUp {
         @Test
