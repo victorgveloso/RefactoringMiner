@@ -39,9 +39,38 @@ public class TryWithFailToExpectedExceptionRuleTest {
 
         @Before
         public void setUp() throws RefactoringMinerTimedOutException {
-            var tryCatchVersionTestClass = TestOperationDiffMother.createExampleTestClass_TryCatchVersion();
+            var tryCatchVersionTestClass = "package android.support.test.espresso.intent.matcher;\n" +
+                    "\n" +
+                    "public class IntentMatchersTest {\n" +
+                    "    public void testToPackage() {\n" +
+                    "        final String pkg = \"pkg1\";\n" +
+                    "        ResolvedIntent intent = new FakeResolvedIntent(pkg);\n" +
+                    "        assertTrue(toPackage(pkg).matches(intent));\n" +
+                    "        assertFalse(toPackage(\"notpkg1\").matches(intent));\n" +
+                    "        try {\n" +
+                    "            toPackage(\"whatever\").matches(new Intent(Intent.ACTION_VIEW));\n" +
+                    "            fail(\"Expected previous call to fail.\");\n" +
+                    "        } catch (RuntimeException expected) {\n" +
+                    "\n" +
+                    "        }\n" +
+                    "    }\n" +
+                    "}";
             var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", tryCatchVersionTestClass), Set.of()).getUmlModel();
-            var ruleVersionTestClass = TestOperationDiffMother.createExampleTestClass_RuleVersion();
+            var ruleVersionTestClass = "package android.support.test.espresso.intent.matcher;\n" +
+                    "\n" +
+                    "public class IntentMatchersTest {\n" +
+                    "    @Rule\n" +
+                    "    public ExpectedException expectedException = none();\n" +
+                    "    @Test\n" +
+                    "    public void toPackageTesting() {\n" +
+                    "        final String pkg = \"pkg1\";\n" +
+                    "        ResolvedIntent intent = new FakeResolvedIntent(pkg);\n" +
+                    "        assertTrue(toPackage(pkg).matches(intent));\n" +
+                    "        assertFalse(toPackage(\"notpkg1\").matches(intent));\n" +
+                    "        expectedException.expect(RuntimeException.class);\n" +
+                    "        toPackage(\"whatever\").matches(new Intent(Intent.ACTION_VIEW));\n" +
+                    "    }\n" +
+                    "}";
             var after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", ruleVersionTestClass), Set.of()).getUmlModel();
             modelDiff = before.diff(after);
         }

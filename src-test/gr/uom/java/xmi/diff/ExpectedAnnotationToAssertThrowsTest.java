@@ -43,9 +43,72 @@ public class ExpectedAnnotationToAssertThrowsTest {
 
         @Before
         public void setUp() throws RefactoringMinerTimedOutException {
-            var inlineVersionTestClass = TestOperationDiffMother.createExampleTestClass_InlineVersion2();
+            var inlineVersionTestClass = "package uk.gov.hmcts.reform.cwrdapi.service.impl;\n" +
+                    "\n" +
+                    "public class CaseWorkerServiceImplTest {\n" +
+                    "    @Test(expected = InvalidRequestException.class)\n" +
+                    "    public void testInvalidRequestExceptionForInvalidSortColumn() {\n" +
+                    "        validateAndBuildPaginationObject(0, 1,\n" +
+                    "                \"invalid\", \"ASC\",\n" +
+                    "                20, \"invalid\", CaseWorkerProfile.class);\n" +
+                    "    }\n" +
+                    "    @Test(expected = StaffReferenceException.class)\n" +
+                    "    public void testRefreshRoleAllocationWhenLrdResponseReturns400() throws JsonProcessingException {\n" +
+                    "        ErrorResponse errorResponse = ErrorResponse\n" +
+                    "                .builder()\n" +
+                    "                .errorCode(400)\n" +
+                    "                .errorDescription(\"testErrorDesc\")\n" +
+                    "                .errorMessage(\"testErrorMsg\")\n" +
+                    "                .build()\n" +
+                    "                ;\n" +
+                    "        String body = mapper.writeValueAsString(errorResponse);\n" +
+                    "\n" +
+                    "        when(locationReferenceDataFeignClient.getLocationRefServiceMapping(\"cmc\"))\n" +
+                    "                .thenReturn(Response.builder()\n" +
+                    "                        .request(mock(Request.class)).body(body, defaultCharset()).status(400).build());\n" +
+                    "        PageRequest pageRequest = RequestUtils.validateAndBuildPaginationObject(0, 1,\n" +
+                    "                \"caseWorkerId\", \"ASC\",\n" +
+                    "                20, \"id\", CaseWorkerProfile.class);\n" +
+                    "\n" +
+                    "        caseWorkerServiceImpl\n" +
+                    "                .fetchStaffProfilesForRoleRefresh(\"cmc\", pageRequest);\n" +
+                    "    }\n" +
+                    "}";
             var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", inlineVersionTestClass), Set.of()).getUmlModel();
-            var assertVersionTestClass = TestOperationDiffMother.createExampleTestClass_AssertVersion2();
+            var assertVersionTestClass = "package uk.gov.hmcts.reform.cwrdapi.service.impl;\n" +
+                    "\n" +
+                    "public class CaseWorkerServiceImplTest {\n" +
+                    "    @Test\n" +
+                    "    public void testInvalidRequestExceptionForInvalidSortColumn() {\n" +
+                    "        Assertions.assertThrows(Exception.class, () -> {\n" +
+                    "            validateAndBuildPaginationObject(0, 1,\n" +
+                    "                    \"invalid\", \"ASC\",\n" +
+                    "                    20, \"invalid\", CaseWorkerProfile.class);\n" +
+                    "        });\n" +
+                    "    }\n" +
+                    "    @Test\n" +
+                    "    public void testRefreshRoleAllocationWhenLrdResponseReturns400() throws JsonProcessingException {\n" +
+                    "        ErrorResponse errorResponse = ErrorResponse\n" +
+                    "                .builder()\n" +
+                    "                .errorCode(400)\n" +
+                    "                .errorDescription(\"testErrorDesc\")\n" +
+                    "                .errorMessage(\"testErrorMsg\")\n" +
+                    "                .build();\n" +
+                    "        String body = mapper.writeValueAsString(errorResponse);\n" +
+                    "\n" +
+                    "        when(locationReferenceDataFeignClient.getLocationRefServiceMapping(\"cmc\"))\n" +
+                    "                .thenReturn(Response.builder()\n" +
+                    "                        .request(mock(Request.class)).body(body, defaultCharset()).status(400).build());\n" +
+                    "        PageRequest pageRequest = RequestUtils.validateAndBuildPaginationObject(0, 1,\n" +
+                    "                \"caseWorkerId\", \"ASC\",\n" +
+                    "                20, \"id\", CaseWorkerProfile.class);\n" +
+                    "\n" +
+                    "        Assertions.assertThrows(StaffReferenceException.class, () -> {\n" +
+                    "            caseWorkerServiceImpl\n" +
+                    "                    .fetchStaffProfilesForRoleRefresh(\"cmc\", pageRequest);\n" +
+                    "        });\n" +
+                    "    }\n" +
+                    "}";
             var after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", assertVersionTestClass), Set.of()).getUmlModel();
             modelDiff = before.diff(after);
         }
