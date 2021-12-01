@@ -34,6 +34,28 @@ public class TryWithFailToExpectedExceptionRuleTest {
             modelDiff = before.diff(after);
         }
     }
+    public static class RegressionTest  {
+        UMLModelDiff modelDiff;
+
+        @Before
+        public void setUp() throws RefactoringMinerTimedOutException {
+            var tryCatchVersionTestClass = TestOperationDiffMother.createExampleTestClass_TryCatchVersion();
+            var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", tryCatchVersionTestClass), Set.of()).getUmlModel();
+            var ruleVersionTestClass = TestOperationDiffMother.createExampleTestClass_RuleVersion();
+            var after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", ruleVersionTestClass), Set.of()).getUmlModel();
+            modelDiff = before.diff(after);
+        }
+        @Test
+        public void testFromTryFailToRule_ModelDiff_getRefactorings() throws RefactoringMinerTimedOutException {
+            try {
+                var refactorings = modelDiff.getRefactorings();
+                Assert.fail();
+            } catch (NullPointerException e) {
+
+            }
+        }
+
+    }
     public static class ImplementationTest extends ModelDiffFieldSetUp {
         @Test
         public void testFromTryFailToRule() {
@@ -76,7 +98,7 @@ public class TryWithFailToExpectedExceptionRuleTest {
             Assert.assertTrue(refactorings.stream().anyMatch(r->r instanceof TryWithFailToExpectedExceptionRuleRefactoring));
             TryWithFailToExpectedExceptionRuleRefactoring r = (TryWithFailToExpectedExceptionRuleRefactoring) refactorings.get(0);
             Assert.assertEquals("IllegalArgumentException.class",r.getException());
-            Assert.assertEquals("Replace Try-Fail With Rule",r.getName());
+            Assert.assertEquals("Replace Try And Fail With Rule",r.getName());
             Assert.assertEquals(RefactoringType.REPLACE_TRY_FAIL_WITH_RULE,r.getRefactoringType());
             Assert.assertEquals(1,r.getInvolvedClassesAfterRefactoring().size());
             Assert.assertEquals("testClass",new ArrayList<>(r.getInvolvedClassesAfterRefactoring()).get(0).left);
@@ -84,7 +106,7 @@ public class TryWithFailToExpectedExceptionRuleTest {
             Assert.assertEquals(1,r.getInvolvedClassesBeforeRefactoring().size());
             Assert.assertEquals("testClass",new ArrayList<>(r.getInvolvedClassesBeforeRefactoring()).get(0).left);
             Assert.assertEquals("ca.concordia.victor.exception.ExampleClassTest",new ArrayList<>(r.getInvolvedClassesBeforeRefactoring()).get(0).right);
-            Assert.assertEquals("Replace Try-Fail With Rule\tIllegalArgumentException.class from method public testExampleMethod_WrongGuess() : void in class ca.concordia.victor.exception.ExampleClassTest", r.toString());
+            Assert.assertEquals("Replace Try And Fail With Rule\tIllegalArgumentException.class from method public testExampleMethod_WrongGuess() : void in class ca.concordia.victor.exception.ExampleClassTest", r.toString());
             var leftSideDescriptions = new String[]{"source method declaration before migration", "source method's try-statement", "source method's catch clause capturing the expected exception", "source method's assertFail invocation from the try-statement before migration"};
             Assert.assertArrayEquals(leftSideDescriptions, r.leftSide().stream().map(CodeRange::getDescription).toArray());
             var leftSideCodeElementTypes = new LocationInfo.CodeElementType[]{LocationInfo.CodeElementType.METHOD_DECLARATION,LocationInfo.CodeElementType.FIELD_DECLARATION,LocationInfo.CodeElementType.METHOD_INVOCATION};

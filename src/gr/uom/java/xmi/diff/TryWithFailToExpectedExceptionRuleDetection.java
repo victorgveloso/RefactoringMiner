@@ -109,7 +109,9 @@ public class TryWithFailToExpectedExceptionRuleDetection {
     private static Stream<OperationInvocation> detectAssertFailInvocationAtTheEndOf(TryStatementObject tryStatement) {
         var lastStatement = tryStatement.getStatements().get(tryStatement.getStatements().size() - 1);
         var operationInvocationsInLastStatement = new ArrayList<>(lastStatement.getMethodInvocationMap().values()).get(0);
-        return operationInvocationsInLastStatement.stream().filter(invocation -> invocation.getExpression().equals("Assert") && invocation.getMethodName().equals("fail"));
+        var nonNullInvocations = operationInvocationsInLastStatement.stream().filter(Objects::nonNull);
+        var nonNullFailInvocations = nonNullInvocations.filter(invocation -> Objects.nonNull(invocation.getMethodName()) && invocation.getMethodName().equals("fail"));
+        return nonNullFailInvocations.filter(invocation -> Objects.isNull(invocation.getExpression()) || invocation.getExpression().equals("Assert"));
     }
 
     private static Stream<String> detectCatchExceptions(TryStatementObject tryStatement) {

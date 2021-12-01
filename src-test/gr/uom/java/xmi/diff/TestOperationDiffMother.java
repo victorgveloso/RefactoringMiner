@@ -79,7 +79,44 @@ public class TestOperationDiffMother {
                 "    }";
     }
 
-    static String createExampleTestClass_InlineVersion2() {
+    static String createExampleTestClass_TryCatchVersion() {
+        return "package android.support.test.espresso.intent.matcher;\n" +
+                "\n" +
+                "public class IntentMatchersTest {\n" +
+                "    public void testToPackage() {\n" +
+                "        final String pkg = \"pkg1\";\n" +
+                "        ResolvedIntent intent = new FakeResolvedIntent(pkg);\n" +
+                "        assertTrue(toPackage(pkg).matches(intent));\n" +
+                "        assertFalse(toPackage(\"notpkg1\").matches(intent));\n" +
+                "        try {\n" +
+                "            toPackage(\"whatever\").matches(new Intent(Intent.ACTION_VIEW));\n" +
+                "            fail(\"Expected previous call to fail.\");\n" +
+                "        } catch (RuntimeException expected) {\n" +
+                "\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
+    }
+
+    static String createExampleTestClass_RuleVersion() {
+        return "package android.support.test.espresso.intent.matcher;\n" +
+                "\n" +
+                "public class IntentMatchersTest {\n" +
+                "    @Rule\n" +
+                "    public ExpectedException expectedException = none();\n" +
+                "    @Test\n" +
+                "    public void toPackageTesting() {\n" +
+                "        final String pkg = \"pkg1\";\n" +
+                "        ResolvedIntent intent = new FakeResolvedIntent(pkg);\n" +
+                "        assertTrue(toPackage(pkg).matches(intent));\n" +
+                "        assertFalse(toPackage(\"notpkg1\").matches(intent));\n" +
+                "        expectedException.expect(RuntimeException.class);\n" +
+                "        toPackage(\"whatever\").matches(new Intent(Intent.ACTION_VIEW));\n" +
+                "    }\n" +
+                "}";
+    }
+
+    static String createExampleTestClass_InlineVersion() {
         return "package uk.gov.hmcts.reform.cwrdapi.service.impl;\n" +
                 "\n" +
                 "public class CaseWorkerServiceImplTest {\n" +
@@ -113,7 +150,7 @@ public class TestOperationDiffMother {
                 "}";
     }
 
-    static String createExampleTestClass_AssertVersion2() {
+    static String createExampleTestClass_AssertVersion() {
         return "package uk.gov.hmcts.reform.cwrdapi.service.impl;\n" +
                 "\n" +
                 "public class CaseWorkerServiceImplTest {\n" +
