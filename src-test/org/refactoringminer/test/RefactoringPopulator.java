@@ -113,9 +113,9 @@ public class RefactoringPopulator {
 		CollapseHierarchy(new BigInteger("9671406556917033397649408")),
 		ReplaceLoopWithPipeline(new BigInteger("19342813113834066795298816")),
 		ReplaceAnonymousWithLambda(new BigInteger("38685626227668133590597632")),
-		ReplaceTryAndFailWithRule(new BigInteger("77371252455336267181195263")),
-		ReplaceExpectAnnotationWithAssertThrows(new BigInteger("154742504910672534362390526")),
-		All(new BigInteger("309485009821345068724781052"));
+		ReplaceTryAndFailWithRule(new BigInteger("77371252455336267181195264")),
+		ReplaceExpectAnnotationWithAssertThrows(new BigInteger("154742504910672534362390528")),
+		All(new BigInteger("309485009821345068724781055"));
 
 		private final BigInteger value;
 

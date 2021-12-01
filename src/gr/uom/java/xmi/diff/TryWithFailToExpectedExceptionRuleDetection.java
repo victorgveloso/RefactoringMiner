@@ -115,7 +115,7 @@ public class TryWithFailToExpectedExceptionRuleDetection {
             return Stream.empty();
         }
         var nonNullInvocations = operationInvocationsInLastStatement.stream().filter(Objects::nonNull);
-        var nonNullFailInvocations = nonNullInvocations.filter(invocation -> Objects.nonNull(invocation.getMethodName()) && invocation.getName().equals("fail"));
+        var nonNullFailInvocations = nonNullInvocations.filter(invocation -> Objects.nonNull(invocation.getName()) && invocation.getName().equals("fail"));
         return nonNullFailInvocations.filter(invocation -> Objects.isNull(invocation.getExpression()) || invocation.getExpression().equals("Assert"));
     }
 

@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 
 @RunWith(Enclosed.class)
 public class TryWithFailToExpectedExceptionRuleTest {
-    abstract public static class ModelDiffFieldSetUp {
+    abstract private static class ModelDiffFieldSetUp {
         UMLModelDiff modelDiff;
 
         @Before
