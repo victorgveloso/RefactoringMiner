@@ -109,7 +109,9 @@ public class RefactoringPopulator {
 		MergePackage(new BigInteger("604462909807314587353088")),
 		MovePackage(new BigInteger("1208925819614629174706176")),
 		LocalizeParameter(new BigInteger("2417851639229258349412352")),
-		All(new BigInteger("4835703278458516698824703"));
+		ReplaceTryAndFailWithRule(new BigInteger("2417851639229258349412352")),
+		ReplaceExpectAnnotationWithAssertThrows(new BigInteger("9671406556917033397649408")),
+		All(new BigInteger("19342813113834066795298815"));
 
 		private final BigInteger value;
 
