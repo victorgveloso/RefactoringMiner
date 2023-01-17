@@ -5,6 +5,7 @@ import gr.uom.java.xmi.diff.StringDistance;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 public class UMLClass extends UMLAbstractClass implements Comparable<UMLClass>, Serializable, LocationInfoProvider {
@@ -197,47 +198,51 @@ public class UMLClass extends UMLAbstractClass implements Comparable<UMLClass>, 
 	}
 
     public UMLEnumConstant containsEnumConstant(UMLEnumConstant otherEnumConstant) {
-		for (UMLEnumConstant enumConstant : enumConstants) {
-			if (enumConstant.equals(otherEnumConstant)) {
-				return enumConstant;
-			}
-		}
+    	ListIterator<UMLEnumConstant> enumConstantIt = enumConstants.listIterator();
+    	while(enumConstantIt.hasNext()) {
+    		UMLEnumConstant enumConstant = enumConstantIt.next();
+    		if(enumConstant.equals(otherEnumConstant)) {
+    			return enumConstant;
+    		}
+    	}
     	return null;
     }
 
     public UMLOperation matchOperation(UMLOperation otherOperation) {
-		for (UMLOperation operation : operations) {
-			if (operation.getName().equals(otherOperation.getName())) {
-				if (operation.getParameters().size() == otherOperation.getParameters().size()) {
-					boolean match = true;
-					int i = 0;
-					for (UMLParameter parameter : operation.getParameters()) {
-						UMLParameter otherParameter = otherOperation.getParameters().get(i);
-						String thisParameterType = parameter.getType().getClassType();
-						String otherParameterType = otherParameter.getType().getClassType();
-						int thisArrayDimension = parameter.getType().getArrayDimension();
-						int otherArrayDimension = otherParameter.getType().getArrayDimension();
-						String thisParameterTypeComparedString;
-						if (thisParameterType.contains("."))
-							thisParameterTypeComparedString = thisParameterType.substring(thisParameterType.lastIndexOf(".") + 1);
-						else
-							thisParameterTypeComparedString = thisParameterType;
-						String otherParameterTypeComparedString;
-						if (otherParameterType.contains("."))
-							otherParameterTypeComparedString = otherParameterType.substring(otherParameterType.lastIndexOf(".") + 1);
-						else
-							otherParameterTypeComparedString = otherParameterType;
-						if (!thisParameterTypeComparedString.equals(otherParameterTypeComparedString) || thisArrayDimension != otherArrayDimension) {
-							match = false;
-							break;
-						}
-						i++;
-					}
-					if (match)
-						return operation;
-				}
-			}
-		}
+    	ListIterator<UMLOperation> operationIt = operations.listIterator();
+    	while(operationIt.hasNext()) {
+    		UMLOperation operation = operationIt.next();
+    		if(operation.getName().equals(otherOperation.getName())) {
+    			if(operation.getParameters().size() == otherOperation.getParameters().size()) {
+    				boolean match = true;
+    				int i = 0;
+    				for(UMLParameter parameter : operation.getParameters()) {
+    					UMLParameter otherParameter = otherOperation.getParameters().get(i);
+    					String thisParameterType = parameter.getType().getClassType();
+    					String otherParameterType = otherParameter.getType().getClassType();
+    					int thisArrayDimension = parameter.getType().getArrayDimension();
+    					int otherArrayDimension = otherParameter.getType().getArrayDimension();
+    					String thisParameterTypeComparedString;
+    	    			if(thisParameterType.contains("."))
+    	    				thisParameterTypeComparedString = thisParameterType.substring(thisParameterType.lastIndexOf(".")+1);
+    	    			else
+    	    				thisParameterTypeComparedString = thisParameterType;
+    	    			String otherParameterTypeComparedString;
+    	    			if(otherParameterType.contains("."))
+    	    				otherParameterTypeComparedString = otherParameterType.substring(otherParameterType.lastIndexOf(".")+1);
+    	    			else
+    	    				otherParameterTypeComparedString = otherParameterType;
+    	    			if(!thisParameterTypeComparedString.equals(otherParameterTypeComparedString) || thisArrayDimension != otherArrayDimension) {
+    						match = false;
+    						break;
+    					}
+    					i++;
+    				}
+    				if(match)
+    					return operation;
+    			}
+    		}
+    	}
     	return null;
     }
 

@@ -443,26 +443,27 @@ public class UMLModelDiff {
 	   for(Iterator<UMLClass> removedClassIterator = removedClasses.iterator(); removedClassIterator.hasNext();) {
 		   UMLClass removedClass = removedClassIterator.next();
 		   TreeSet<UMLClassMoveDiff> diffSet = new TreeSet<>(new ClassMoveComparator());
-		   for (UMLClass addedClass : addedClasses) {
+		   for(Iterator<UMLClass> addedClassIterator = addedClasses.iterator(); addedClassIterator.hasNext();) {
+			   UMLClass addedClass = addedClassIterator.next();
 			   String removedClassSourceFile = removedClass.getSourceFile();
-			   String renamedFile = renamedFileHints.get(removedClassSourceFile);
+			   String renamedFile =  renamedFileHints.get(removedClassSourceFile);
 			   String removedClassSourceFolder = "";
-			   if (removedClassSourceFile.contains("/")) {
+			   if(removedClassSourceFile.contains("/")) {
 				   removedClassSourceFolder = removedClassSourceFile.substring(0, removedClassSourceFile.lastIndexOf("/"));
 			   }
-			   if (!repositoryDirectories.contains(removedClassSourceFolder)) {
+			   if(!repositoryDirectories.contains(removedClassSourceFolder)) {
 				   deletedFolderPaths.add(removedClassSourceFolder);
 				   //add deleted sub-directories
 				   String subDirectory = new String(removedClassSourceFolder);
-				   while (subDirectory.contains("/")) {
+				   while(subDirectory.contains("/")) {
 					   subDirectory = subDirectory.substring(0, subDirectory.lastIndexOf("/"));
-					   if (!repositoryDirectories.contains(subDirectory)) {
+					   if(!repositoryDirectories.contains(subDirectory)) {
 						   deletedFolderPaths.add(subDirectory);
 					   }
 				   }
 			   }
-			   if (matcher.match(removedClass, addedClass, renamedFile)) {
-				   if (!conflictingMoveOfTopLevelClass(removedClass, addedClass)) {
+			   if(matcher.match(removedClass, addedClass, renamedFile)) {
+				   if(!conflictingMoveOfTopLevelClass(removedClass, addedClass)) {
 					   UMLClassMoveDiff classMoveDiff = new UMLClassMoveDiff(removedClass, addedClass, this);
 					   diffSet.add(classMoveDiff);
 				   }
@@ -511,15 +512,16 @@ public class UMLModelDiff {
       for(Iterator<UMLClass> removedClassIterator = removedClasses.iterator(); removedClassIterator.hasNext();) {
          UMLClass removedClass = removedClassIterator.next();
          TreeSet<UMLClassRenameDiff> diffSet = new TreeSet<>(new ClassRenameComparator());
-		  for (UMLClass addedClass : addedClasses) {
-			  String renamedFile = renamedFileHints.get(removedClass.getSourceFile());
-			  if (matcher.match(removedClass, addedClass, renamedFile)) {
-				  if (!conflictingMoveOfTopLevelClass(removedClass, addedClass) && !innerClassWithTheSameName(removedClass, addedClass)) {
-					  UMLClassRenameDiff classRenameDiff = new UMLClassRenameDiff(removedClass, addedClass, this);
-					  diffSet.add(classRenameDiff);
-				  }
-			  }
-		  }
+         for(Iterator<UMLClass> addedClassIterator = addedClasses.iterator(); addedClassIterator.hasNext();) {
+            UMLClass addedClass = addedClassIterator.next();
+            String renamedFile =  renamedFileHints.get(removedClass.getSourceFile());
+            if(matcher.match(removedClass, addedClass, renamedFile)) {
+               if(!conflictingMoveOfTopLevelClass(removedClass, addedClass) && !innerClassWithTheSameName(removedClass, addedClass)) {
+            	   UMLClassRenameDiff classRenameDiff = new UMLClassRenameDiff(removedClass, addedClass, this);
+            	   diffSet.add(classRenameDiff);
+               }
+            }
+         }
          if(!diffSet.isEmpty()) {
             UMLClassRenameDiff minClassRenameDiff = diffSet.first();
             minClassRenameDiff.process();
@@ -545,9 +547,9 @@ public class UMLModelDiff {
    private boolean innerClassWithTheSameName(UMLClass removedClass, UMLClass addedClass) {
 	   if(!removedClass.isTopLevel() && !addedClass.isTopLevel()) {
 		   String removedClassName = removedClass.getName();
-		   String removedName = removedClassName.substring(removedClassName.lastIndexOf(".")+1);
+		   String removedName = removedClassName.substring(removedClassName.lastIndexOf(".")+1, removedClassName.length());
 		   String addedClassName = addedClass.getName();
-		   String addedName = addedClassName.substring(addedClassName.lastIndexOf(".")+1);
+		   String addedName = addedClassName.substring(addedClassName.lastIndexOf(".")+1, addedClassName.length());
 		   return removedName.equals(addedName);
 	   }
 	   return false;
@@ -1852,8 +1854,8 @@ public class UMLModelDiff {
 				String prefix1 = before.substring(0, before.lastIndexOf(".") + 1);
 				String prefix2 = after.substring(0, after.lastIndexOf(".") + 1);
 				if(prefix1.equals(prefix2)) {
-					before = before.substring(prefix1.length());
-					after = after.substring(prefix2.length());
+					before = before.substring(prefix1.length(), before.length());
+					after = after.substring(prefix2.length(), after.length());
 				}
 			}
 		 Replacement renamePattern = new Replacement(before, after, ReplacementType.VARIABLE_NAME);
@@ -1869,41 +1871,42 @@ public class UMLModelDiff {
    }
 
    private void checkForMovedAndInlinedOperations(List<UMLOperationBodyMapper> mappers, List<UMLOperation> removedOperations) throws RefactoringMinerTimedOutException {
-	   for (UMLOperation removedOperation : removedOperations) {
-		   for (UMLOperationBodyMapper mapper : mappers) {
-			   if (!mapper.getNonMappedLeavesT2().isEmpty() || !mapper.getNonMappedInnerNodesT2().isEmpty() || !mapper.getReplacementsInvolvingMethodInvocation().isEmpty()) {
+	   for(Iterator<UMLOperation> removedOperationIterator = removedOperations.iterator(); removedOperationIterator.hasNext();) {
+		   UMLOperation removedOperation = removedOperationIterator.next();
+		   for(UMLOperationBodyMapper mapper : mappers) {
+			   if(!mapper.getNonMappedLeavesT2().isEmpty() || !mapper.getNonMappedInnerNodesT2().isEmpty() || !mapper.getReplacementsInvolvingMethodInvocation().isEmpty()) {
 				   List<OperationInvocation> operationInvocations = mapper.getOperation1().getAllOperationInvocations();
 				   List<OperationInvocation> removedOperationInvocations = new ArrayList<>();
-				   for (OperationInvocation invocation : operationInvocations) {
-					   if (invocation.matchesOperation(removedOperation, mapper.getOperation1(), this)) {
+				   for(OperationInvocation invocation : operationInvocations) {
+					   if(invocation.matchesOperation(removedOperation, mapper.getOperation1(), this)) {
 						   removedOperationInvocations.add(invocation);
 					   }
 				   }
-				   if (removedOperationInvocations.size() > 0) {
-					   for (OperationInvocation removedOperationInvocation : removedOperationInvocations) {
-						   if (!invocationMatchesWithAddedOperation(removedOperationInvocation, mapper.getOperation1(), mapper.getOperation2().getAllOperationInvocations())) {
-							   List<String> arguments = removedOperationInvocation.getArguments();
-							   List<String> parameters = removedOperation.getParameterNameList();
-							   Map<String, String> parameterToArgumentMap1 = new LinkedHashMap<>();
-							   //special handling for methods with varargs parameter for which no argument is passed in the matching invocation
-							   int size = Math.min(arguments.size(), parameters.size());
-							   for (int i = 0; i < size; i++) {
-								   parameterToArgumentMap1.put(parameters.get(i), arguments.get(i));
-							   }
-							   Map<String, String> parameterToArgumentMap2 = new LinkedHashMap<>();
-							   String expression = removedOperationInvocation.getExpression();
-							   if (expression != null && !removedOperation.getClassName().endsWith("." + expression)) {
-								   parameterToArgumentMap2.put(expression + ".", "");
-								   parameterToArgumentMap1.put("this.", "");
-							   }
-							   UMLOperationBodyMapper operationBodyMapper = new UMLOperationBodyMapper(removedOperation, mapper, parameterToArgumentMap1, parameterToArgumentMap2, getUMLClassDiff(removedOperation.getClassName()));
-							   if (moveAndInlineMatchCondition(operationBodyMapper, mapper)) {
-								   InlineOperationRefactoring inlineOperationRefactoring = new InlineOperationRefactoring(operationBodyMapper, mapper.getOperation1(), removedOperationInvocations);
-								   refactorings.add(inlineOperationRefactoring);
-								   deleteRemovedOperation(removedOperation);
-							   }
-						   }
-					   }
+				   if(removedOperationInvocations.size() > 0) {
+						for(OperationInvocation removedOperationInvocation : removedOperationInvocations) {
+							if(!invocationMatchesWithAddedOperation(removedOperationInvocation, mapper.getOperation1(), mapper.getOperation2().getAllOperationInvocations())) {
+								List<String> arguments = removedOperationInvocation.getArguments();
+								List<String> parameters = removedOperation.getParameterNameList();
+								Map<String, String> parameterToArgumentMap1 = new LinkedHashMap<>();
+								//special handling for methods with varargs parameter for which no argument is passed in the matching invocation
+								int size = Math.min(arguments.size(), parameters.size());
+								for(int i=0; i<size; i++) {
+									parameterToArgumentMap1.put(parameters.get(i), arguments.get(i));
+								}
+								Map<String, String> parameterToArgumentMap2 = new LinkedHashMap<>();
+								String expression = removedOperationInvocation.getExpression();
+								if(expression != null && !removedOperation.getClassName().endsWith("." + expression)) {
+									parameterToArgumentMap2.put(expression + ".", "");
+									parameterToArgumentMap1.put("this.", "");
+								}
+								UMLOperationBodyMapper operationBodyMapper = new UMLOperationBodyMapper(removedOperation, mapper, parameterToArgumentMap1, parameterToArgumentMap2, getUMLClassDiff(removedOperation.getClassName()));
+								if(moveAndInlineMatchCondition(operationBodyMapper, mapper)) {
+									InlineOperationRefactoring inlineOperationRefactoring =	new InlineOperationRefactoring(operationBodyMapper, mapper.getOperation1(), removedOperationInvocations);
+									refactorings.add(inlineOperationRefactoring);
+									deleteRemovedOperation(removedOperation);
+								}
+							}
+						}
 				   }
 			   }
 		   }
@@ -1957,133 +1960,141 @@ public class UMLModelDiff {
 	}
 
    private void checkForExtractedAndMovedOperations(List<UMLOperationBodyMapper> mappers, List<UMLOperation> addedOperations) throws RefactoringMinerTimedOutException {
-	   for (UMLOperation addedOperation : addedOperations) {
-		   for (UMLOperationBodyMapper mapper : mappers) {
-			   Pair<UMLOperation, UMLOperation> pair = Pair.of(mapper.getOperation1(), addedOperation);
-			   if ((mapper.nonMappedElementsT1() > 0 || !mapper.getReplacementsInvolvingMethodInvocation().isEmpty()) && !mapper.containsExtractOperationRefactoring(addedOperation) && !processedOperationPairs.contains(pair)) {
-				   processedOperationPairs.add(pair);
-				   List<OperationInvocation> operationInvocations = ExtractOperationDetection.getInvocationsInSourceOperationAfterExtraction(mapper);
-				   List<OperationInvocation> addedOperationInvocations = new ArrayList<>();
-				   for (OperationInvocation invocation : operationInvocations) {
-					   if (invocation.matchesOperation(addedOperation, mapper.getOperation2(), this)) {
-						   addedOperationInvocations.add(invocation);
-					   }
-				   }
-				   if (addedOperationInvocations.size() > 0) {
-					   OperationInvocation addedOperationInvocation = addedOperationInvocations.get(0);
-					   List<String> arguments = addedOperationInvocation.getArguments();
-					   List<String> parameters = addedOperation.getParameterNameList();
-					   Map<String, String> parameterToArgumentMap2 = new LinkedHashMap<>();
-					   //special handling for methods with varargs parameter for which no argument is passed in the matching invocation
-					   int size = Math.min(arguments.size(), parameters.size());
-					   for (int i = 0; i < size; i++) {
-						   parameterToArgumentMap2.put(parameters.get(i), arguments.get(i));
-					   }
-					   String className = mapper.getOperation2().getClassName();
-					   List<UMLAttribute> attributes = new ArrayList<>();
-					   if (className.contains(".") && isAnonymousClassName(className)) {
-						   //add enclosing class fields + anonymous class fields
-						   String[] tokens = className.split("\\.");
-						   String anonymousID = "";
-						   for (int i = tokens.length - 1; i >= 0; i--) {
-							   String token = tokens[i];
-							   if (PrefixSuffixUtils.isNumeric(token) || Character.isLowerCase(token.charAt(0))) {
-								   anonymousID = "." + token + anonymousID;
-							   } else {
-								   break;
-							   }
-						   }
-						   UMLClassBaseDiff umlClassDiff = getUMLClassDiff(className);
-						   if (umlClassDiff == null) {
-							   String enclosingClassName = className.substring(0, className.indexOf(anonymousID));
-							   umlClassDiff = getUMLClassDiff(enclosingClassName);
-						   }
-						   attributes.addAll(umlClassDiff.originalClassAttributesOfType(addedOperation.getClassName()));
-						   for (UMLAnonymousClass anonymousClass : umlClassDiff.getOriginalClass().getAnonymousClassList()) {
-							   if (className.equals(anonymousClass.getCodePath())) {
-								   attributes.addAll(anonymousClass.attributesOfType(addedOperation.getClassName()));
-								   break;
-							   }
-						   }
-					   } else {
-						   UMLClassBaseDiff umlClassDiff = getUMLClassDiff(className);
-						   if (umlClassDiff == null) {
-							   for (UMLClassDiff classDiff : commonClassDiffList) {
-								   for (UMLAnonymousClass anonymousClass : classDiff.getAddedAnonymousClasses()) {
-									   if (className.equals(anonymousClass.getCodePath())) {
-										   umlClassDiff = classDiff;
-										   attributes.addAll(anonymousClass.attributesOfType(addedOperation.getClassName()));
-										   break;
-									   }
-								   }
-								   if (umlClassDiff != null) {
-									   break;
-								   }
-							   }
-						   }
-						   attributes.addAll(umlClassDiff.originalClassAttributesOfType(addedOperation.getClassName()));
-					   }
-					   Map<String, String> parameterToArgumentMap1 = new LinkedHashMap<>();
-					   for (UMLAttribute attribute : attributes) {
-						   parameterToArgumentMap1.put(attribute.getName() + ".", "");
-						   parameterToArgumentMap2.put("this.", "");
-					   }
-					   if (addedOperationInvocation.getExpression() != null) {
-						   parameterToArgumentMap1.put(addedOperationInvocation.getExpression() + ".", "");
-						   parameterToArgumentMap2.put("this.", "");
-					   }
-					   UMLOperationBodyMapper operationBodyMapper = new UMLOperationBodyMapper(mapper, addedOperation, parameterToArgumentMap1, parameterToArgumentMap2, getUMLClassDiff(addedOperation.getClassName()));
-					   if (!anotherAddedMethodExistsWithBetterMatchingInvocationExpression(addedOperationInvocation, addedOperation, addedOperations) &&
-							   !conflictingExpression(addedOperationInvocation, addedOperation, mapper.getOperation2().variableDeclarationMap()) &&
-							   extractAndMoveMatchCondition(operationBodyMapper, mapper)) {
-						   if (className.equals(addedOperation.getClassName())) {
-							   //extract inside moved or renamed class
-							   ExtractOperationRefactoring extractOperationRefactoring =
-									   new ExtractOperationRefactoring(operationBodyMapper, mapper.getOperation2(), addedOperationInvocations);
-							   refactorings.add(extractOperationRefactoring);
-							   deleteAddedOperation(addedOperation);
-						   } else if (isSubclassOf(className, addedOperation.getClassName())) {
-							   //extract and pull up method
-							   ExtractOperationRefactoring extractOperationRefactoring =
-									   new ExtractOperationRefactoring(operationBodyMapper, mapper.getOperation2(), addedOperationInvocations);
-							   refactorings.add(extractOperationRefactoring);
-							   deleteAddedOperation(addedOperation);
-						   } else if (isSubclassOf(addedOperation.getClassName(), className)) {
-							   //extract and push down method
-							   ExtractOperationRefactoring extractOperationRefactoring =
-									   new ExtractOperationRefactoring(operationBodyMapper, mapper.getOperation2(), addedOperationInvocations);
-							   refactorings.add(extractOperationRefactoring);
-							   deleteAddedOperation(addedOperation);
-						   } else if (addedOperation.getClassName().startsWith(className + ".")) {
-							   //extract and move to inner class
-							   ExtractOperationRefactoring extractOperationRefactoring =
-									   new ExtractOperationRefactoring(operationBodyMapper, mapper.getOperation2(), addedOperationInvocations);
-							   refactorings.add(extractOperationRefactoring);
-							   deleteAddedOperation(addedOperation);
-						   } else if (className.startsWith(addedOperation.getClassName() + ".")) {
-							   //extract and move to outer class
-							   ExtractOperationRefactoring extractOperationRefactoring =
-									   new ExtractOperationRefactoring(operationBodyMapper, mapper.getOperation2(), addedOperationInvocations);
-							   refactorings.add(extractOperationRefactoring);
-							   deleteAddedOperation(addedOperation);
-						   } else if (sourceClassImportsTargetClass(className, addedOperation.getClassName()) ||
-								   sourceClassImportsSuperclassOfTargetClass(className, addedOperation.getClassName()) ||
-								   targetClassImportsSourceClass(className, addedOperation.getClassName())) {
-							   //extract and move
-							   ExtractOperationRefactoring extractOperationRefactoring =
-									   new ExtractOperationRefactoring(operationBodyMapper, mapper.getOperation2(), addedOperationInvocations);
-							   refactorings.add(extractOperationRefactoring);
-							   deleteAddedOperation(addedOperation);
-						   }
-					   }
-				   }
-			   }
-		   }
-	   }
+      for(Iterator<UMLOperation> addedOperationIterator = addedOperations.iterator(); addedOperationIterator.hasNext();) {
+    	  UMLOperation addedOperation = addedOperationIterator.next();
+    	  for(UMLOperationBodyMapper mapper : mappers) {
+    		  Pair<UMLOperation, UMLOperation> pair = Pair.of(mapper.getOperation1(), addedOperation);
+    		  if((mapper.nonMappedElementsT1() > 0 || !mapper.getReplacementsInvolvingMethodInvocation().isEmpty()) && !mapper.containsExtractOperationRefactoring(addedOperation) && !processedOperationPairs.contains(pair)) {
+    			  processedOperationPairs.add(pair);
+    			  List<OperationInvocation> operationInvocations = ExtractOperationDetection.getInvocationsInSourceOperationAfterExtraction(mapper);
+    			  List<OperationInvocation> addedOperationInvocations = new ArrayList<>();
+    			  for(OperationInvocation invocation : operationInvocations) {
+    				  if(invocation.matchesOperation(addedOperation, mapper.getOperation2(), this)) {
+    					  addedOperationInvocations.add(invocation);
+    				  }
+    			  }
+    			  if(addedOperationInvocations.size() > 0) {
+            	  OperationInvocation addedOperationInvocation = addedOperationInvocations.get(0);
+            	  List<String> arguments = addedOperationInvocation.getArguments();
+            	  List<String> parameters = addedOperation.getParameterNameList();
+            	  Map<String, String> parameterToArgumentMap2 = new LinkedHashMap<>();
+            	  //special handling for methods with varargs parameter for which no argument is passed in the matching invocation
+				  int size = Math.min(arguments.size(), parameters.size());
+            	  for(int i=0; i<size; i++) {
+            		  parameterToArgumentMap2.put(parameters.get(i), arguments.get(i));
+            	  }
+            	  String className = mapper.getOperation2().getClassName();
+            	  List<UMLAttribute> attributes = new ArrayList<>();
+            	  if(className.contains(".") && isAnonymousClassName(className)) {
+            		  //add enclosing class fields + anonymous class fields
+            		  String[] tokens = className.split("\\.");
+            		  String anonymousID = "";
+            		  for(int i=tokens.length-1; i>=0; i--) {
+            			  String token = tokens[i];
+            			  if(PrefixSuffixUtils.isNumeric(token) || Character.isLowerCase(token.charAt(0))) {
+            				  anonymousID = "." + token + anonymousID;
+            			  }
+            			  else {
+            				  break;
+            			  }
+            		  }
+            		  UMLClassBaseDiff umlClassDiff = getUMLClassDiff(className);
+            		  if(umlClassDiff == null) {
+            			  String enclosingClassName = className.substring(0, className.indexOf(anonymousID));
+            			  umlClassDiff = getUMLClassDiff(enclosingClassName);
+            		  }
+            		  attributes.addAll(umlClassDiff.originalClassAttributesOfType(addedOperation.getClassName()));
+            		  for(UMLAnonymousClass anonymousClass : umlClassDiff.getOriginalClass().getAnonymousClassList()) {
+            			  if(className.equals(anonymousClass.getCodePath())) {
+            				  attributes.addAll(anonymousClass.attributesOfType(addedOperation.getClassName()));
+            				  break;
+            			  }
+            		  }
+            	  }
+            	  else {
+            		  UMLClassBaseDiff umlClassDiff = getUMLClassDiff(className);
+            		  if(umlClassDiff == null) {
+            			  for(UMLClassDiff classDiff : commonClassDiffList) {
+            				  for(UMLAnonymousClass anonymousClass : classDiff.getAddedAnonymousClasses()) {
+            					  if(className.equals(anonymousClass.getCodePath())) {
+            						  umlClassDiff = classDiff;
+            						  attributes.addAll(anonymousClass.attributesOfType(addedOperation.getClassName()));
+            						  break;
+            					  }
+            				  }
+            				  if(umlClassDiff != null) {
+            					  break;
+            				  }
+            			  }
+            		  }
+            		  attributes.addAll(umlClassDiff.originalClassAttributesOfType(addedOperation.getClassName()));
+            	  }
+            	  Map<String, String> parameterToArgumentMap1 = new LinkedHashMap<>();
+            	  for(UMLAttribute attribute : attributes) {
+            		  parameterToArgumentMap1.put(attribute.getName() + ".", "");
+            		  parameterToArgumentMap2.put("this.", "");
+            	  }
+            	  if(addedOperationInvocation.getExpression() != null) {
+            		  parameterToArgumentMap1.put(addedOperationInvocation.getExpression() + ".", "");
+            		  parameterToArgumentMap2.put("this.", "");
+            	  }
+                  UMLOperationBodyMapper operationBodyMapper = new UMLOperationBodyMapper(mapper, addedOperation, parameterToArgumentMap1, parameterToArgumentMap2, getUMLClassDiff(addedOperation.getClassName()));
+                  if(!anotherAddedMethodExistsWithBetterMatchingInvocationExpression(addedOperationInvocation, addedOperation, addedOperations) &&
+                		  !conflictingExpression(addedOperationInvocation, addedOperation, mapper.getOperation2().variableDeclarationMap()) &&
+                		  extractAndMoveMatchCondition(operationBodyMapper, mapper)) {
+                	  if(className.equals(addedOperation.getClassName())) {
+                		  //extract inside moved or renamed class
+                		  ExtractOperationRefactoring extractOperationRefactoring =
+   	                           new ExtractOperationRefactoring(operationBodyMapper, mapper.getOperation2(), addedOperationInvocations);
+   	                      refactorings.add(extractOperationRefactoring);
+   	                      deleteAddedOperation(addedOperation);
+                	  }
+                	  else if(isSubclassOf(className, addedOperation.getClassName())) {
+                		  //extract and pull up method
+                		  ExtractOperationRefactoring extractOperationRefactoring =
+   	                           new ExtractOperationRefactoring(operationBodyMapper, mapper.getOperation2(), addedOperationInvocations);
+   	                      refactorings.add(extractOperationRefactoring);
+   	                      deleteAddedOperation(addedOperation);
+                	  }
+                	  else if(isSubclassOf(addedOperation.getClassName(), className)) {
+                		  //extract and push down method
+                		  ExtractOperationRefactoring extractOperationRefactoring =
+   	                           new ExtractOperationRefactoring(operationBodyMapper, mapper.getOperation2(), addedOperationInvocations);
+   	                      refactorings.add(extractOperationRefactoring);
+   	                      deleteAddedOperation(addedOperation);
+                	  }
+                	  else if(addedOperation.getClassName().startsWith(className + ".")) {
+                		  //extract and move to inner class
+                		  ExtractOperationRefactoring extractOperationRefactoring =
+      	                       new ExtractOperationRefactoring(operationBodyMapper, mapper.getOperation2(), addedOperationInvocations);
+      	                  refactorings.add(extractOperationRefactoring);
+      	                  deleteAddedOperation(addedOperation);
+                	  }
+                	  else if(className.startsWith(addedOperation.getClassName() + ".")) {
+                		  //extract and move to outer class
+                		  ExtractOperationRefactoring extractOperationRefactoring =
+      	                       new ExtractOperationRefactoring(operationBodyMapper, mapper.getOperation2(), addedOperationInvocations);
+      	                  refactorings.add(extractOperationRefactoring);
+      	                  deleteAddedOperation(addedOperation);
+                	  }
+                	  else if(sourceClassImportsTargetClass(className, addedOperation.getClassName()) ||
+                			  sourceClassImportsSuperclassOfTargetClass(className, addedOperation.getClassName()) ||
+                			  targetClassImportsSourceClass(className, addedOperation.getClassName())) {
+                		  //extract and move
+	                      ExtractOperationRefactoring extractOperationRefactoring =
+	                           new ExtractOperationRefactoring(operationBodyMapper, mapper.getOperation2(), addedOperationInvocations);
+	                      refactorings.add(extractOperationRefactoring);
+	                      deleteAddedOperation(addedOperation);
+                	  }
+                  }
+               }
+            }
+         }
+      }
    }
 
    private boolean isAnonymousClassName(String className) {
-	   String anonymousID = className.substring(className.lastIndexOf(".")+1);
+	   String anonymousID = className.substring(className.lastIndexOf(".")+1, className.length());
 	   return PrefixSuffixUtils.isNumeric(anonymousID) || Character.isLowerCase(anonymousID.charAt(0));
    }
 
@@ -2241,7 +2252,7 @@ public class UMLModelDiff {
 		   for(UMLClassMoveDiff diff : classMoveDiffList) {
 			   if(diff.getOriginalClass().getName().equals(umlClass.getPackageName())) {
 				   String nestedClassExpectedName = diff.getMovedClass().getName() + 
-						   umlClass.getName().substring(diff.getOriginalClass().getName().length());
+						   umlClass.getName().substring(diff.getOriginalClass().getName().length(), umlClass.getName().length());
 				   for(UMLClass addedClass : addedClasses) {
 					   if(addedClass.getName().equals(nestedClassExpectedName)) {
 						   return true;
@@ -2255,7 +2266,7 @@ public class UMLModelDiff {
 			   }
 			   else if(diff.getMovedClass().getName().equals(umlClass.getPackageName())) {
 				   String nestedClassExpectedName = diff.getOriginalClass().getName() +
-						   umlClass.getName().substring(diff.getMovedClass().getName().length());
+						   umlClass.getName().substring(diff.getMovedClass().getName().length(), umlClass.getName().length());
 				   for(UMLClass removedClass : removedClasses) {
 					   if(removedClass.getName().equals(nestedClassExpectedName)) {
 						   return true;
@@ -2271,7 +2282,7 @@ public class UMLModelDiff {
 		   for(UMLClassRenameDiff diff : classRenameDiffList) {
 			   if(diff.getOriginalClass().getName().equals(umlClass.getPackageName())) {
 				   String nestedClassExpectedName = diff.getRenamedClass().getName() + 
-						   umlClass.getName().substring(diff.getOriginalClass().getName().length());
+						   umlClass.getName().substring(diff.getOriginalClass().getName().length(), umlClass.getName().length());
 				   for(UMLClass addedClass : addedClasses) {
 					   if(addedClass.getName().equals(nestedClassExpectedName)) {
 						   return true;
@@ -2285,7 +2296,7 @@ public class UMLModelDiff {
 			   }
 			   else if(diff.getRenamedClass().getName().equals(umlClass.getPackageName())) {
 				   String nestedClassExpectedName = diff.getOriginalClass().getName() +
-						   umlClass.getName().substring(diff.getRenamedClass().getName().length());
+						   umlClass.getName().substring(diff.getRenamedClass().getName().length(), umlClass.getName().length());
 				   for(UMLClass removedClass : removedClasses) {
 					   if(removedClass.getName().equals(nestedClassExpectedName)) {
 						   return true;
@@ -2307,37 +2318,40 @@ public class UMLModelDiff {
 	      for(Iterator<UMLOperation> addedOperationIterator = addedOperations.iterator(); addedOperationIterator.hasNext();) {
 	         UMLOperation addedOperation = addedOperationIterator.next();
 	         TreeMap<Integer, List<UMLOperationBodyMapper>> operationBodyMapperMap = new TreeMap<>();
-			  for (UMLOperation removedOperation : removedOperations) {
-				  Pair<UMLOperation, UMLOperation> pair = Pair.of(removedOperation, addedOperation);
-				  if (!processedOperationPairs.contains(pair) && removedOperation.testMethodCheck(addedOperation)) {
-					  UMLClassBaseDiff umlClassDiff = getUMLClassDiff(removedOperation.getClassName());
-					  if (umlClassDiff == null) {
-						  umlClassDiff = getUMLClassDiff(addedOperation.getClassName());
-					  }
-					  UMLOperationBodyMapper operationBodyMapper = new UMLOperationBodyMapper(removedOperation, addedOperation, umlClassDiff);
-					  processedOperationPairs.add(pair);
-					  int mappings = operationBodyMapper.mappingsWithoutBlocks();
-					  if ((mappings > 0 && mappedElementsMoreThanNonMappedT1AndT2(mappings, operationBodyMapper)) || addedOperation.equalSignatureForAbstractMethods(removedOperation) ||
-							  (mappings > 0 && isPartOfMethodExtracted(removedOperation, addedOperation, addedOperations))) {
-						  int exactMatches = operationBodyMapper.exactMatches();
-						  List<AbstractCodeMapping> exactMappings = operationBodyMapper.getExactMatches();
-						  for (AbstractCodeMapping mapping : exactMappings) {
-							  String fragment1 = mapping.getFragment1().getString();
-							  if (RETURN_NUMBER_LITERAL.matcher(fragment1).matches()) {
-								  exactMatches--;
-							  }
-						  }
-						  if (operationBodyMapperMap.containsKey(exactMatches)) {
-							  List<UMLOperationBodyMapper> mapperList = operationBodyMapperMap.get(exactMatches);
-							  mapperList.add(operationBodyMapper);
-						  } else {
-							  List<UMLOperationBodyMapper> mapperList = new ArrayList<>();
-							  mapperList.add(operationBodyMapper);
-							  operationBodyMapperMap.put(exactMatches, mapperList);
-						  }
-					  }
-				  }
-			  }
+	         for(Iterator<UMLOperation> removedOperationIterator = removedOperations.iterator(); removedOperationIterator.hasNext();) {
+	            UMLOperation removedOperation = removedOperationIterator.next();
+	            
+	            Pair<UMLOperation, UMLOperation> pair = Pair.of(removedOperation, addedOperation);
+	            if(!processedOperationPairs.contains(pair) && removedOperation.testMethodCheck(addedOperation)) {
+		            UMLClassBaseDiff umlClassDiff = getUMLClassDiff(removedOperation.getClassName());
+		            if(umlClassDiff == null) {
+		            	umlClassDiff = getUMLClassDiff(addedOperation.getClassName());
+		            }
+					UMLOperationBodyMapper operationBodyMapper = new UMLOperationBodyMapper(removedOperation, addedOperation, umlClassDiff);
+		            processedOperationPairs.add(pair);
+		            int mappings = operationBodyMapper.mappingsWithoutBlocks();
+		            if((mappings > 0 && mappedElementsMoreThanNonMappedT1AndT2(mappings, operationBodyMapper)) || addedOperation.equalSignatureForAbstractMethods(removedOperation) ||
+		            		(mappings > 0 && isPartOfMethodExtracted(removedOperation, addedOperation, addedOperations))) {
+		               int exactMatches = operationBodyMapper.exactMatches();
+		               List<AbstractCodeMapping> exactMappings = operationBodyMapper.getExactMatches();
+		               for(AbstractCodeMapping mapping : exactMappings) {
+		            	   String fragment1 = mapping.getFragment1().getString();
+						   if(RETURN_NUMBER_LITERAL.matcher(fragment1).matches()) {
+		            		   exactMatches--;
+		            	   }
+		               }
+		               if(operationBodyMapperMap.containsKey(exactMatches)) {
+		                  List<UMLOperationBodyMapper> mapperList = operationBodyMapperMap.get(exactMatches);
+		                  mapperList.add(operationBodyMapper);
+		               }
+		               else {
+		                  List<UMLOperationBodyMapper> mapperList = new ArrayList<>();
+		                  mapperList.add(operationBodyMapper);
+		                  operationBodyMapperMap.put(exactMatches, mapperList);
+		               }
+		            }
+	            }
+	         }
 	         if(!operationBodyMapperMap.isEmpty()) {
 	            List<UMLOperationBodyMapper> firstMappers = firstMappers(operationBodyMapperMap);
 	            firstMappers.sort(new UMLOperationBodyMapperComparator());
@@ -2406,37 +2420,40 @@ public class UMLModelDiff {
     	  for(Iterator<UMLOperation> removedOperationIterator = removedOperations.iterator(); removedOperationIterator.hasNext();) {
 	         UMLOperation removedOperation = removedOperationIterator.next();
 	         TreeMap<Integer, List<UMLOperationBodyMapper>> operationBodyMapperMap = new TreeMap<>();
-			  for (UMLOperation addedOperation : addedOperations) {
-				  Pair<UMLOperation, UMLOperation> pair = Pair.of(removedOperation, addedOperation);
-				  if (!processedOperationPairs.contains(pair) && removedOperation.testMethodCheck(addedOperation)) {
-					  UMLClassBaseDiff umlClassDiff = getUMLClassDiff(removedOperation.getClassName());
-					  if (umlClassDiff == null) {
-						  umlClassDiff = getUMLClassDiff(addedOperation.getClassName());
-					  }
-					  UMLOperationBodyMapper operationBodyMapper = new UMLOperationBodyMapper(removedOperation, addedOperation, umlClassDiff);
-					  processedOperationPairs.add(pair);
-					  int mappings = operationBodyMapper.mappingsWithoutBlocks();
-					  if ((mappings > 0 && mappedElementsMoreThanNonMappedT1AndT2(mappings, operationBodyMapper)) || removedOperation.equalSignatureForAbstractMethods(addedOperation) ||
-							  (mappings > 0 && isPartOfMethodExtracted(removedOperation, addedOperation, addedOperations))) {
-						  int exactMatches = operationBodyMapper.exactMatches();
-						  List<AbstractCodeMapping> exactMappings = operationBodyMapper.getExactMatches();
-						  for (AbstractCodeMapping mapping : exactMappings) {
-							  String fragment1 = mapping.getFragment1().getString();
-							  if (RETURN_NUMBER_LITERAL.matcher(fragment1).matches()) {
-								  exactMatches--;
-							  }
-						  }
-						  if (operationBodyMapperMap.containsKey(exactMatches)) {
-							  List<UMLOperationBodyMapper> mapperList = operationBodyMapperMap.get(exactMatches);
-							  mapperList.add(operationBodyMapper);
-						  } else {
-							  List<UMLOperationBodyMapper> mapperList = new ArrayList<>();
-							  mapperList.add(operationBodyMapper);
-							  operationBodyMapperMap.put(exactMatches, mapperList);
-						  }
-					  }
-				  }
-			  }
+	         for(Iterator<UMLOperation> addedOperationIterator = addedOperations.iterator(); addedOperationIterator.hasNext();) {
+	            UMLOperation addedOperation = addedOperationIterator.next();
+	            
+	            Pair<UMLOperation, UMLOperation> pair = Pair.of(removedOperation, addedOperation);
+	            if(!processedOperationPairs.contains(pair) && removedOperation.testMethodCheck(addedOperation)) {
+	            	UMLClassBaseDiff umlClassDiff = getUMLClassDiff(removedOperation.getClassName());
+		            if(umlClassDiff == null) {
+		            	umlClassDiff = getUMLClassDiff(addedOperation.getClassName());
+		            }
+		            UMLOperationBodyMapper operationBodyMapper = new UMLOperationBodyMapper(removedOperation, addedOperation, umlClassDiff);
+		            processedOperationPairs.add(pair);
+		            int mappings = operationBodyMapper.mappingsWithoutBlocks();
+		            if((mappings > 0 && mappedElementsMoreThanNonMappedT1AndT2(mappings, operationBodyMapper)) || removedOperation.equalSignatureForAbstractMethods(addedOperation) ||
+		            		(mappings > 0 && isPartOfMethodExtracted(removedOperation, addedOperation, addedOperations))) {
+		               int exactMatches = operationBodyMapper.exactMatches();
+		               List<AbstractCodeMapping> exactMappings = operationBodyMapper.getExactMatches();
+		               for(AbstractCodeMapping mapping : exactMappings) {
+		            	   String fragment1 = mapping.getFragment1().getString();
+						   if(RETURN_NUMBER_LITERAL.matcher(fragment1).matches()) {
+		            		   exactMatches--;
+		            	   }
+		               }
+		               if(operationBodyMapperMap.containsKey(exactMatches)) {
+		                  List<UMLOperationBodyMapper> mapperList = operationBodyMapperMap.get(exactMatches);
+		                  mapperList.add(operationBodyMapper);
+		               }
+		               else {
+		                  List<UMLOperationBodyMapper> mapperList = new ArrayList<>();
+		                  mapperList.add(operationBodyMapper);
+		                  operationBodyMapperMap.put(exactMatches, mapperList);
+		               }
+		            }
+	            }
+	         }
 	         if(!operationBodyMapperMap.isEmpty()) {
 	            List<UMLOperationBodyMapper> firstMappers = firstMappers(operationBodyMapperMap);
 	            firstMappers.sort(new UMLOperationBodyMapperComparator());

@@ -1,15 +1,41 @@
 package gr.uom.java.xmi.diff;
 
-import gr.uom.java.xmi.*;
-import gr.uom.java.xmi.decomposition.*;
-import gr.uom.java.xmi.decomposition.replacement.*;
-import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringMinerTimedOutException;
 import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.util.PrefixSuffixUtils;
 
-import java.util.*;
+import gr.uom.java.xmi.UMLAnnotation;
+import gr.uom.java.xmi.UMLAnonymousClass;
+import gr.uom.java.xmi.UMLAttribute;
+import gr.uom.java.xmi.UMLClass;
+import gr.uom.java.xmi.UMLEnumConstant;
+import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.UMLType;
+import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
+import gr.uom.java.xmi.decomposition.CompositeStatementObject;
+import gr.uom.java.xmi.decomposition.OperationInvocation;
+import gr.uom.java.xmi.decomposition.StatementObject;
+import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
+import gr.uom.java.xmi.decomposition.VariableDeclaration;
+import gr.uom.java.xmi.decomposition.replacement.MethodInvocationReplacement;
+import gr.uom.java.xmi.decomposition.replacement.Replacement;
+import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
+import gr.uom.java.xmi.decomposition.replacement.SplitVariableReplacement;
+import gr.uom.java.xmi.decomposition.replacement.CompositeReplacement;
+import gr.uom.java.xmi.decomposition.replacement.ConsistentReplacementDetector;
+import gr.uom.java.xmi.decomposition.replacement.MergeVariableReplacement;
 import java.util.stream.Collectors;
 
 public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements Comparable<UMLClassBaseDiff> {
@@ -705,8 +731,8 @@ public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements C
 					String prefix1 = before.substring(0, before.lastIndexOf(".") + 1);
 					String prefix2 = after.substring(0, after.lastIndexOf(".") + 1);
 					if(prefix1.equals(prefix2)) {
-						before = before.substring(prefix1.length());
-						after = after.substring(prefix2.length());
+						before = before.substring(prefix1.length(), before.length());
+						after = after.substring(prefix2.length(), after.length());
 					}
 				}
 				Replacement renamePattern = new Replacement(before, after, ReplacementType.VARIABLE_NAME);
@@ -1096,19 +1122,21 @@ public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements C
 			for(Iterator<UMLOperation> removedOperationIterator = removedOperations.iterator(); removedOperationIterator.hasNext();) {
 				UMLOperation removedOperation = removedOperationIterator.next();
 				TreeSet<UMLOperationBodyMapper> mapperSet = new TreeSet<>();
-				for (UMLOperation addedOperation : addedOperations) {
+				for(Iterator<UMLOperation> addedOperationIterator = addedOperations.iterator(); addedOperationIterator.hasNext();) {
+					UMLOperation addedOperation = addedOperationIterator.next();
 					int maxDifferenceInPosition;
-					if (removedOperation.hasTestAnnotation() && addedOperation.hasTestAnnotation()) {
+					if(removedOperation.hasTestAnnotation() && addedOperation.hasTestAnnotation()) {
 						maxDifferenceInPosition = Math.abs(removedOperations.size() - addedOperations.size());
-					} else {
+					}
+					else {
 						maxDifferenceInPosition = Math.max(removedOperations.size(), addedOperations.size());
 					}
 					updateMapperSet(mapperSet, removedOperation, addedOperation, maxDifferenceInPosition);
 					List<UMLOperation> operationsInsideAnonymousClass = addedOperation.getOperationsInsideAnonymousClass(this.addedAnonymousClasses);
-					for (UMLOperation operationInsideAnonymousClass : operationsInsideAnonymousClass) {
+					for(UMLOperation operationInsideAnonymousClass : operationsInsideAnonymousClass) {
 						updateMapperSet(mapperSet, removedOperation, operationInsideAnonymousClass, addedOperation, maxDifferenceInPosition);
 					}
-					if (initialNumberOfRemovedOperations >= MAXIMUM_NUMBER_OF_COMPARED_METHODS && initialNumberOfAddedOperations >= MAXIMUM_NUMBER_OF_COMPARED_METHODS && mapperSet.size() > 0 &&
+					if(initialNumberOfRemovedOperations >= MAXIMUM_NUMBER_OF_COMPARED_METHODS && initialNumberOfAddedOperations >= MAXIMUM_NUMBER_OF_COMPARED_METHODS && mapperSet.size() > 0 &&
 							removedOperation.getName().equals(addedOperation.getName())) {
 						break;
 					}
@@ -1139,19 +1167,21 @@ public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements C
 			for(Iterator<UMLOperation> addedOperationIterator = addedOperations.iterator(); addedOperationIterator.hasNext();) {
 				UMLOperation addedOperation = addedOperationIterator.next();
 				TreeSet<UMLOperationBodyMapper> mapperSet = new TreeSet<>();
-				for (UMLOperation removedOperation : removedOperations) {
+				for(Iterator<UMLOperation> removedOperationIterator = removedOperations.iterator(); removedOperationIterator.hasNext();) {
+					UMLOperation removedOperation = removedOperationIterator.next();
 					int maxDifferenceInPosition;
-					if (removedOperation.hasTestAnnotation() && addedOperation.hasTestAnnotation()) {
+					if(removedOperation.hasTestAnnotation() && addedOperation.hasTestAnnotation()) {
 						maxDifferenceInPosition = Math.abs(removedOperations.size() - addedOperations.size());
-					} else {
+					}
+					else {
 						maxDifferenceInPosition = Math.max(removedOperations.size(), addedOperations.size());
 					}
 					updateMapperSet(mapperSet, removedOperation, addedOperation, maxDifferenceInPosition);
 					List<UMLOperation> operationsInsideAnonymousClass = addedOperation.getOperationsInsideAnonymousClass(this.addedAnonymousClasses);
-					for (UMLOperation operationInsideAnonymousClass : operationsInsideAnonymousClass) {
+					for(UMLOperation operationInsideAnonymousClass : operationsInsideAnonymousClass) {
 						updateMapperSet(mapperSet, removedOperation, operationInsideAnonymousClass, addedOperation, maxDifferenceInPosition);
 					}
-					if (initialNumberOfRemovedOperations >= MAXIMUM_NUMBER_OF_COMPARED_METHODS && initialNumberOfAddedOperations >= MAXIMUM_NUMBER_OF_COMPARED_METHODS && mapperSet.size() > 0 &&
+					if(initialNumberOfRemovedOperations >= MAXIMUM_NUMBER_OF_COMPARED_METHODS && initialNumberOfAddedOperations >= MAXIMUM_NUMBER_OF_COMPARED_METHODS && mapperSet.size() > 0 &&
 							removedOperation.getName().equals(addedOperation.getName())) {
 						break;
 					}
@@ -1714,11 +1744,12 @@ public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements C
 
 	private void checkForInlinedOperations() throws RefactoringMinerTimedOutException {
 		List<UMLOperation> operationsToBeRemoved = new ArrayList<>();
-		for (UMLOperation removedOperation : removedOperations) {
-			for (UMLOperationBodyMapper mapper : getOperationBodyMapperList()) {
+		for(Iterator<UMLOperation> removedOperationIterator = removedOperations.iterator(); removedOperationIterator.hasNext();) {
+			UMLOperation removedOperation = removedOperationIterator.next();
+			for(UMLOperationBodyMapper mapper : getOperationBodyMapperList()) {
 				InlineOperationDetection detection = new InlineOperationDetection(mapper, removedOperations, this, modelDiff);
 				List<InlineOperationRefactoring> refs = detection.check(removedOperation);
-				for (InlineOperationRefactoring refactoring : refs) {
+				for(InlineOperationRefactoring refactoring : refs) {
 					refactorings.add(refactoring);
 					UMLOperationBodyMapper operationBodyMapper = refactoring.getBodyMapper();
 					processMapperRefactorings(operationBodyMapper, refactorings);
@@ -1732,11 +1763,12 @@ public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements C
 
 	private void checkForExtractedOperations() throws RefactoringMinerTimedOutException {
 		List<UMLOperation> operationsToBeRemoved = new ArrayList<>();
-		for (UMLOperation addedOperation : addedOperations) {
-			for (UMLOperationBodyMapper mapper : getOperationBodyMapperList()) {
+		for(Iterator<UMLOperation> addedOperationIterator = addedOperations.iterator(); addedOperationIterator.hasNext();) {
+			UMLOperation addedOperation = addedOperationIterator.next();
+			for(UMLOperationBodyMapper mapper : getOperationBodyMapperList()) {
 				ExtractOperationDetection detection = new ExtractOperationDetection(mapper, addedOperations, this, modelDiff);
 				List<ExtractOperationRefactoring> refs = detection.check(addedOperation);
-				for (ExtractOperationRefactoring refactoring : refs) {
+				for(ExtractOperationRefactoring refactoring : refs) {
 					refactorings.add(refactoring);
 					UMLOperationBodyMapper operationBodyMapper = refactoring.getBodyMapper();
 					processMapperRefactorings(operationBodyMapper, refactorings);

@@ -45,7 +45,7 @@ public class RenameOperationRefactoring implements Refactoring {
 		String targetClassName = renamedOperation.getClassName();
 		boolean targetIsAnonymousInsideSource = false;
 		if(targetClassName.startsWith(sourceClassName + ".")) {
-			String targetClassNameSuffix = targetClassName.substring(sourceClassName.length() + 1);
+			String targetClassNameSuffix = targetClassName.substring(sourceClassName.length() + 1, targetClassName.length());
 			targetIsAnonymousInsideSource = isNumeric(targetClassNameSuffix);
 		}
 		return sourceClassName.equals(targetClassName) || targetIsAnonymousInsideSource ? sourceClassName : targetClassName;
