@@ -97,12 +97,6 @@ public class LambdaExpressionObject implements VariableDeclarationContainer, Loc
 	public VariableDeclarationContainer getOwner() {
 		return owner;
 	}
-
-	@Override
-	public String toString() {
-		return Objects.isNull(expression) ? String.join("\n", body.stringRepresentation()) : expression.toString();
-	}
-
 	public OperationBody getBody() {
 		return body;
 	}

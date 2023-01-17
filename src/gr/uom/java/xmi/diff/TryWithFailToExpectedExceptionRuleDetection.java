@@ -18,10 +18,10 @@ public class TryWithFailToExpectedExceptionRuleDetection {
     private final UMLOperation operationAfter;
     private final List<UMLAttribute> addedAttributes;
     private final List<CompositeStatementObject> removedCompositeStmts;
-    private final List<StatementObject> addedStmts;
+    private final List<AbstractCodeFragment> addedStmts;
     private List<TryStatementObject> tryStatements;
     private List<String> capturedExceptions;
-    private List<OperationInvocation> assertFailInvocationsFound;
+    private List<AbstractCall> assertFailInvocationsFound;
     private UMLAttribute expectedExceptionFieldDeclaration;
 
     List<TryStatementObject> getTryStatements() {
@@ -32,7 +32,7 @@ public class TryWithFailToExpectedExceptionRuleDetection {
         return capturedExceptions;
     }
 
-    List<OperationInvocation> getAssertFailInvocationsFound() {
+    List<AbstractCall> getAssertFailInvocationsFound() {
         return assertFailInvocationsFound;
     }
 
@@ -40,11 +40,11 @@ public class TryWithFailToExpectedExceptionRuleDetection {
         return expectedExceptionFieldDeclaration;
     }
 
-    List<OperationInvocation> getExpectInvocations() {
+    List<AbstractCall> getExpectInvocations() {
         return expectInvocations;
     }
 
-    private List<OperationInvocation> expectInvocations;
+    private List<AbstractCall> expectInvocations;
 
     public TryWithFailToExpectedExceptionRuleDetection(UMLOperationBodyMapper mapper, UMLClassBaseDiff classDiff) {
         this(mapper,classDiff.addedAttributes);
@@ -54,7 +54,7 @@ public class TryWithFailToExpectedExceptionRuleDetection {
         this(mapper.getOperation1(), mapper.getOperation2(), mapper.getNonMappedInnerNodesT1(), mapper.getNonMappedLeavesT2(), addedAttributes);
     }
 
-    public TryWithFailToExpectedExceptionRuleDetection(UMLOperation operationBefore, UMLOperation operationAfter, List<CompositeStatementObject> removedCompositeStmts, List<StatementObject> addedStmts, List<UMLAttribute> addedAttributes) {
+    public TryWithFailToExpectedExceptionRuleDetection(UMLOperation operationBefore, UMLOperation operationAfter, List<CompositeStatementObject> removedCompositeStmts, List<AbstractCodeFragment> addedStmts, List<UMLAttribute> addedAttributes) {
         this.operationBefore = operationBefore;
         this.operationAfter = operationAfter;
         this.removedCompositeStmts = removedCompositeStmts;
@@ -105,7 +105,7 @@ public class TryWithFailToExpectedExceptionRuleDetection {
         return expectInvocations.size() > 0;
     }
 
-    private static Stream<OperationInvocation> detectAddedExpectInvocations(List<StatementObject> addedStmts, List<String> capturedExceptions, UMLAttribute expectedExceptionRuleFieldDeclaration) {
+    private static Stream<AbstractCall> detectAddedExpectInvocations(List<AbstractCodeFragment> addedStmts, List<String> capturedExceptions, UMLAttribute expectedExceptionRuleFieldDeclaration) {
         return extractMethodInvocationsStream(addedStmts)
                 .filter(invocation -> isExpectedExceptionExpectInvocation(capturedExceptions, invocation))
                 .filter(expectInvocation -> expectedExceptionRuleFieldDeclaration.getName().equals(expectInvocation.getExpression()))
@@ -113,28 +113,28 @@ public class TryWithFailToExpectedExceptionRuleDetection {
                 .filter(expectInvocation -> capturedExceptions.contains(expectInvocation.getArguments().get(0)));
     }
 
-    private static boolean isExpectedExceptionExpectInvocation(List<String> candidateExceptions, OperationInvocation invocation) {
-        return invocation.getMethodName().equals("expect") && isAnyArgumentPassedTo(candidateExceptions, invocation);
+    private static boolean isExpectedExceptionExpectInvocation(List<String> candidateExceptions, AbstractCall invocation) {
+        return invocation.getName().equals("expect") && isAnyArgumentPassedTo(candidateExceptions, invocation);
     }
 
-    private static boolean isAnyArgumentPassedTo(List<String> arguments, OperationInvocation invocation) {
+    private static boolean isAnyArgumentPassedTo(List<String> arguments, AbstractCall invocation) {
         return arguments.contains(invocation.getArguments().get(0));
     }
 
-    private static Stream<OperationInvocation> extractMethodInvocationsStream(List<StatementObject> addedStmts) {
-        return addedStmts.stream().flatMap(st -> st.getMethodInvocationMap().values().stream().flatMap(Collection::stream));
+    private static Stream<AbstractCall> extractMethodInvocationsStream(List<AbstractCodeFragment> addedStmts) {
+        return addedStmts.stream().flatMap(st -> st.getMethodInvocations().stream());
     }
 
-    private static Stream<OperationInvocation> detectAssertFailInvocationAtTheEndOf(TryStatementObject tryStatement) {
-        List<OperationInvocation> operationInvocationsInLastStatement;
+    private static Stream<AbstractCall> detectAssertFailInvocationAtTheEndOf(TryStatementObject tryStatement) {
+        List<AbstractCall> operationInvocationsInLastStatement;
         try {
             var lastStatement = tryStatement.getStatements().get(tryStatement.getStatements().size() - 1);
-            operationInvocationsInLastStatement = new ArrayList<>(lastStatement.getMethodInvocationMap().values()).get(0);
+            operationInvocationsInLastStatement = new ArrayList<>(lastStatement.getMethodInvocations());
         } catch (IndexOutOfBoundsException e) {
             return Stream.empty();
         }
         var nonNullInvocations = operationInvocationsInLastStatement.stream().filter(Objects::nonNull);
-        var nonNullFailInvocations = nonNullInvocations.filter(invocation -> Objects.nonNull(invocation.getMethodName()) && invocation.getMethodName().equals("fail"));
+        var nonNullFailInvocations = nonNullInvocations.filter(invocation -> Objects.nonNull(invocation.getName()) && invocation.getName().equals("fail"));
         return nonNullFailInvocations.filter(invocation -> Objects.isNull(invocation.getExpression()) || invocation.getExpression().equals("Assert"));
     }
 

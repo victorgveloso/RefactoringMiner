@@ -2,7 +2,8 @@ package gr.uom.java.xmi.diff;
 
 import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.decomposition.OperationInvocation;
+import gr.uom.java.xmi.decomposition.AbstractCall;
+import gr.uom.java.xmi.decomposition.LeafExpression;
 import gr.uom.java.xmi.decomposition.TryStatementObject;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.refactoringminer.api.Refactoring;
@@ -22,9 +23,9 @@ public class TryWithFailToExpectedExceptionRuleRefactoring implements Refactorin
     private final UMLOperation operationBefore;
     private final UMLOperation operationAfter;
     private final TryStatementObject tryStatement;
-    private final OperationInvocation assertFailInvocation;
-    private final String exception;
-    private final OperationInvocation thrownExpectInvocations;
+    private final AbstractCall assertFailInvocation;
+    private final LeafExpression exception;
+    private final AbstractCall thrownExpectInvocations;
     private final UMLAttribute ruleFieldDeclaration;
 
     public UMLOperation getOperationBefore() {
@@ -39,15 +40,15 @@ public class TryWithFailToExpectedExceptionRuleRefactoring implements Refactorin
         return tryStatement;
     }
 
-    public OperationInvocation getAssertFailInvocation() {
+    public AbstractCall getAssertFailInvocation() {
         return assertFailInvocation;
     }
 
-    public String getException() {
+    public LeafExpression getException() {
         return exception;
     }
 
-    public OperationInvocation getThrownExpectInvocations() {
+    public AbstractCall getThrownExpectInvocations() {
         return thrownExpectInvocations;
     }
 
@@ -55,7 +56,7 @@ public class TryWithFailToExpectedExceptionRuleRefactoring implements Refactorin
         return ruleFieldDeclaration;
     }
 
-    public TryWithFailToExpectedExceptionRuleRefactoring(UMLOperation operationBefore, UMLOperation operationAfter, TryStatementObject tryStatement, OperationInvocation assertFailInvocation, String capturedException, OperationInvocation thrownExpectInvocation, UMLAttribute ruleFieldDeclaration) {
+    public TryWithFailToExpectedExceptionRuleRefactoring(UMLOperation operationBefore, UMLOperation operationAfter, TryStatementObject tryStatement, AbstractCall assertFailInvocation, LeafExpression capturedException, AbstractCall thrownExpectInvocation, UMLAttribute ruleFieldDeclaration) {
         this.operationBefore = operationBefore;
         this.operationAfter = operationAfter;
         this.tryStatement = tryStatement;

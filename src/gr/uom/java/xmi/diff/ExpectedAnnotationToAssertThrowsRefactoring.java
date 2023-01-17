@@ -1,9 +1,9 @@
 package gr.uom.java.xmi.diff;
 
 import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.decomposition.AbstractCall;
 import gr.uom.java.xmi.decomposition.AbstractExpression;
 import gr.uom.java.xmi.decomposition.LambdaExpressionObject;
-import gr.uom.java.xmi.decomposition.OperationInvocation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
@@ -24,7 +24,7 @@ public class ExpectedAnnotationToAssertThrowsRefactoring implements Refactoring 
     private final ModifyMethodAnnotationRefactoring expectedExceptionAnnotation;
     private final AbstractExpression exception;
     private final LambdaExpressionObject lambda;
-    private final OperationInvocation assertThrows;
+    private final AbstractCall assertThrows;
 
     public UMLOperation getOperationBefore() {
         return operationBefore;
@@ -46,7 +46,7 @@ public class ExpectedAnnotationToAssertThrowsRefactoring implements Refactoring 
         return lambda;
     }
 
-    public OperationInvocation getAssertThrows() {
+    public AbstractCall getAssertThrows() {
         return assertThrows;
     }
 
@@ -55,7 +55,7 @@ public class ExpectedAnnotationToAssertThrowsRefactoring implements Refactoring 
                                                        ModifyMethodAnnotationRefactoring expectedExceptionAnnotation,
                                                        AbstractExpression exception,
                                                        LambdaExpressionObject lambda,
-                                                       OperationInvocation assertThrows) {
+                                                       AbstractCall assertThrows) {
         this.operationBefore = operationBefore;
         this.operationAfter = operationAfter;
         this.expectedExceptionAnnotation = expectedExceptionAnnotation;
