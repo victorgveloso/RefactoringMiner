@@ -3,10 +3,7 @@ package gr.uom.java.xmi.diff;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLModelASTReader;
-import gr.uom.java.xmi.decomposition.CompositeStatementObject;
-import gr.uom.java.xmi.decomposition.OperationInvocation;
-import gr.uom.java.xmi.decomposition.StatementObject;
-import gr.uom.java.xmi.decomposition.TryStatementObject;
+import gr.uom.java.xmi.decomposition.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,10 +25,10 @@ public class TryWithFailToExpectedExceptionRuleTest {
         public void setUp() throws RefactoringMinerTimedOutException {
             var tryCatchVersionTestMethod = TestOperationDiffMother.createExampleTestMethod_TryCatchVersion();
             var tryCatchVersionTestClass = TestOperationDiffMother.createExampleClassTestCode(tryCatchVersionTestMethod);
-            var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", tryCatchVersionTestClass), Set.of()).getUmlModel();
+            var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", tryCatchVersionTestClass), Set.of(), false).getUmlModel();
             var ruleVersionTestMethod = TestOperationDiffMother.createExampleTestMethod_RuleVersion();
             var ruleVersionTestClass = TestOperationDiffMother.createExampleClassTestCode(ruleVersionTestMethod);
-            var after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", ruleVersionTestClass), Set.of()).getUmlModel();
+            var after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", ruleVersionTestClass), Set.of(), false).getUmlModel();
             modelDiff = before.diff(after);
         }
     }
@@ -56,7 +53,7 @@ public class TryWithFailToExpectedExceptionRuleTest {
                     "        toPackage(\"whatever\").matches(new Intent(Intent.ACTION_VIEW));\n" +
                     "    }\n" +
                     "}";
-            after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", ruleVersionTestClass), Set.of()).getUmlModel();
+            after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", ruleVersionTestClass), Set.of(), false).getUmlModel();
         }
 
         @Test
@@ -78,7 +75,7 @@ public class TryWithFailToExpectedExceptionRuleTest {
                     "        assertEquals(pkg, \"pkg1\");\n" +
                     "    }\n" +
                     "}";
-            var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", tryCatchVersionTestClass), Set.of()).getUmlModel();
+            var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", tryCatchVersionTestClass), Set.of(), false).getUmlModel();
             modelDiff = before.diff(after);
             modelDiff.getRefactorings();
         }
@@ -101,7 +98,7 @@ public class TryWithFailToExpectedExceptionRuleTest {
                     "        }\n" +
                     "    }\n" +
                     "}";
-            var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", tryCatchVersionTestClass), Set.of()).getUmlModel();
+            var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", tryCatchVersionTestClass), Set.of(), false).getUmlModel();
             modelDiff = before.diff(after);
             modelDiff.getRefactorings();
         }
@@ -211,23 +208,23 @@ public class TryWithFailToExpectedExceptionRuleTest {
             Assert.assertEquals("IllegalArgumentException.class", thrownExpect.getArguments().get(0));
         }
 
-        private boolean hasExpectedException(List<String> capturedExceptions, OperationInvocation invocation) {
-            return invocation.getMethodName().equals("expect") && isAnyArgumentPassedTo(capturedExceptions, invocation);
+        private boolean hasExpectedException(List<String> capturedExceptions, AbstractCall invocation) {
+            return invocation.getName().equals("expect") && isAnyArgumentPassedTo(capturedExceptions, invocation);
         }
 
-        private boolean isAnyArgumentPassedTo(List<String> arguments, OperationInvocation invocation) {
+        private boolean isAnyArgumentPassedTo(List<String> arguments, AbstractCall invocation) {
             return arguments.contains(invocation.getArguments().get(0));
         }
 
-        private Stream<OperationInvocation> extractMethodInvocations(List<StatementObject> addedStmts) {
-            return addedStmts.stream().flatMap(st -> st.getMethodInvocationMap().values().stream().flatMap(Collection::stream));
+        private Stream<AbstractCall> extractMethodInvocations(List<AbstractCodeFragment> addedStmts) {
+            return addedStmts.stream().flatMap(st -> st.getMethodInvocations().stream());
         }
 
         private boolean hasAssertFailInvocationAtTheEnd(TryStatementObject tryStatement) {
             var lastStatement = tryStatement.getStatements().get(tryStatement.getStatements().size() - 1);
-            var operationInvocationsInLastStatement = new ArrayList<>(lastStatement.getMethodInvocationMap().values()).get(0);
+            var operationInvocationsInLastStatement = new ArrayList<>(lastStatement.getMethodInvocations());
             var assertFailInvocations = operationInvocationsInLastStatement.stream()
-                    .filter(invocation -> invocation.getExpression().equals("Assert") && invocation.getMethodName().equals("fail"))
+                    .filter(invocation -> invocation.getExpression().equals("Assert") && invocation.getName().equals("fail"))
                     .collect(Collectors.toList());
             return assertFailInvocations.size() > 0;
         }

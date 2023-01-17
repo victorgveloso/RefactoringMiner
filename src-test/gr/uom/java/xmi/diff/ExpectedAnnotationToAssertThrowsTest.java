@@ -4,7 +4,8 @@ import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLModelASTReader;
 import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.decomposition.OperationInvocation;
+import gr.uom.java.xmi.decomposition.AbstractCall;
+import gr.uom.java.xmi.decomposition.LeafExpression;
 import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,10 +32,10 @@ public class ExpectedAnnotationToAssertThrowsTest {
         public void setUp() throws RefactoringMinerTimedOutException {
             var inlineVersionTestMethod = TestOperationDiffMother.createExampleTestMethod_InlineVersion();
             var inlineVersionTestClass = TestOperationDiffMother.createExampleClassTestCode(inlineVersionTestMethod);
-            var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", inlineVersionTestClass), Set.of()).getUmlModel();
+            var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", inlineVersionTestClass), Set.of(), false).getUmlModel();
             var assertVersionTestMethod = TestOperationDiffMother.createExampleTestMethod_AssertVersion();
             var assertVersionTestClass = TestOperationDiffMother.createExampleClassTestCode(assertVersionTestMethod);
-            var after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", assertVersionTestClass), Set.of()).getUmlModel();
+            var after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", assertVersionTestClass), Set.of(), false).getUmlModel();
             modelDiff = before.diff(after);
         }
     }
@@ -74,7 +75,7 @@ public class ExpectedAnnotationToAssertThrowsTest {
                     "                .fetchStaffProfilesForRoleRefresh(\"cmc\", pageRequest);\n" +
                     "    }\n" +
                     "}";
-            var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", inlineVersionTestClass), Set.of()).getUmlModel();
+            var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", inlineVersionTestClass), Set.of(), false).getUmlModel();
             var assertVersionTestClass = "package uk.gov.hmcts.reform.cwrdapi.service.impl;\n" +
                     "\n" +
                     "public class CaseWorkerServiceImplTest {\n" +
@@ -109,7 +110,7 @@ public class ExpectedAnnotationToAssertThrowsTest {
                     "        });\n" +
                     "    }\n" +
                     "}";
-            var after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", assertVersionTestClass), Set.of()).getUmlModel();
+            var after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", assertVersionTestClass), Set.of(), false).getUmlModel();
             modelDiff = before.diff(after);
         }
         @Test
@@ -225,11 +226,11 @@ public class ExpectedAnnotationToAssertThrowsTest {
             return expectedException.getExpression();
         }
 
-        private void verifyAssertThrowsLambdaHasPreviousTestBodyStatements(UMLOperation after, String lambdaExpression) {
+        private void verifyAssertThrowsLambdaHasPreviousTestBodyStatements(UMLOperation after, LeafExpression lambdaExpression) {
             var allLambdas = after.getBody().getAllLambdas();
             Assert.assertEquals(1, allLambdas.size());
             var lambda = allLambdas.get(0);
-            var expectedLines = lambdaExpression.lines().collect(Collectors.toList());
+            var expectedLines = lambdaExpression.getString().lines().collect(Collectors.toList());
             expectedLines.remove(0);
             expectedLines.remove(expectedLines.size() - 1);
             var lines = lambda.getBody().stringRepresentation();
@@ -248,9 +249,9 @@ public class ExpectedAnnotationToAssertThrowsTest {
             return before.isNormalAnnotation() && before.getTypeName().equals("Test") && before.getMemberValuePairs().containsKey("expected");
         }
 
-        private List<OperationInvocation> getAssertThrows(UMLOperation operation) {
+        private List<AbstractCall> getAssertThrows(UMLOperation operation) {
             return operation.getAllOperationInvocations().stream()
-                    .filter((op) -> op.getMethodName().equals("assertThrows") &&
+                    .filter((op) -> op.getName().equals("assertThrows") &&
                             (op.getExpression().equals("Assert") || op.getExpression().equals("Assertions")))
                     .collect(Collectors.toList());
         }
