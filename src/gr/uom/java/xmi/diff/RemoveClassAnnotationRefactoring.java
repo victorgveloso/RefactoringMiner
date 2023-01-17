@@ -118,7 +118,10 @@ public class RemoveClassAnnotationRefactoring implements Refactoring {
 		} else if (!classAfter.equals(other.classAfter))
 			return false;
 		if (classBefore == null) {
-			return other.classBefore == null;
-		} else return classBefore.equals(other.classBefore);
+			if (other.classBefore != null)
+				return false;
+		} else if (!classBefore.equals(other.classBefore))
+			return false;
+		return true;
 	}
 }

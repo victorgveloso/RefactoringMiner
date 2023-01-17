@@ -131,8 +131,11 @@ public class SplitVariableRefactoring implements Refactoring {
 		} else if (!operationBefore.equals(other.operationBefore))
 			return false;
 		if (splitVariables == null) {
-			return other.splitVariables == null;
-		} else return splitVariables.equals(other.splitVariables);
+			if (other.splitVariables != null)
+				return false;
+		} else if (!splitVariables.equals(other.splitVariables))
+			return false;
+		return true;
 	}
 
 	@Override

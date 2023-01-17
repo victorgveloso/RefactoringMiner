@@ -249,14 +249,18 @@ public class UMLClass extends UMLAbstractClass implements Comparable<UMLClass>, 
     public boolean hasSameNameAndKind(UMLClass umlClass) {
     	if(!this.name.equals(umlClass.name))
     		return false;
-		return hasSameKind(umlClass);
-	}
+    	if(!hasSameKind(umlClass))
+    		return false;
+    	return true;
+    }
 
     public boolean hasSameKind(UMLClass umlClass) {
     	if(this.isInterface != umlClass.isInterface)
     		return false;
-		return equalTypeParameters(umlClass);
-	}
+    	if(!equalTypeParameters(umlClass))
+    		return false;
+    	return true;
+    }
 
 	private boolean equalTypeParameters(UMLClass umlClass) {
 		return this.typeParameters.equals(umlClass.typeParameters) || this.getTypeParameterNames().equals(umlClass.getTypeParameterNames()) ||

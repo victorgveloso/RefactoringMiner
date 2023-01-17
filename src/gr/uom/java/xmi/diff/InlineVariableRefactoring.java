@@ -91,8 +91,11 @@ public class InlineVariableRefactoring implements Refactoring {
 		} else if (!operationBefore.equals(other.operationBefore))
 			return false;
 		if (variableDeclaration == null) {
-			return other.variableDeclaration == null;
-		} else return variableDeclaration.equals(other.variableDeclaration);
+			if (other.variableDeclaration != null)
+				return false;
+		} else if (!variableDeclaration.equals(other.variableDeclaration))
+			return false;
+		return true;
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {

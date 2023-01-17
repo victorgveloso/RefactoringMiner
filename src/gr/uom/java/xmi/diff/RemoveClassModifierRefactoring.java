@@ -114,7 +114,10 @@ public class RemoveClassModifierRefactoring implements Refactoring {
 		} else if (!classBefore.equals(other.classBefore))
 			return false;
 		if (modifier == null) {
-			return other.modifier == null;
-		} else return modifier.equals(other.modifier);
+			if (other.modifier != null)
+				return false;
+		} else if (!modifier.equals(other.modifier))
+			return false;
+		return true;
 	}
 }

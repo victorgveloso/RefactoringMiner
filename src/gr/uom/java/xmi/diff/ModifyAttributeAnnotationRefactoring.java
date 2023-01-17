@@ -147,9 +147,13 @@ public class ModifyAttributeAnnotationRefactoring implements Refactoring {
 		} else if (!attributeBefore.getVariableDeclaration().equals(other.attributeBefore.getVariableDeclaration()))
 			return false;
 		if (attributeAfter == null) {
-			return other.attributeAfter == null;
+			if (other.attributeAfter != null)
+				return false;
 		} else if(attributeAfter.getVariableDeclaration() == null) {
-			return other.attributeAfter.getVariableDeclaration() == null;
-		} else return attributeAfter.getVariableDeclaration().equals(other.attributeAfter.getVariableDeclaration());
+			if(other.attributeAfter.getVariableDeclaration() != null)
+				return false;
+		} else if (!attributeAfter.getVariableDeclaration().equals(other.attributeAfter.getVariableDeclaration()))
+			return false;
+		return true;
 	}
 }

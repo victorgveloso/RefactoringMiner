@@ -124,7 +124,10 @@ public class RenamePackageRefactoring implements Refactoring {
 			return false;
 		RenamePackageRefactoring other = (RenamePackageRefactoring) obj;
 		if (pattern == null) {
-			return other.pattern == null;
-		} else return pattern.equals(other.pattern);
+			if (other.pattern != null)
+				return false;
+		} else if (!pattern.equals(other.pattern))
+			return false;
+		return true;
 	}
 }

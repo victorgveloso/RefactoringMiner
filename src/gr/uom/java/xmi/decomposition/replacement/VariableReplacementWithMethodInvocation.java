@@ -21,6 +21,6 @@ public class VariableReplacementWithMethodInvocation extends Replacement {
 	}
 
 	public enum Direction {
-		VARIABLE_TO_INVOCATION, INVOCATION_TO_VARIABLE
-    }
+		VARIABLE_TO_INVOCATION, INVOCATION_TO_VARIABLE;
+	}
 }

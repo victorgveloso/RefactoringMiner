@@ -550,7 +550,9 @@ public class UMLModelDiff {
 		   String removedName = removedClassName.substring(removedClassName.lastIndexOf(".")+1, removedClassName.length());
 		   String addedClassName = addedClass.getName();
 		   String addedName = addedClassName.substring(addedClassName.lastIndexOf(".")+1, addedClassName.length());
-		   return removedName.equals(addedName);
+		   if(removedName.equals(addedName)) {
+			   return true;
+		   }
 	   }
 	   return false;
    }
@@ -746,8 +748,10 @@ public class UMLModelDiff {
 		   List<String> typeLiterals2 = v2.getInitializer().getTypeLiterals();
 		   String className1 = addedAttribute.getNonQualifiedClassName();
 		   String className2 = removedAttribute.getNonQualifiedClassName();
-		   return typeLiterals1.contains(className1 + ".class") && typeLiterals2.contains(className2 + ".class") &&
-				   addedAttribute.getType().getClassType().endsWith("Logger") && removedAttribute.getType().getClassType().endsWith("Logger");
+		   if(typeLiterals1.contains(className1 + ".class") && typeLiterals2.contains(className2 + ".class") &&
+				   addedAttribute.getType().getClassType().endsWith("Logger") && removedAttribute.getType().getClassType().endsWith("Logger")) {
+			   return true;
+		   }
 	   }
 	   return false;
    }

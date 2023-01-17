@@ -86,8 +86,11 @@ public class ExtractAttributeRefactoring implements Refactoring {
 			return false;
 		ExtractAttributeRefactoring other = (ExtractAttributeRefactoring) obj;
 		if (attributeDeclaration == null) {
-			return other.attributeDeclaration == null;
-		} else return attributeDeclaration.equals(other.attributeDeclaration);
+			if (other.attributeDeclaration != null)
+				return false;
+		} else if (!attributeDeclaration.equals(other.attributeDeclaration))
+			return false;
+		return true;
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {

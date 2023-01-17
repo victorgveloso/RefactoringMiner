@@ -147,7 +147,10 @@ public class ReorderParameterRefactoring implements Refactoring {
 		} else if (!parametersAfter.equals(other.parametersAfter))
 			return false;
 		if (parametersBefore == null) {
-			return other.parametersBefore == null;
-		} else return parametersBefore.equals(other.parametersBefore);
+			if (other.parametersBefore != null)
+				return false;
+		} else if (!parametersBefore.equals(other.parametersBefore))
+			return false;
+		return true;
 	}
 }

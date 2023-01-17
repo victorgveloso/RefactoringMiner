@@ -134,8 +134,11 @@ public class CandidateAttributeRefactoring {
 		} else if (!originalVariableName.equals(other.originalVariableName))
 			return false;
 		if (renamedVariableName == null) {
-			return other.renamedVariableName == null;
-		} else return renamedVariableName.equals(other.renamedVariableName);
+			if (other.renamedVariableName != null)
+				return false;
+		} else if (!renamedVariableName.equals(other.renamedVariableName))
+			return false;
+		return true;
 	}
 
 }

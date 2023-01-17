@@ -342,7 +342,9 @@ public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements C
 
 	//return true if "classMoveDiff" represents the move of a class that is inner to this.originalClass
 	public boolean isInnerClassMove(UMLClassBaseDiff classDiff) {
-		return this.originalClass.isInnerClass(classDiff.originalClass) && this.nextClass.isInnerClass(classDiff.nextClass);
+		if(this.originalClass.isInnerClass(classDiff.originalClass) && this.nextClass.isInnerClass(classDiff.nextClass))
+			return true;
+		return false;
 	}
 
 	public boolean nextClassImportsType(String targetClass) {
@@ -1088,7 +1090,9 @@ public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements C
 			}
 		}
 		double percentage = (double)counter/(double)allCases;
-		return percentage > 0.5;
+		if(percentage > 0.5)
+			return true;
+		return false;
 	}
 
 	private static boolean cyclicRename(Map<Replacement, Set<CandidateAttributeRefactoring>> renames, Replacement rename) {
@@ -1685,7 +1689,9 @@ public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements C
 		if(removedOperation.isGetter() && addedOperation.isGetter()) {
 			UMLType type1 = removedOperation.getReturnParameter().getType();
 			UMLType type2 = addedOperation.getReturnParameter().getType();
-			return !removedOperation.equalReturnParameter(addedOperation) && !type1.compatibleTypes(type2);
+			if(!removedOperation.equalReturnParameter(addedOperation) && !type1.compatibleTypes(type2)) {
+				return true;
+			}
 		}
 		return false;
 	}

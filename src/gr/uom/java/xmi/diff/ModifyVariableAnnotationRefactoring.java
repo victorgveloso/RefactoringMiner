@@ -179,7 +179,10 @@ public class ModifyVariableAnnotationRefactoring implements Refactoring {
 		} else if (!variableAfter.equals(other.variableAfter))
 			return false;
 		if (variableBefore == null) {
-			return other.variableBefore == null;
-		} else return variableBefore.equals(other.variableBefore);
+			if (other.variableBefore != null)
+				return false;
+		} else if (!variableBefore.equals(other.variableBefore))
+			return false;
+		return true;
 	}
 }

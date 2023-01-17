@@ -22,8 +22,8 @@ public class RenameAttributeRefactoring implements Refactoring {
 			Set<CandidateAttributeRefactoring> attributeRenames) {
 		this.originalAttribute = originalAttribute;
 		this.renamedAttribute = renamedAttribute;
-		this.classNameBefore = originalAttribute.getClassName();
-		this.classNameAfter = renamedAttribute.getClassName();
+		this.classNameBefore = originalAttribute.getClassName();;
+		this.classNameAfter = renamedAttribute.getClassName();;
 		this.attributeRenames = attributeRenames;
 	}
 
@@ -103,10 +103,14 @@ public class RenameAttributeRefactoring implements Refactoring {
 		} else if (!originalAttribute.getVariableDeclaration().equals(other.originalAttribute.getVariableDeclaration()))
 			return false;
 		if (renamedAttribute == null) {
-			return other.renamedAttribute == null;
+			if (other.renamedAttribute != null)
+				return false;
 		} else if(renamedAttribute.getVariableDeclaration() == null) {
-			return other.renamedAttribute.getVariableDeclaration() == null;
-		} else return renamedAttribute.getVariableDeclaration().equals(other.renamedAttribute.getVariableDeclaration());
+			if(other.renamedAttribute.getVariableDeclaration() != null)
+				return false;
+		} else if (!renamedAttribute.getVariableDeclaration().equals(other.renamedAttribute.getVariableDeclaration()))
+			return false;
+		return true;
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {

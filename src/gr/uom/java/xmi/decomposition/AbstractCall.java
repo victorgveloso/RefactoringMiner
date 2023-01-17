@@ -58,7 +58,10 @@ public abstract class AbstractCall implements LocationInfoProvider {
 		if(expression == null) {
 			return true;
 		}
-		else return expression.equals("this");
+		else if(expression.equals("this")) {
+			return true;
+		}
+		return false;
 	}
 
 	public boolean identicalExpression(AbstractCall call, Set<Replacement> replacements) {
@@ -87,7 +90,9 @@ public abstract class AbstractCall implements LocationInfoProvider {
 					expression1AfterReplacements = ReplacementUtil.performReplacement(expression1AfterReplacements, expression2, replacement.getBefore(), replacement.getAfter());
 				}
 			}
-			return expression1AfterReplacements.equals(expression2);
+			if(expression1AfterReplacements.equals(expression2)) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -160,8 +165,11 @@ public abstract class AbstractCall implements LocationInfoProvider {
 		for(int i=0; i<arguments1.size(); i++) {
 			String argument1 = arguments1.get(i);
 			String argument2 = arguments2.get(i);
-			boolean argumentWrapped = argument1.contains("(" + argument2 + ")") ||
-					argument2.contains("(" + argument1 + ")");
+			boolean argumentWrapped = false;
+			if(argument1.contains("(" + argument2 + ")") ||
+					argument2.contains("(" + argument1 + ")")) {
+				argumentWrapped = true;
+			}
 			if(!argument1.equals(argument2) && !argumentWrapped)
 				return false;
 		}
@@ -306,7 +314,9 @@ public abstract class AbstractCall implements LocationInfoProvider {
 	public boolean identicalWithDifferentNumberOfArguments(AbstractCall call, Set<Replacement> replacements, Map<String, String> parameterToArgumentMap) {
 		if(onlyArgumentsChanged(call, replacements)) {
 			int argumentIntersectionSize = argumentIntersectionSize(call, replacements, parameterToArgumentMap);
-			return argumentIntersectionSize > 0 || getArguments().size() == 0 || call.getArguments().size() == 0;
+			if(argumentIntersectionSize > 0 || getArguments().size() == 0 || call.getArguments().size() == 0) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -450,7 +460,9 @@ public abstract class AbstractCall implements LocationInfoProvider {
 		if(parenthesizedS1.equals(s2))
 			return true;
 		String parenthesizedS2 = "("+s2+")";
-		return parenthesizedS2.equals(s1);
+		if(parenthesizedS2.equals(s1))
+			return true;
+		return false;
 	}
 
 	protected void update(AbstractCall newCall, String oldExpression, String newExpression) {
@@ -474,6 +486,6 @@ public abstract class AbstractCall implements LocationInfoProvider {
 	}
 
 	public enum StatementCoverageType {
-		NONE, ONLY_CALL, RETURN_CALL, THROW_CALL, CAST_CALL, VARIABLE_DECLARATION_INITIALIZER_CALL
-    }
+		NONE, ONLY_CALL, RETURN_CALL, THROW_CALL, CAST_CALL, VARIABLE_DECLARATION_INITIALIZER_CALL;
+	}
 }

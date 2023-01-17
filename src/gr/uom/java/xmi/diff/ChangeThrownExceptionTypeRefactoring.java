@@ -140,7 +140,10 @@ public class ChangeThrownExceptionTypeRefactoring implements Refactoring {
 		} else if (!operationBefore.equals(other.operationBefore))
 			return false;
 		if (originalTypes == null) {
-			return other.originalTypes == null;
-		} else return originalTypes.equals(other.originalTypes);
+			if (other.originalTypes != null)
+				return false;
+		} else if (!originalTypes.equals(other.originalTypes))
+			return false;
+		return true;
 	}
 }

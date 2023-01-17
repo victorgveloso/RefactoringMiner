@@ -50,7 +50,10 @@ public class MethodInvocationReplacement extends Replacement {
 		} else if (!invokedOperationAfter.getLocationInfo().equals(other.invokedOperationAfter.getLocationInfo()))
 			return false;
 		if (invokedOperationBefore == null) {
-			return other.invokedOperationBefore == null;
-		} else return invokedOperationBefore.getLocationInfo().equals(other.invokedOperationBefore.getLocationInfo());
+			if (other.invokedOperationBefore != null)
+				return false;
+		} else if (!invokedOperationBefore.getLocationInfo().equals(other.invokedOperationBefore.getLocationInfo()))
+			return false;
+		return true;
 	}
 }

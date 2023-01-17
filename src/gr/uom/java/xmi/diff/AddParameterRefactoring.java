@@ -119,7 +119,10 @@ public class AddParameterRefactoring implements Refactoring {
 		} else if (!operationAfter.equals(other.operationAfter))
 			return false;
 		if (operationBefore == null) {
-			return other.operationBefore == null;
-		} else return operationBefore.equals(other.operationBefore);
+			if (other.operationBefore != null)
+				return false;
+		} else if (!operationBefore.equals(other.operationBefore))
+			return false;
+		return true;
 	}
 }

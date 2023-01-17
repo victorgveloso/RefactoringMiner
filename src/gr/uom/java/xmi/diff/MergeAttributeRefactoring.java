@@ -97,10 +97,14 @@ public class MergeAttributeRefactoring implements Refactoring {
 		if (!this.getMergedVariables().equals(other.getMergedVariables()))
 			return false;
 		if (newAttribute == null) {
-			return other.newAttribute == null;
+			if (other.newAttribute != null)
+				return false;
 		} else if (newAttribute.getVariableDeclaration() == null) {
-			return other.newAttribute.getVariableDeclaration() == null;
-		} else return newAttribute.getVariableDeclaration().equals(other.newAttribute.getVariableDeclaration());
+			if (other.newAttribute.getVariableDeclaration() != null)
+				return false;
+		} else if (!newAttribute.getVariableDeclaration().equals(other.newAttribute.getVariableDeclaration()))
+			return false;
+		return true;
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {

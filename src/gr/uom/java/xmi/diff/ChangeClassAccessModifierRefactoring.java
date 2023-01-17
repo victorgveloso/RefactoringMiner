@@ -128,7 +128,10 @@ public class ChangeClassAccessModifierRefactoring implements Refactoring {
 		} else if (!classBefore.equals(other.classBefore))
 			return false;
 		if (originalAccessModifier == null) {
-			return other.originalAccessModifier == null;
-		} else return originalAccessModifier.equals(other.originalAccessModifier);
+			if (other.originalAccessModifier != null)
+				return false;
+		} else if (!originalAccessModifier.equals(other.originalAccessModifier))
+			return false;
+		return true;
 	}
 }
