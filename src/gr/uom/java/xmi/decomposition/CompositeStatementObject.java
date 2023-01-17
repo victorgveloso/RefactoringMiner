@@ -1,27 +1,33 @@
 package gr.uom.java.xmi.decomposition;
 
-import gr.uom.java.xmi.LocationInfo;
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.diff.CodeRange;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Statement;
 
-import java.util.*;
+import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.diff.CodeRange;
 
 public class CompositeStatementObject extends AbstractStatement {
 
-	private final List<AbstractStatement> statementList;
-	private final List<AbstractExpression> expressionList;
-	private final List<VariableDeclaration> variableDeclarations;
-	private final LocationInfo locationInfo;
+	private List<AbstractStatement> statementList;
+	private List<AbstractExpression> expressionList;
+	private List<VariableDeclaration> variableDeclarations;
+	private LocationInfo locationInfo;
 
 	public CompositeStatementObject(CompilationUnit cu, String filePath, Statement statement, int depth, CodeElementType codeElementType) {
 		super();
 		this.setDepth(depth);
 		this.locationInfo = new LocationInfo(cu, filePath, statement, codeElementType);
-		this.statementList = new ArrayList<>();
-		this.expressionList = new ArrayList<>();
-		this.variableDeclarations = new ArrayList<>();
+		this.statementList = new ArrayList<AbstractStatement>();
+		this.expressionList = new ArrayList<AbstractExpression>();
+		this.variableDeclarations = new ArrayList<VariableDeclaration>();
 	}
 
 	public void addStatement(AbstractStatement statement) {
@@ -52,7 +58,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<StatementObject> getLeaves() {
-		List<StatementObject> leaves = new ArrayList<>();
+		List<StatementObject> leaves = new ArrayList<StatementObject>();
 		for(AbstractStatement statement : statementList) {
 			leaves.addAll(statement.getLeaves());
 		}
@@ -60,7 +66,7 @@ public class CompositeStatementObject extends AbstractStatement {
 	}
 
 	public List<CompositeStatementObject> getInnerNodes() {
-		List<CompositeStatementObject> innerNodes = new ArrayList<>();
+		List<CompositeStatementObject> innerNodes = new ArrayList<CompositeStatementObject>();
 		for(AbstractStatement statement : statementList) {
 			if(statement instanceof CompositeStatementObject) {
 				CompositeStatementObject composite = (CompositeStatementObject)statement;
@@ -109,7 +115,7 @@ public class CompositeStatementObject extends AbstractStatement {
 					}
 				}
 				else {
-					sb.append(expression).append("; ");
+					sb.append(expression.toString()).append("; ");
 				}
 			}
 			AbstractExpression lastExpression = expressionList.get(expressionList.size()-1);
@@ -123,7 +129,7 @@ public class CompositeStatementObject extends AbstractStatement {
 				}
 			}
 			else {
-				sb.append(lastExpression);
+				sb.append(lastExpression.toString());
 			}
 			sb.append(")");
 		}
@@ -149,7 +155,7 @@ public class CompositeStatementObject extends AbstractStatement {
 					}
 				}
 				else {
-					sb.append(expression).append("; ");
+					sb.append(expression.toString()).append("; ");
 				}
 			}
 			AbstractExpression lastExpression = expressionList.get(expressionList.size()-1);
@@ -164,7 +170,7 @@ public class CompositeStatementObject extends AbstractStatement {
 				}
 			}
 			else {
-				sb.append(lastExpression);
+				sb.append(lastExpression.toString());
 			}
 			sb.append(")");
 		}
@@ -173,7 +179,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<String> getVariables() {
-		List<String> variables = new ArrayList<>();
+		List<String> variables = new ArrayList<String>();
 		for(AbstractExpression expression : expressionList) {
 			variables.addAll(expression.getVariables());
 		}
@@ -182,7 +188,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<String> getTypes() {
-		List<String> types = new ArrayList<>();
+		List<String> types = new ArrayList<String>();
 		for(AbstractExpression expression : expressionList) {
 			types.addAll(expression.getTypes());
 		}
@@ -191,8 +197,9 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<VariableDeclaration> getVariableDeclarations() {
+		List<VariableDeclaration> variableDeclarations = new ArrayList<VariableDeclaration>();
 		//special handling for enhanced-for formal parameter
-		List<VariableDeclaration> variableDeclarations = new ArrayList<>(this.variableDeclarations);
+		variableDeclarations.addAll(this.variableDeclarations);
 		for(AbstractExpression expression : expressionList) {
 			variableDeclarations.addAll(expression.getVariableDeclarations());
 		}
@@ -201,7 +208,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public Map<String, List<OperationInvocation>> getMethodInvocationMap() {
-		Map<String, List<OperationInvocation>> map = new LinkedHashMap<>();
+		Map<String, List<OperationInvocation>> map = new LinkedHashMap<String, List<OperationInvocation>>();
 		for(AbstractExpression expression : expressionList) {
 			Map<String, List<OperationInvocation>> expressionMap = expression.getMethodInvocationMap();
 			for(String key : expressionMap.keySet()) {
@@ -209,7 +216,8 @@ public class CompositeStatementObject extends AbstractStatement {
 					map.get(key).addAll(expressionMap.get(key));
 				}
 				else {
-					List<OperationInvocation> list = new ArrayList<>(expressionMap.get(key));
+					List<OperationInvocation> list = new ArrayList<OperationInvocation>();
+					list.addAll(expressionMap.get(key));
 					map.put(key, list);
 				}
 			}
@@ -219,7 +227,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<AnonymousClassDeclarationObject> getAnonymousClassDeclarations() {
-		List<AnonymousClassDeclarationObject> anonymousClassDeclarations = new ArrayList<>();
+		List<AnonymousClassDeclarationObject> anonymousClassDeclarations = new ArrayList<AnonymousClassDeclarationObject>();
 		for(AbstractExpression expression : expressionList) {
 			anonymousClassDeclarations.addAll(expression.getAnonymousClassDeclarations());
 		}
@@ -228,7 +236,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<String> getStringLiterals() {
-		List<String> stringLiterals = new ArrayList<>();
+		List<String> stringLiterals = new ArrayList<String>();
 		for(AbstractExpression expression : expressionList) {
 			stringLiterals.addAll(expression.getStringLiterals());
 		}
@@ -237,7 +245,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<String> getNumberLiterals() {
-		List<String> numberLiterals = new ArrayList<>();
+		List<String> numberLiterals = new ArrayList<String>();
 		for(AbstractExpression expression : expressionList) {
 			numberLiterals.addAll(expression.getNumberLiterals());
 		}
@@ -246,7 +254,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<String> getNullLiterals() {
-		List<String> nullLiterals = new ArrayList<>();
+		List<String> nullLiterals = new ArrayList<String>();
 		for(AbstractExpression expression : expressionList) {
 			nullLiterals.addAll(expression.getNullLiterals());
 		}
@@ -255,7 +263,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<String> getBooleanLiterals() {
-		List<String> booleanLiterals = new ArrayList<>();
+		List<String> booleanLiterals = new ArrayList<String>();
 		for(AbstractExpression expression : expressionList) {
 			booleanLiterals.addAll(expression.getBooleanLiterals());
 		}
@@ -264,7 +272,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<String> getTypeLiterals() {
-		List<String> typeLiterals = new ArrayList<>();
+		List<String> typeLiterals = new ArrayList<String>();
 		for(AbstractExpression expression : expressionList) {
 			typeLiterals.addAll(expression.getTypeLiterals());
 		}
@@ -273,7 +281,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<String> getInfixExpressions() {
-		List<String> infixExpressions = new ArrayList<>();
+		List<String> infixExpressions = new ArrayList<String>();
 		for(AbstractExpression expression : expressionList) {
 			infixExpressions.addAll(expression.getInfixExpressions());
 		}
@@ -282,7 +290,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<String> getInfixOperators() {
-		List<String> infixOperators = new ArrayList<>();
+		List<String> infixOperators = new ArrayList<String>();
 		for(AbstractExpression expression : expressionList) {
 			infixOperators.addAll(expression.getInfixOperators());
 		}
@@ -291,7 +299,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<String> getArrayAccesses() {
-		List<String> arrayAccesses = new ArrayList<>();
+		List<String> arrayAccesses = new ArrayList<String>();
 		for(AbstractExpression expression : expressionList) {
 			arrayAccesses.addAll(expression.getArrayAccesses());
 		}
@@ -300,7 +308,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<String> getPrefixExpressions() {
-		List<String> prefixExpressions = new ArrayList<>();
+		List<String> prefixExpressions = new ArrayList<String>();
 		for(AbstractExpression expression : expressionList) {
 			prefixExpressions.addAll(expression.getPrefixExpressions());
 		}
@@ -309,7 +317,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<String> getPostfixExpressions() {
-		List<String> postfixExpressions = new ArrayList<>();
+		List<String> postfixExpressions = new ArrayList<String>();
 		for(AbstractExpression expression : expressionList) {
 			postfixExpressions.addAll(expression.getPostfixExpressions());
 		}
@@ -318,7 +326,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<String> getArguments() {
-		List<String> arguments = new ArrayList<>();
+		List<String> arguments = new ArrayList<String>();
 		for(AbstractExpression expression : expressionList) {
 			arguments.addAll(expression.getArguments());
 		}
@@ -327,7 +335,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<TernaryOperatorExpression> getTernaryOperatorExpressions() {
-		List<TernaryOperatorExpression> ternaryOperatorExpressions = new ArrayList<>();
+		List<TernaryOperatorExpression> ternaryOperatorExpressions = new ArrayList<TernaryOperatorExpression>();
 		for(AbstractExpression expression : expressionList) {
 			ternaryOperatorExpressions.addAll(expression.getTernaryOperatorExpressions());
 		}
@@ -336,7 +344,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<LambdaExpressionObject> getLambdas() {
-		List<LambdaExpressionObject> lambdas = new ArrayList<>();
+		List<LambdaExpressionObject> lambdas = new ArrayList<LambdaExpressionObject>();
 		for(AbstractExpression expression : expressionList) {
 			lambdas.addAll(expression.getLambdas());
 		}
@@ -345,7 +353,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public Map<String, List<ObjectCreation>> getCreationMap() {
-		Map<String, List<ObjectCreation>> map = new LinkedHashMap<>();
+		Map<String, List<ObjectCreation>> map = new LinkedHashMap<String, List<ObjectCreation>>();
 		for(AbstractExpression expression : expressionList) {
 			Map<String, List<ObjectCreation>> expressionMap = expression.getCreationMap();
 			for(String key : expressionMap.keySet()) {
@@ -353,7 +361,8 @@ public class CompositeStatementObject extends AbstractStatement {
 					map.get(key).addAll(expressionMap.get(key));
 				}
 				else {
-					List<ObjectCreation> list = new ArrayList<>(expressionMap.get(key));
+					List<ObjectCreation> list = new ArrayList<ObjectCreation>();
+					list.addAll(expressionMap.get(key));
 					map.put(key, list);
 				}
 			}
@@ -362,7 +371,8 @@ public class CompositeStatementObject extends AbstractStatement {
 	}
 
 	public Map<String, List<OperationInvocation>> getAllMethodInvocations() {
-		Map<String, List<OperationInvocation>> map = new LinkedHashMap<>(getMethodInvocationMap());
+		Map<String, List<OperationInvocation>> map = new LinkedHashMap<String, List<OperationInvocation>>();
+		map.putAll(getMethodInvocationMap());
 		for(AbstractStatement statement : statementList) {
 			if(statement instanceof CompositeStatementObject) {
 				CompositeStatementObject composite = (CompositeStatementObject)statement;
@@ -372,7 +382,8 @@ public class CompositeStatementObject extends AbstractStatement {
 						map.get(key).addAll(compositeMap.get(key));
 					}
 					else {
-						List<OperationInvocation> list = new ArrayList<>(compositeMap.get(key));
+						List<OperationInvocation> list = new ArrayList<OperationInvocation>();
+						list.addAll(compositeMap.get(key));
 						map.put(key, list);
 					}
 				}
@@ -385,7 +396,8 @@ public class CompositeStatementObject extends AbstractStatement {
 						map.get(key).addAll(statementMap.get(key));
 					}
 					else {
-						List<OperationInvocation> list = new ArrayList<>(statementMap.get(key));
+						List<OperationInvocation> list = new ArrayList<OperationInvocation>();
+						list.addAll(statementMap.get(key));
 						map.put(key, list);
 					}
 				}
@@ -395,14 +407,16 @@ public class CompositeStatementObject extends AbstractStatement {
 						lambdaMap = lambda.getBody().getCompositeStatement().getAllMethodInvocations();
 					}
 					else if(lambda.getExpression() != null) {
-						lambdaMap = new LinkedHashMap<>(lambda.getExpression().getMethodInvocationMap());
+						lambdaMap = new LinkedHashMap<String, List<OperationInvocation>>();
+						lambdaMap.putAll(lambda.getExpression().getMethodInvocationMap());
 					}
 					for(String key : lambdaMap.keySet()) {
 						if(map.containsKey(key)) {
 							map.get(key).addAll(lambdaMap.get(key));
 						}
 						else {
-							List<OperationInvocation> list = new ArrayList<>(lambdaMap.get(key));
+							List<OperationInvocation> list = new ArrayList<OperationInvocation>();
+							list.addAll(lambdaMap.get(key));
 							map.put(key, list);
 						}
 					}
@@ -413,7 +427,8 @@ public class CompositeStatementObject extends AbstractStatement {
 	}
 
 	public List<AnonymousClassDeclarationObject> getAllAnonymousClassDeclarations() {
-		List<AnonymousClassDeclarationObject> anonymousClassDeclarations = new ArrayList<>(getAnonymousClassDeclarations());
+		List<AnonymousClassDeclarationObject> anonymousClassDeclarations = new ArrayList<AnonymousClassDeclarationObject>();
+		anonymousClassDeclarations.addAll(getAnonymousClassDeclarations());
 		for(AbstractStatement statement : statementList) {
 			if(statement instanceof CompositeStatementObject) {
 				CompositeStatementObject composite = (CompositeStatementObject)statement;
@@ -428,7 +443,8 @@ public class CompositeStatementObject extends AbstractStatement {
 	}
 
 	public List<LambdaExpressionObject> getAllLambdas() {
-		List<LambdaExpressionObject> lambdas = new ArrayList<>(getLambdas());
+		List<LambdaExpressionObject> lambdas = new ArrayList<LambdaExpressionObject>();
+		lambdas.addAll(getLambdas());
 		for(AbstractStatement statement : statementList) {
 			if(statement instanceof CompositeStatementObject) {
 				CompositeStatementObject composite = (CompositeStatementObject)statement;
@@ -443,7 +459,8 @@ public class CompositeStatementObject extends AbstractStatement {
 	}
 
 	public List<String> getAllVariables() {
-		List<String> variables = new ArrayList<>(getVariables());
+		List<String> variables = new ArrayList<String>();
+		variables.addAll(getVariables());
 		for(AbstractStatement statement : statementList) {
 			if(statement instanceof CompositeStatementObject) {
 				CompositeStatementObject composite = (CompositeStatementObject)statement;
@@ -458,7 +475,8 @@ public class CompositeStatementObject extends AbstractStatement {
 	}
 
 	public List<VariableDeclaration> getAllVariableDeclarations() {
-		List<VariableDeclaration> variableDeclarations = new ArrayList<>(getVariableDeclarations());
+		List<VariableDeclaration> variableDeclarations = new ArrayList<VariableDeclaration>();
+		variableDeclarations.addAll(getVariableDeclarations());
 		for(AbstractStatement statement : statementList) {
 			if(statement instanceof CompositeStatementObject) {
 				CompositeStatementObject composite = (CompositeStatementObject)statement;
@@ -478,7 +496,7 @@ public class CompositeStatementObject extends AbstractStatement {
 	}
 
 	public List<VariableDeclaration> getVariableDeclarationsInScope(LocationInfo location) {
-		List<VariableDeclaration> variableDeclarations = new ArrayList<>();
+		List<VariableDeclaration> variableDeclarations = new ArrayList<VariableDeclaration>();
 		for(VariableDeclaration variableDeclaration : getAllVariableDeclarations()) {
 			if(variableDeclaration.getScope().subsumes(location)) {
 				variableDeclarations.add(variableDeclaration);
@@ -513,7 +531,7 @@ public class CompositeStatementObject extends AbstractStatement {
 	}
 
 	public Map<String, Set<String>> aliasedAttributes() {
-		Map<String, Set<String>> map = new LinkedHashMap<>();
+		Map<String, Set<String>> map = new LinkedHashMap<String, Set<String>>();
 		for(StatementObject statement : getLeaves()) {
 			String s = statement.getString();
 			if(s.startsWith("this.") && s.endsWith(";\n")) {
@@ -525,14 +543,14 @@ public class CompositeStatementObject extends AbstractStatement {
 						map.get(value).add(attribute);
 					}
 					else {
-						Set<String> set = new LinkedHashSet<>();
+						Set<String> set = new LinkedHashSet<String>();
 						set.add(attribute);
 						map.put(value, set);
 					}
 				}
 			}
 		}
-		Set<String> keysToBeRemoved = new LinkedHashSet<>();
+		Set<String> keysToBeRemoved = new LinkedHashSet<String>();
 		for(String key : map.keySet()) {
 			if(map.get(key).size() <= 1) {
 				keysToBeRemoved.add(key);
@@ -603,7 +621,7 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	@Override
 	public List<String> stringRepresentation() {
-		List<String> stringRepresentation = new ArrayList<>();
+		List<String> stringRepresentation = new ArrayList<String>();
 		stringRepresentation.add(this.toStringForStringRepresentation());
 		for(AbstractStatement statement : statementList) {
 			stringRepresentation.addAll(statement.stringRepresentation());

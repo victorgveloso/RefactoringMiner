@@ -57,7 +57,7 @@ public class UMLEnumConstantDiff {
 	}
 
 	private Set<Refactoring> getAnnotationRefactorings() {
-		Set<Refactoring> refactorings = new LinkedHashSet<>();
+		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
 		for(UMLAnnotation annotation : annotationListDiff.getAddedAnnotations()) {
 			AddAttributeAnnotationRefactoring refactoring = new AddAttributeAnnotationRefactoring(annotation, removedEnumConstant, addedEnumConstant);
 			refactorings.add(refactoring);
@@ -74,7 +74,7 @@ public class UMLEnumConstantDiff {
 	}
 
 	public Set<Refactoring> getRefactorings() {
-		Set<Refactoring> refactorings = new LinkedHashSet<>();
+		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
 		refactorings.addAll(getAnnotationRefactorings());
 		return refactorings;
 	}

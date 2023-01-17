@@ -9,10 +9,10 @@ import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
 
 public class TernaryOperatorExpression {
 
-	private final AbstractExpression condition;
-	private final AbstractExpression thenExpression;
-	private final AbstractExpression elseExpression;
-	private final String expression;
+	private AbstractExpression condition;
+	private AbstractExpression thenExpression;
+	private AbstractExpression elseExpression;
+	private String expression;
 
 	public TernaryOperatorExpression(CompilationUnit cu, String filePath, ConditionalExpression expression) {
 		this.condition = new AbstractExpression(cu, filePath, expression.getExpression(), CodeElementType.TERNARY_OPERATOR_CONDITION);

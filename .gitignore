@@ -29,6 +29,3 @@ src/META-INF/persistence.xml
 .project
 .classpath
 /.settings/
-
-# Refactoring Miner dynamic setup
-github-oauth.properties

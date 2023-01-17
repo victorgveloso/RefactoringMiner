@@ -13,7 +13,7 @@ public class InheritanceDetection {
 	private Map<String, LinkedHashSet<String>> subclassMap;
 
 	public InheritanceDetection(UMLModelDiff modelDiff) {
-		this.subclassMap = new LinkedHashMap<>();
+		this.subclassMap = new LinkedHashMap<String, LinkedHashSet<String>>();
 		generateNewInheritanceHierarchies(modelDiff);
 	}
 
@@ -23,7 +23,7 @@ public class InheritanceDetection {
 			subclasses.add(subclass);
 		}
 		else {
-			LinkedHashSet<String> subclasses = new LinkedHashSet<>();
+			LinkedHashSet<String> subclasses = new LinkedHashSet<String>();
 			subclasses.add(subclass);
 			subclassMap.put(superclass, subclasses);
 		}

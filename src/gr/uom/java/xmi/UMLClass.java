@@ -53,7 +53,7 @@ public class UMLClass extends UMLAbstractClass implements Comparable<UMLClass>, 
         		}
         	}
         	else {
-        		int index;
+        		int index = -1;
         		if(packageName.contains(".")) {
         			String realPackageName = packageName.substring(0, packageName.lastIndexOf('.'));
         			index = sourceFile.indexOf(realPackageName.replace('.', '/'));
@@ -70,11 +70,11 @@ public class UMLClass extends UMLAbstractClass implements Comparable<UMLClass>, 
         this.isInterface = false;
         this.topLevel = topLevel;
         this.superclass = null;
-        this.implementedInterfaces = new ArrayList<>();
+        this.implementedInterfaces = new ArrayList<UMLType>();
         this.importedTypes = importedTypes;
-        this.typeParameters = new ArrayList<>();
-        this.annotations = new ArrayList<>();
-        this.enumConstants = new ArrayList<>();
+        this.typeParameters = new ArrayList<UMLTypeParameter>();
+        this.annotations = new ArrayList<UMLAnnotation>();
+        this.enumConstants = new ArrayList<UMLEnumConstant>();
     }
 
     public List<UMLTypeParameter> getTypeParameters() {
@@ -82,7 +82,7 @@ public class UMLClass extends UMLAbstractClass implements Comparable<UMLClass>, 
 	}
 
     public List<String> getTypeParameterNames() {
-    	List<String> typeParameterNames = new ArrayList<>();
+    	List<String> typeParameterNames = new ArrayList<String>();
 		for(UMLTypeParameter typeParameter : typeParameters) {
 			typeParameterNames.add(typeParameter.getName());
 		}
@@ -222,12 +222,12 @@ public class UMLClass extends UMLAbstractClass implements Comparable<UMLClass>, 
     					String otherParameterType = otherParameter.getType().getClassType();
     					int thisArrayDimension = parameter.getType().getArrayDimension();
     					int otherArrayDimension = otherParameter.getType().getArrayDimension();
-    					String thisParameterTypeComparedString;
+    					String thisParameterTypeComparedString = null;
     	    			if(thisParameterType.contains("."))
     	    				thisParameterTypeComparedString = thisParameterType.substring(thisParameterType.lastIndexOf(".")+1);
     	    			else
     	    				thisParameterTypeComparedString = thisParameterType;
-    	    			String otherParameterTypeComparedString;
+    	    			String otherParameterTypeComparedString = null;
     	    			if(otherParameterType.contains("."))
     	    				otherParameterTypeComparedString = otherParameterType.substring(otherParameterType.lastIndexOf(".")+1);
     	    			else

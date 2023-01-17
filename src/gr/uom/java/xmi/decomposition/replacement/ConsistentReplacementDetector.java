@@ -1,16 +1,16 @@
 package gr.uom.java.xmi.decomposition.replacement;
 
-import gr.uom.java.xmi.diff.CandidateAttributeRefactoring;
-
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+
+import gr.uom.java.xmi.diff.CandidateAttributeRefactoring;
 
 public class ConsistentReplacementDetector {
 
 	private static <T extends Replacement> Set<T> inconsistentRenames(
 			Set<T> currentRenames, T newRename) {
-		Set<T> inconsistentRenames = new LinkedHashSet<>();
+		Set<T> inconsistentRenames = new LinkedHashSet<T>();
 		for(T rename : currentRenames) {
 			if(rename.getBefore().equals(newRename.getBefore()) && !rename.getAfter().equals(newRename.getAfter())) {
 				inconsistentRenames.add(rename);
@@ -64,7 +64,7 @@ public class ConsistentReplacementDetector {
 
 	private static <T extends Replacement> void validInconsistencies(Set<T> inconsistentRenames, T newRename, Map<Replacement, Set<CandidateAttributeRefactoring>> renameMap) {
 		if(involvesOnlyAttributes(newRename, renameMap)) {
-			Set<T> toBeRemoved = new LinkedHashSet<>();
+			Set<T> toBeRemoved = new LinkedHashSet<T>();
 			for(T rename : inconsistentRenames) {
 				if(!involvesOnlyAttributes(rename, renameMap)) {
 					toBeRemoved.add(rename);
@@ -91,7 +91,7 @@ public class ConsistentReplacementDetector {
 	private static <T extends Replacement> Set<T> filter(Set<T> inconsistentRenames,
 			Map<String, Set<String>> aliasedAttributesInOriginalClass,
 			Map<String, Set<String>> aliasedAttributesInNextClass) {
-		Set<T> renamesToBeRemoved = new LinkedHashSet<>();
+		Set<T> renamesToBeRemoved = new LinkedHashSet<T>();
 		for(String key : aliasedAttributesInOriginalClass.keySet()) {
 			Set<String> aliasedAttributes = aliasedAttributesInOriginalClass.get(key);
 			for(T r : inconsistentRenames) {

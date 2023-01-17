@@ -1,37 +1,47 @@
 package gr.uom.java.xmi.decomposition;
 
-import gr.uom.java.xmi.LocationInfo;
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.diff.CodeRange;
-import org.eclipse.jdt.core.dom.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.IExtendedModifier;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+
+import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.diff.CodeRange;
+
 public class StatementObject extends AbstractStatement {
 	
-	private final String statement;
-	private final LocationInfo locationInfo;
-	private final List<String> variables;
-	private final List<String> types;
-	private final List<VariableDeclaration> variableDeclarations;
-	private final Map<String, List<OperationInvocation>> methodInvocationMap;
-	private final List<AnonymousClassDeclarationObject> anonymousClassDeclarations;
-	private final List<String> stringLiterals;
-	private final List<String> numberLiterals;
-	private final List<String> nullLiterals;
-	private final List<String> booleanLiterals;
-	private final List<String> typeLiterals;
-	private final Map<String, List<ObjectCreation>> creationMap;
-	private final List<String> infixExpressions;
-	private final List<String> infixOperators;
-	private final List<String> arrayAccesses;
-	private final List<String> prefixExpressions;
-	private final List<String> postfixExpressions;
-	private final List<String> arguments;
-	private final List<TernaryOperatorExpression> ternaryOperatorExpressions;
-	private final List<LambdaExpressionObject> lambdas;
+	private String statement;
+	private LocationInfo locationInfo;
+	private List<String> variables;
+	private List<String> types;
+	private List<VariableDeclaration> variableDeclarations;
+	private Map<String, List<OperationInvocation>> methodInvocationMap;
+	private List<AnonymousClassDeclarationObject> anonymousClassDeclarations;
+	private List<String> stringLiterals;
+	private List<String> numberLiterals;
+	private List<String> nullLiterals;
+	private List<String> booleanLiterals;
+	private List<String> typeLiterals;
+	private Map<String, List<ObjectCreation>> creationMap;
+	private List<String> infixExpressions;
+	private List<String> infixOperators;
+	private List<String> arrayAccesses;
+	private List<String> prefixExpressions;
+	private List<String> postfixExpressions;
+	private List<String> arguments;
+	private List<TernaryOperatorExpression> ternaryOperatorExpressions;
+	private List<LambdaExpressionObject> lambdas;
 	
 	public StatementObject(CompilationUnit cu, String filePath, Statement statement, int depth, CodeElementType codeElementType) {
 		super();
@@ -125,7 +135,7 @@ public class StatementObject extends AbstractStatement {
 
 	@Override
 	public List<StatementObject> getLeaves() {
-		List<StatementObject> leaves = new ArrayList<>();
+		List<StatementObject> leaves = new ArrayList<StatementObject>();
 		leaves.add(this);
 		return leaves;
 	}
@@ -254,7 +264,7 @@ public class StatementObject extends AbstractStatement {
 
 	@Override
 	public List<String> stringRepresentation() {
-		List<String> stringRepresentation = new ArrayList<>();
+		List<String> stringRepresentation = new ArrayList<String>();
 		stringRepresentation.add(this.toString());
 		return stringRepresentation;
 	}

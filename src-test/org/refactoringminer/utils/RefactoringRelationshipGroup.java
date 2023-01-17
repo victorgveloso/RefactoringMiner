@@ -1,13 +1,13 @@
 package org.refactoringminer.utils;
 
-import org.refactoringminer.api.RefactoringType;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.refactoringminer.api.RefactoringType;
+
 public class RefactoringRelationshipGroup {
 
-  private final List<RefactoringRelationship> refactoringRelationships = new ArrayList<>();
+  private List<RefactoringRelationship> refactoringRelationships = new ArrayList<>();
 
   public RefactoringRelationshipGroup(RefactoringRelationship refactoringRelationship) {
     refactoringRelationships.add(refactoringRelationship);
@@ -17,7 +17,7 @@ public class RefactoringRelationshipGroup {
     if (r.getRefactoringType().equals(this.getRefactoringType()) && r.getMainEntity().equals(this.getMainEntity())) {
       refactoringRelationships.add(r);
     }
-    throw new IllegalArgumentException(String.format("refactoring relatiships are note from the same group: %s %s", r, refactoringRelationships.get(0)));
+    throw new IllegalArgumentException(String.format("refactoring relatiships are note from the same group: [] []", r, refactoringRelationships.get(0)));
   }
 
   public RefactoringType getRefactoringType() {

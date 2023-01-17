@@ -1,15 +1,16 @@
 package gr.uom.java.xmi.diff;
 
-import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.decomposition.VariableDeclaration;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringType;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
+
+import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
 public class AddVariableModifierRefactoring implements Refactoring {
 	private String modifier;
@@ -49,7 +50,7 @@ public class AddVariableModifierRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(variableBefore.codeRange()
 				.setDescription("original variable declaration")
 				.setCodeElement(variableBefore.toString()));
@@ -61,7 +62,7 @@ public class AddVariableModifierRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(variableAfter.codeRange()
 				.setDescription("variable declaration with added modifier")
 				.setCodeElement(variableAfter.toString()));
@@ -88,15 +89,15 @@ public class AddVariableModifierRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
 		return pairs;
 	}
 

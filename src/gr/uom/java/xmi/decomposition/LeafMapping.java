@@ -1,14 +1,14 @@
 package gr.uom.java.xmi.decomposition;
 
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.decomposition.replacement.CompositeReplacement;
-import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
-import gr.uom.java.xmi.diff.StringDistance;
-
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.decomposition.replacement.CompositeReplacement;
+import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.diff.StringDistance;
 
 public class LeafMapping extends AbstractCodeMapping implements Comparable<LeafMapping> {
 
@@ -86,13 +86,13 @@ public class LeafMapping extends AbstractCodeMapping implements Comparable<LeafM
 				int depthDiff2 = Math.abs(o.getFragment1().getDepth() - o.getFragment2().getDepth());
 	
 				if(depthDiff1 != depthDiff2) {
-					return Integer.compare(depthDiff1, depthDiff2);
+					return Integer.valueOf(depthDiff1).compareTo(Integer.valueOf(depthDiff2));
 				}
 				else {
 					int indexDiff1 = Math.abs(this.getFragment1().getIndex() - this.getFragment2().getIndex());
 					int indexDiff2 = Math.abs(o.getFragment1().getIndex() - o.getFragment2().getIndex());
 					if(indexDiff1 != indexDiff2) {
-						return Integer.compare(indexDiff1, indexDiff2);
+						return Integer.valueOf(indexDiff1).compareTo(Integer.valueOf(indexDiff2));
 					}
 					else {
 						boolean sameVariableDeclarationTypeInParent1 = this.sameVariableDeclarationTypeInParent();
@@ -178,6 +178,6 @@ public class LeafMapping extends AbstractCodeMapping implements Comparable<LeafM
 		if(invocation1 != null && invocation2 != null) {
 			return invocation1.callChainIntersection(invocation2);
 		}
-		return new LinkedHashSet<>();
+		return new LinkedHashSet<String>();
 	}
 }

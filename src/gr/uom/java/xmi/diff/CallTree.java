@@ -1,10 +1,10 @@
 package gr.uom.java.xmi.diff;
 
-import gr.uom.java.xmi.UMLOperation;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import gr.uom.java.xmi.UMLOperation;
 
 public class CallTree {
 	private CallTreeNode root;
@@ -14,8 +14,8 @@ public class CallTree {
 	}
 	
 	public List<CallTreeNode> getNodesInBreadthFirstOrder() {
-		List<CallTreeNode> nodes = new ArrayList<>();
-		List<CallTreeNode> queue = new LinkedList<>();
+		List<CallTreeNode> nodes = new ArrayList<CallTreeNode>();
+		List<CallTreeNode> queue = new LinkedList<CallTreeNode>();
 		nodes.add(root);
 		queue.add(root);
 		while(!queue.isEmpty()) {

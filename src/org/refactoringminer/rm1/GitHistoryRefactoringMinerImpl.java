@@ -1,16 +1,45 @@
 package org.refactoringminer.rm1;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.difflib.DiffUtils;
-import com.github.difflib.patch.AbstractDelta;
-import com.github.difflib.patch.Chunk;
-import com.github.difflib.patch.Patch;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLModelASTReader;
 import gr.uom.java.xmi.diff.MoveSourceFolderRefactoring;
 import gr.uom.java.xmi.diff.MovedClassToAnotherSourceFolder;
 import gr.uom.java.xmi.diff.RenamePattern;
 import gr.uom.java.xmi.diff.UMLModelDiff;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.regex.Matcher;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jgit.errors.MissingObjectException;
@@ -21,19 +50,31 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
-import org.kohsuke.github.*;
-import org.refactoringminer.api.*;
+import org.kohsuke.github.GHCommit;
+import org.kohsuke.github.GHPullRequest;
+import org.kohsuke.github.GHPullRequestCommitDetail;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHRepositoryWrapper;
+import org.kohsuke.github.GHTree;
+import org.kohsuke.github.GHTreeEntry;
+import org.kohsuke.github.GitHub;
+import org.kohsuke.github.PagedIterable;
+import org.refactoringminer.api.Churn;
+import org.refactoringminer.api.GitHistoryRefactoringMiner;
+import org.refactoringminer.api.GitService;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringHandler;
+import org.refactoringminer.api.RefactoringMinerTimedOutException;
+import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.util.GitServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.URL;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.regex.Matcher;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.difflib.DiffUtils;
+import com.github.difflib.patch.AbstractDelta;
+import com.github.difflib.patch.Chunk;
+import com.github.difflib.patch.Patch;
 
 public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMiner {
 
@@ -46,8 +87,10 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 	}
 
 	public void setRefactoringTypesToConsider(RefactoringType ... types) {
-		this.refactoringTypesToConsider = new HashSet<>();
-		this.refactoringTypesToConsider.addAll(Arrays.asList(types));
+		this.refactoringTypesToConsider = new HashSet<RefactoringType>();
+		for (RefactoringType type : types) {
+			this.refactoringTypesToConsider.add(type);
+		}
 	}
 	
 	private void detect(GitService gitService, Repository repository, final RefactoringHandler handler, Iterator<RevCommit> i) {
@@ -87,15 +130,15 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 	protected List<Refactoring> detectRefactorings(GitService gitService, Repository repository, final RefactoringHandler handler, File projectFolder, RevCommit currentCommit) throws Exception {
 		List<Refactoring> refactoringsAtRevision;
 		String commitId = currentCommit.getId().getName();
-		List<String> filePathsBefore = new ArrayList<>();
-		List<String> filePathsCurrent = new ArrayList<>();
-		Map<String, String> renamedFilesHint = new HashMap<>();
+		List<String> filePathsBefore = new ArrayList<String>();
+		List<String> filePathsCurrent = new ArrayList<String>();
+		Map<String, String> renamedFilesHint = new HashMap<String, String>();
 		gitService.fileTreeDiff(repository, currentCommit, filePathsBefore, filePathsCurrent, renamedFilesHint);
 		
-		Set<String> repositoryDirectoriesBefore = new LinkedHashSet<>();
-		Set<String> repositoryDirectoriesCurrent = new LinkedHashSet<>();
-		Map<String, String> fileContentsBefore = new LinkedHashMap<>();
-		Map<String, String> fileContentsCurrent = new LinkedHashMap<>();
+		Set<String> repositoryDirectoriesBefore = new LinkedHashSet<String>();
+		Set<String> repositoryDirectoriesCurrent = new LinkedHashSet<String>();
+		Map<String, String> fileContentsBefore = new LinkedHashMap<String, String>();
+		Map<String, String> fileContentsCurrent = new LinkedHashMap<String, String>();
 		try (RevWalk walk = new RevWalk(repository)) {
 			// If no java files changed, there is no refactoring. Also, if there are
 			// only ADD's or only REMOVE's there is no refactoring
@@ -123,7 +166,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 	}
 
 	private List<MoveSourceFolderRefactoring> processIdenticalFiles(Map<String, String> fileContentsBefore, Map<String, String> fileContentsCurrent, Map<String, String> renamedFilesHint) throws IOException {
-		Map<String, String> identicalFiles = new HashMap<>();
+		Map<String, String> identicalFiles = new HashMap<String, String>();
 		for(String key : fileContentsBefore.keySet()) {
 			if(renamedFilesHint.containsKey(key)) {
 				String renamedFile = renamedFilesHint.get(key);
@@ -144,7 +187,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 		fileContentsBefore.keySet().removeAll(identicalFiles.keySet());
 		fileContentsCurrent.keySet().removeAll(identicalFiles.values());
 		
-		List<MoveSourceFolderRefactoring> moveSourceFolderRefactorings = new ArrayList<>();
+		List<MoveSourceFolderRefactoring> moveSourceFolderRefactorings = new ArrayList<MoveSourceFolderRefactoring>();
 		for(String key : identicalFiles.keySet()) {
 			String originalPath = key;
 			String movedPath = identicalFiles.get(key);
@@ -197,7 +240,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 
 	private void populateFileContents(Repository repository, RevCommit commit,
 			List<String> filePaths, Map<String, String> fileContents, Set<String> repositoryDirectories) throws Exception {
-		logger.info("Processing {} {} ...", repository.getDirectory().getParent(), commit.getName());
+		logger.info("Processing {} {} ...", repository.getDirectory().getParent().toString(), commit.getName());
 		RevTree parentTree = commit.getTree();
 		try (TreeWalk treeWalk = new TreeWalk(repository)) {
 			treeWalk.addTree(parentTree);
@@ -215,7 +258,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 					String directory = pathString.substring(0, pathString.lastIndexOf("/"));
 					repositoryDirectories.add(directory);
 					//include sub-directories
-					String subDirectory = directory;
+					String subDirectory = new String(directory);
 					while(subDirectory.contains("/")) {
 						subDirectory = subDirectory.substring(0, subDirectory.lastIndexOf("/"));
 						repositoryDirectories.add(subDirectory);
@@ -241,10 +284,10 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 			if (!parentFolder.exists()) {	
 				downloadAndExtractZipFile(projectFolder, cloneURL, parentCommitId);
 			}
-			Set<String> repositoryDirectoriesBefore = new LinkedHashSet<>();
-			Set<String> repositoryDirectoriesCurrent = new LinkedHashSet<>();
-			Map<String, String> fileContentsBefore = new LinkedHashMap<>();
-			Map<String, String> fileContentsCurrent = new LinkedHashMap<>();
+			Set<String> repositoryDirectoriesBefore = new LinkedHashSet<String>();
+			Set<String> repositoryDirectoriesCurrent = new LinkedHashSet<String>();
+			Map<String, String> fileContentsBefore = new LinkedHashMap<String, String>();
+			Map<String, String> fileContentsCurrent = new LinkedHashMap<String, String>();
 			if (currentFolder.exists() && parentFolder.exists()) {
 				populateFileContents(currentFolder, filesCurrent, fileContentsCurrent, repositoryDirectoriesCurrent);
 				populateFileContents(parentFolder, filesBefore, fileContentsBefore, repositoryDirectoriesBefore);
@@ -274,7 +317,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 			String fullPath = projectFolder + File.separator + path.replaceAll("/", systemFileSeparator);
 			String contents = FileUtils.readFileToString(new File(fullPath));
 			fileContents.put(path, contents);
-			String directory = path;
+			String directory = new String(path);
 			while(directory.contains("/")) {
 				directory = directory.substring(0, directory.lastIndexOf("/"));
 				repositoryDirectories.add(directory);
@@ -289,11 +332,12 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 		logger.info(String.format("Downloading archive %s", downloadLink));
 		FileUtils.copyURLToFile(new URL(downloadLink), destinationFile);
 		logger.info(String.format("Unzipping archive %s", downloadLink));
-		try (ZipFile zipFile = new ZipFile(destinationFile)) {
+		java.util.zip.ZipFile zipFile = new ZipFile(destinationFile);
+		try {
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			while (entries.hasMoreElements()) {
 				ZipEntry entry = entries.nextElement();
-				File entryDestination = new File(projectFolder.getParentFile(), entry.getName());
+				File entryDestination = new File(projectFolder.getParentFile(),  entry.getName());
 				if (entry.isDirectory()) {
 					entryDestination.mkdirs();
 				} else {
@@ -305,6 +349,8 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 					out.close();
 				}
 			}
+		} finally {
+			zipFile.close();
 		}
 	}
 
@@ -357,27 +403,25 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 			List<GHCommit.File> commitFiles = new ArrayList<>();
 			GHCommit commit = new GHRepositoryWrapper(repository).getCommit(currentCommitId, commitFiles);
 			String parentCommitId = commit.getParents().get(0).getSHA1();
-			List<String> filesBefore = new ArrayList<>();
-			List<String> filesCurrent = new ArrayList<>();
-			Map<String, String> renamedFilesHint = new HashMap<>();
+			List<String> filesBefore = new ArrayList<String>();
+			List<String> filesCurrent = new ArrayList<String>();
+			Map<String, String> renamedFilesHint = new HashMap<String, String>();
 			for (GHCommit.File commitFile : commitFiles) {
 				if (commitFile.getFileName().endsWith(".java")) {
-					switch (commitFile.getStatus()) {
-						case "modified":
-							filesBefore.add(commitFile.getFileName());
-							filesCurrent.add(commitFile.getFileName());
-							break;
-						case "added":
-							filesCurrent.add(commitFile.getFileName());
-							break;
-						case "removed":
-							filesBefore.add(commitFile.getFileName());
-							break;
-						case "renamed":
-							filesBefore.add(commitFile.getPreviousFilename());
-							filesCurrent.add(commitFile.getFileName());
-							renamedFilesHint.put(commitFile.getPreviousFilename(), commitFile.getFileName());
-							break;
+					if (commitFile.getStatus().equals("modified")) {
+						filesBefore.add(commitFile.getFileName());
+						filesCurrent.add(commitFile.getFileName());
+					}
+					else if (commitFile.getStatus().equals("added")) {
+						filesCurrent.add(commitFile.getFileName());
+					}
+					else if (commitFile.getStatus().equals("removed")) {
+						filesBefore.add(commitFile.getFileName());
+					}
+					else if (commitFile.getStatus().equals("renamed")) {
+						filesBefore.add(commitFile.getPreviousFilename());
+						filesCurrent.add(commitFile.getFileName());
+						renamedFilesHint.put(commitFile.getPreviousFilename(), commitFile.getFileName());
 					}
 				}
 			}
@@ -417,7 +461,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 		if (this.refactoringTypesToConsider == null) {
 			return refactoringsAtRevision;
 		}
-		List<Refactoring> filteredList = new ArrayList<>();
+		List<Refactoring> filteredList = new ArrayList<Refactoring>();
 		for (Refactoring ref : refactoringsAtRevision) {
 			if (this.refactoringTypesToConsider.contains(ref.getRefactoringType())) {
 				filteredList.add(ref);
@@ -458,7 +502,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 		}
 	}
 
-	protected UMLModel createModel(Map<String, String> fileContents, Set<String> repositoryDirectories) {
+	protected UMLModel createModel(Map<String, String> fileContents, Set<String> repositoryDirectories) throws Exception {
 		return new UMLModelASTReader(fileContents, repositoryDirectories).getUmlModel();
 	}
 
@@ -502,7 +546,9 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 			f.get(timeout, TimeUnit.SECONDS);
 		} catch (TimeoutException e) {
 			f.cancel(true);
-		} catch (ExecutionException | InterruptedException e) {
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} finally {
 			service.shutdown();
@@ -577,7 +623,9 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 			f.get(timeout, TimeUnit.SECONDS);
 		} catch (TimeoutException e) {
 			f.cancel(true);
-		} catch (ExecutionException | InterruptedException e) {
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} finally {
 			service.shutdown();
@@ -589,9 +637,9 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 		try {
 			Set<String> repositoryDirectoriesBefore = ConcurrentHashMap.newKeySet();
 			Set<String> repositoryDirectoriesCurrent = ConcurrentHashMap.newKeySet();
-			Map<String, String> fileContentsBefore = new ConcurrentHashMap<>();
-			Map<String, String> fileContentsCurrent = new ConcurrentHashMap<>();
-			Map<String, String> renamedFilesHint = new ConcurrentHashMap<>();
+			Map<String, String> fileContentsBefore = new ConcurrentHashMap<String, String>();
+			Map<String, String> fileContentsCurrent = new ConcurrentHashMap<String, String>();
+			Map<String, String> renamedFilesHint = new ConcurrentHashMap<String, String>();
 			populateWithGitHubAPI(gitURL, currentCommitId, fileContentsBefore, fileContentsCurrent, renamedFilesHint, repositoryDirectoriesBefore, repositoryDirectoriesCurrent);
 			List<MoveSourceFolderRefactoring> moveSourceFolderRefactorings = processIdenticalFiles(fileContentsBefore, fileContentsCurrent, renamedFilesHint);
 			UMLModel currentUMLModel = createModel(fileContentsCurrent, repositoryDirectoriesCurrent);
@@ -713,7 +761,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 
 	private void repositoryDirectories(GHTree tree, String pathFromRoot, Set<String> repositoryDirectories, Set<String> targetPaths) throws IOException {
 		for(GHTreeEntry entry : tree.getTree()) {
-			String path;
+			String path = null;
 			if(pathFromRoot.equals("")) {
 				path = entry.getPath();
 			}

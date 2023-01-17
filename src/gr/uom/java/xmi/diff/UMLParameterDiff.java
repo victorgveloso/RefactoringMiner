@@ -1,5 +1,10 @@
 package gr.uom.java.xmi.diff;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import org.refactoringminer.api.Refactoring;
+
 import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.UMLParameter;
@@ -8,10 +13,6 @@ import gr.uom.java.xmi.decomposition.VariableDeclaration;
 import gr.uom.java.xmi.decomposition.VariableReferenceExtractor;
 import gr.uom.java.xmi.decomposition.replacement.Replacement;
 import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
-import org.refactoringminer.api.Refactoring;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 public class UMLParameterDiff {
 	private UMLParameter removedParameter;
@@ -104,7 +105,7 @@ public class UMLParameterDiff {
 	}
 
 	public Set<Refactoring> getRefactorings() {
-		Set<Refactoring> refactorings = new LinkedHashSet<>();
+		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
 		VariableDeclaration originalVariable = getRemovedParameter().getVariableDeclaration();
 		VariableDeclaration newVariable = getAddedParameter().getVariableDeclaration();
 		Set<AbstractCodeMapping> references = VariableReferenceExtractor.findReferences(originalVariable, newVariable, mappings);

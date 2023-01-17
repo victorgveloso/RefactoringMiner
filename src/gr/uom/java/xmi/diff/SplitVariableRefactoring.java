@@ -72,27 +72,28 @@ public class SplitVariableRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
 		return pairs;
 	}
 
 	public String toString() {
-		String sb = getName() + "\t" +
-				oldVariable +
-				" to " +
-				splitVariables +
-				" in method " +
-				operationAfter +
-				" from class " + operationAfter.getClassName();
-		return sb;
+		StringBuilder sb = new StringBuilder();
+		sb.append(getName()).append("\t");
+		sb.append(oldVariable);
+		sb.append(" to ");
+		sb.append(splitVariables);
+		sb.append(" in method ");
+		sb.append(operationAfter);
+		sb.append(" from class ").append(operationAfter.getClassName());
+		return sb.toString();
 	}
 
 	@Override
@@ -140,7 +141,7 @@ public class SplitVariableRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(oldVariable.codeRange()
 				.setDescription("original variable declaration")
 				.setCodeElement(oldVariable.toString()));
@@ -152,7 +153,7 @@ public class SplitVariableRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		for(VariableDeclaration splitVariable : splitVariables) {
 			ranges.add(splitVariable.codeRange()
 					.setDescription("split variable declaration")

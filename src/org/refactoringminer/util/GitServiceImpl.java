@@ -1,11 +1,21 @@
 package org.refactoringminer.util;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.Edit;
+import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.jgit.diff.Edit.Type;
 import org.eclipse.jgit.diff.RenameDetector;
 import org.eclipse.jgit.lib.ObjectId;
@@ -26,12 +36,6 @@ import org.refactoringminer.api.Churn;
 import org.refactoringminer.api.GitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class GitServiceImpl implements GitService {
 
@@ -113,7 +117,7 @@ public class GitServiceImpl implements GitService {
 	}
 
 	public void checkout(Repository repository, String commitId) throws Exception {
-	    logger.info("Checking out {} {} ...", repository.getDirectory().getParent(), commitId);
+	    logger.info("Checking out {} {} ...", repository.getDirectory().getParent().toString(), commitId);
 	    try (Git git = new Git(repository)) {
 	        CheckoutCommand checkout = git.checkout().setName(commitId);
 	        checkout.call();
@@ -122,8 +126,8 @@ public class GitServiceImpl implements GitService {
 //		ExternalProcess.execute(workingDir, "git", "checkout", commitId);
 	}
 
-	public void checkout2(Repository repository, String commitId) {
-	    logger.info("Checking out {} {} ...", repository.getDirectory().getParent(), commitId);
+	public void checkout2(Repository repository, String commitId) throws Exception {
+	    logger.info("Checking out {} {} ...", repository.getDirectory().getParent().toString(), commitId);
 		File workingDir = repository.getDirectory().getParentFile();
 		String output = ExternalProcess.execute(workingDir, "git", "checkout", commitId);
 		if (output.startsWith("fatal")) {
@@ -151,7 +155,7 @@ public class GitServiceImpl implements GitService {
     		FetchResult result = git.fetch().call();
     		
     		Collection<TrackingRefUpdate> updates = result.getTrackingRefUpdates();
-    		List<TrackingRefUpdate> remoteRefsChanges = new ArrayList<>();
+    		List<TrackingRefUpdate> remoteRefsChanges = new ArrayList<TrackingRefUpdate>();
     		for (TrackingRefUpdate update : updates) {
     			String refName = update.getLocalName();
     			if (refName.startsWith(REMOTE_REFS_PREFIX)) {
@@ -172,7 +176,7 @@ public class GitServiceImpl implements GitService {
 	}
 
 	public RevWalk fetchAndCreateNewRevsWalk(Repository repository, String branch) throws Exception {
-		List<ObjectId> currentRemoteRefs = new ArrayList<>();
+		List<ObjectId> currentRemoteRefs = new ArrayList<ObjectId>(); 
 		for (Ref ref : repository.getRefDatabase().getRefs()) {
 			String refName = ref.getName();
 			if (refName.startsWith(REMOTE_REFS_PREFIX)) {
@@ -200,7 +204,7 @@ public class GitServiceImpl implements GitService {
 	}
 
 	public RevWalk createAllRevsWalk(Repository repository, String branch) throws Exception {
-		List<ObjectId> currentRemoteRefs = new ArrayList<>();
+		List<ObjectId> currentRemoteRefs = new ArrayList<ObjectId>(); 
 		for (Ref ref : repository.getRefDatabase().getRefs()) {
 			String refName = ref.getName();
 			if (refName.startsWith(REMOTE_REFS_PREFIX)) {

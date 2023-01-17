@@ -74,14 +74,15 @@ public class RenameVariableRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		String sb = getName() + "\t" +
-				originalVariable +
-				" to " +
-				renamedVariable +
-				" in method " +
-				operationAfter +
-				" from class " + operationAfter.getClassName();
-		return sb;
+		StringBuilder sb = new StringBuilder();
+		sb.append(getName()).append("\t");
+		sb.append(originalVariable);
+		sb.append(" to ");
+		sb.append(renamedVariable);
+		sb.append(" in method ");
+		sb.append(operationAfter);
+		sb.append(" from class ").append(operationAfter.getClassName());
+		return sb.toString();
 	}
 
 	@Override
@@ -128,20 +129,20 @@ public class RenameVariableRefactoring implements Refactoring {
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
 		return pairs;
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
 		return pairs;
 	}
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(originalVariable.codeRange()
 				.setDescription("original variable declaration")
 				.setCodeElement(originalVariable.toString()));
@@ -153,7 +154,7 @@ public class RenameVariableRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(renamedVariable.codeRange()
 				.setDescription("renamed variable declaration")
 				.setCodeElement(renamedVariable.toString()));

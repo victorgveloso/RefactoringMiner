@@ -1,21 +1,31 @@
 package gr.uom.java.xmi;
 
-import gr.uom.java.xmi.ListCompositeType.Kind;
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.diff.CodeRange;
-import gr.uom.java.xmi.diff.StringDistance;
-import org.eclipse.jdt.core.dom.WildcardType;
-import org.eclipse.jdt.core.dom.*;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.AnnotatableType;
+import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.ArrayType;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IntersectionType;
+import org.eclipse.jdt.core.dom.NameQualifiedType;
+import org.eclipse.jdt.core.dom.ParameterizedType;
+import org.eclipse.jdt.core.dom.QualifiedType;
+import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.UnionType;
+import org.eclipse.jdt.core.dom.WildcardType;
+
+import gr.uom.java.xmi.ListCompositeType.Kind;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.diff.CodeRange;
+import gr.uom.java.xmi.diff.StringDistance;
+
 public abstract class UMLType implements Serializable, LocationInfoProvider {
 	private LocationInfo locationInfo;
 	private int arrayDimension;
-	private List<UMLType> typeArguments = new ArrayList<>();
-	protected List<UMLAnnotation> annotations = new ArrayList<>();
+	private List<UMLType> typeArguments = new ArrayList<UMLType>();
+	protected List<UMLAnnotation> annotations = new ArrayList<UMLAnnotation>();
 
 	public LocationInfo getLocationInfo() {
 		return locationInfo;
@@ -165,7 +175,7 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 
 	public static LeafType extractTypeObject(String qualifiedName) {
 		int arrayDimension = 0;
-		List<UMLType> typeArgumentDecomposition = new ArrayList<>();
+		List<UMLType> typeArgumentDecomposition = new ArrayList<UMLType>();
 		if(qualifiedName.endsWith("[]")) {
 			while(qualifiedName.endsWith("[]")) {
 				qualifiedName = qualifiedName.substring(0, qualifiedName.lastIndexOf("[]"));
@@ -243,7 +253,7 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 			QualifiedType qualified = (QualifiedType)type;
 			UMLType leftType = extractTypeObject(cu, filePath, qualified.getQualifier());
 			LeafType rightType = extractTypeObject(qualified.getName().getFullyQualifiedName());
-			AnnotatableType annotatableType = qualified;
+			AnnotatableType annotatableType = (AnnotatableType)qualified;
 			List<Annotation> annotations = annotatableType.annotations();
 			for(Annotation annotation : annotations) {
 				rightType.annotations.add(new UMLAnnotation(cu, filePath, annotation));
@@ -254,7 +264,7 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 			NameQualifiedType nameQualified = (NameQualifiedType)type;
 			LeafType leftType = extractTypeObject(nameQualified.getQualifier().getFullyQualifiedName());
 			LeafType rightType = extractTypeObject(nameQualified.getName().getFullyQualifiedName());
-			AnnotatableType annotatableType = nameQualified;
+			AnnotatableType annotatableType = (AnnotatableType)nameQualified;
 			List<Annotation> annotations = annotatableType.annotations();
 			for(Annotation annotation : annotations) {
 				rightType.annotations.add(new UMLAnnotation(cu, filePath, annotation));
@@ -263,7 +273,7 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 		}
 		else if(type instanceof WildcardType) {
 			WildcardType wildcard = (WildcardType)type;
-			gr.uom.java.xmi.WildcardType myWildcardType;
+			gr.uom.java.xmi.WildcardType myWildcardType = null;
 			if(wildcard.getBound() != null) {
 				UMLType bound = extractTypeObject(cu, filePath, wildcard.getBound());
 				myWildcardType = new gr.uom.java.xmi.WildcardType(bound, wildcard.isUpperBound());
@@ -271,7 +281,7 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 			else {
 				myWildcardType = new gr.uom.java.xmi.WildcardType(null, false);
 			}
-			AnnotatableType annotatableType = wildcard;
+			AnnotatableType annotatableType = (AnnotatableType)wildcard;
 			List<Annotation> annotations = annotatableType.annotations();
 			for(Annotation annotation : annotations) {
 				myWildcardType.annotations.add(new UMLAnnotation(cu, filePath, annotation));
@@ -296,7 +306,7 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 		else if(type instanceof UnionType) {
 			UnionType union = (UnionType)type;
 			List<Type> types = union.types();
-			List<UMLType> umlTypes = new ArrayList<>();
+			List<UMLType> umlTypes = new ArrayList<UMLType>();
 			for(Type unionType : types) {
 				umlTypes.add(extractTypeObject(cu, filePath, unionType));
 			}
@@ -305,7 +315,7 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 		else if(type instanceof IntersectionType) {
 			IntersectionType intersection = (IntersectionType)type;
 			List<Type> types = intersection.types();
-			List<UMLType> umlTypes = new ArrayList<>();
+			List<UMLType> umlTypes = new ArrayList<UMLType>();
 			for(Type unionType : types) {
 				umlTypes.add(extractTypeObject(cu, filePath, unionType));
 			}

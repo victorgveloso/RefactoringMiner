@@ -1,15 +1,16 @@
 package gr.uom.java.xmi.diff;
 
-import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.UMLType;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringType;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
+
+import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.UMLType;
 
 public class AddThrownExceptionTypeRefactoring implements Refactoring {
 	private UMLType exceptionType;
@@ -36,7 +37,7 @@ public class AddThrownExceptionTypeRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(operationBefore.codeRange()
 				.setDescription("original method declaration")
 				.setCodeElement(operationBefore.toString()));
@@ -45,7 +46,7 @@ public class AddThrownExceptionTypeRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(exceptionType.codeRange()
 				.setDescription("added thrown exception type")
 				.setCodeElement(exceptionType.toString()));
@@ -67,23 +68,27 @@ public class AddThrownExceptionTypeRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
 		return pairs;
 	}
 
 	public String toString() {
-		return new RefactoringStringBuilder(this)
-				.addNode(exceptionType)
-				.inMethod(operationAfter)
-				.fromClass().build();
+		StringBuilder sb = new StringBuilder();
+		sb.append(getName()).append("\t");
+		sb.append(exceptionType);
+		sb.append(" in method ");
+		sb.append(operationAfter);
+		sb.append(" from class ");
+		sb.append(operationAfter.getClassName());
+		return sb.toString();
 	}
 
 	@Override

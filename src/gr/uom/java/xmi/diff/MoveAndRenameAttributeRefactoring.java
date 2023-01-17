@@ -22,15 +22,16 @@ public class MoveAndRenameAttributeRefactoring extends MoveAttributeRefactoring 
 	}
 
 	public String toString() {
-        String sb = getName() + "\t" +
-                originalAttribute.toQualifiedString() +
-                " renamed to " +
-                movedAttribute.toQualifiedString() +
-                " and moved from class " +
-                getSourceClassName() +
-                " to class " +
-                getTargetClassName();
-        return sb;
+		StringBuilder sb = new StringBuilder();
+		sb.append(getName()).append("\t");
+		sb.append(originalAttribute.toQualifiedString());
+		sb.append(" renamed to ");
+		sb.append(movedAttribute.toQualifiedString());
+		sb.append(" and moved from class ");
+		sb.append(getSourceClassName());
+		sb.append(" to class ");
+		sb.append(getTargetClassName());
+		return sb.toString();
 	}
 
 	public String getName() {
@@ -43,7 +44,7 @@ public class MoveAndRenameAttributeRefactoring extends MoveAttributeRefactoring 
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(movedAttribute.codeRange()
 				.setDescription("moved and renamed attribute declaration")
 				.setCodeElement(movedAttribute.toString()));

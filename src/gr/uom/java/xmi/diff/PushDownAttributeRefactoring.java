@@ -1,10 +1,11 @@
 package gr.uom.java.xmi.diff;
 
-import gr.uom.java.xmi.UMLAttribute;
-import org.refactoringminer.api.RefactoringType;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.refactoringminer.api.RefactoringType;
+
+import gr.uom.java.xmi.UMLAttribute;
 
 public class PushDownAttributeRefactoring extends MoveAttributeRefactoring {
 
@@ -13,14 +14,16 @@ public class PushDownAttributeRefactoring extends MoveAttributeRefactoring {
 	}
 
 	public String toString() {
-		return getName() + "\t" +
-				getOriginalAttribute().toQualifiedString() +
-				" from class " +
-				getSourceClassName() +
-				" to " +
-				getMovedAttribute().toQualifiedString() +
-				" from class " +
-				getTargetClassName();
+		StringBuilder sb = new StringBuilder();
+		sb.append(getName()).append("\t");
+		sb.append(getOriginalAttribute().toQualifiedString());
+		sb.append(" from class ");
+		sb.append(getSourceClassName());
+		sb.append(" to ");
+		sb.append(getMovedAttribute().toQualifiedString());
+		sb.append(" from class ");
+		sb.append(getTargetClassName());
+		return sb.toString();
 	}
 
 	public RefactoringType getRefactoringType() {
@@ -29,7 +32,7 @@ public class PushDownAttributeRefactoring extends MoveAttributeRefactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(movedAttribute.codeRange()
 				.setDescription("pushed down attribute declaration")
 				.setCodeElement(movedAttribute.toString()));

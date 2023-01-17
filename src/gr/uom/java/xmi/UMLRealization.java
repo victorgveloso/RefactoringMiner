@@ -1,8 +1,8 @@
 package gr.uom.java.xmi;
 
 public class UMLRealization implements Comparable<UMLRealization> {
-    private final UMLClass client;
-    private final String supplier;
+    private UMLClass client;
+    private String supplier;
 
     public UMLRealization(UMLClass client, String supplier) {
         this.supplier = supplier;

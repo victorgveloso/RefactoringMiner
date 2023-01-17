@@ -1,29 +1,34 @@
 package gr.uom.java.xmi.decomposition;
 
-import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.decomposition.replacement.*;
-import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
-import gr.uom.java.xmi.diff.ExtractVariableRefactoring;
-import gr.uom.java.xmi.diff.InlineVariableRefactoring;
-import gr.uom.java.xmi.diff.RenameOperationRefactoring;
-import gr.uom.java.xmi.diff.UMLClassBaseDiff;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.util.PrefixSuffixUtils;
-
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.util.PrefixSuffixUtils;
+
+import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.decomposition.replacement.CompositeReplacement;
+import gr.uom.java.xmi.decomposition.replacement.MethodInvocationReplacement;
+import gr.uom.java.xmi.decomposition.replacement.ObjectCreationReplacement;
+import gr.uom.java.xmi.decomposition.replacement.Replacement;
+import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
+import gr.uom.java.xmi.decomposition.replacement.VariableReplacementWithMethodInvocation;
+import gr.uom.java.xmi.diff.ExtractVariableRefactoring;
+import gr.uom.java.xmi.diff.InlineVariableRefactoring;
+import gr.uom.java.xmi.diff.RenameOperationRefactoring;
+import gr.uom.java.xmi.diff.UMLClassBaseDiff;
+
 public abstract class AbstractCodeMapping {
 
-	private final AbstractCodeFragment fragment1;
-	private final AbstractCodeFragment fragment2;
-	private final UMLOperation operation1;
-	private final UMLOperation operation2;
-	private final Set<Replacement> replacements;
+	private AbstractCodeFragment fragment1;
+	private AbstractCodeFragment fragment2;
+	private UMLOperation operation1;
+	private UMLOperation operation2;
+	private Set<Replacement> replacements;
 	private boolean identicalWithExtractedVariable;
 	private boolean identicalWithInlinedVariable;
-	private final Set<Refactoring> refactorings = new LinkedHashSet<>();
+	private Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
 	
 	public AbstractCodeMapping(AbstractCodeFragment fragment1, AbstractCodeFragment fragment2,
 			UMLOperation operation1, UMLOperation operation2) {
@@ -31,7 +36,7 @@ public abstract class AbstractCodeMapping {
 		this.fragment2 = fragment2;
 		this.operation1 = operation1;
 		this.operation2 = operation2;
-		this.replacements = new LinkedHashSet<>();
+		this.replacements = new LinkedHashSet<Replacement>();
 	}
 
 	public AbstractCodeFragment getFragment1() {
@@ -156,7 +161,7 @@ public abstract class AbstractCodeMapping {
 	}
 
 	public Set<ReplacementType> getReplacementTypes() {
-		Set<ReplacementType> types = new LinkedHashSet<>();
+		Set<ReplacementType> types = new LinkedHashSet<ReplacementType>();
 		for(Replacement replacement : replacements) {
 			types.add(replacement.getType());
 		}
@@ -195,7 +200,7 @@ public abstract class AbstractCodeMapping {
 			AbstractExpression initializer = declaration.getInitializer();
 			for(Replacement replacement : getReplacements()) {
 				if(replacement.getAfter().startsWith(variableName + ".")) {
-					String suffixAfter = replacement.getAfter().substring(variableName.length());
+					String suffixAfter = replacement.getAfter().substring(variableName.length(), replacement.getAfter().length());
 					if(replacement.getBefore().endsWith(suffixAfter)) {
 						String prefixBefore = replacement.getBefore().substring(0, replacement.getBefore().indexOf(suffixAfter));
 						if(initializer != null) {
@@ -248,12 +253,12 @@ public abstract class AbstractCodeMapping {
 			String beforeAssignment = argumentizedString.substring(0, argumentizedString.indexOf("="));
 			String[] tokens = beforeAssignment.split("\\s");
 			String variable = tokens[tokens.length-1];
-			String initializer;
+			String initializer = null;
 			if(argumentizedString.endsWith(";\n")) {
 				initializer = argumentizedString.substring(argumentizedString.indexOf("=")+1, argumentizedString.length()-2);
 			}
 			else {
-				initializer = argumentizedString.substring(argumentizedString.indexOf("=")+1);
+				initializer = argumentizedString.substring(argumentizedString.indexOf("=")+1, argumentizedString.length());
 			}
 			for(Replacement replacement : getReplacements()) {
 				if(variable.endsWith(replacement.getAfter()) &&	initializer.equals(replacement.getBefore())) {
@@ -279,7 +284,7 @@ public abstract class AbstractCodeMapping {
 				String variableName = declaration.getVariableName();
 				AbstractExpression initializer = declaration.getInitializer();
 				if(replacement.getBefore().startsWith(variableName + ".")) {
-					String suffixBefore = replacement.getBefore().substring(variableName.length());
+					String suffixBefore = replacement.getBefore().substring(variableName.length(), replacement.getBefore().length());
 					if(replacement.getAfter().endsWith(suffixBefore)) {
 						String prefixAfter = replacement.getAfter().substring(0, replacement.getAfter().indexOf(suffixBefore));
 						if(initializer != null) {
@@ -315,12 +320,12 @@ public abstract class AbstractCodeMapping {
 			String beforeAssignment = argumentizedString.substring(0, argumentizedString.indexOf("="));
 			String[] tokens = beforeAssignment.split("\\s");
 			String variable = tokens[tokens.length-1];
-			String initializer;
+			String initializer = null;
 			if(argumentizedString.endsWith(";\n")) {
 				initializer = argumentizedString.substring(argumentizedString.indexOf("=")+1, argumentizedString.length()-2);
 			}
 			else {
-				initializer = argumentizedString.substring(argumentizedString.indexOf("=")+1);
+				initializer = argumentizedString.substring(argumentizedString.indexOf("=")+1, argumentizedString.length());
 			}
 			for(Replacement replacement : getReplacements()) {
 				if(variable.endsWith(replacement.getBefore()) && initializer.equals(replacement.getAfter())) {
@@ -361,7 +366,9 @@ public abstract class AbstractCodeMapping {
 		}
 		ObjectCreation creation = initializer.creationCoveringEntireFragment();
 		if(creation != null) {
-			return creation.getArguments().contains(replacedExpression);
+			if(creation.getArguments().contains(replacedExpression)) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -488,7 +495,7 @@ public abstract class AbstractCodeMapping {
 	}
 
 	public Set<Replacement> commonReplacements(AbstractCodeMapping other) {
-		Set<Replacement> intersection = new LinkedHashSet<>(this.replacements);
+		Set<Replacement> intersection = new LinkedHashSet<Replacement>(this.replacements);
 		intersection.retainAll(other.replacements);
 		return intersection;
 	}
@@ -529,7 +536,10 @@ public abstract class AbstractCodeMapping {
 		} else if (!operation1.equals(other.operation1))
 			return false;
 		if (operation2 == null) {
-			return other.operation2 == null;
-		} else return operation2.equals(other.operation2);
+			if (other.operation2 != null)
+				return false;
+		} else if (!operation2.equals(other.operation2))
+			return false;
+		return true;
 	}
 }

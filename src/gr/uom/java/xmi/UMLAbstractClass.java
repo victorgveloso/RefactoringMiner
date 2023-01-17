@@ -1,13 +1,20 @@
 package gr.uom.java.xmi;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+
+import org.refactoringminer.util.PrefixSuffixUtils;
+
 import gr.uom.java.xmi.decomposition.OperationInvocation;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 import gr.uom.java.xmi.diff.CodeRange;
 import gr.uom.java.xmi.diff.RenamePattern;
 import gr.uom.java.xmi.diff.StringDistance;
-import org.refactoringminer.util.PrefixSuffixUtils;
-
-import java.util.*;
 
 public abstract class UMLAbstractClass {
 	protected LocationInfo locationInfo;
@@ -16,14 +23,14 @@ public abstract class UMLAbstractClass {
 	protected List<UMLOperation> operations;
 	protected List<UMLAttribute> attributes;
 	protected List<UMLComment> comments;
-	private final List<UMLAnonymousClass> anonymousClassList;
+	private List<UMLAnonymousClass> anonymousClassList;
 	private Map<String, VariableDeclaration> fieldDeclarationMap;
 
 	public UMLAbstractClass() {
-        this.operations = new ArrayList<>();
-        this.attributes = new ArrayList<>();
-        this.comments = new ArrayList<>();
-        this.anonymousClassList = new ArrayList<>();
+        this.operations = new ArrayList<UMLOperation>();
+        this.attributes = new ArrayList<UMLAttribute>();
+        this.comments = new ArrayList<UMLComment>();
+        this.anonymousClassList = new ArrayList<UMLAnonymousClass>();
 	}
 
 	public List<UMLOperation> getOperationsWithOverrideAnnotation() {
@@ -76,7 +83,7 @@ public abstract class UMLAbstractClass {
 
 	public Map<String, VariableDeclaration> getFieldDeclarationMap() {
 		if(this.fieldDeclarationMap == null) {
-			fieldDeclarationMap = new LinkedHashMap<>();
+			fieldDeclarationMap = new LinkedHashMap<String, VariableDeclaration>();
 			for(UMLAttribute attribute : attributes) {
 				fieldDeclarationMap.put(attribute.getName(), attribute.getVariableDeclaration());
 			}
@@ -86,8 +93,10 @@ public abstract class UMLAbstractClass {
 
 	//returns true if the "innerClass" parameter is inner class of this
 	public boolean isInnerClass(UMLAbstractClass innerClass) {
-        return this.getName().equals(innerClass.packageName);
-    }
+		if(this.getName().equals(innerClass.packageName))
+			return true;
+		return false;
+	}
 
 	public UMLOperation operationWithTheSameSignature(UMLOperation operation) {
 		for(UMLOperation originalOperation : operations) {
@@ -106,7 +115,7 @@ public abstract class UMLAbstractClass {
 	}
 
 	public UMLOperation operationWithTheSameSignatureIgnoringChangedTypes(UMLOperation operation) {
-		List<UMLOperation> matchingOperations = new ArrayList<>();
+		List<UMLOperation> matchingOperations = new ArrayList<UMLOperation>();
 		for(UMLOperation originalOperation : operations) {
 			boolean matchesOperation = isInterface() ?
 				originalOperation.equalSignatureIgnoringChangedTypes(operation) :
@@ -225,7 +234,7 @@ public abstract class UMLAbstractClass {
 	}
 
 	public boolean hasAttributesAndOperationsWithCommonNames(UMLAbstractClass umlClass) {
-		Set<UMLOperation> commonOperations = new LinkedHashSet<>();
+		Set<UMLOperation> commonOperations = new LinkedHashSet<UMLOperation>();
 		int totalOperations = 0;
 		for(UMLOperation operation : operations) {
 			if(!operation.isConstructor() && !operation.overridesObject()) {
@@ -243,7 +252,7 @@ public abstract class UMLAbstractClass {
 	    		}
 			}
 		}
-		Set<UMLAttribute> commonAttributes = new LinkedHashSet<>();
+		Set<UMLAttribute> commonAttributes = new LinkedHashSet<UMLAttribute>();
 		int totalAttributes = 0;
 		for(UMLAttribute attribute : attributes) {
 			totalAttributes++;
@@ -282,7 +291,7 @@ public abstract class UMLAbstractClass {
 			String diff2 = beginIndexS2 > endIndexS2 ? "" :	umlClass.name.substring(beginIndexS2, endIndexS2);
 			pattern = new RenamePattern(diff1, diff2);
 		}
-		Set<UMLOperation> commonOperations = new LinkedHashSet<>();
+		Set<UMLOperation> commonOperations = new LinkedHashSet<UMLOperation>();
 		int totalOperations = 0;
 		for(UMLOperation operation : operations) {
 			if(!operation.isConstructor() && !operation.overridesObject()) {
@@ -302,7 +311,7 @@ public abstract class UMLAbstractClass {
 	    		}
 			}
 		}
-		Set<UMLAttribute> commonAttributes = new LinkedHashSet<>();
+		Set<UMLAttribute> commonAttributes = new LinkedHashSet<UMLAttribute>();
 		int totalAttributes = 0;
 		for(UMLAttribute attribute : attributes) {
 			totalAttributes++;
@@ -333,9 +342,9 @@ public abstract class UMLAbstractClass {
 				(commonOperations.size() == totalOperations && commonOperations.size() > 2 && totalAttributes == 1)) {
 			return true;
 		}
-		Set<UMLOperation> unmatchedOperations = new LinkedHashSet<>(umlClass.operations);
+		Set<UMLOperation> unmatchedOperations = new LinkedHashSet<UMLOperation>(umlClass.operations);
 		unmatchedOperations.removeAll(commonOperations);
-		Set<UMLOperation> unmatchedCalledOperations = new LinkedHashSet<>();
+		Set<UMLOperation> unmatchedCalledOperations = new LinkedHashSet<UMLOperation>();
 		for(UMLOperation operation : umlClass.operations) {
 			if(commonOperations.contains(operation)) {
 				for(OperationInvocation invocation : operation.getAllOperationInvocations()) {
@@ -348,8 +357,11 @@ public abstract class UMLAbstractClass {
 				}
 			}
 		}
-        return commonOperations.size() + unmatchedCalledOperations.size() > Math.floor(totalOperations / 2.0) && (commonAttributes.size() > 2 || totalAttributes == 0);
-    }
+		if((commonOperations.size() + unmatchedCalledOperations.size() > Math.floor(totalOperations/2.0) && (commonAttributes.size() > 2 || totalAttributes == 0))) {
+			return true;
+		}
+		return false;
+	}
 
 	public boolean hasSameAttributesAndOperations(UMLAbstractClass umlClass) {
 		if(this.attributes.size() != umlClass.attributes.size())
@@ -389,7 +401,7 @@ public abstract class UMLAbstractClass {
 	}
 
 	public List<UMLAttribute> attributesOfType(String targetClass) {
-		List<UMLAttribute> attributesOfType = new ArrayList<>();
+		List<UMLAttribute> attributesOfType = new ArrayList<UMLAttribute>();
 		for(UMLAttribute attribute : attributes) {
 			if(targetClass.endsWith("." + attribute.getType().getClassType()) ||
 					targetClass.equals(attribute.getType().getClassType())) {
@@ -400,35 +412,39 @@ public abstract class UMLAbstractClass {
 	}
 
     public UMLAttribute containsAttribute(UMLAttribute otherAttribute) {
-		for (UMLAttribute attribute : attributes) {
-			if (attribute.equals(otherAttribute)) {
-				return attribute;
-			}
-		}
+    	ListIterator<UMLAttribute> attributeIt = attributes.listIterator();
+    	while(attributeIt.hasNext()) {
+    		UMLAttribute attribute = attributeIt.next();
+    		if(attribute.equals(otherAttribute)) {
+    			return attribute;
+    		}
+    	}
     	return null;
     }
 
     public UMLAttribute matchAttribute(UMLAttribute otherAttribute) {
-		for (UMLAttribute attribute : attributes) {
-			if (attribute.getName().equals(otherAttribute.getName())) {
-				String thisAttributeType = attribute.getType().getClassType();
+    	ListIterator<UMLAttribute> attributeIt = attributes.listIterator();
+    	while(attributeIt.hasNext()) {
+    		UMLAttribute attribute = attributeIt.next();
+    		if(attribute.getName().equals(otherAttribute.getName())) {
+    			String thisAttributeType = attribute.getType().getClassType();
 				String otherAttributeType = otherAttribute.getType().getClassType();
 				int thisArrayDimension = attribute.getType().getArrayDimension();
 				int otherArrayDimension = otherAttribute.getType().getArrayDimension();
-				String thisAttributeTypeComparedString;
-				if (thisAttributeType.contains("."))
-					thisAttributeTypeComparedString = thisAttributeType.substring(thisAttributeType.lastIndexOf(".") + 1);
-				else
-					thisAttributeTypeComparedString = thisAttributeType;
-				String otherAttributeTypeComparedString;
-				if (otherAttributeType.contains("."))
-					otherAttributeTypeComparedString = otherAttributeType.substring(otherAttributeType.lastIndexOf(".") + 1);
-				else
-					otherAttributeTypeComparedString = otherAttributeType;
-				if (thisAttributeTypeComparedString.equals(otherAttributeTypeComparedString) && thisArrayDimension == otherArrayDimension)
-					return attribute;
-			}
-		}
+				String thisAttributeTypeComparedString = null;
+    			if(thisAttributeType.contains("."))
+    				thisAttributeTypeComparedString = thisAttributeType.substring(thisAttributeType.lastIndexOf(".")+1);
+    			else
+    				thisAttributeTypeComparedString = thisAttributeType;
+    			String otherAttributeTypeComparedString = null;
+    			if(otherAttributeType.contains("."))
+    				otherAttributeTypeComparedString = otherAttributeType.substring(otherAttributeType.lastIndexOf(".")+1);
+    			else
+    				otherAttributeTypeComparedString = otherAttributeType;
+    			if(thisAttributeTypeComparedString.equals(otherAttributeTypeComparedString) && thisArrayDimension == otherArrayDimension)
+    				return attribute;
+    		}
+    	}
     	return null;
     }
 
@@ -459,7 +475,7 @@ public abstract class UMLAbstractClass {
 				}
 			}
 		}
-		return new LinkedHashMap<>();
+		return new LinkedHashMap<String, Set<String>>();
 	}
 
 	public void addAnonymousClass(UMLAnonymousClass anonymousClass) {

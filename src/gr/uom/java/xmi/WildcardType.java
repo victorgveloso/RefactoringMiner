@@ -1,8 +1,8 @@
 package gr.uom.java.xmi;
 
 public class WildcardType extends UMLType {
-	private final UMLType bound;
-	private final boolean upperBound;
+	private UMLType bound;
+	private boolean upperBound;
 	
 	public WildcardType(UMLType bound, boolean upperBound) {
 		this.bound = bound;
@@ -32,7 +32,9 @@ public class WildcardType extends UMLType {
 				return false;
 		} else if (!bound.equals(other.bound))
 			return false;
-		return upperBound == other.upperBound;
+		if (upperBound != other.upperBound)
+			return false;
+		return true;
 	}
 
 	@Override
@@ -44,7 +46,7 @@ public class WildcardType extends UMLType {
 				sb.append(" extends ");
 			else
 				sb.append(" super ");
-			sb.append(bound);
+			sb.append(bound.toString());
 		}
 		return sb.toString();
 	}

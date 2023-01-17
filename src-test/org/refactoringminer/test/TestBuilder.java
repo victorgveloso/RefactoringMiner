@@ -1,14 +1,25 @@
 package org.refactoringminer.test;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.jgit.lib.Repository;
 import org.junit.Assert;
-import org.refactoringminer.api.*;
+import org.refactoringminer.api.GitHistoryRefactoringMiner;
+import org.refactoringminer.api.GitService;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringHandler;
+import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.test.RefactoringPopulator.Refactorings;
 import org.refactoringminer.util.GitServiceImpl;
-
-import java.math.BigInteger;
-import java.util.*;
 
 public class TestBuilder {
 
@@ -30,7 +41,7 @@ public class TestBuilder {
 	private BigInteger refactoringFilter;
 
 	public TestBuilder(GitHistoryRefactoringMiner detector, String tempDir) {
-		this.map = new HashMap<>();
+		this.map = new HashMap<String, ProjectMatcher>();
 		this.refactoringDetector = detector;
 		this.tempDir = tempDir;
 		this.verbose = false;
@@ -91,7 +102,7 @@ public class TestBuilder {
 
 	public void assertExpectations(int expectedTPs, int expectedFPs, int expectedFNs) throws Exception {
 		c = new Counter();
-		cMap = new HashMap<>();
+		cMap = new HashMap<RefactoringType, Counter>();
 		commitsCount = 0;
 		errorCommitsCount = 0;
 		GitService gitService = new GitServiceImpl();
@@ -112,7 +123,7 @@ public class TestBuilder {
 				}
 			}
 		}
-		System.out.printf("Commits: %d  Errors: %d%n", commitsCount, errorCommitsCount);
+		System.out.println(String.format("Commits: %d  Errors: %d", commitsCount, errorCommitsCount));
 
 		String mainResultMessage = buildResultMessage(c);
 		System.out.println("Total  " + mainResultMessage);
@@ -153,7 +164,7 @@ public class TestBuilder {
 				int end = refactoring.lastIndexOf(']');
 				String types = refactoring.substring(begin + "from classes [".length(), end);
 				String[] typesArray = types.split(", ");
-				List<String> refactorings = new ArrayList<>();
+				List<String> refactorings = new ArrayList<String>();
 				for (String type : typesArray) {
 					refactorings.add(refactoring.substring(0, begin) + "from class " + type);
 				}
@@ -182,7 +193,7 @@ public class TestBuilder {
 
 		private final String cloneUrl;
 		private final String branch;
-		private final Map<String, CommitMatcher> expected = new HashMap<>();
+		private Map<String, CommitMatcher> expected = new HashMap<>();
 		private boolean ignoreNonSpecifiedCommits = true;
 		private int truePositiveCount = 0;
 		private int falsePositiveCount = 0;
@@ -239,7 +250,7 @@ public class TestBuilder {
 			}
 			if (matcher != null) {
 				matcher.analyzed = true;
-				Set<String> refactoringsFound = new HashSet<>();
+				Set<String> refactoringsFound = new HashSet<String>();
 				for (Refactoring refactoring : refactorings) {
 					refactoringsFound.addAll(normalize(refactoring.toString()));
 				}
@@ -374,10 +385,10 @@ public class TestBuilder {
 		// }
 
 		public class CommitMatcher {
-			private Set<String> expected = new HashSet<>();
-			private Set<String> notExpected = new HashSet<>();
-			private final Set<String> truePositive = new HashSet<>();
-			private final Set<String> unknown = new HashSet<>();
+			private Set<String> expected = new HashSet<String>();
+			private Set<String> notExpected = new HashSet<String>();
+			private Set<String> truePositive = new HashSet<String>();
+			private Set<String> unknown = new HashSet<String>();
 			private boolean ignoreNonSpecified = true;
 			private boolean analyzed = false;
 			private String error = null;
@@ -394,8 +405,8 @@ public class TestBuilder {
 
 			public ProjectMatcher containsOnly(String... refactorings) {
 				this.ignoreNonSpecified = false;
-				this.expected = new HashSet<>();
-				this.notExpected = new HashSet<>();
+				this.expected = new HashSet<String>();
+				this.notExpected = new HashSet<String>();
 				for (String refactoring : refactorings) {
 					expected.addAll(normalize(refactoring));
 				}

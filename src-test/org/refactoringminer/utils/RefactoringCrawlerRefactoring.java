@@ -1,9 +1,9 @@
 package org.refactoringminer.utils;
 
-import org.refactoringminer.api.RefactoringType;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.refactoringminer.api.RefactoringType;
 
 public class RefactoringCrawlerRefactoring {
 
@@ -19,9 +19,9 @@ public class RefactoringCrawlerRefactoring {
     TYPE_MAP.put("RenamedPackages", RefactoringType.RENAME_PACKAGE);
   }
 
-  private final String type;
-  private final String newElement;
-  private final String oldElement;
+  private String type;
+  private String newElement;
+  private String oldElement;
   
   public RefactoringCrawlerRefactoring(String type, String newElement, String oldElement) {
     this.type = type.trim();

@@ -1,5 +1,6 @@
 package gr.uom.java.xmi;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,8 +12,8 @@ public class ListCompositeType extends UMLType {
 	 */
 	public enum Kind {
 		UNION("|"), INTERSECTION("&");
-		private final String operand;
-		Kind(String operand) {
+		private String operand;
+		private Kind(String operand) {
 			this.operand = operand;
 		}
 	}
@@ -20,11 +21,11 @@ public class ListCompositeType extends UMLType {
 	/**
 	 * Each type belonging to the composite
 	 */
-	private List<UMLType> types;
+	private List<UMLType> types = new ArrayList<UMLType>();
 	/**
 	 * Composition kind.
 	 */
-	private final Kind kind;
+	private Kind kind;
 
 	public ListCompositeType(List<UMLType> types, Kind kind) {
 		this.types = types;
@@ -60,8 +61,11 @@ public class ListCompositeType extends UMLType {
 		if (kind != other.kind)
 			return false;
 		if (types == null) {
-			return other.types == null;
-		} else return types.equals(other.types);
+			if (other.types != null)
+				return false;
+		} else if (!types.equals(other.types))
+			return false;
+		return true;
 	}
 
 	@Override

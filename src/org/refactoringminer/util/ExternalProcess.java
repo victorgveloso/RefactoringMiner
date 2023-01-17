@@ -33,10 +33,12 @@ class ExternalProcess {
 				close(p.getOutputStream());
 				//p.destroy();
 			}
-		} catch (IOException | InterruptedException e) {
+		} catch (IOException e) {
+			throw new RuntimeException("Error executing command " + commandAndArgs, e);
+		} catch (InterruptedException e) {
 			throw new RuntimeException("Error executing command " + commandAndArgs, e);
 		}
-    }
+	}
 
 	private static void close(Closeable closeable) throws IOException {
 		if (closeable != null) {
@@ -55,9 +57,9 @@ class ExternalProcess {
 		public void run() {
 			try {
 				BufferedReader br = new BufferedReader(new InputStreamReader(is));
-				String line;
+				String line = null;
 				while ((line = br.readLine()) != null) {
-					output.append(line).append('\n');
+					output.append(line + '\n');
 				}
 			} catch (IOException e) {
 				throw new RuntimeException(e); 

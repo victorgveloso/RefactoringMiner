@@ -1,20 +1,25 @@
 package gr.uom.java.xmi;
 
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.decomposition.AbstractExpression;
-import gr.uom.java.xmi.diff.CodeRange;
-import org.eclipse.jdt.core.dom.*;
-
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UMLAnnotation implements Serializable, LocationInfoProvider, IExtendedModifier {
-	private final LocationInfo locationInfo;
-	private final String typeName;
+import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MemberValuePair;
+import org.eclipse.jdt.core.dom.NormalAnnotation;
+import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
+
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.decomposition.AbstractExpression;
+import gr.uom.java.xmi.diff.CodeRange;
+
+public class UMLAnnotation implements Serializable, LocationInfoProvider {
+	private LocationInfo locationInfo;
+	private String typeName;
 	private AbstractExpression value;
-	private final Map<String, AbstractExpression> memberValuePairs = new LinkedHashMap<>();
+	private Map<String, AbstractExpression> memberValuePairs = new LinkedHashMap<>();
 	
 	public UMLAnnotation(CompilationUnit cu, String filePath, Annotation annotation) {
 		this.typeName = annotation.getTypeName().getFullyQualifiedName();
@@ -119,12 +124,15 @@ public class UMLAnnotation implements Serializable, LocationInfoProvider, IExten
 		} else if (!typeName.equals(other.typeName))
 			return false;
 		if (value == null) {
-			return other.value == null;
+			if (other.value != null)
+				return false;
 		} else {
 			if (other.value == null)
 				return false;
-			return value.getExpression().equals(other.value.getExpression());
+			if (!value.getExpression().equals(other.value.getExpression()))
+				return false;
 		}
+		return true;
 	}
 
 	private boolean memberValuePairsEquals(UMLAnnotation other) {
@@ -155,15 +163,5 @@ public class UMLAnnotation implements Serializable, LocationInfoProvider, IExten
 		for (Map.Entry<String, AbstractExpression> entry : memberValuePairs.entrySet())
 			h += (entry.getKey() == null ? 0 : entry.getKey().hashCode()) ^ (entry.getValue() == null ? 0 : entry.getValue().getExpression().hashCode());
 		return h;
-	}
-
-	@Override
-	public boolean isModifier() {
-		return false;
-	}
-
-	@Override
-	public boolean isAnnotation() {
-		return true;
 	}
 }

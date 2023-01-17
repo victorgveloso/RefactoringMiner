@@ -10,31 +10,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 public class SubMethodNodeVisitorTest {
-    static private final char[] SOURCE = ("import org.junit.Test;" +
+    static private char[] SOURCE = ("import org.junit.Test;" +
+            "import org.junit.rules.ExpectedException;" +
             "class ExampleTest {" +
-            "@Test(expected = RuntimeException.class)" +
-            "void testExample() {" +
-            "(new Example()).method();" +
-            "}" +
+                "@ExpectedException(RuntimeException.class)" +
+                "@Test" +
+                "void testSomething() {" +
+                    "(new Example()).method();" +
+                "}" +
             "}").toCharArray();
 
     SubMethodNodeVisitor visitor;
-    private CompilationUnit unit;
+    private CompilationUnit ast;
 
     private SubMethodNodeVisitor.SubMethodNodeVisitorBuilder createBuilderFromVisitor(SubMethodNodeVisitor visitor) {
-        return SubMethodNodeVisitor.builder().creationMap(visitor.getCreationMap()).methodInvocationMap(this.visitor.getMethodInvocationMap()).cu(unit).filePath("");
+        return SubMethodNodeVisitor.builder().creationMap(visitor.getCreationMap()).methodInvocationMap(this.visitor.getMethodInvocationMap()).cu(ast).filePath("");
     }
 
     @Before
     public void setUp() {
-        unit = CompilationUnitMother.createFromSource(SOURCE);
-        visitor = new SubMethodNodeVisitor(unit, "");
-        unit.accept(visitor);
+        ASTParser parser = ASTParser.newParser(AST.JLS_Latest);
+        parser.setSource(SOURCE);
+        ast = (CompilationUnit) parser.createAST(null);
+        visitor = new SubMethodNodeVisitor(ast, "");
+        ast.accept(visitor);
     }
 
     @Test
     public void testVisit() {
-        SubMethodNodeVisitor expectedVisitor = createBuilderFromVisitor(visitor).variable("Test").variable("ExampleTest").variable("Test").variable("expected").type("RuntimeException").type("void").type("Example").typeLiteral("RuntimeException.class").build();
+        SubMethodNodeVisitor expectedVisitor = createBuilderFromVisitor(visitor).variable("Test").variable("ExpectedException").variable("ExampleTest").variable("ExpectedException").type("RuntimeException").type("Example").typeLiteral("RuntimeException.class").build();
         assertThat(visitor).usingRecursiveComparison().isEqualTo(expectedVisitor);
     }
 
@@ -48,9 +52,9 @@ public class SubMethodNodeVisitorTest {
                 return super.visit(node);
             }
         };
-        unit.accept(v);
-        assertEquals(invocations.size(), 1);
-        assertEquals(SubMethodNodeVisitor.processMethodInvocation(invocations.get(0)), "method()");
+        ast.accept(v);
+        assertEquals(invocations.size(),1);
+        assertEquals(SubMethodNodeVisitor.processMethodInvocation(invocations.get(0)),"method()");
     }
 
     @Test
@@ -63,9 +67,8 @@ public class SubMethodNodeVisitorTest {
                 return super.visit(node);
             }
         };
-        unit.accept(v);
-        assertEquals(creations.size(), 1);
-        assertEquals(SubMethodNodeVisitor.processClassInstanceCreation(creations.get(0)), "new Example()");
+        ast.accept(v);
+        assertEquals(creations.size(),1);
+        assertEquals(SubMethodNodeVisitor.processClassInstanceCreation(creations.get(0)),"new Example()");
     }
-
 }

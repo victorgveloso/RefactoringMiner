@@ -1,5 +1,12 @@
 package org.refactoringminer;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.List;
+
 import org.eclipse.jgit.lib.Repository;
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
 import org.refactoringminer.api.GitService;
@@ -7,13 +14,6 @@ import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringHandler;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.List;
 
 public class RefactoringMiner {
 	private static Path path = null;
@@ -74,8 +74,8 @@ public class RefactoringMiner {
 
 				@Override
 				public void onFinish(int refactoringsCount, int commitsCount, int errorCommitsCount) {
-					System.out.printf("Total count: [Commits: %d, Errors: %d, Refactorings: %d]%n",
-							commitsCount, errorCommitsCount, refactoringsCount);
+					System.out.println(String.format("Total count: [Commits: %d, Errors: %d, Refactorings: %d]",
+							commitsCount, errorCommitsCount, refactoringsCount));
 				}
 
 				@Override
@@ -118,8 +118,8 @@ public class RefactoringMiner {
 
 				@Override
 				public void onFinish(int refactoringsCount, int commitsCount, int errorCommitsCount) {
-					System.out.printf("Total count: [Commits: %d, Errors: %d, Refactorings: %d]%n",
-							commitsCount, errorCommitsCount, refactoringsCount);
+					System.out.println(String.format("Total count: [Commits: %d, Errors: %d, Refactorings: %d]",
+							commitsCount, errorCommitsCount, refactoringsCount));
 				}
 
 				@Override
@@ -158,8 +158,8 @@ public class RefactoringMiner {
 
 				@Override
 				public void onFinish(int refactoringsCount, int commitsCount, int errorCommitsCount) {
-					System.out.printf("Total count: [Commits: %d, Errors: %d, Refactorings: %d]%n",
-							commitsCount, errorCommitsCount, refactoringsCount);
+					System.out.println(String.format("Total count: [Commits: %d, Errors: %d, Refactorings: %d]",
+							commitsCount, errorCommitsCount, refactoringsCount));
 				}
 
 				@Override
@@ -204,7 +204,7 @@ public class RefactoringMiner {
 		}
 	}
 
-	private static void detectAtGitHubCommit(String[] args) {
+	private static void detectAtGitHubCommit(String[] args) throws Exception {
 		int maxArgLength = processJSONoption(args, 4);
 		if (args.length != maxArgLength) {
 			throw argumentException();

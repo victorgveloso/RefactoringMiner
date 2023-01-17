@@ -1,14 +1,15 @@
 package gr.uom.java.xmi.diff;
 
 import gr.uom.java.xmi.UMLClass;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringType;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
 
 public class ExtractSuperclassRefactoring implements Refactoring {
 	private UMLClass extractedClass;
@@ -20,11 +21,12 @@ public class ExtractSuperclassRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-        String sb = getName() + "\t" +
-                extractedClass +
-                " from classes " +
-                subclassSet;
-        return sb;
+		StringBuilder sb = new StringBuilder();
+		sb.append(getName()).append("\t");
+		sb.append(extractedClass);
+		sb.append(" from classes ");
+		sb.append(subclassSet);
+		return sb.toString();
 	}
 
 	public String getName() {
@@ -43,7 +45,7 @@ public class ExtractSuperclassRefactoring implements Refactoring {
 	}
 
 	public Set<String> getSubclassSet() {
-		Set<String> subclassSet = new LinkedHashSet<>();
+		Set<String> subclassSet = new LinkedHashSet<String>();
 		for(UMLClass umlClass : this.subclassSet) {
 			subclassSet.add(umlClass.getName());
 		}
@@ -51,26 +53,26 @@ public class ExtractSuperclassRefactoring implements Refactoring {
 	}
 
 	public Set<UMLClass> getUMLSubclassSet() {
-		return new LinkedHashSet<>(subclassSet);
+		return new LinkedHashSet<UMLClass>(subclassSet);
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
 		for(UMLClass umlClass : this.subclassSet) {
-			pairs.add(new ImmutablePair<>(umlClass.getLocationInfo().getFilePath(), umlClass.getName()));
+			pairs.add(new ImmutablePair<String, String>(umlClass.getLocationInfo().getFilePath(), umlClass.getName()));
 		}
 		return pairs;
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getExtractedClass().getLocationInfo().getFilePath(), getExtractedClass().getName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getExtractedClass().getLocationInfo().getFilePath(), getExtractedClass().getName()));
 		return pairs;
 	}
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		for(UMLClass subclass : subclassSet) {
 			ranges.add(subclass.codeRange()
 					.setDescription("sub-type declaration")
@@ -81,7 +83,7 @@ public class ExtractSuperclassRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(extractedClass.codeRange()
 				.setDescription("extracted super-type declaration")
 				.setCodeElement(extractedClass.getName()));

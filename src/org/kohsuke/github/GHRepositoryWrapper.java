@@ -18,7 +18,7 @@ public class GHRepositoryWrapper {
      * @param sha1 a commit's SHA-1 hash
      * @param files outputs the list of modified files by a commit
      * @return commit object containing sha1
-     * @throws IOException Failed to fetch GitHub Commit
+     * @throws IOException
      */
     public GHCommit getCommit(String sha1, List<GHCommit.File> files) throws IOException {
         GitHubResponse<GHCommit> ghCommitGitHubResponse = getGhCommitGitHubResponse(String.format("/repos/%s/%s/commits/%s", ghRepository.getOwnerName(), ghRepository.getName(), sha1));
@@ -37,7 +37,7 @@ public class GHRepositoryWrapper {
                         if (urlParts.length == 2) {
                             url = urlParts[0] + "=";
                             url = url.trim();
-                            int lastPage = Integer.parseInt(urlParts[1]);
+                            int lastPage = Integer.valueOf(urlParts[1]);
                             for (int page = 2; page <= lastPage; page++) {
                                 files.addAll(getGhCommitGitHubResponse(url + page).body().getFiles());
                             }

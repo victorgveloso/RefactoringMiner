@@ -7,11 +7,11 @@ public class UMLGeneralization implements Comparable<UMLGeneralization> {
 	/**
 	 * The subclass (more specific classifier)
 	 */
-    private final UMLClass child;
+    private UMLClass child;
 	/**
 	 * The superclass' name (more general classifier)
 	 */
-    private final String parent;
+    private String parent;
 
     public UMLGeneralization(UMLClass child, String parent) {
         this.child = child;

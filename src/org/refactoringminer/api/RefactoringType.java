@@ -1,11 +1,12 @@
 package org.refactoringminer.api;
 
-import org.refactoringminer.util.AstUtils;
-import org.refactoringminer.utils.RefactoringRelationship;
-
 import java.util.Collection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.refactoringminer.util.AstUtils;
+import org.refactoringminer.utils.RefactoringRelationship;
 
 public enum RefactoringType {
 
@@ -97,9 +98,9 @@ public enum RefactoringType {
     REPLACE_EXPECTED_WITH_ASSERT_THROWS("Replace Expect Annotation With Assert Throws", "Replace Expect Annotation With Assert Throws (.+) from method (.+) in class (.+)"),
     REPLACE_TRY_FAIL_WITH_RULE("Replace Try And Fail With Rule", "Replace Try-Fail With Rule (.+) from method (.+) in class (.+)");
 
-	private final String displayName;
-	private final Pattern regex;
-	private final int[] aggregateGroups;
+	private String displayName;
+	private Pattern regex;
+	private int[] aggregateGroups;
 	public static RefactoringType[] ALL = RefactoringType.values();
 
 	RefactoringType(String displayName, String regex, int... aggregateGroups) {
@@ -217,12 +218,18 @@ public enum RefactoringType {
         return typeKey + "#" + AstUtils.normalizeAttribute(attribute);
     }
 
-    public void parseRefactoring(String refactoringDescription) {
+    public List<RefactoringRelationship> parseRefactoring(String refactoringDescription) {
+        List<RefactoringRelationship> result;
         Matcher m = regex.matcher(refactoringDescription);
         if (m.matches()) {
-            return;
+            
+            for (int g = 1; g <= m.groupCount(); g++) {
+                
+            }
+            return null;
+        } else {
+            throw new RuntimeException("Pattern not matched: " + refactoringDescription);
         }
-        throw new RuntimeException("Pattern not matched: " + refactoringDescription);
     }
 
     public static RefactoringType extractFromDescription(String refactoringDescription) {

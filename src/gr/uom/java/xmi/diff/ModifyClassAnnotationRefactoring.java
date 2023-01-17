@@ -44,7 +44,7 @@ public class ModifyClassAnnotationRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(annotationBefore.codeRange()
 				.setDescription("original annotation")
 				.setCodeElement(annotationBefore.toString()));
@@ -56,7 +56,7 @@ public class ModifyClassAnnotationRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(annotationAfter.codeRange()
 				.setDescription("modified annotation")
 				.setCodeElement(annotationAfter.toString()));
@@ -78,26 +78,27 @@ public class ModifyClassAnnotationRefactoring implements Refactoring {
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getClassBefore().getLocationInfo().getFilePath(), getClassBefore().getName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getClassBefore().getLocationInfo().getFilePath(), getClassBefore().getName()));
 		return pairs;
 	}
 
 	@Override
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getClassAfter().getLocationInfo().getFilePath(), getClassAfter().getName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getClassAfter().getLocationInfo().getFilePath(), getClassAfter().getName()));
 		return pairs;
 	}
 
 	public String toString() {
-		String sb = getName() + "\t" +
-				annotationBefore +
-				" to " +
-				annotationAfter +
-				" in class " +
-				classAfter.getName();
-		return sb;
+		StringBuilder sb = new StringBuilder();
+		sb.append(getName()).append("\t");
+		sb.append(annotationBefore);
+		sb.append(" to ");
+		sb.append(annotationAfter);
+		sb.append(" in class ");
+		sb.append(classAfter.getName());
+		return sb.toString();
 	}
 	@Override
 	public int hashCode() {

@@ -69,26 +69,27 @@ public class MergeVariableRefactoring implements Refactoring {
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getOperationBefore().getLocationInfo().getFilePath(), getOperationBefore().getClassName()));
 		return pairs;
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getOperationAfter().getLocationInfo().getFilePath(), getOperationAfter().getClassName()));
 		return pairs;
 	}
 
 	public String toString() {
-		String sb = getName() + "\t" +
-				mergedVariables +
-				" to " +
-				newVariable +
-				" in method " +
-				operationAfter +
-				" from class " + operationAfter.getClassName();
-		return sb;
+		StringBuilder sb = new StringBuilder();
+		sb.append(getName()).append("\t");
+		sb.append(mergedVariables);
+		sb.append(" to ");
+		sb.append(newVariable);
+		sb.append(" in method ");
+		sb.append(operationAfter);
+		sb.append(" from class ").append(operationAfter.getClassName());
+		return sb.toString();
 	}
 
 	@Override
@@ -136,7 +137,7 @@ public class MergeVariableRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		for(VariableDeclaration mergedVariable : mergedVariables) {
 			ranges.add(mergedVariable.codeRange()
 					.setDescription("merged variable declaration")
@@ -150,7 +151,7 @@ public class MergeVariableRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(newVariable.codeRange()
 				.setDescription("new variable declaration")
 				.setCodeElement(newVariable.toString()));

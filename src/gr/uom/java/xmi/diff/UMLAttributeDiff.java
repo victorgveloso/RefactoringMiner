@@ -108,7 +108,7 @@ public class UMLAttributeDiff {
 		this.removedAttribute = removedAttribute;
 		this.addedAttribute = addedAttribute;
 		this.operationBodyMapperList = operationBodyMapperList;
-		this.anonymousClassDiffList = new ArrayList<>();
+		this.anonymousClassDiffList = new ArrayList<UMLAnonymousClassDiff>();
 		this.visibilityChanged = false;
 		this.typeChanged = false;
 		this.renamed = false;
@@ -194,7 +194,7 @@ public class UMLAttributeDiff {
 	}
 
 	private Set<Refactoring> getAnnotationRefactorings() {
-		Set<Refactoring> refactorings = new LinkedHashSet<>();
+		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
 		for(UMLAnnotation annotation : annotationListDiff.getAddedAnnotations()) {
 			AddAttributeAnnotationRefactoring refactoring = new AddAttributeAnnotationRefactoring(annotation, removedAttribute, addedAttribute);
 			refactorings.add(refactoring);
@@ -211,7 +211,7 @@ public class UMLAttributeDiff {
 	}
 
 	private Set<Refactoring> getAnonymousClassRefactorings() {
-		Set<Refactoring> refactorings = new LinkedHashSet<>();
+		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
 		for(UMLAnonymousClassDiff anonymousClassDiff : anonymousClassDiffList) {
 			refactorings.addAll(anonymousClassDiff.getRefactorings());
 		}
@@ -219,7 +219,7 @@ public class UMLAttributeDiff {
 	}
 
 	public Set<Refactoring> getRefactorings() {
-		Set<Refactoring> refactorings = new LinkedHashSet<>();
+		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
 		if(changeTypeCondition()) {
 			ChangeAttributeTypeRefactoring ref = new ChangeAttributeTypeRefactoring(removedAttribute, addedAttribute,
 					VariableReferenceExtractor.findReferences(removedAttribute.getVariableDeclaration(), addedAttribute.getVariableDeclaration(), operationBodyMapperList));
@@ -232,7 +232,7 @@ public class UMLAttributeDiff {
 	}
 
 	private Set<Refactoring> getModifierRefactorings() {
-		Set<Refactoring> refactorings = new LinkedHashSet<>();
+		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
 		if(isVisibilityChanged()) {
 			ChangeAttributeAccessModifierRefactoring ref = new ChangeAttributeAccessModifierRefactoring(removedAttribute.getVisibility(), addedAttribute.getVisibility(), removedAttribute, addedAttribute);
 			refactorings.add(ref);
@@ -285,7 +285,7 @@ public class UMLAttributeDiff {
 	}
 	
 	public Set<Refactoring> getRefactorings(Set<CandidateAttributeRefactoring> set) {
-		Set<Refactoring> refactorings = new LinkedHashSet<>();
+		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
 		RenameAttributeRefactoring rename = null;
 		if(isRenamed()) {
 			rename = new RenameAttributeRefactoring(removedAttribute, addedAttribute, set);

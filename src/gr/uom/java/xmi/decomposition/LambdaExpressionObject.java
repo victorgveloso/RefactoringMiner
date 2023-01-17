@@ -12,7 +12,7 @@ import org.eclipse.jdt.core.dom.LambdaExpression;
 import java.util.Objects;
 
 public class LambdaExpressionObject implements LocationInfoProvider {
-	private final LocationInfo locationInfo;
+	private LocationInfo locationInfo;
 	private OperationBody body;
 	private AbstractExpression expression;
 	

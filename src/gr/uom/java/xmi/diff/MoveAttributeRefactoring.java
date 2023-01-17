@@ -1,14 +1,15 @@
 package gr.uom.java.xmi.diff;
 
-import gr.uom.java.xmi.UMLAttribute;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringType;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
+
+import gr.uom.java.xmi.UMLAttribute;
 
 public class MoveAttributeRefactoring implements Refactoring {
 	protected UMLAttribute originalAttribute;
@@ -21,14 +22,16 @@ public class MoveAttributeRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		return getName() + "\t" +
-				getOriginalAttribute().toQualifiedString() +
-				" from class " +
-				getSourceClassName() +
-				" to " +
-				getMovedAttribute().toQualifiedString() +
-				" from class " +
-				getTargetClassName();
+		StringBuilder sb = new StringBuilder();
+		sb.append(getName()).append("\t");
+		sb.append(getOriginalAttribute().toQualifiedString());
+		sb.append(" from class ");
+		sb.append(getSourceClassName());
+		sb.append(" to ");
+		sb.append(getMovedAttribute().toQualifiedString());
+		sb.append(" from class ");
+		sb.append(getTargetClassName());
+		return sb.toString();
 	}
 
 	public String getName() {
@@ -101,20 +104,20 @@ public class MoveAttributeRefactoring implements Refactoring {
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesBeforeRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getOriginalAttribute().getLocationInfo().getFilePath(), getOriginalAttribute().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getOriginalAttribute().getLocationInfo().getFilePath(), getOriginalAttribute().getClassName()));
 		return pairs;
 	}
 
 	public Set<ImmutablePair<String, String>> getInvolvedClassesAfterRefactoring() {
-		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<>();
-		pairs.add(new ImmutablePair<>(getMovedAttribute().getLocationInfo().getFilePath(), getMovedAttribute().getClassName()));
+		Set<ImmutablePair<String, String>> pairs = new LinkedHashSet<ImmutablePair<String, String>>();
+		pairs.add(new ImmutablePair<String, String>(getMovedAttribute().getLocationInfo().getFilePath(), getMovedAttribute().getClassName()));
 		return pairs;
 	}
 
 	@Override
 	public List<CodeRange> leftSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(originalAttribute.codeRange()
 				.setDescription("original attribute declaration")
 				.setCodeElement(originalAttribute.toString()));
@@ -123,7 +126,7 @@ public class MoveAttributeRefactoring implements Refactoring {
 
 	@Override
 	public List<CodeRange> rightSide() {
-		List<CodeRange> ranges = new ArrayList<>();
+		List<CodeRange> ranges = new ArrayList<CodeRange>();
 		ranges.add(movedAttribute.codeRange()
 				.setDescription("moved attribute declaration")
 				.setCodeElement(movedAttribute.toString()));

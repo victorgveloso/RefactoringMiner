@@ -5,7 +5,7 @@ import gr.uom.java.xmi.diff.StringDistance;
 
 public class CompositeStatementObjectMapping extends AbstractCodeMapping implements Comparable<CompositeStatementObjectMapping> {
 
-	private final double compositeChildMatchingScore;
+	private double compositeChildMatchingScore;
 	
 	public CompositeStatementObjectMapping(CompositeStatementObject statement1, CompositeStatementObject statement2,
 			UMLOperation operation1, UMLOperation operation2, double score) {
@@ -49,12 +49,12 @@ public class CompositeStatementObjectMapping extends AbstractCodeMapping impleme
 				int depthDiff2 = Math.abs(o.getFragment1().getDepth() - o.getFragment2().getDepth());
 
 				if(depthDiff1 != depthDiff2) {
-					return Integer.compare(depthDiff1, depthDiff2);
+					return Integer.valueOf(depthDiff1).compareTo(Integer.valueOf(depthDiff2));
 				}
 				else {
 					int indexDiff1 = Math.abs(this.getFragment1().getIndex() - this.getFragment2().getIndex());
 					int indexDiff2 = Math.abs(o.getFragment1().getIndex() - o.getFragment2().getIndex());
-					return Integer.compare(indexDiff1, indexDiff2);
+					return Integer.valueOf(indexDiff1).compareTo(Integer.valueOf(indexDiff2));
 				}
 			}
 		}

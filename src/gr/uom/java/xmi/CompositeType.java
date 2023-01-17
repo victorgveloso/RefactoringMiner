@@ -1,8 +1,8 @@
 package gr.uom.java.xmi;
 
 public class CompositeType extends UMLType {
-	private final UMLType leftType;
-	private final LeafType rightType;
+	private UMLType leftType;
+	private LeafType rightType;
 
 	public CompositeType(UMLType leftType, LeafType rightType) {
 		this.leftType = leftType;
@@ -41,8 +41,11 @@ public class CompositeType extends UMLType {
 		} else if (!leftType.equals(other.leftType))
 			return false;
 		if (rightType == null) {
-			return other.rightType == null;
-		} else return rightType.equals(other.rightType);
+			if (other.rightType != null)
+				return false;
+		} else if (!rightType.equals(other.rightType))
+			return false;
+		return true;
 	}
 
 	@Override

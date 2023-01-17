@@ -2,9 +2,15 @@ package gr.uom.java.xmi;
 
 import gr.uom.java.xmi.diff.UMLClassDiff;
 import gr.uom.java.xmi.diff.UMLModelDiff;
-import org.refactoringminer.api.RefactoringMinerTimedOutException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+
+import org.refactoringminer.api.RefactoringMinerTimedOutException;
 
 public class UMLModel {
 	private Set<String> repositoryDirectories;
@@ -14,9 +20,9 @@ public class UMLModel {
 
     public UMLModel(Set<String> repositoryDirectories) {
     	this.repositoryDirectories = repositoryDirectories;
-        classList = new ArrayList<>();
-        generalizationList = new ArrayList<>();
-        realizationList = new ArrayList<>();
+        classList = new ArrayList<UMLClass>();
+        generalizationList = new ArrayList<UMLGeneralization>();
+        realizationList = new ArrayList<UMLRealization>();
     }
 
 	public void addClass(UMLClass umlClass) {
@@ -60,12 +66,12 @@ public class UMLModel {
     		if(generalization.getChild().equals(otherGeneralization.getChild())) {
     			String thisParent = generalization.getParent();
     			String otherParent = otherGeneralization.getParent();
-    			String thisParentComparedString;
+    			String thisParentComparedString = null;
     			if(thisParent.contains("."))
     				thisParentComparedString = thisParent.substring(thisParent.lastIndexOf(".")+1);
     			else
     				thisParentComparedString = thisParent;
-    			String otherParentComparedString;
+    			String otherParentComparedString = null;
     			if(otherParent.contains("."))
     				otherParentComparedString = otherParent.substring(otherParent.lastIndexOf(".")+1);
     			else
@@ -84,12 +90,12 @@ public class UMLModel {
     		if(realization.getClient().equals(otherRealization.getClient())) {
     			String thisSupplier = realization.getSupplier();
     			String otherSupplier = otherRealization.getSupplier();
-    			String thisSupplierComparedString;
+    			String thisSupplierComparedString = null;
     			if(thisSupplier.contains("."))
     				thisSupplierComparedString = thisSupplier.substring(thisSupplier.lastIndexOf(".")+1);
     			else
     				thisSupplierComparedString = thisSupplier;
-    			String otherSupplierComparedString;
+    			String otherSupplierComparedString = null;
     			if(otherSupplier.contains("."))
     				otherSupplierComparedString = otherSupplier.substring(otherSupplier.lastIndexOf(".")+1);
     			else
@@ -102,7 +108,7 @@ public class UMLModel {
     }
 
     public UMLModelDiff diff(UMLModel umlModel) throws RefactoringMinerTimedOutException {
-    	return this.diff(umlModel, Collections.emptyMap());
+    	return this.diff(umlModel, Collections.<String, String>emptyMap());
     }
 
 	public UMLModelDiff diff(UMLModel umlModel, Map<String, String> renamedFileHints) throws RefactoringMinerTimedOutException {

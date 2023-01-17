@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UMLEnumConstant extends UMLAttribute {
-	private final List<String> arguments;
+	private List<String> arguments;
 
 	public UMLEnumConstant(String name, UMLType type, LocationInfo locationInfo) {
 		super(name, type, locationInfo);
-		this.arguments = new ArrayList<>();
+		this.arguments = new ArrayList<String>();
 	}
 
 	public void addArgument(String argument) {
@@ -49,7 +49,10 @@ public class UMLEnumConstant extends UMLAttribute {
 			return false;
 		UMLEnumConstant other = (UMLEnumConstant) obj;
 		if (getName() == null) {
-			return other.getName() == null;
-		} else return getName().equals(other.getName());
+			if (other.getName() != null)
+				return false;
+		} else if (!getName().equals(other.getName()))
+			return false;
+		return true;
 	}
 }

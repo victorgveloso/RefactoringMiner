@@ -1,16 +1,24 @@
 package org.refactoringminer.utils;
 
+import static org.refactoringminer.utils.RefactoringRelationship.parentOf;
+
+import java.io.File;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.jgit.lib.Repository;
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
 import org.refactoringminer.api.GitService;
 import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.util.GitServiceImpl;
-
-import java.io.File;
-import java.io.PrintStream;
-import java.util.*;
-
-import static org.refactoringminer.utils.RefactoringRelationship.parentOf;
 
 public class ResultComparator {
 
@@ -70,7 +78,7 @@ public class ResultComparator {
                 int fpRt = r.getFPCount(refType);
                 int fnRt = r.getFNCount(refType);
                 if (tpRt > 0 || fpRt > 0 || fnRt > 0) {
-                    out.printf("%-7s" + getResultLine(tpRt, fpRt, fnRt) + "%n", refType.getAbbreviation());
+                    out.println(String.format("%-7s" + getResultLine(tpRt, fpRt, fnRt), refType.getAbbreviation()));
                 }
             }
             out.println();
@@ -105,7 +113,9 @@ public class ResultComparator {
                         }
                     }
                 }
-                falseNegatives.addAll(expectedRefactorings);
+                for (Object r : expectedRefactorings) {
+                    falseNegatives.add(r);
+                }
             }
         }
         return new CompareResult(truePositives, falsePositives, falseNegatives);
@@ -138,9 +148,10 @@ public class ResultComparator {
         EnumSet<RefactoringType> ignore = EnumSet.complementOf(refTypesToConsider);
         boolean headerPrinted = false;
         for (RefactoringSet expected : expectedMap.values()) {
+            Set<RefactoringRelationship> all = new HashSet<>();
             Set<RefactoringRelationship> expectedRefactorings = expected.ignoring(ignore).ignoringMethodParameters(ignoreMethodParams).getRefactorings();
             Set<RefactoringRelationship> expectedUnfiltered = expected.getRefactorings();
-            Set<RefactoringRelationship> all = new HashSet<>(expectedRefactorings); //
+            all.addAll(expectedRefactorings); //
 
             StringBuilder header = new StringBuilder("Ref Type\tEntity before\tEntity after");
             for (String groupId : groupIds) {
@@ -152,12 +163,13 @@ public class ResultComparator {
                 }
             }
             if (!headerPrinted) {
-                out.println(header);
+                out.println(header.toString());
                 headerPrinted = true;
             }
             if (!all.isEmpty()) {
                 out.println(getProjectRevisionId(expected.getProject(), expected.getRevision()));
-                ArrayList<RefactoringRelationship> allList = new ArrayList<>(all);
+                ArrayList<RefactoringRelationship> allList = new ArrayList<>();
+                allList.addAll(all);
                 Collections.sort(allList);
                 for (RefactoringRelationship r : allList) {
                     out.print(r.toString());
@@ -214,7 +226,9 @@ public class ResultComparator {
             if (expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.EXTRACT_SUPERCLASS, parentOf(r.getEntityBefore()), parentOf(r.getEntityAfter())))) {
                 return true;
             }
-            return expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.EXTRACT_INTERFACE, parentOf(r.getEntityBefore()), parentOf(r.getEntityAfter())));
+            if (expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.EXTRACT_INTERFACE, parentOf(r.getEntityBefore()), parentOf(r.getEntityAfter())))) {
+                return true;
+            }
         }
         return false;
     }
@@ -224,7 +238,9 @@ public class ResultComparator {
             if (expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.RENAME_CLASS, parentOf(r.getEntityBefore()), parentOf(r.getEntityAfter())))) {
                 return true;
             }
-            return expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.RENAME_CLASS, parentOf(parentOf(r.getEntityBefore())), parentOf(parentOf(r.getEntityAfter()))));
+            if (expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.RENAME_CLASS, parentOf(parentOf(r.getEntityBefore())), parentOf(parentOf(r.getEntityAfter()))))) {
+                return true;
+            }
         }
         return false;
     }
@@ -237,7 +253,9 @@ public class ResultComparator {
             if (expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.MOVE_CLASS, parentOf(parentOf(r.getEntityBefore())), parentOf(parentOf(r.getEntityAfter()))))) {
                 return true;
             }
-            return expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.MOVE_SOURCE_FOLDER, parentOf(r.getEntityBefore()), parentOf(r.getEntityAfter())));
+            if (expectedUnfiltered.contains(new RefactoringRelationship(RefactoringType.MOVE_SOURCE_FOLDER, parentOf(r.getEntityBefore()), parentOf(r.getEntityAfter())))) {
+                return true;
+            }
         }
         return false;
     }

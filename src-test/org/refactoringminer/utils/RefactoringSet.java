@@ -1,11 +1,20 @@
 package org.refactoringminer.utils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.utils.RefactoringRelationship.GroupKey;
-
-import java.io.*;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class RefactoringSet {
 
@@ -45,7 +54,11 @@ public class RefactoringSet {
     public RefactoringSet add(RefactoringRelationship r) {
         this.refactorings.add(r);
         GroupKey groupKey = r.getGroupKey();
-        Set<RefactoringRelationship> group = refactoringGroups.computeIfAbsent(groupKey, k -> new HashSet<>());
+        Set<RefactoringRelationship> group = refactoringGroups.get(groupKey);
+        if (group == null) {
+            group = new HashSet<>();
+            refactoringGroups.put(groupKey, group);
+        }
         group.add(r);
         return this;
     }
