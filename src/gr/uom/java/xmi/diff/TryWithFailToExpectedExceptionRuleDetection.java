@@ -3,8 +3,6 @@ package gr.uom.java.xmi.diff;
 import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.*;
-import lombok.AccessLevel;
-import lombok.Getter;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,11 +19,32 @@ public class TryWithFailToExpectedExceptionRuleDetection {
     private final List<UMLAttribute> addedAttributes;
     private final List<CompositeStatementObject> removedCompositeStmts;
     private final List<StatementObject> addedStmts;
-    private @Getter(AccessLevel.PACKAGE) List<TryStatementObject> tryStatements;
-    private @Getter(AccessLevel.PACKAGE) List<String> capturedExceptions;
-    private @Getter(AccessLevel.PACKAGE) List<OperationInvocation> assertFailInvocationsFound;
-    private @Getter(AccessLevel.PACKAGE) UMLAttribute expectedExceptionFieldDeclaration;
-    private @Getter(AccessLevel.PACKAGE) List<OperationInvocation> expectInvocations;
+    private List<TryStatementObject> tryStatements;
+    private List<String> capturedExceptions;
+    private List<OperationInvocation> assertFailInvocationsFound;
+    private UMLAttribute expectedExceptionFieldDeclaration;
+
+    List<TryStatementObject> getTryStatements() {
+        return tryStatements;
+    }
+
+    List<String> getCapturedExceptions() {
+        return capturedExceptions;
+    }
+
+    List<OperationInvocation> getAssertFailInvocationsFound() {
+        return assertFailInvocationsFound;
+    }
+
+    UMLAttribute getExpectedExceptionFieldDeclaration() {
+        return expectedExceptionFieldDeclaration;
+    }
+
+    List<OperationInvocation> getExpectInvocations() {
+        return expectInvocations;
+    }
+
+    private List<OperationInvocation> expectInvocations;
 
     public TryWithFailToExpectedExceptionRuleDetection(UMLOperationBodyMapper mapper, UMLClassBaseDiff classDiff) {
         this(mapper,classDiff.addedAttributes);

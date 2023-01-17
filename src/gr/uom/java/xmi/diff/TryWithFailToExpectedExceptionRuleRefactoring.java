@@ -4,7 +4,6 @@ import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.OperationInvocation;
 import gr.uom.java.xmi.decomposition.TryStatementObject;
-import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
@@ -20,13 +19,41 @@ import java.util.Set;
  * JUnit4 usually relies on @Rule ExpectedException, a Single Member annotated field, which provides an expect method
  */
 public class TryWithFailToExpectedExceptionRuleRefactoring implements Refactoring {
-    @Getter  private final UMLOperation operationBefore;
-    @Getter  private final UMLOperation operationAfter;
-    @Getter  private final TryStatementObject tryStatement;
-    @Getter  private final OperationInvocation assertFailInvocation;
-    @Getter  private final String exception;
-    @Getter  private final OperationInvocation thrownExpectInvocations;
-    @Getter  private final UMLAttribute ruleFieldDeclaration;
+    private final UMLOperation operationBefore;
+    private final UMLOperation operationAfter;
+    private final TryStatementObject tryStatement;
+    private final OperationInvocation assertFailInvocation;
+    private final String exception;
+    private final OperationInvocation thrownExpectInvocations;
+    private final UMLAttribute ruleFieldDeclaration;
+
+    public UMLOperation getOperationBefore() {
+        return operationBefore;
+    }
+
+    public UMLOperation getOperationAfter() {
+        return operationAfter;
+    }
+
+    public TryStatementObject getTryStatement() {
+        return tryStatement;
+    }
+
+    public OperationInvocation getAssertFailInvocation() {
+        return assertFailInvocation;
+    }
+
+    public String getException() {
+        return exception;
+    }
+
+    public OperationInvocation getThrownExpectInvocations() {
+        return thrownExpectInvocations;
+    }
+
+    public UMLAttribute getRuleFieldDeclaration() {
+        return ruleFieldDeclaration;
+    }
 
     public TryWithFailToExpectedExceptionRuleRefactoring(UMLOperation operationBefore, UMLOperation operationAfter, TryStatementObject tryStatement, OperationInvocation assertFailInvocation, String capturedException, OperationInvocation thrownExpectInvocation, UMLAttribute ruleFieldDeclaration) {
         this.operationBefore = operationBefore;
