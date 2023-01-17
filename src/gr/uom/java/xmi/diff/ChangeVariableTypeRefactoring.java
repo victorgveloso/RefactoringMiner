@@ -9,26 +9,29 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
 
-import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
-public class ChangeVariableTypeRefactoring implements Refactoring {
+public class ChangeVariableTypeRefactoring implements Refactoring, ReferenceBasedRefactoring {
 	private VariableDeclaration originalVariable;
 	private VariableDeclaration changedTypeVariable;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
+	private VariableDeclarationContainer operationBefore;
+	private VariableDeclarationContainer operationAfter;
 	private Set<AbstractCodeMapping> variableReferences;
 	private Set<Refactoring> relatedRefactorings;
+	private boolean insideExtractedOrInlinedMethod;
 
 	public ChangeVariableTypeRefactoring(VariableDeclaration originalVariable, VariableDeclaration changedTypeVariable,
-			UMLOperation operationBefore, UMLOperation operationAfter, Set<AbstractCodeMapping> variableReferences) {
+			VariableDeclarationContainer operationBefore, VariableDeclarationContainer operationAfter, Set<AbstractCodeMapping> variableReferences,
+			boolean insideExtractedOrInlinedMethod) {
 		this.originalVariable = originalVariable;
 		this.changedTypeVariable = changedTypeVariable;
 		this.operationBefore = operationBefore;
 		this.operationAfter = operationAfter;
 		this.variableReferences = variableReferences;
 		this.relatedRefactorings = new LinkedHashSet<Refactoring>();
+		this.insideExtractedOrInlinedMethod = insideExtractedOrInlinedMethod;
 	}
 
 	public void addRelatedRefactoring(Refactoring refactoring) {
@@ -57,26 +60,31 @@ public class ChangeVariableTypeRefactoring implements Refactoring {
 		return changedTypeVariable;
 	}
 
-	public UMLOperation getOperationBefore() {
+	public VariableDeclarationContainer getOperationBefore() {
 		return operationBefore;
 	}
 
-	public UMLOperation getOperationAfter() {
+	public VariableDeclarationContainer getOperationAfter() {
 		return operationAfter;
 	}
 
-	public Set<AbstractCodeMapping> getVariableReferences() {
+	public Set<AbstractCodeMapping> getReferences() {
 		return variableReferences;
+	}
+
+	public boolean isInsideExtractedOrInlinedMethod() {
+		return insideExtractedOrInlinedMethod;
 	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		boolean qualified = originalVariable.getType().equals(changedTypeVariable.getType()) && !originalVariable.getType().equalsQualified(changedTypeVariable.getType());
+		boolean qualified = originalVariable.equalType(changedTypeVariable) && !originalVariable.equalQualifiedType(changedTypeVariable);
 		sb.append(getName()).append("\t");
 		sb.append(qualified ? originalVariable.toQualifiedString() : originalVariable.toString());
 		sb.append(" to ");
 		sb.append(qualified ? changedTypeVariable.toQualifiedString() : changedTypeVariable.toString());
-		sb.append(" in method ");
+		String elementType = operationAfter.getElementType();
+		sb.append(" in " + elementType + " ");
 		sb.append(qualified ? operationAfter.toQualifiedString() : operationAfter.toString());
 		sb.append(" from class ").append(operationAfter.getClassName());
 		return sb.toString();
@@ -143,8 +151,9 @@ public class ChangeVariableTypeRefactoring implements Refactoring {
 		ranges.add(originalVariable.codeRange()
 				.setDescription("original variable declaration")
 				.setCodeElement(originalVariable.toString()));
+		String elementType = operationBefore.getElementType();
 		ranges.add(operationBefore.codeRange()
-				.setDescription("original method declaration")
+				.setDescription("original " + elementType + " declaration")
 				.setCodeElement(operationBefore.toString()));
 		return ranges;
 	}
@@ -155,8 +164,9 @@ public class ChangeVariableTypeRefactoring implements Refactoring {
 		ranges.add(changedTypeVariable.codeRange()
 				.setDescription("changed-type variable declaration")
 				.setCodeElement(changedTypeVariable.toString()));
+		String elementType = operationAfter.getElementType();
 		ranges.add(operationAfter.codeRange()
-				.setDescription("method declaration with changed variable type")
+				.setDescription(elementType + " declaration with changed variable type")
 				.setCodeElement(operationAfter.toString()));
 		return ranges;
 	}

@@ -9,23 +9,26 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
 
-import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
 public class AddVariableModifierRefactoring implements Refactoring {
 	private String modifier;
 	private VariableDeclaration variableBefore;
 	private VariableDeclaration variableAfter;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
+	private VariableDeclarationContainer operationBefore;
+	private VariableDeclarationContainer operationAfter;
+	private boolean insideExtractedOrInlinedMethod;
 
 	public AddVariableModifierRefactoring(String modifier, VariableDeclaration variableBefore,
-			VariableDeclaration variableAfter, UMLOperation operationBefore, UMLOperation operationAfter) {
+			VariableDeclaration variableAfter, VariableDeclarationContainer operationBefore, VariableDeclarationContainer operationAfter,
+			boolean insideExtractedOrInlinedMethod) {
 		this.modifier = modifier;
 		this.variableBefore = variableBefore;
 		this.variableAfter = variableAfter;
 		this.operationBefore = operationBefore;
 		this.operationAfter = operationAfter;
+		this.insideExtractedOrInlinedMethod = insideExtractedOrInlinedMethod;
 	}
 
 	public String getModifier() {
@@ -40,12 +43,16 @@ public class AddVariableModifierRefactoring implements Refactoring {
 		return variableAfter;
 	}
 
-	public UMLOperation getOperationBefore() {
+	public VariableDeclarationContainer getOperationBefore() {
 		return operationBefore;
 	}
 
-	public UMLOperation getOperationAfter() {
+	public VariableDeclarationContainer getOperationAfter() {
 		return operationAfter;
+	}
+
+	public boolean isInsideExtractedOrInlinedMethod() {
+		return insideExtractedOrInlinedMethod;
 	}
 
 	@Override
@@ -54,8 +61,9 @@ public class AddVariableModifierRefactoring implements Refactoring {
 		ranges.add(variableBefore.codeRange()
 				.setDescription("original variable declaration")
 				.setCodeElement(variableBefore.toString()));
+		String elementType = operationBefore.getElementType();
 		ranges.add(operationBefore.codeRange()
-				.setDescription("original method declaration")
+				.setDescription("original " + elementType + " declaration")
 				.setCodeElement(operationBefore.toString()));
 		return ranges;
 	}
@@ -66,8 +74,9 @@ public class AddVariableModifierRefactoring implements Refactoring {
 		ranges.add(variableAfter.codeRange()
 				.setDescription("variable declaration with added modifier")
 				.setCodeElement(variableAfter.toString()));
+		String elementType = operationAfter.getElementType();
 		ranges.add(operationAfter.codeRange()
-				.setDescription("method declaration with added variable modifier")
+				.setDescription(elementType + " declaration with added variable modifier")
 				.setCodeElement(operationAfter.toString()));
 		return ranges;
 	}
@@ -110,7 +119,8 @@ public class AddVariableModifierRefactoring implements Refactoring {
 		else
 			sb.append(" in variable ");
 		sb.append(variableAfter);
-		sb.append(" in method ");
+		String elementType = operationAfter.getElementType();
+		sb.append(" in " + elementType + " ");
 		sb.append(operationAfter);
 		sb.append(" from class ");
 		sb.append(operationAfter.getClassName());

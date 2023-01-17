@@ -9,35 +9,36 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
 
-import gr.uom.java.xmi.UMLClass;
+import gr.uom.java.xmi.UMLAbstractClass;
+import gr.uom.java.xmi.Visibility;
 
 public class ChangeClassAccessModifierRefactoring implements Refactoring {
-	private String originalAccessModifier;
-	private String changedAccessModifier;
-	private UMLClass classBefore;
-	private UMLClass classAfter;
+	private Visibility originalAccessModifier;
+	private Visibility changedAccessModifier;
+	private UMLAbstractClass classBefore;
+	private UMLAbstractClass classAfter;
 
-	public ChangeClassAccessModifierRefactoring(String originalAccessModifier, String changedAccessModifier,
-			UMLClass classBefore, UMLClass classAfter) {
+	public ChangeClassAccessModifierRefactoring(Visibility originalAccessModifier, Visibility changedAccessModifier,
+			UMLAbstractClass classBefore, UMLAbstractClass classAfter) {
 		this.originalAccessModifier = originalAccessModifier;
 		this.changedAccessModifier = changedAccessModifier;
 		this.classBefore = classBefore;
 		this.classAfter = classAfter;
 	}
 
-	public String getOriginalAccessModifier() {
+	public Visibility getOriginalAccessModifier() {
 		return originalAccessModifier;
 	}
 
-	public String getChangedAccessModifier() {
+	public Visibility getChangedAccessModifier() {
 		return changedAccessModifier;
 	}
 
-	public UMLClass getClassBefore() {
+	public UMLAbstractClass getClassBefore() {
 		return classBefore;
 	}
 
-	public UMLClass getClassAfter() {
+	public UMLAbstractClass getClassAfter() {
 		return classAfter;
 	}
 

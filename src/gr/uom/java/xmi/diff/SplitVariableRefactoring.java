@@ -9,24 +9,27 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
 
-import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
-public class SplitVariableRefactoring implements Refactoring {
+public class SplitVariableRefactoring implements Refactoring, ReferenceBasedRefactoring {
 	private Set<VariableDeclaration> splitVariables;
 	private VariableDeclaration oldVariable;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
+	private VariableDeclarationContainer operationBefore;
+	private VariableDeclarationContainer operationAfter;
 	private Set<AbstractCodeMapping> variableReferences;
+	private boolean insideExtractedOrInlinedMethod;
 	
 	public SplitVariableRefactoring(VariableDeclaration oldVariable, Set<VariableDeclaration> splitVariables,
-			UMLOperation operationBefore, UMLOperation operationAfter, Set<AbstractCodeMapping> variableReferences) {
+			VariableDeclarationContainer operationBefore, VariableDeclarationContainer operationAfter, Set<AbstractCodeMapping> variableReferences,
+			boolean insideExtractedOrInlinedMethod) {
 		this.splitVariables = splitVariables;
 		this.oldVariable = oldVariable;
 		this.operationBefore = operationBefore;
 		this.operationAfter = operationAfter;
 		this.variableReferences = variableReferences;
+		this.insideExtractedOrInlinedMethod = insideExtractedOrInlinedMethod;
 	}
 
 	public Set<VariableDeclaration> getSplitVariables() {
@@ -37,16 +40,20 @@ public class SplitVariableRefactoring implements Refactoring {
 		return oldVariable;
 	}
 
-	public UMLOperation getOperationBefore() {
+	public VariableDeclarationContainer getOperationBefore() {
 		return operationBefore;
 	}
 
-	public UMLOperation getOperationAfter() {
+	public VariableDeclarationContainer getOperationAfter() {
 		return operationAfter;
 	}
 
-	public Set<AbstractCodeMapping> getVariableReferences() {
+	public Set<AbstractCodeMapping> getReferences() {
 		return variableReferences;
+	}
+
+	public boolean isInsideExtractedOrInlinedMethod() {
+		return insideExtractedOrInlinedMethod;
 	}
 
 	private boolean allVariablesAreParameters() {
@@ -90,7 +97,8 @@ public class SplitVariableRefactoring implements Refactoring {
 		sb.append(oldVariable);
 		sb.append(" to ");
 		sb.append(splitVariables);
-		sb.append(" in method ");
+		String elementType = operationAfter.getElementType();
+		sb.append(" in " + elementType + " ");
 		sb.append(operationAfter);
 		sb.append(" from class ").append(operationAfter.getClassName());
 		return sb.toString();
@@ -145,8 +153,9 @@ public class SplitVariableRefactoring implements Refactoring {
 		ranges.add(oldVariable.codeRange()
 				.setDescription("original variable declaration")
 				.setCodeElement(oldVariable.toString()));
+		String elementType = operationBefore.getElementType();
 		ranges.add(operationBefore.codeRange()
-				.setDescription("original method declaration")
+				.setDescription("original " + elementType + " declaration")
 				.setCodeElement(operationBefore.toString()));
 		return ranges;
 	}
@@ -159,8 +168,9 @@ public class SplitVariableRefactoring implements Refactoring {
 					.setDescription("split variable declaration")
 					.setCodeElement(splitVariable.toString()));
 		}
+		String elementType = operationAfter.getElementType();
 		ranges.add(operationAfter.codeRange()
-				.setDescription("method declaration with split variable")
+				.setDescription(elementType + " declaration with split variable")
 				.setCodeElement(operationAfter.toString()));
 		return ranges;
 	}

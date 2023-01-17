@@ -1,5 +1,7 @@
 package gr.uom.java.xmi.decomposition;
 
+import static gr.uom.java.xmi.decomposition.Visitor.stringify;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,9 +10,9 @@ import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 
-import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.UMLType;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.diff.StringDistance;
 
 public class ObjectCreation extends AbstractCall {
@@ -19,35 +21,35 @@ public class ObjectCreation extends AbstractCall {
 	private boolean isArray = false;
 	private volatile int hashCode = 0;
 	
-	public ObjectCreation(CompilationUnit cu, String filePath, ClassInstanceCreation creation) {
-		this.locationInfo = new LocationInfo(cu, filePath, creation, CodeElementType.CLASS_INSTANCE_CREATION);
+	public ObjectCreation(CompilationUnit cu, String filePath, ClassInstanceCreation creation, VariableDeclarationContainer container) {
+		super(cu, filePath, creation, CodeElementType.CLASS_INSTANCE_CREATION, container);
 		this.type = UMLType.extractTypeObject(cu, filePath, creation.getType(), 0);
-		this.typeArguments = creation.arguments().size();
+		this.numberOfArguments = creation.arguments().size();
 		this.arguments = new ArrayList<String>();
 		List<Expression> args = creation.arguments();
 		for(Expression argument : args) {
-			this.arguments.add(argument.toString());
+			this.arguments.add(stringify(argument));
 		}
 		if(creation.getExpression() != null) {
-			this.expression = creation.getExpression().toString();
+			this.expression = stringify(creation.getExpression());
 		}
 		if(creation.getAnonymousClassDeclaration() != null) {
-			this.anonymousClassDeclaration = creation.getAnonymousClassDeclaration().toString();
+			this.anonymousClassDeclaration = stringify(creation.getAnonymousClassDeclaration());
 		}
 	}
 
-	public ObjectCreation(CompilationUnit cu, String filePath, ArrayCreation creation) {
-		this.locationInfo = new LocationInfo(cu, filePath, creation, CodeElementType.ARRAY_CREATION);
+	public ObjectCreation(CompilationUnit cu, String filePath, ArrayCreation creation, VariableDeclarationContainer container) {
+		super(cu, filePath, creation, CodeElementType.ARRAY_CREATION, container);
 		this.isArray = true;
 		this.type = UMLType.extractTypeObject(cu, filePath, creation.getType(), 0);
-		this.typeArguments = creation.dimensions().size();
+		this.numberOfArguments = creation.dimensions().size();
 		this.arguments = new ArrayList<String>();
 		List<Expression> args = creation.dimensions();
 		for(Expression argument : args) {
-			this.arguments.add(argument.toString());
+			this.arguments.add(stringify(argument));
 		}
 		if(creation.getInitializer() != null) {
-			this.anonymousClassDeclaration = creation.getInitializer().toString();
+			this.anonymousClassDeclaration = stringify(creation.getInitializer());
 		}
 	}
 
@@ -68,7 +70,7 @@ public class ObjectCreation extends AbstractCall {
 	}
 
 	private ObjectCreation() {
-		
+		super();
 	}
 
 	public ObjectCreation update(String oldExpression, String newExpression) {
@@ -86,7 +88,7 @@ public class ObjectCreation extends AbstractCall {
         if (o instanceof ObjectCreation) {
         	ObjectCreation creation = (ObjectCreation)o;
             return type.equals(creation.type) && isArray == creation.isArray &&
-                typeArguments == creation.typeArguments;
+                numberOfArguments == creation.numberOfArguments;
         }
         return false;
     }
@@ -96,10 +98,10 @@ public class ObjectCreation extends AbstractCall {
         sb.append("new ");
         sb.append(type);
         sb.append("(");
-        if(typeArguments > 0) {
-            for(int i=0; i<typeArguments-1; i++)
+        if(numberOfArguments > 0) {
+            for(int i=0; i<numberOfArguments-1; i++)
                 sb.append("arg" + i).append(", ");
-            sb.append("arg" + (typeArguments-1));
+            sb.append("arg" + (numberOfArguments-1));
         }
         sb.append(")");
         return sb.toString();
@@ -110,7 +112,7 @@ public class ObjectCreation extends AbstractCall {
     		int result = 17;
     		result = 37*result + type.hashCode();
     		result = 37*result + (isArray ? 1 : 0);
-    		result = 37*result + typeArguments;
+    		result = 37*result + numberOfArguments;
     		hashCode = result;
     	}
     	return hashCode;
@@ -137,7 +139,9 @@ public class ObjectCreation extends AbstractCall {
 	}
 
 	public boolean identicalName(AbstractCall call) {
-		return getType().equals(((ObjectCreation)call).getType());
+		if(call instanceof ObjectCreation)
+			return getType().equals(((ObjectCreation)call).getType());
+		return false;
 	}
 
 	public String actualString() {

@@ -3,20 +3,20 @@ package gr.uom.java.xmi.diff;
 import java.util.Set;
 
 import gr.uom.java.xmi.UMLAttribute;
-import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 
-public class CandidateMergeVariableRefactoring {
+public class CandidateMergeVariableRefactoring implements ReferenceBasedRefactoring {
 	private Set<String> mergedVariables;
 	private String newVariable;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
+	private VariableDeclarationContainer operationBefore;
+	private VariableDeclarationContainer operationAfter;
 	private Set<AbstractCodeMapping> variableReferences;
 	private Set<UMLAttribute> mergedAttributes;
 	private UMLAttribute newAttribute;
 
 	public CandidateMergeVariableRefactoring(Set<String> mergedVariables, String newVariable,
-			UMLOperation operationBefore, UMLOperation operationAfter, Set<AbstractCodeMapping> variableReferences) {
+			VariableDeclarationContainer operationBefore, VariableDeclarationContainer operationAfter, Set<AbstractCodeMapping> variableReferences) {
 		this.mergedVariables = mergedVariables;
 		this.newVariable = newVariable;
 		this.operationBefore = operationBefore;
@@ -32,15 +32,15 @@ public class CandidateMergeVariableRefactoring {
 		return newVariable;
 	}
 
-	public UMLOperation getOperationBefore() {
+	public VariableDeclarationContainer getOperationBefore() {
 		return operationBefore;
 	}
 
-	public UMLOperation getOperationAfter() {
+	public VariableDeclarationContainer getOperationAfter() {
 		return operationAfter;
 	}
 
-	public Set<AbstractCodeMapping> getVariableReferences() {
+	public Set<AbstractCodeMapping> getReferences() {
 		return variableReferences;
 	}
 
@@ -66,7 +66,8 @@ public class CandidateMergeVariableRefactoring {
 		sb.append(mergedVariables);
 		sb.append(" to ");
 		sb.append(newVariable);
-		sb.append(" in method ");
+		String elementType = operationAfter.getElementType();
+		sb.append(" in " + elementType + " ");
 		sb.append(operationAfter);
 		sb.append(" from class ").append(operationAfter.getClassName());
 		return sb.toString();

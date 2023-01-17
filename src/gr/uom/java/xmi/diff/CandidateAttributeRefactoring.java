@@ -3,15 +3,15 @@ package gr.uom.java.xmi.diff;
 import java.util.Set;
 
 import gr.uom.java.xmi.UMLAttribute;
-import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
-public class CandidateAttributeRefactoring {
+public class CandidateAttributeRefactoring implements ReferenceBasedRefactoring {
 	private String originalVariableName;
 	private String renamedVariableName;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
+	private VariableDeclarationContainer operationBefore;
+	private VariableDeclarationContainer operationAfter;
 	private Set<AbstractCodeMapping> attributeReferences;
 	private VariableDeclaration originalVariableDeclaration;
 	private VariableDeclaration renamedVariableDeclaration;
@@ -21,8 +21,8 @@ public class CandidateAttributeRefactoring {
 	public CandidateAttributeRefactoring(
 			String originalVariableName,
 			String renamedVariableName,
-			UMLOperation operationBefore,
-			UMLOperation operationAfter,
+			VariableDeclarationContainer operationBefore,
+			VariableDeclarationContainer operationAfter,
 			Set<AbstractCodeMapping> attributeReferences) {
 		this.originalVariableName = originalVariableName;
 		this.renamedVariableName = renamedVariableName;
@@ -39,15 +39,15 @@ public class CandidateAttributeRefactoring {
 		return renamedVariableName;
 	}
 
-	public UMLOperation getOperationBefore() {
+	public VariableDeclarationContainer getOperationBefore() {
 		return operationBefore;
 	}
 
-	public UMLOperation getOperationAfter() {
+	public VariableDeclarationContainer getOperationAfter() {
 		return operationAfter;
 	}
 
-	public Set<AbstractCodeMapping> getAttributeReferences() {
+	public Set<AbstractCodeMapping> getReferences() {
 		return attributeReferences;
 	}
 
@@ -93,7 +93,8 @@ public class CandidateAttributeRefactoring {
 		sb.append(originalVariableName);
 		sb.append(" to ");
 		sb.append(renamedVariableName);
-		sb.append(" in method ");
+		String elementType = operationAfter.getElementType();
+		sb.append(" in " + elementType + " ");
 		sb.append(operationAfter);
 		sb.append(" from class ").append(operationAfter.getClassName());
 		return sb.toString();

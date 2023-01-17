@@ -9,24 +9,27 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
 
-import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
-public class MergeVariableRefactoring implements Refactoring {
+public class MergeVariableRefactoring implements Refactoring, ReferenceBasedRefactoring {
 	private Set<VariableDeclaration> mergedVariables;
 	private VariableDeclaration newVariable;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
+	private VariableDeclarationContainer operationBefore;
+	private VariableDeclarationContainer operationAfter;
 	private Set<AbstractCodeMapping> variableReferences;
+	private boolean insideExtractedOrInlinedMethod;
 	
 	public MergeVariableRefactoring(Set<VariableDeclaration> mergedVariables, VariableDeclaration newVariable,
-			UMLOperation operationBefore, UMLOperation operationAfter, Set<AbstractCodeMapping> variableReferences) {
+			VariableDeclarationContainer operationBefore, VariableDeclarationContainer operationAfter, Set<AbstractCodeMapping> variableReferences,
+			boolean insideExtractedOrInlinedMethod) {
 		this.mergedVariables = mergedVariables;
 		this.newVariable = newVariable;
 		this.operationBefore = operationBefore;
 		this.operationAfter = operationAfter;
 		this.variableReferences = variableReferences;
+		this.insideExtractedOrInlinedMethod = insideExtractedOrInlinedMethod;
 	}
 
 	public Set<VariableDeclaration> getMergedVariables() {
@@ -37,16 +40,20 @@ public class MergeVariableRefactoring implements Refactoring {
 		return newVariable;
 	}
 
-	public UMLOperation getOperationBefore() {
+	public VariableDeclarationContainer getOperationBefore() {
 		return operationBefore;
 	}
 
-	public UMLOperation getOperationAfter() {
+	public VariableDeclarationContainer getOperationAfter() {
 		return operationAfter;
 	}
 
-	public Set<AbstractCodeMapping> getVariableReferences() {
+	public Set<AbstractCodeMapping> getReferences() {
 		return variableReferences;
+	}
+
+	public boolean isInsideExtractedOrInlinedMethod() {
+		return insideExtractedOrInlinedMethod;
 	}
 
 	private boolean allVariablesAreParameters() {
@@ -86,7 +93,8 @@ public class MergeVariableRefactoring implements Refactoring {
 		sb.append(mergedVariables);
 		sb.append(" to ");
 		sb.append(newVariable);
-		sb.append(" in method ");
+		String elementType = operationAfter.getElementType();
+		sb.append(" in " + elementType + " ");
 		sb.append(operationAfter);
 		sb.append(" from class ").append(operationAfter.getClassName());
 		return sb.toString();
@@ -143,8 +151,9 @@ public class MergeVariableRefactoring implements Refactoring {
 					.setDescription("merged variable declaration")
 					.setCodeElement(mergedVariable.toString()));
 		}
+		String elementType = operationBefore.getElementType();
 		ranges.add(operationBefore.codeRange()
-				.setDescription("original method declaration")
+				.setDescription("original " + elementType + " declaration")
 				.setCodeElement(operationBefore.toString()));
 		return ranges;
 	}
@@ -155,8 +164,9 @@ public class MergeVariableRefactoring implements Refactoring {
 		ranges.add(newVariable.codeRange()
 				.setDescription("new variable declaration")
 				.setCodeElement(newVariable.toString()));
+		String elementType = operationAfter.getElementType();
 		ranges.add(operationAfter.codeRange()
-				.setDescription("method declaration with merged variables")
+				.setDescription(elementType + " declaration with merged variables")
 				.setCodeElement(operationAfter.toString()));
 		return ranges;
 	}

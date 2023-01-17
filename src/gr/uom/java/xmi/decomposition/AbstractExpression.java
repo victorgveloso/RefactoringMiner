@@ -1,12 +1,14 @@
 package gr.uom.java.xmi.decomposition;
 
+import static gr.uom.java.xmi.decomposition.Visitor.stringify;
+
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 
 import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.diff.CodeRange;
 
@@ -15,51 +17,57 @@ public class AbstractExpression extends AbstractCodeFragment {
 	private String expression;
 	private LocationInfo locationInfo;
 	private CompositeStatementObject owner;
-	private List<String> variables;
+	private LambdaExpressionObject lambdaOwner;
+	private List<LeafExpression> variables;
 	private List<String> types;
 	private List<VariableDeclaration> variableDeclarations;
-	private Map<String, List<OperationInvocation>> methodInvocationMap;
+	private List<AbstractCall> methodInvocations;
 	private List<AnonymousClassDeclarationObject> anonymousClassDeclarations;
-	private List<String> stringLiterals;
-	private List<String> numberLiterals;
-	private List<String> nullLiterals;
-	private List<String> booleanLiterals;
-	private List<String> typeLiterals;
-	private Map<String, List<ObjectCreation>> creationMap;
-	private List<String> infixExpressions;
+	private List<LeafExpression> stringLiterals;
+	private List<LeafExpression> numberLiterals;
+	private List<LeafExpression> nullLiterals;
+	private List<LeafExpression> booleanLiterals;
+	private List<LeafExpression> typeLiterals;
+	private List<AbstractCall> creations;
+	private List<LeafExpression> infixExpressions;
 	private List<String> infixOperators;
-	private List<String> arrayAccesses;
-	private List<String> prefixExpressions;
-	private List<String> postfixExpressions;
-	private List<String> arguments;
+	private List<LeafExpression> arrayAccesses;
+	private List<LeafExpression> prefixExpressions;
+	private List<LeafExpression> postfixExpressions;
+	private List<LeafExpression> thisExpressions;
+	private List<LeafExpression> arguments;
+	private List<LeafExpression> parenthesizedExpressions;
 	private List<TernaryOperatorExpression> ternaryOperatorExpressions;
 	private List<LambdaExpressionObject> lambdas;
     
-    public AbstractExpression(CompilationUnit cu, String filePath, Expression expression, CodeElementType codeElementType) {
+    public AbstractExpression(CompilationUnit cu, String filePath, Expression expression, CodeElementType codeElementType, VariableDeclarationContainer container) {
     	this.locationInfo = new LocationInfo(cu, filePath, expression, codeElementType);
-    	Visitor visitor = new Visitor(cu, filePath);
+    	Visitor visitor = new Visitor(cu, filePath, container);
     	expression.accept(visitor);
 		this.variables = visitor.getVariables();
 		this.types = visitor.getTypes();
 		this.variableDeclarations = visitor.getVariableDeclarations();
-		this.methodInvocationMap = visitor.getMethodInvocationMap();
+		this.methodInvocations = visitor.getMethodInvocations();
 		this.anonymousClassDeclarations = visitor.getAnonymousClassDeclarations();
 		this.stringLiterals = visitor.getStringLiterals();
 		this.numberLiterals = visitor.getNumberLiterals();
 		this.nullLiterals = visitor.getNullLiterals();
 		this.booleanLiterals = visitor.getBooleanLiterals();
 		this.typeLiterals = visitor.getTypeLiterals();
-		this.creationMap = visitor.getCreationMap();
+		this.creations = visitor.getCreations();
 		this.infixExpressions = visitor.getInfixExpressions();
 		this.infixOperators = visitor.getInfixOperators();
 		this.arrayAccesses = visitor.getArrayAccesses();
 		this.prefixExpressions = visitor.getPrefixExpressions();
 		this.postfixExpressions = visitor.getPostfixExpressions();
+		this.thisExpressions = visitor.getThisExpressions();
 		this.arguments = visitor.getArguments();
+		this.parenthesizedExpressions = visitor.getParenthesizedExpressions();
 		this.ternaryOperatorExpressions = visitor.getTernaryOperatorExpressions();
 		this.lambdas = visitor.getLambdas();
-    	this.expression = expression.toString();
+		this.expression = stringify(expression);
     	this.owner = null;
+    	this.lambdaOwner = null;
     }
 
     public void setOwner(CompositeStatementObject owner) {
@@ -69,6 +77,14 @@ public class AbstractExpression extends AbstractCodeFragment {
     public CompositeStatementObject getOwner() {
     	return this.owner;
     }
+
+	public LambdaExpressionObject getLambdaOwner() {
+		return lambdaOwner;
+	}
+
+	public void setLambdaOwner(LambdaExpressionObject lambdaOwner) {
+		this.lambdaOwner = lambdaOwner;
+	}
 
 	@Override
 	public CompositeStatementObject getParent() {
@@ -88,7 +104,7 @@ public class AbstractExpression extends AbstractCodeFragment {
 	}
 
 	@Override
-	public List<String> getVariables() {
+	public List<LeafExpression> getVariables() {
 		return variables;
 	}
 
@@ -103,8 +119,8 @@ public class AbstractExpression extends AbstractCodeFragment {
 	}
 
 	@Override
-	public Map<String, List<OperationInvocation>> getMethodInvocationMap() {
-		return methodInvocationMap;
+	public List<AbstractCall> getMethodInvocations() {
+		return methodInvocations;
 	}
 
 	@Override
@@ -113,37 +129,37 @@ public class AbstractExpression extends AbstractCodeFragment {
 	}
 
 	@Override
-	public List<String> getStringLiterals() {
+	public List<LeafExpression> getStringLiterals() {
 		return stringLiterals;
 	}
 
 	@Override
-	public List<String> getNumberLiterals() {
+	public List<LeafExpression> getNumberLiterals() {
 		return numberLiterals;
 	}
 
 	@Override
-	public List<String> getNullLiterals() {
+	public List<LeafExpression> getNullLiterals() {
 		return nullLiterals;
 	}
 
 	@Override
-	public List<String> getBooleanLiterals() {
+	public List<LeafExpression> getBooleanLiterals() {
 		return booleanLiterals;
 	}
 
 	@Override
-	public List<String> getTypeLiterals() {
+	public List<LeafExpression> getTypeLiterals() {
 		return typeLiterals;
 	}
 
 	@Override
-	public Map<String, List<ObjectCreation>> getCreationMap() {
-		return creationMap;
+	public List<AbstractCall> getCreations() {
+		return creations;
 	}
 
 	@Override
-	public List<String> getInfixExpressions() {
+	public List<LeafExpression> getInfixExpressions() {
 		return infixExpressions;
 	}
 
@@ -153,23 +169,33 @@ public class AbstractExpression extends AbstractCodeFragment {
 	}
 
 	@Override
-	public List<String> getArrayAccesses() {
+	public List<LeafExpression> getArrayAccesses() {
 		return arrayAccesses;
 	}
 
 	@Override
-	public List<String> getPrefixExpressions() {
+	public List<LeafExpression> getPrefixExpressions() {
 		return prefixExpressions;
 	}
 
 	@Override
-	public List<String> getPostfixExpressions() {
+	public List<LeafExpression> getPostfixExpressions() {
 		return postfixExpressions;
 	}
 
 	@Override
-	public List<String> getArguments() {
+	public List<LeafExpression> getThisExpressions() {
+		return thisExpressions;
+	}
+
+	@Override
+	public List<LeafExpression> getArguments() {
 		return arguments;
+	}
+
+	@Override
+	public List<LeafExpression> getParenthesizedExpressions() {
+		return parenthesizedExpressions;
 	}
 
 	@Override
@@ -193,6 +219,13 @@ public class AbstractExpression extends AbstractCodeFragment {
 		}
 		else if(owner != null) {
 			return owner.searchVariableDeclaration(variableName);
+		}
+		else if(lambdaOwner != null) {
+			for(VariableDeclaration declaration : lambdaOwner.getParameters()) {
+				if(declaration.getVariableName().equals(variableName)) {
+					return declaration;
+				}
+			}
 		}
 		return null;
 	}

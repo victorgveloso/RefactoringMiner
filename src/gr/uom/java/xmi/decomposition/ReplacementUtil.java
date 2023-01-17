@@ -2,9 +2,10 @@ package gr.uom.java.xmi.decomposition;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.containsMethodSignatureOfAnonymousClass;
 
 public class ReplacementUtil {
-	private static final String[] SPECIAL_CHARACTERS = {";", ",", ")", "=", "+", "-", ">", "<", ".", "]", " ", "(", "["};
+	private static final String[] SPECIAL_CHARACTERS = {";", ",", ")", "=", "+", "-", ">", "<", ".", "]", " ", "(", "[", "}", "{"};
 	private static final String[] SPECIAL_ARGUMENT_CHARACTERS = {";", ",", ")", "=", "+", "-", ">", "<", ".", "]", " "};
 	private static final Pattern DOUBLE_QUOTES = Pattern.compile("\"([^\"]*)\"|(\\S+)");
 
@@ -43,13 +44,14 @@ public class ReplacementUtil {
 	}
 
 	public static int countInstances(String completeString, String subString) {
+		int count = 0;
 		for(String character : SPECIAL_CHARACTERS) {
 			int index = completeString.indexOf(subString + character);
 			if(index != -1) {
-				return (completeString.length() - completeString.replace(subString + character, "").length()) / (subString.length() + 1);
+				count += (completeString.length() - completeString.replace(subString + character, "").length()) / (subString.length() + 1);
 			}
 		}
-		return 0;
+		return count;
 	}
 
 	public static boolean contains(String completeString, String subString) {
@@ -118,7 +120,7 @@ public class ReplacementUtil {
 				temp = sb.toString();
 			}
 		}
-		if(!replacementOccurred && !UMLOperationBodyMapper.containsMethodSignatureOfAnonymousClass(completeString1) && !UMLOperationBodyMapper.containsMethodSignatureOfAnonymousClass(completeString2)) {
+		if(!replacementOccurred && !containsMethodSignatureOfAnonymousClass(completeString1) && !containsMethodSignatureOfAnonymousClass(completeString2)) {
 			for(String character : SPECIAL_CHARACTERS) {
 				if(temp.contains(character + subString1) && completeString2.contains(character + subString2)) {
 					StringBuffer sb = new StringBuffer();

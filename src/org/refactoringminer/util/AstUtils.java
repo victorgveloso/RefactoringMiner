@@ -1,5 +1,7 @@
 package org.refactoringminer.util;
 
+import static gr.uom.java.xmi.decomposition.Visitor.stringify;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -82,7 +84,7 @@ public class AstUtils {
 	public static String normalizeTypeName(Type type, int extraDimensions, boolean varargs) {
 	    StringBuilder sb = new StringBuilder();
 //	    String rawTypeName = stripQualifiedTypeName(stripTypeParamsFromTypeName(type.toString()));
-	    String rawTypeName = stripTypeParamsFromTypeName(type.toString());
+	    String rawTypeName = stripTypeParamsFromTypeName(stringify(type));
         sb.append(rawTypeName);
         for (int i = extraDimensions; i > 0; i--) {
             sb.append("[]");

@@ -1,8 +1,11 @@
 package gr.uom.java.xmi;
 
+import java.util.List;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
 import gr.uom.java.xmi.diff.CodeRange;
 
 public class LocationInfo {
@@ -26,6 +29,9 @@ public class LocationInfo {
 		//lines are 1-based
 		this.startLine = cu.getLineNumber(startOffset);
 		this.endLine = cu.getLineNumber(endOffset);
+		if(this.endLine == -1) {
+			this.endLine = cu.getLineNumber(endOffset-1);
+		}
 		//columns are 0-based
 		this.startColumn = cu.getColumnNumber(startOffset);
 		//convert to 1-based
@@ -33,6 +39,9 @@ public class LocationInfo {
 			this.startColumn += 1;
 		}
 		this.endColumn = cu.getColumnNumber(endOffset);
+		if(this.endColumn == -1) {
+			this.endColumn = cu.getColumnNumber(endOffset-1);
+		}
 		//convert to 1-based
 		if(this.endColumn > 0) {
 			this.endColumn += 1;
@@ -81,10 +90,26 @@ public class LocationInfo {
 				getStartColumn(), getEndColumn(), getCodeElementType());
 	}
 
+	public boolean before(LocationInfo other) {
+		return this.filePath.equals(other.filePath) &&
+				this.startOffset <= other.startOffset &&
+				this.endOffset <= other.startOffset;
+	}
+
 	public boolean subsumes(LocationInfo other) {
 		return this.filePath.equals(other.filePath) &&
 				this.startOffset <= other.startOffset &&
 				this.endOffset >= other.endOffset;
+	}
+
+	public boolean subsumes(List<? extends AbstractCodeFragment> statements) {
+		int subsumedStatements = 0;
+		for(AbstractCodeFragment statement : statements) {
+			if(subsumes(statement.getLocationInfo())) {
+				subsumedStatements++;
+			}
+		}
+		return subsumedStatements == statements.size() && statements.size() > 0;
 	}
 
 	public boolean sameLine(LocationInfo other) {
@@ -96,6 +121,15 @@ public class LocationInfo {
 	public boolean nextLine(LocationInfo other) {
 		return this.filePath.equals(other.filePath) &&
 				this.startLine == other.endLine + 1;
+	}
+
+	public boolean startsAtTheEndLineOf(LocationInfo other) {
+		return this.filePath.equals(other.filePath) &&
+				this.startLine == other.endLine;
+	}
+
+	public String toString() {
+		return "line range:" + startLine + "-" + endLine;
 	}
 
 	@Override
@@ -204,7 +238,14 @@ public class LocationInfo {
 		ENUM_CONSTANT_DECLARATION,
 		JAVADOC,
 		LINE_COMMENT,
-		BLOCK_COMMENT;
+		BLOCK_COMMENT,
+		LAMBDA_EXPRESSION_PARAMETER,
+		METHOD_REFERENCE,
+		CREATION_REFERENCE,
+		INITIALIZER,
+		TYPE_PARAMETER,
+		//expressions
+		STRING_LITERAL, ARRAY_ACCESS, PREFIX_EXPRESSION, POSTFIX_EXPRESSION, INFIX_EXPRESSION, THIS_EXPRESSION, NUMBER_LITERAL, NULL_LITERAL, BOOLEAN_LITERAL, TYPE_LITERAL, FIELD_ACCESS, SIMPLE_NAME, EXPRESSION, QUALIFIED_NAME, CAST_EXPRESSION, PARENTHESIZED_EXPRESSION;
 		
 		private String name;
 		

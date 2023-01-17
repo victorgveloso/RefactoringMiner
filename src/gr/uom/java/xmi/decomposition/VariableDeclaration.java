@@ -2,6 +2,7 @@ package gr.uom.java.xmi.decomposition;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Annotation;
@@ -10,6 +11,7 @@ import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
+import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
@@ -22,6 +24,7 @@ import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.LocationInfoProvider;
 import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLType;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.VariableDeclarationProvider;
 import gr.uom.java.xmi.diff.CodeRange;
 
@@ -38,7 +41,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 	private boolean isFinal;
 	private List<UMLAnnotation> annotations;
 	
-	public VariableDeclaration(CompilationUnit cu, String filePath, VariableDeclarationFragment fragment) {
+	public VariableDeclaration(CompilationUnit cu, String filePath, VariableDeclarationFragment fragment, VariableDeclarationContainer container) {
 		this.annotations = new ArrayList<UMLAnnotation>();
 		List<IExtendedModifier> extendedModifiers = null;
 		if(fragment.getParent() instanceof VariableDeclarationStatement) {
@@ -75,9 +78,11 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 		}
 		this.locationInfo = new LocationInfo(cu, filePath, fragment, extractVariableDeclarationType(fragment));
 		this.variableName = fragment.getName().getIdentifier();
-		this.initializer = fragment.getInitializer() != null ? new AbstractExpression(cu, filePath, fragment.getInitializer(), CodeElementType.VARIABLE_DECLARATION_INITIALIZER) : null;
+		this.initializer = fragment.getInitializer() != null ? new AbstractExpression(cu, filePath, fragment.getInitializer(), CodeElementType.VARIABLE_DECLARATION_INITIALIZER, container) : null;
 		Type astType = extractType(fragment);
-		this.type = UMLType.extractTypeObject(cu, filePath, astType, fragment.getExtraDimensions());
+		if(astType != null) {
+			this.type = UMLType.extractTypeObject(cu, filePath, astType, fragment.getExtraDimensions());
+		}
 		ASTNode scopeNode = getScopeNode(fragment);
 		int startOffset = 0;
 		if(locationInfo.getCodeElementType().equals(CodeElementType.FIELD_DECLARATION)) {
@@ -91,7 +96,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 		this.scope = new VariableScope(cu, filePath, startOffset, endOffset);
 	}
 
-	public VariableDeclaration(CompilationUnit cu, String filePath, SingleVariableDeclaration fragment) {
+	public VariableDeclaration(CompilationUnit cu, String filePath, SingleVariableDeclaration fragment, VariableDeclarationContainer container) {
 		this.annotations = new ArrayList<UMLAnnotation>();
 		int modifiers = fragment.getModifiers();
 		if((modifiers & Modifier.FINAL) != 0) {
@@ -106,7 +111,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 		}
 		this.locationInfo = new LocationInfo(cu, filePath, fragment, extractVariableDeclarationType(fragment));
 		this.variableName = fragment.getName().getIdentifier();
-		this.initializer = fragment.getInitializer() != null ? new AbstractExpression(cu, filePath, fragment.getInitializer(), CodeElementType.VARIABLE_DECLARATION_INITIALIZER) : null;
+		this.initializer = fragment.getInitializer() != null ? new AbstractExpression(cu, filePath, fragment.getInitializer(), CodeElementType.VARIABLE_DECLARATION_INITIALIZER, container) : null;
 		Type astType = extractType(fragment);
 		this.type = UMLType.extractTypeObject(cu, filePath, astType, fragment.getExtraDimensions());
 		int startOffset = fragment.getStartPosition();
@@ -115,9 +120,12 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 		this.scope = new VariableScope(cu, filePath, startOffset, endOffset);
 	}
 
-	public VariableDeclaration(CompilationUnit cu, String filePath, SingleVariableDeclaration fragment, boolean varargs) {
-		this(cu, filePath, fragment);
+	public VariableDeclaration(CompilationUnit cu, String filePath, SingleVariableDeclaration fragment, VariableDeclarationContainer container, boolean varargs) {
+		this(cu, filePath, fragment, container);
 		this.varargsParameter = varargs;
+		if(varargs) {
+			this.type.setVarargs();
+		}
 	}
 
 	public VariableDeclaration(CompilationUnit cu, String filePath, EnumConstantDeclaration fragment) {
@@ -236,18 +244,26 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-        sb.append(variableName).append(" : ").append(type);
+        sb.append(variableName).append(" : ");
         if(varargsParameter) {
+        	sb.append(type.toString().substring(0, type.toString().lastIndexOf("[]")));
         	sb.append("...");
+        }
+        else {
+        	sb.append(type);
         }
         return sb.toString();
 	}
 
 	public String toQualifiedString() {
 		StringBuilder sb = new StringBuilder();
-        sb.append(variableName).append(" : ").append(type.toQualifiedString());
+        sb.append(variableName).append(" : ");
         if(varargsParameter) {
+        	sb.append(type.toQualifiedString().substring(0, type.toQualifiedString().lastIndexOf("[]")));
         	sb.append("...");
+        }
+        else {
+        	sb.append(type.toQualifiedString());
         }
         return sb.toString();
 	}
@@ -285,6 +301,9 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 			else if(fragment.getParent() instanceof FieldDeclaration) {
 				return CodeElementType.FIELD_DECLARATION;
 			}
+			else if(fragment.getParent() instanceof LambdaExpression) {
+				return CodeElementType.LAMBDA_EXPRESSION_PARAMETER;
+			}
 		}
 		return null;
 	}
@@ -317,20 +336,53 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 		return this.locationInfo.getCodeElementType().equals(other.locationInfo.getCodeElementType());
 	}
 
+	public boolean equalType(VariableDeclaration other) {
+		if(this.getType() == null && other.getType() == null) {
+			return true;
+		}
+		else if(this.getType() != null && other.getType() != null) {
+			return this.getType().equals(other.getType());
+		}
+		return false;
+	}
+
+	public boolean equalQualifiedType(VariableDeclaration other) {
+		if(this.getType() == null && other.getType() == null) {
+			return true;
+		}
+		else if(this.getType() != null && other.getType() != null) {
+			return this.getType().equalsQualified(other.getType());
+		}
+		return false;
+	}
+
 	public VariableDeclaration getVariableDeclaration() {
 		return this;
 	}
 
-	public void addStatementInScope(AbstractStatement statement) {
+	public void addStatementInScope(AbstractCodeFragment statement) {
 		if(scope.subsumes(statement.getLocationInfo())) {
-			scope.addStatement(statement);
-			if(statement.getVariables().contains(variableName)) {
-				scope.addStatementUsingVariable(statement);
+			List<LeafExpression> variables = statement.getVariables();
+			boolean matchFound = false;
+			for(LeafExpression variable : variables) {
+				if(variable.getString().equals(variableName) || (isAttribute && variable.getString().equals("this." + variableName))) {
+					scope.addStatementUsingVariable(statement);
+					matchFound = true;
+					break;
+				}
+			}
+			if(!matchFound) {
+				for(LeafExpression variable : variables) {
+					if(variable.getString().startsWith(variableName + ".")) {
+						scope.addStatementUsingVariable(statement);
+						break;
+					}
+				}
 			}
 		}
 	}
 
-	public List<AbstractCodeFragment> getStatementsInScopeUsingVariable() {
+	public Set<AbstractCodeFragment> getStatementsInScopeUsingVariable() {
 		return scope.getStatementsInScopeUsingVariable();
 	}
 }

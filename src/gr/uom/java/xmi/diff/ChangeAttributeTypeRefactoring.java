@@ -13,7 +13,7 @@ import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 import gr.uom.java.xmi.UMLAttribute;
 
-public class ChangeAttributeTypeRefactoring implements Refactoring {
+public class ChangeAttributeTypeRefactoring implements Refactoring, ReferenceBasedRefactoring {
 	private UMLAttribute originalAttribute;
 	private UMLAttribute changedTypeAttribute;
 	private String classNameBefore;
@@ -55,7 +55,7 @@ public class ChangeAttributeTypeRefactoring implements Refactoring {
 		return classNameAfter;
 	}
 
-	public Set<AbstractCodeMapping> getAttributeReferences() {
+	public Set<AbstractCodeMapping> getReferences() {
 		return attributeReferences;
 	}
 
@@ -73,7 +73,7 @@ public class ChangeAttributeTypeRefactoring implements Refactoring {
 		StringBuilder sb = new StringBuilder();
 		VariableDeclaration originalVariableDeclaration = originalAttribute.getVariableDeclaration();
 		VariableDeclaration changedTypeVariableDeclaration = changedTypeAttribute.getVariableDeclaration();
-		boolean qualified = originalVariableDeclaration.getType().equals(changedTypeVariableDeclaration.getType()) && !originalVariableDeclaration.getType().equalsQualified(changedTypeVariableDeclaration.getType());
+		boolean qualified = originalVariableDeclaration.equalType(changedTypeVariableDeclaration) && !originalVariableDeclaration.equalQualifiedType(changedTypeVariableDeclaration);
 		sb.append(getName()).append("\t");
 		sb.append(qualified ? originalVariableDeclaration.toQualifiedString() : originalVariableDeclaration.toString());
 		sb.append(" to ");

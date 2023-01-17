@@ -2,12 +2,14 @@ Table of Contents
 =================
 
    * [General info](#general-info)
+   * [Current precision and recall](#current-precision-and-recall)
    * [How to build RefactoringMiner](#how-to-build-refactoringminer)
    * [How to use RefactoringMiner as a maven dependency](#how-to-use-refactoringminer-as-a-maven-dependency)
    * [Chrome extension](#chrome-extension)
    * [Research](#research)
       * [How to cite RefactoringMiner](#how-to-cite-refactoringminer)
-      * [Papers based on RefactoringMiner](#papers-based-on-refactoringminer)
+      * [Talks about RefactoringMiner](#talks-about-refactoringminer)
+      * [Papers using RefactoringMiner](#papers-using-refactoringminer)
    * [Support for other programming languages](#support-for-other-programming-languages)
       * [Kotlin](#kotlin)
       * [Python](#python)
@@ -16,6 +18,7 @@ Table of Contents
       * [With a locally cloned git repository](#with-a-locally-cloned-git-repository)
       * [With two directories containing Java source code](#with-two-directories-containing-java-source-code)
       * [With all information fetched directly from GitHub](#with-all-information-fetched-directly-from-github)
+   * [AST Diff API usage guidelines](#ast-diff-api-usage-guidelines)
    * [Location information for the detected refactorings](#location-information-for-the-detected-refactorings)
    * [Statement matching information for the detected refactorings](#statement-matching-information-for-the-detected-refactorings)
    * [Running RefactoringMiner from the command line](#running-refactoringminer-from-the-command-line)
@@ -25,7 +28,7 @@ RefactoringMiner is a library/API written in Java that can detect refactorings a
 
 Currently, it supports the detection of the following refactorings:
 
-**<ins>supported by RefactoringMiner 1.0 & 2.0</ins>**
+**<ins>supported by RefactoringMiner 1.0 and newer versions</ins>**
 
 1. Extract Method
 2. Inline Method
@@ -43,7 +46,7 @@ Currently, it supports the detection of the following refactorings:
 14. Extract and Move Method
 15. Rename Package ~~Change Package (Move, Rename, Split, Merge)~~
 
-**<ins>supported by RefactoringMiner 2.0</ins>**
+**<ins>supported by RefactoringMiner 2.0 and newer versions</ins>**
 
 16. Move and Rename Class
 17. Extract Class
@@ -71,7 +74,7 @@ Currently, it supports the detection of the following refactorings:
 39. Move and Rename Method
 40. Move and Inline Method
 
-**<ins>supported by RefactoringMiner 2.1</ins>**
+**<ins>supported by RefactoringMiner 2.1 and newer versions</ins>**
 
 41. Add Method Annotation
 42. Remove Method Annotation
@@ -95,6 +98,9 @@ Currently, it supports the detection of the following refactorings:
 60. Remove Thrown Exception Type
 61. Change Thrown Exception Type
 62. Change Method Access Modifier
+
+**<ins>supported by RefactoringMiner 2.2 and newer versions</ins>**
+
 63. Change Attribute Access Modifier
 64. Encapsulate Attribute
 65. Parameterize Attribute
@@ -114,6 +120,121 @@ Currently, it supports the detection of the following refactorings:
 79. Split Package
 80. Merge Package
 81. Localize Parameter
+82. Change Type Declaration Kind (`class`, `interface`, `enum`)
+83. Collapse Hierarchy
+84. Replace Loop with Pipeline
+85. Replace Anonymous with Lambda
+
+**<ins>supported by RefactoringMiner 2.3  and newer versions</ins>**
+
+86. Merge Class
+87. Inline Attribute
+88. Replace Pipeline with Loop
+
+**<ins>supported by RefactoringMiner 2.3.2</ins>**
+
+89. Split Class
+90. Split Conditional
+91. Invert Condition
+92. Merge Conditional
+93. Merge Catch
+
+# Current precision and recall
+As of **December 23, 2022** the precision and recall of the tool on an oracle consisting of **541 commits** from **186 open-source projects** is:
+
+| Refactoring Type | TP | FP | FN | Precision | Recall |
+|:-----------------------|-----------:|--------:|--------:|--------:|--------:|
+|**Total**|11395  | 23  | 278  | 0.998  | 0.976|
+|Extract Method|960  |  1  | 29  | 0.999  | 0.971|
+|Rename Class|53  |  0  |  2  | 1.000  | 0.964|
+|Move Attribute|242  |  4  | 10  | 0.984  | 0.960|
+|Move And Rename Attribute|12  |  0  |  0  | 1.000  | 1.000|
+|Replace Attribute|10  |  0  |  0  | 1.000  | 1.000|
+|Rename Method|357  |  4  | 27  | 0.989  | 0.930|
+|Inline Method|109  |  0  |  2  | 1.000  | 0.982|
+|Move Method|352  |  3  |  9  | 0.992  | 0.975|
+|Move And Rename Method|116  |  0  |  6  | 1.000  | 0.951|
+|Pull Up Method|290  |  0  |  6  | 1.000  | 0.980|
+|Move Class|1093  |  0  |  4  | 1.000  | 0.996|
+|Move And Rename Class|34  |  0  |  1  | 1.000  | 0.971|
+|Move Source Folder| 3  |  0  |  0  | 1.000  | 1.000|
+|Pull Up Attribute|128  |  0  |  1  | 1.000  | 0.992|
+|Push Down Attribute|33  |  0  |  0  | 1.000  | 1.000|
+|Push Down Method|43  |  0  |  1  | 1.000  | 0.977|
+|Extract Interface|22  |  0  |  0  | 1.000  | 1.000|
+|Extract Superclass|73  |  0  |  0  | 1.000  | 1.000|
+|Extract Subclass| 4  |  0  |  0  | 1.000  | 1.000|
+|Extract Class|96  |  0  |  0  | 1.000  | 1.000|
+|Extract And Move Method|98  |  0  | 69  | 1.000  | 0.587|
+|Move And Inline Method|13  |  0  |  4  | 1.000  | 0.765|
+|Rename Package|16  |  0  |  0  | 1.000  | 1.000|
+|Move Package|10  |  0  |  0  | 1.000  | 1.000|
+|Extract Variable|221  |  0  |  0  | 1.000  | 1.000|
+|Extract Attribute|19  |  0  |  0  | 1.000  | 1.000|
+|Inline Variable|76  |  0  |  0  | 1.000  | 1.000|
+|Inline Attribute| 8  |  0  |  0  | 1.000  | 1.000|
+|Rename Variable|302  |  3  | 11  | 0.990  | 0.965|
+|Rename Parameter|472  |  2  | 28  | 0.996  | 0.944|
+|Rename Attribute|130  |  0  | 16  | 1.000  | 0.890|
+|Merge Variable| 4  |  0  |  0  | 1.000  | 1.000|
+|Merge Parameter|28  |  0  |  0  | 1.000  | 1.000|
+|Merge Attribute| 5  |  0  |  0  | 1.000  | 1.000|
+|Split Variable| 1  |  0  |  0  | 1.000  | 1.000|
+|Split Parameter| 7  |  0  |  0  | 1.000  | 1.000|
+|Split Attribute| 2  |  0  |  0  | 1.000  | 1.000|
+|Replace Variable With Attribute|20  |  0  |  0  | 1.000  | 1.000|
+|Parameterize Variable|72  |  0  |  0  | 1.000  | 1.000|
+|Localize Parameter|25  |  0  |  0  | 1.000  | 1.000|
+|Parameterize Attribute|23  |  0  |  0  | 1.000  | 1.000|
+|Change Return Type|419  |  0  | 12  | 1.000  | 0.972|
+|Change Variable Type|767  |  2  | 10  | 0.997  | 0.987|
+|Change Parameter Type|628  |  1  | 16  | 0.998  | 0.975|
+|Change Attribute Type|224  |  0  |  8  | 1.000  | 0.966|
+|Add Method Annotation|327  |  0  |  4  | 1.000  | 0.988|
+|Remove Method Annotation|99  |  0  |  0  | 1.000  | 1.000|
+|Modify Method Annotation|29  |  0  |  0  | 1.000  | 1.000|
+|Add Attribute Annotation|62  |  0  |  1  | 1.000  | 0.984|
+|Remove Attribute Annotation|18  |  0  |  0  | 1.000  | 1.000|
+|Modify Attribute Annotation| 7  |  0  |  0  | 1.000  | 1.000|
+|Add Class Annotation|52  |  0  |  0  | 1.000  | 1.000|
+|Remove Class Annotation|20  |  0  |  0  | 1.000  | 1.000|
+|Modify Class Annotation|32  |  0  |  0  | 1.000  | 1.000|
+|Add Parameter Annotation|32  |  0  |  0  | 1.000  | 1.000|
+|Remove Parameter Annotation| 3  |  0  |  0  | 1.000  | 1.000|
+|Modify Parameter Annotation| 2  |  0  |  0  | 1.000  | 1.000|
+|Add Parameter|938  |  2  |  1  | 0.998  | 0.999|
+|Remove Parameter|333  |  0  |  0  | 1.000  | 1.000|
+|Reorder Parameter| 9  |  0  |  0  | 1.000  | 1.000|
+|Add Variable Annotation| 1  |  0  |  0  | 1.000  | 1.000|
+|Remove Variable Annotation| 3  |  0  |  0  | 1.000  | 1.000|
+|Add Thrown Exception Type|40  |  0  |  0  | 1.000  | 1.000|
+|Remove Thrown Exception Type|245  |  0  |  0  | 1.000  | 1.000|
+|Change Thrown Exception Type| 9  |  0  |  0  | 1.000  | 1.000|
+|Change Method Access Modifier|318  |  0  |  0  | 1.000  | 1.000|
+|Change Attribute Access Modifier|221  |  0  |  0  | 1.000  | 1.000|
+|Encapsulate Attribute|48  |  0  |  0  | 1.000  | 1.000|
+|Add Method Modifier|78  |  0  |  0  | 1.000  | 1.000|
+|Remove Method Modifier|102  |  0  |  0  | 1.000  | 1.000|
+|Add Attribute Modifier|134  |  0  |  0  | 1.000  | 1.000|
+|Remove Attribute Modifier|142  |  1  |  0  | 0.993  | 1.000|
+|Add Variable Modifier|128  |  0  |  0  | 1.000  | 1.000|
+|Remove Variable Modifier|57  |  0  |  0  | 1.000  | 1.000|
+|Change Class Access Modifier|77  |  0  |  0  | 1.000  | 1.000|
+|Add Class Modifier|34  |  0  |  0  | 1.000  | 1.000|
+|Remove Class Modifier|44  |  0  |  0  | 1.000  | 1.000|
+|Split Package| 4  |  0  |  0  | 1.000  | 1.000|
+|Merge Package| 2  |  0  |  0  | 1.000  | 1.000|
+|Change Type Declaration Kind| 6  |  0  |  0  | 1.000  | 1.000|
+|Collapse Hierarchy| 1  |  0  |  0  | 1.000  | 1.000|
+|Replace Loop With Pipeline|35  |  0  |  0  | 1.000  | 1.000|
+|Replace Pipeline With Loop| 2  |  0  |  0  | 1.000  | 1.000|
+|Replace Anonymous With Lambda|45  |  0  |  0  | 1.000  | 1.000|
+|Merge Class| 6  |  0  |  0  | 1.000  | 1.000|
+|Split Class| 3  |  0  |  0  | 1.000  | 1.000|
+|Split Conditional|15  |  0  |  0  | 1.000  | 1.000|
+|Invert Condition| 5  |  0  |  0  | 1.000  | 1.000|
+|Merge Conditional| 5  |  0  |  0  | 1.000  | 1.000|
+|Merge Catch| 2  |  0  |  0  | 1.000  | 1.000|
 
 # How to build RefactoringMiner
 
@@ -123,6 +244,7 @@ Alternatively, you can generate a complete distribution zip including all runtim
 You can also work with the project with Eclipse IDE. First, run `./gradlew eclipse` to generate Eclipse project metadata files. Then, import it into Eclipse using the *Import Existing Project* feature.
 
 # How to use RefactoringMiner as a maven dependency
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tsantalis/refactoring-miner/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tsantalis/refactoring-miner)
 
 Since version 2.0, RefactoringMiner is available in the [Maven Central Repository](https://mvnrepository.com/artifact/com.github.tsantalis/refactoring-miner).
 In order to use RefactoringMiner as a maven dependency in your project, add the following snippet to your project's build configuration file:
@@ -130,7 +252,7 @@ In order to use RefactoringMiner as a maven dependency in your project, add the 
     <dependency>
       <groupId>com.github.tsantalis</groupId>
       <artifactId>refactoring-miner</artifactId>
-      <version>2.1.0</version>
+      <version>2.3.2</version>
     </dependency>
 
 # Chrome Extension
@@ -167,18 +289,26 @@ Nikolaos Tsantalis, Matin Mansouri, Laleh Eshkevari, Davood Mazinanian, and Dann
 	keywords = {Git, Oracle, abstract syntax tree, accuracy, commit, refactoring},
     }
 
-Nikolaos Tsantalis, Ameya Ketkar, and Danny Dig, "[RefactoringMiner 2.0](https://users.encs.concordia.ca/~nikolaos/publications/TSE_2020.pdf)," *IEEE Transactions on Software Engineering*, 2020.
+Nikolaos Tsantalis, Ameya Ketkar, and Danny Dig, "[RefactoringMiner 2.0](https://users.encs.concordia.ca/~nikolaos/publications/TSE_2020.pdf)," *IEEE Transactions on Software Engineering*, vol. 48, no. 3, pp. 930-950, March 2022.
 
     @article{Tsantalis:TSE:2020:RefactoringMiner2.0,
-	author = {Tsantalis, Nikolaos and Ketkar, Ameya and Dig, Danny},
-	title = {RefactoringMiner 2.0},
-	journal = {IEEE Transactions on Software Engineering},
-	year = {2020},
-	numpages = {21},
-	doi = {10.1109/TSE.2020.3007722},
+	author={Tsantalis, Nikolaos and Ketkar, Ameya and Dig, Danny},
+	title={RefactoringMiner 2.0},
+	journal={IEEE Transactions on Software Engineering},
+	year={2022},
+	volume={48},
+	number={3},
+	pages={930-950},
+	doi={10.1109/TSE.2020.3007722}
     }
 
-## Papers based on RefactoringMiner
+## Talks about RefactoringMiner
+**[Keynote at the Fifth International Workshop on Refactoring (IWoR 2021)](https://iwor.github.io/iwor2021/keynote.html)**
+
+[![2021-11-14 22_16_25-Greenshot](https://user-images.githubusercontent.com/1483516/142782871-7f7545d3-3fe7-4d0c-8860-db892757a152.png)](https://www.youtube.com/watch?v=CXO32d1ih3E)
+
+
+## Papers using RefactoringMiner
 RefactoringMiner has been used in the following studies:
 1. Danilo Silva, Nikolaos Tsantalis, and Marco Tulio Valente, "[Why We Refactor? Confessions of GitHub Contributors](https://doi.org/10.1145/2950290.2950305)," *24th ACM SIGSOFT International Symposium on the Foundations of Software Engineering* (FSE 2016), Seattle, WA, USA, November 13-18, 2016.
 2. Davood Mazinanian, Ameya Ketkar, Nikolaos Tsantalis, and Danny Dig, "[Understanding the use of lambda expressions in Java](https://doi.org/10.1145/3133909)",  *Proceedings of the ACM on Programming Languages*, vol. 1, issue OOPSLA, Article 85, 31 pages, October 2017.
@@ -210,7 +340,7 @@ Refactorings and Commit Messages](https://doi.org/10.1109/SCAM.2019.00017)," *19
 27. Bo Shen, Wei Zhang, Haiyan Zhao, Guangtai Liang, Zhi Jin, and Qianxiang Wang, "[IntelliMerge: A Refactoring-Aware Software Merging Technique](https://doi.org/10.1145/3360596)," *Proceedings of the ACM on Programming Languages*, vol. 3, OOPSLA, Article 170, October 2019.
 28. Martina Iammarino, Fiorella Zampetti, Lerina Aversano, and Massimiliano Di Penta, "[Self-Admitted Technical Debt Removal and Refactoring Actions: Co-Occurrence or More?](https://doi.org/10.1109/ICSME.2019.00029)," *35th IEEE International Conference on Software Maintenance and Evolution* (ICSME 2019), Cleveland, OH, USA, September 29-October 4, 2019.
 29. Ally S. Nyamawe, Hui Liu, Nan Niu, Qasim Umer, and Zhendong Niu, "[Automated Recommendation of Software Refactorings based on Feature Requests](https://doi.org/10.1109/RE.2019.00029)," *27th IEEE International Requirements Engineering Conference* (RE 2019), Jeju Island, South Korea, September 23-27, 2019.
-30. Maurício Aniche, Erick Maziero, Rafael Durelli, and Vinicius Durelli, "[The Effectiveness of Supervised Machine Learning Algorithms in Predicting Software Refactoring](https://arxiv.org/abs/2001.03338)," arXiv:2001.03338, January 10, 2020.
+30. Maurício Aniche, Erick Maziero, Rafael Durelli, and Vinicius Durelli, "[The Effectiveness of Supervised Machine Learning Algorithms in Predicting Software Refactoring](https://doi.org/10.1109/TSE.2020.3021736)," *IEEE Transactions on Software Engineering*, 2020.
 31. Ana Bibiano, Vinicius Soares, Daniel Coutinho, Eduardo Fernandes, João Correia, Kleber Tarcísio, Anderson Oliveira, Alessandro Garcia, Rohit Gheyi, Marcio Ribeiro, Baldoino Fonseca, Caio Barbosa, and Daniel Oliveira, "[How Does Incomplete Composite Refactoring Affect Internal Quality Attributes?](https://doi.org/10.1145/3387904.3389264)," *28th IEEE International Conference on Program Comprehension* (ICPC 2020), Seoul, South Korea, 2020.
 32. Leonardo Sousa, Willian Oizumi, Alessandro Garcia, Anderson Oliveira, Diego Cedrim, and Carlos Lucena, "[When Are Smells Indicators of Architectural Refactoring Opportunities? A Study of 50 Software Projects](https://doi.org/10.1145/3387904.3389276)," *28th IEEE International Conference on Program Comprehension* (ICPC 2020), Seoul, South Korea, 2020.
 33. Devjeet Roy, Sarah Fakhoury, John Lee, and Venera Arnaoudova, "[A Model to Detect Readability Improvements in Incremental Changes](https://doi.org/10.1145/3387904.3389255)," *28th IEEE International Conference on Program Comprehension* (ICPC 2020), Seoul, South Korea, 2020.
@@ -233,11 +363,19 @@ Refactorings and Commit Messages](https://doi.org/10.1109/SCAM.2019.00017)," *19
 50. Ameya Ketkar, Nikolaos Tsantalis, and Danny Dig, "[Understanding Type Changes in Java](https://doi.org/10.1145/3368089.3409725)," *ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering* (ESEC/FSE 2020), Sacramento, California, United States, November 8-13, 2020.
 51. Zhongxin Liu, Xin Xia, Meng Yan, and Shanping Li, "[Automating Just-In-Time Comment Updating](https://doi.org/10.1145/3324884.3416581)," *35th IEEE/ACM International Conference on Automated Software Engineering* (ASE 2020), September 21–25, 2020.
 52. Zadia Codabux and Christopher Dutchyn, "[Profiling Developers Through the Lens of Technical Debt](https://doi.org/10.1145/3382494.3422172)," *ACM/IEEE International Symposium on Empirical Software Engineering and Measurement* (ESEM 2020), October 8–9, 2020, Bari, Italy.
-53. Yiming Tang, Raffi Khatchadourian, Mehdi Bagherzadeh, Rhia Singh, Ajani Stewart, and Anita Raja, "An Empirical Study of Refactorings and Technical Debt in Machine Learning Systems," *43rd International Conference on Software Engineering* (ICSE 2021), Madrid, Spain, May 25-28, 2021.
-54. Dong Jae Kim, Nikolaos Tsantalis, Tse-Hsun (Peter) Chen, and Jinqiu Yang, "Studying Test Annotation Maintenance in the Wild," *43rd International Conference on Software Engineering* (ICSE 2021), Madrid, Spain, May 25-28, 2021.
-55. Yanjie Jiang, Hui Liu, Nan Niu, Lu Zhang, and Yamin Hu, "Extracting Concise Bug-Fixing Patches from Human-Written Patches in Version Control Systems," *43rd International Conference on Software Engineering* (ICSE 2021), Madrid, Spain, May 25-28, 2021.
-56. Giovanni Rosa, Luca Pascarella, Simone Scalabrino, Rosalia Tufano, Gabriele Bavota, Michele Lanza, and Rocco Oliveto, "Evaluating SZZ Implementations Through a Developer-informed Oracle," *43rd International Conference on Software Engineering* (ICSE 2021), Madrid, Spain, May 25-28, 2021.
+53. Yiming Tang, Raffi Khatchadourian, Mehdi Bagherzadeh, Rhia Singh, Ajani Stewart, and Anita Raja, "[An Empirical Study of Refactorings and Technical Debt in Machine Learning Systems](https://doi.org/10.1109/ICSE43902.2021.00033)," *43rd International Conference on Software Engineering* (ICSE 2021), Madrid, Spain, May 25-28, 2021.
+54. Dong Jae Kim, Nikolaos Tsantalis, Tse-Hsun (Peter) Chen, and Jinqiu Yang, "[Studying Test Annotation Maintenance in the Wild](https://doi.org/10.1109/ICSE43902.2021.00019)," *43rd International Conference on Software Engineering* (ICSE 2021), Madrid, Spain, May 25-28, 2021.
+55. Yanjie Jiang, Hui Liu, Nan Niu, Lu Zhang, and Yamin Hu, "[Extracting Concise Bug-Fixing Patches from Human-Written Patches in Version Control Systems](https://doi.ieeecomputersociety.org/10.1109/ICSE43902.2021.00069)," *43rd International Conference on Software Engineering* (ICSE 2021), Madrid, Spain, May 25-28, 2021.
+56. Giovanni Rosa, Luca Pascarella, Simone Scalabrino, Rosalia Tufano, Gabriele Bavota, Michele Lanza, and Rocco Oliveto, "[Evaluating SZZ Implementations Through a Developer-informed Oracle](https://doi.ieeecomputersociety.org/10.1109/ICSE43902.2021.00049)," *43rd International Conference on Software Engineering* (ICSE 2021), Madrid, Spain, May 25-28, 2021.
 57. Bo Shen, Wei Zhang, Christian Kästner, Haiyan Zhao, Zhao Wei, Guangtai Liang, and Zhi Jin, "[SmartCommit: a graph-based interactive assistant for activity-oriented commits](https://doi.org/10.1145/3468264.3468551)," *29th ACM Joint Meeting on European Software Engineering Conference and Symposium on the Foundations of Software Engineering* (ESEC/FSE 2021), Athens, Greece, August 23-28, 2021.
+58. Dimitrios Tsoukalas, Nikolaos Mittas, Alexander Chatzigeorgiou, Dionysios Kehagias, Apostolos Ampatzoglou, Theodoros Amanatidis, and Lefteris Angelis, "[Machine Learning for Technical Debt Identification](https://doi.ieeecomputersociety.org/10.1109/TSE.2021.3129355)," *IEEE Transactions on Software Engineering*, 2021.
+59. Luca Traini, Daniele Di Pompeo, Michele Tucci, Bin Lin, Simone Scalabrino, Gabriele Bavota, Michele Lanza, Rocco Oliveto, and Vittorio Cortellessa, "[How Software Refactoring Impacts Execution Time](https://doi.org/10.1145/3485136)," *ACM Transactions on Software Engineering and Methodology*, Volume 31, Issue 2, Article 25, pp. 1-23, April 2022.
+60. Jarosław Pokropiński, Jakub Gąsiorek, Patryk Kramarczyk, and Lech Madeyski, "[SZZ Unleashed-RA-C: An Improved Implementation of the SZZ Algorithm and Empirical Comparison with Existing Open Source Solutions](https://doi.org/10.1007/978-3-030-77916-0_7)," Developments in Information & Knowledge Management for Business Applications : Volume 3, Springer International Publishing, pp. 181-199, 2022.
+61. Eman Abdullah AlOmar, Jiaqian Liu, Kenneth Addo, Mohamed Wiem Mkaouer, Christian Newman, Ali Ouni, and Zhe Yu, "[On the documentation of refactoring types](https://doi.org/10.1007/s10515-021-00314-w)," *Automated Software Engineering*, Volume 29, Article 9, 2022.
+62. Giulia Sellitto, Emanuele Iannone, Zadia Codabux, Valentina Lenarduzzi, Andrea De Lucia, Fabio Palomba, and Filomena Ferrucci, "Toward Understanding the Impact of Refactoring on Program Comprehension," *29th IEEE International Conference on Software Analysis, Evolution and Reengineering* (SANER 2022), Honolulu, Hawaii, USA, March 15-18, 2022.
+63. Eman Abdullah AlOmar, Tianjia Wang, Vaibhavi Raut, Mohamed Wiem Mkaouer, Christian Newman, and Ali Ouni, "[Refactoring for Reuse: An Empirical Study](https://arxiv.org/abs/2111.07002)," arXiv:2111.07002v1, 13 Nov 2021.
+64. Anton Ivanov, Zarina Kurbatova, Yaroslav Golubev, Andrey Kirilenko, and Timofey Bryksin, "[AntiCopyPaster: Extracting Code Duplicates As Soon As They Are Introduced in the IDE](https://arxiv.org/abs/2112.15230)," arXiv:2112.15230v1, 30 Dec 2021.
+65. Max Ellis, Sarah Nadi, and Danny Dig, "[A Systematic Comparison of Two Refactoring-aware Merging Techniques](https://arxiv.org/abs/2112.10370)," arXiv:2112.10370v1, 20 Dec 2021.
 
 # Support for other programming languages
 ## Kotlin
@@ -246,7 +384,7 @@ The project is led and maintained by [Zarina Kurbatova](https://github.com/onewh
 
 ## Python
 * [PyRef](https://github.com/PyRef/PyRef) has been developed by Hassan Atwi and [Bin Lin](https://binlin.info/) from the Software Institute at USI - Università della Svizzera Italiana, Switzerland.
-* [Python-adapted RefactoringMiner](https://github.com/maldil/RefactoringMiner) has been developed by [Malinda Dilhara](https://maldil.github.io/), a Ph.D. student in the department of Computer Science at University of Colorado Boulder under the suprevision of [Danny Dig](https://dig.cs.illinois.edu/).
+* [Py-RefactoringMiner](https://github.com/maldil/RefactoringMiner) has been developed by [Malinda Dilhara](https://maldil.github.io/), a Ph.D. student in the department of Computer Science at University of Colorado Boulder under the suprevision of [Danny Dig](https://dig.cs.illinois.edu/).
 
 # Contributors
 The code in package **gr.uom.java.xmi.*** is developed by [Nikolaos Tsantalis](https://github.com/tsantalis).
@@ -326,21 +464,46 @@ miner.detectAtCommit(repo, "05c1e773878bbacae64112f70964f4f2f7944398", new Refac
   }
 });
 ```
-You can get the churn of a specific commit using `churnAtCommit` as follows:
-```java
-Churn churn = miner.churnAtCommit(repo, "05c1e773878bbacae64112f70964f4f2f7944398", handler);
-```
+
 ## With two directories containing Java source code
 
-There is also a lower level API that compares the Java files in two directories
-containing the code before and after some changes:  
+It is possible to detect refactorings between the Java files in two directories
+containing the code before and after some changes.
+This feature supports the detection of renamed and moved classes,
+and automatically excludes from the analysis any files with identical contents:  
 
 ```java
-UMLModel model1 = new UMLModelASTReader(new File("/path/to/version1")).getUmlModel();
-UMLModel model2 = new UMLModelASTReader(new File("/path/to/version2")).getUmlModel();
-UMLModelDiff modelDiff = model1.diff(model2);
-List<Refactoring> refactorings = modelDiff.getRefactorings();
+GitHistoryRefactoringMiner miner = new GitHistoryRefactoringMinerImpl();
+// You must provide absolute paths to the directories. Relative paths will cause exceptions.
+File dir1 = new File("/home/user/tmp/v1");
+File dir2 = new File("/home/user/tmp/v2");
+miner.detectAtDirectories(dir1, dir2, new RefactoringHandler() {
+  @Override
+  public void handle(String commitId, List<Refactoring> refactorings) {
+    System.out.println("Refactorings at " + commitId);
+    for (Refactoring ref : refactorings) {
+      System.out.println(ref.toString());
+    }
+  }
+});
 ```
+
+```java
+GitHistoryRefactoringMiner miner = new GitHistoryRefactoringMinerImpl();
+// You must provide absolute paths to the directories. Relative paths will cause exceptions.
+Path dir1 = Paths.get("/home/user/tmp/v1");
+Path dir1 = Paths.get("/home/user/tmp/v2");
+miner.detectAtDirectories(dir1, dir2, new RefactoringHandler() {
+  @Override
+  public void handle(String commitId, List<Refactoring> refactorings) {
+    System.out.println("Refactorings at " + commitId);
+    for (Refactoring ref : refactorings) {
+      System.out.println(ref.toString());
+    }
+  }
+});
+```
+
 ## With all information fetched directly from GitHub
 
 To use this API, please provide a valid OAuth token in the `github-oauth.properties` file.
@@ -374,6 +537,53 @@ miner.detectAtPullRequest("https://github.com/apache/drill.git", 1807, new Refac
     }
   }
 }, 10);
+```
+
+# AST Diff API usage guidelines
+
+All AST Diff APIs return a `Set<ASTDiff>`, where each [ASTDiff](https://github.com/tsantalis/RefactoringMiner/blob/master/src/org/refactoringminer/astDiff/actions/ASTDiff.java) object corresponds to a pair of Java Compilation Units.
+
+`ASTDiff` extends `com.github.gumtreediff.actions.Diff` and thus it is compatible with the [GumTree](https://github.com/GumTreeDiff/gumtree) core APIs.
+
+More detailed documentation can be found in [GitHistoryRefactoringMiner](https://github.com/tsantalis/RefactoringMiner/blob/master/src/org/refactoringminer/api/GitHistoryRefactoringMiner.java) JavaDoc.
+
+```java
+// With a locally cloned git repository
+GitService gitService = new GitServiceImpl();
+GitHistoryRefactoringMiner miner = new GitHistoryRefactoringMinerImpl();
+
+Repository repo = gitService.cloneIfNotExists(
+    "tmp/refactoring-toy-example",
+    "https://github.com/danilofes/refactoring-toy-example.git");
+
+Set<ASTDiff> diffs = miner.diffAtCommit(repo, "36287f7c3b09eff78395267a3ac0d7da067863fd");
+```
+
+To use the following API, please provide a valid OAuth token in the `github-oauth.properties` file.
+You can generate an OAuth token in GitHub `Settings` -> `Developer settings` -> `Personal access tokens`.
+```java
+// With all information fetched directly from GitHub
+GitHistoryRefactoringMiner miner = new GitHistoryRefactoringMinerImpl();
+Set<ASTDiff> diffs = miner.diffAtCommit("https://github.com/danilofes/refactoring-toy-example.git",
+    "36287f7c3b09eff78395267a3ac0d7da067863fd", 10);
+```
+
+```java
+// With two directories containing Java source code (File API)
+GitHistoryRefactoringMiner miner = new GitHistoryRefactoringMinerImpl();
+// You must provide absolute paths to the directories. Relative paths will cause exceptions.
+File dir1 = new File("/home/user/tmp/v1");
+File dir2 = new File("/home/user/tmp/v2");
+Set<ASTDiff> diffs = miner.diffAtDirectories(dir1, dir2);
+```
+
+```java
+// With two directories containing Java source code (Path API)
+GitHistoryRefactoringMiner miner = new GitHistoryRefactoringMinerImpl();
+// You must provide absolute paths to the directories. Relative paths will cause exceptions.
+Path dir1 = Paths.get("/home/user/tmp/v1");
+Path dir1 = Paths.get("/home/user/tmp/v2");
+Set<ASTDiff> diffs = miner.diffAtDirectories(dir1, dir2);
 ```
 
 # Location information for the detected refactorings

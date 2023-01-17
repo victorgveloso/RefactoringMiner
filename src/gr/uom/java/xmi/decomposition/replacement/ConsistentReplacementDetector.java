@@ -21,23 +21,82 @@ public class ConsistentReplacementDetector {
 		}
 		return inconsistentRenames;
 	}
-
 	public static <T extends Replacement> void updateRenames(
 			Set<T> allConsistentRenames,
 			Set<T> allInconsistentRenames,
+			Map<String, Set<String>> aliasedVariablesInOriginalMethod,
+			Map<String, Set<String>> aliasedVariablesInNextMethod,
 			Set<T> renames) {
+		boolean allRenamesHaveIdenticalTypeAndInitializer = allRenamesHaveIdenticalTypeAndInitializer(renames);
 		for(T newRename : renames) {
 			Set<T> inconsistentRenames = inconsistentRenames(allConsistentRenames, newRename);
-			if(inconsistentRenames.isEmpty()) {
+			filter(inconsistentRenames, aliasedVariablesInOriginalMethod, aliasedVariablesInNextMethod);
+			if(inconsistentRenames.isEmpty() || (identicalTypeAndInitializer(newRename) && !allRenamesHaveIdenticalTypeAndInitializer)) {
 				allConsistentRenames.add(newRename);
 			}
 			else {
-				allInconsistentRenames.addAll(inconsistentRenames);
+				if(!allRenamesHaveIdenticalTypeAndInitializer) {
+					for(T rename : inconsistentRenames) {
+						if(!identicalTypeAndInitializer(rename)) {
+							allInconsistentRenames.add(rename);
+						}
+					}
+				}
+				else {
+					allInconsistentRenames.addAll(inconsistentRenames);
+				}
 				allInconsistentRenames.add(newRename);
 			}
 		}
 	}
 
+	public static <T extends Replacement> void updateRenames(
+			Set<T> allConsistentRenames,
+			Set<T> allInconsistentRenames,
+			Set<T> renames) {
+		boolean allRenamesHaveIdenticalTypeAndInitializer = allRenamesHaveIdenticalTypeAndInitializer(renames);
+		for(T newRename : renames) {
+			Set<T> inconsistentRenames = inconsistentRenames(allConsistentRenames, newRename);
+			if(inconsistentRenames.isEmpty() || (identicalTypeAndInitializer(newRename) && !allRenamesHaveIdenticalTypeAndInitializer)) {
+				allConsistentRenames.add(newRename);
+			}
+			else {
+				if(!allRenamesHaveIdenticalTypeAndInitializer) {
+					for(T rename : inconsistentRenames) {
+						if(!identicalTypeAndInitializer(rename)) {
+							allInconsistentRenames.add(rename);
+						}
+					}
+				}
+				else {
+					allInconsistentRenames.addAll(inconsistentRenames);
+				}
+				allInconsistentRenames.add(newRename);
+			}
+		}
+	}
+
+	private static <T extends Replacement> boolean allRenamesHaveIdenticalTypeAndInitializer(Set<T> renames) {
+		if(renames.size() > 1) {
+			for(T rename : renames) {
+				if(!identicalTypeAndInitializer(rename)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private static <T extends Replacement> boolean identicalTypeAndInitializer(T newRename) {
+		if(newRename instanceof VariableDeclarationReplacement) {
+			VariableDeclarationReplacement replacement = (VariableDeclarationReplacement)newRename;
+			if(replacement.identicalTypeAndInitializer()) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public static <T extends Replacement> void updateRenames(
 			Set<T> allConsistentRenames,
@@ -95,7 +154,13 @@ public class ConsistentReplacementDetector {
 		for(String key : aliasedAttributesInOriginalClass.keySet()) {
 			Set<String> aliasedAttributes = aliasedAttributesInOriginalClass.get(key);
 			for(T r : inconsistentRenames) {
-				if(aliasedAttributes.contains(r.getBefore())) {
+				if(r instanceof VariableDeclarationReplacement) {
+					Replacement rename = ((VariableDeclarationReplacement)r).getVariableNameReplacement();
+					if(aliasedAttributes.contains(rename.getBefore())) {
+						renamesToBeRemoved.add(r);
+					}
+				}
+				else if(aliasedAttributes.contains(r.getBefore())) {
 					renamesToBeRemoved.add(r);
 				}
 			}
@@ -103,7 +168,13 @@ public class ConsistentReplacementDetector {
 		for(String key : aliasedAttributesInNextClass.keySet()) {
 			Set<String> aliasedAttributes = aliasedAttributesInNextClass.get(key);
 			for(T r : inconsistentRenames) {
-				if(aliasedAttributes.contains(r.getAfter())) {
+				if(r instanceof VariableDeclarationReplacement) {
+					Replacement rename = ((VariableDeclarationReplacement)r).getVariableNameReplacement();
+					if(aliasedAttributes.contains(rename.getAfter())) {
+						renamesToBeRemoved.add(r);
+					}
+				}
+				else if(aliasedAttributes.contains(r.getAfter())) {
 					renamesToBeRemoved.add(r);
 				}
 			}

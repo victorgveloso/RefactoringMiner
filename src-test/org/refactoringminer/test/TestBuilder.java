@@ -9,6 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jgit.lib.Repository;
 import org.junit.Assert;
@@ -106,7 +109,7 @@ public class TestBuilder {
 		commitsCount = 0;
 		errorCommitsCount = 0;
 		GitService gitService = new GitServiceImpl();
-
+		ExecutorService pool = Executors.newWorkStealingPool();
 		for (ProjectMatcher m : map.values()) {
 			String folder = tempDir + "/"
 					+ m.cloneUrl.substring(m.cloneUrl.lastIndexOf('/') + 1, m.cloneUrl.lastIndexOf('.'));
@@ -115,7 +118,8 @@ public class TestBuilder {
 				if (m.ignoreNonSpecifiedCommits) {
 					// It is faster to only look at particular commits
 					for (String commitId : m.getCommits()) {
-						refactoringDetector.detectAtCommit(rep, commitId, m);
+						Runnable r = () -> refactoringDetector.detectAtCommit(rep, commitId, m);
+						pool.submit(r);
 					}
 				} else {
 					// Iterate over each commit
@@ -123,6 +127,8 @@ public class TestBuilder {
 				}
 			}
 		}
+		pool.shutdown();
+		pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
 		System.out.println(String.format("Commits: %d  Errors: %d", commitsCount, errorCommitsCount));
 
 		String mainResultMessage = buildResultMessage(c);
@@ -141,7 +147,31 @@ public class TestBuilder {
 				m.printResults();
 			}
 		}
+		System.out.println(buildMarkup());
 		Assert.assertTrue(mainResultMessage, success);
+	}
+
+	private String buildMarkup() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("| Refactoring Type | TP | FP | FN | Precision | Recall |").append("\n");
+		sb.append("|:-----------------------|-----------:|--------:|--------:|--------:|--------:|").append("\n");
+		for (RefactoringType refType : RefactoringType.values()) {
+			Counter refTypeCounter = cMap.get(refType);
+			if (refTypeCounter != null) {
+				sb.append("|" + refType.getDisplayName() + buildResultMessageMarkup(refTypeCounter)).append("\n");
+			}
+		}
+		sb.append("|Total" + buildResultMessageMarkup(c));
+		return sb.toString();
+	}
+
+	private String buildResultMessageMarkup(Counter c) {
+		double precision = ((double) get(TP, c) / (get(TP, c) + get(FP, c)));
+		double recall = ((double) get(TP, c)) / (get(TP, c) + get(FN, c));
+		String mainResultMessage = String.format(
+				"|%2d  | %2d  | %2d  | %.3f  | %.3f|", get(TP, c), get(FP, c),
+				get(FN, c), precision, recall);
+		return mainResultMessage;
 	}
 
 	private String buildResultMessage(Counter c) {

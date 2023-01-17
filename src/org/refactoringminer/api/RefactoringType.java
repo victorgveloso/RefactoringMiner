@@ -1,7 +1,6 @@
 package org.refactoringminer.api;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,6 +39,7 @@ public enum RefactoringType {
 	EXTRACT_VARIABLE("Extract Variable", "Extract Variable (.+) in method (.+) from class (.+)"),
 	EXTRACT_ATTRIBUTE("Extract Attribute", "Extract Attribute (.+) in class (.+)"),
 	INLINE_VARIABLE("Inline Variable", "Inline Variable (.+) in method (.+) from class (.+)"),
+	INLINE_ATTRIBUTE("Inline Attribute", "Inline Attribute (.+) in class (.+)"),
 	RENAME_VARIABLE("Rename Variable", "Rename Variable (.+) to (.+) in method (.+) from class (.+)"),
 	RENAME_PARAMETER("Rename Parameter", "Rename Parameter (.+) to (.+) in method (.+) from class (.+)"),
 	RENAME_ATTRIBUTE("Rename Attribute", "Rename Attribute (.+) to (.+) in class (.+)"),
@@ -95,15 +95,121 @@ public enum RefactoringType {
 	REMOVE_CLASS_MODIFIER("Remove Class Modifier", "Remove Class Modifier (.+) in class (.+)"),
 	SPLIT_PACKAGE("Split Package", "Split Package (.+) to \\[(.+)\\]"),
 	MERGE_PACKAGE("Merge Package", "Merge Package \\[(.+)\\] to (.+)"),
+	CHANGE_TYPE_DECLARATION_KIND("Change Type Declaration Kind", "Change Type Declaration Kind (.+) to (.+) in type (.+)"),
+	COLLAPSE_HIERARCHY("Collapse Hierarchy", "Collapse Hierarchy (.+) to (.+)"),
+	REPLACE_LOOP_WITH_PIPELINE("Replace Loop With Pipeline", "Replace Loop With Pipeline (.+) with (.+) in method (.+) from class (.+)"),
+	REPLACE_PIPELINE_WITH_LOOP("Replace Pipeline With Loop", "Replace Pipeline With Loop (.+) with (.+) in method (.+) from class (.+)"),
+	REPLACE_ANONYMOUS_WITH_LAMBDA("Replace Anonymous With Lambda", "Replace Anonymous With Lambda (.+) with (.+) in method (.+) from class (.+)"),
+	MERGE_CLASS("Merge Class", "Merge Class \\[(.+)\\] to (.+)"),
+	SPLIT_CLASS("Split Class", "Split Class (.+) to \\[(.+)\\]"),
+	SPLIT_CONDITIONAL("Split Conditional", "Split Conditional (.+) to \\[(.+)\\] in method (.+) from class (.+)"),
+	INVERT_CONDITION("Invert Condition", "Invert Condition (.+) to (.+) in method (.+) from class (.+)"),
+	MERGE_CONDITIONAL("Merge Conditional", "Merge Conditional \\[(.+)\\] to (.+) in method (.+) from class (.+)"),
+	MERGE_CATCH("Merge Catch", "Merge Catch \\[(.+)\\] to (.+) in method (.+) from class (.+)"),
     REPLACE_EXPECTED_WITH_ASSERT_THROWS("Replace Expect Annotation With Assert Throws", "Replace Expect Annotation With Assert Throws (.+) from method (.+) in class (.+)"),
     REPLACE_TRY_FAIL_WITH_RULE("Replace Try And Fail With Rule", "Replace Try-Fail With Rule (.+) from method (.+) in class (.+)");
 
 	private String displayName;
 	private Pattern regex;
 	private int[] aggregateGroups;
-	public static RefactoringType[] ALL = RefactoringType.values();
+	public static RefactoringType[] ALL = {
+		RENAME_CLASS,
+		MOVE_CLASS,
+		MOVE_SOURCE_FOLDER,
+		RENAME_METHOD,
+		EXTRACT_OPERATION,
+		INLINE_OPERATION,
+		MOVE_OPERATION,
+		PULL_UP_OPERATION,
+		PUSH_DOWN_OPERATION,
+		MOVE_ATTRIBUTE,
+		MOVE_RENAME_ATTRIBUTE,
+		REPLACE_ATTRIBUTE,
+		PULL_UP_ATTRIBUTE,
+		PUSH_DOWN_ATTRIBUTE,
+		EXTRACT_INTERFACE,
+		EXTRACT_SUPERCLASS,
+		EXTRACT_SUBCLASS,
+		EXTRACT_CLASS,
+		EXTRACT_AND_MOVE_OPERATION,
+		MOVE_RENAME_CLASS,
+		RENAME_PACKAGE,
+		MOVE_PACKAGE,
+		EXTRACT_VARIABLE,
+		INLINE_VARIABLE,
+		RENAME_VARIABLE,
+		RENAME_PARAMETER,
+		RENAME_ATTRIBUTE,
+		REPLACE_VARIABLE_WITH_ATTRIBUTE,
+		REPLACE_ATTRIBUTE_WITH_VARIABLE,
+		PARAMETERIZE_VARIABLE,
+		LOCALIZE_PARAMETER,
+		PARAMETERIZE_ATTRIBUTE,
+		MERGE_VARIABLE,
+		MERGE_PARAMETER,
+		MERGE_ATTRIBUTE,
+		SPLIT_VARIABLE,
+		SPLIT_PARAMETER,
+		SPLIT_ATTRIBUTE,
+		CHANGE_RETURN_TYPE,
+		CHANGE_VARIABLE_TYPE,
+		CHANGE_PARAMETER_TYPE,
+		CHANGE_ATTRIBUTE_TYPE,
+		EXTRACT_ATTRIBUTE,
+		MOVE_AND_RENAME_OPERATION,
+		MOVE_AND_INLINE_OPERATION,
+		ADD_METHOD_ANNOTATION,
+		REMOVE_METHOD_ANNOTATION,
+		MODIFY_METHOD_ANNOTATION,
+		ADD_ATTRIBUTE_ANNOTATION,
+		REMOVE_ATTRIBUTE_ANNOTATION,
+		MODIFY_ATTRIBUTE_ANNOTATION,
+		ADD_CLASS_ANNOTATION,
+		REMOVE_CLASS_ANNOTATION,
+		MODIFY_CLASS_ANNOTATION,
+		ADD_PARAMETER,
+		REMOVE_PARAMETER,
+		REORDER_PARAMETER,
+		ADD_PARAMETER_ANNOTATION,
+		REMOVE_PARAMETER_ANNOTATION,
+		MODIFY_PARAMETER_ANNOTATION,
+		ADD_VARIABLE_ANNOTATION,
+		REMOVE_VARIABLE_ANNOTATION,
+		MODIFY_VARIABLE_ANNOTATION,
+		ADD_THROWN_EXCEPTION_TYPE,
+		REMOVE_THROWN_EXCEPTION_TYPE,
+		CHANGE_THROWN_EXCEPTION_TYPE,
+		CHANGE_OPERATION_ACCESS_MODIFIER,
+		CHANGE_ATTRIBUTE_ACCESS_MODIFIER,
+		ENCAPSULATE_ATTRIBUTE,
+		ADD_METHOD_MODIFIER,
+		REMOVE_METHOD_MODIFIER,
+		ADD_ATTRIBUTE_MODIFIER,
+		REMOVE_ATTRIBUTE_MODIFIER,
+		ADD_VARIABLE_MODIFIER,
+		ADD_PARAMETER_MODIFIER,
+		REMOVE_VARIABLE_MODIFIER,
+		REMOVE_PARAMETER_MODIFIER,
+		CHANGE_CLASS_ACCESS_MODIFIER,
+		ADD_CLASS_MODIFIER,
+		REMOVE_CLASS_MODIFIER,
+		SPLIT_PACKAGE,
+		MERGE_PACKAGE,
+		CHANGE_TYPE_DECLARATION_KIND,
+		COLLAPSE_HIERARCHY,
+		REPLACE_LOOP_WITH_PIPELINE,
+		REPLACE_PIPELINE_WITH_LOOP,
+		REPLACE_ANONYMOUS_WITH_LAMBDA,
+		MERGE_CLASS,
+		SPLIT_CLASS,
+		INLINE_ATTRIBUTE,
+		SPLIT_CONDITIONAL,
+		INVERT_CONDITION,
+		MERGE_CONDITIONAL,
+		MERGE_CATCH
+	};
 
-	RefactoringType(String displayName, String regex, int... aggregateGroups) {
+	private RefactoringType(String displayName, String regex, int ... aggregateGroups) {
 		this.displayName = displayName;
 		this.regex = Pattern.compile(regex);
 		this.aggregateGroups = aggregateGroups;
@@ -216,20 +322,6 @@ public enum RefactoringType {
 
     private static String attributeKey(String attribute, String typeKey) {
         return typeKey + "#" + AstUtils.normalizeAttribute(attribute);
-    }
-
-    public List<RefactoringRelationship> parseRefactoring(String refactoringDescription) {
-        List<RefactoringRelationship> result;
-        Matcher m = regex.matcher(refactoringDescription);
-        if (m.matches()) {
-            
-            for (int g = 1; g <= m.groupCount(); g++) {
-                
-            }
-            return null;
-        } else {
-            throw new RuntimeException("Pattern not matched: " + refactoringDescription);
-        }
     }
 
     public static RefactoringType extractFromDescription(String refactoringDescription) {

@@ -4,72 +4,115 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.refactoringminer.api.Refactoring;
+import org.apache.commons.lang3.tuple.Pair;
 import org.refactoringminer.api.RefactoringMinerTimedOutException;
 
 import gr.uom.java.xmi.UMLAnonymousClass;
 import gr.uom.java.xmi.UMLAttribute;
+import gr.uom.java.xmi.UMLInitializer;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
 
 public class UMLAnonymousClassDiff extends UMLAbstractClassDiff {
-	private UMLAnonymousClass anonymousClass1;
-	private UMLAnonymousClass anonymousClass2;
-	private UMLClassBaseDiff classDiff;
+	private UMLAbstractClassDiff classDiff;
 	
-	public UMLAnonymousClassDiff(UMLAnonymousClass anonymousClass1, UMLAnonymousClass anonymousClass2, UMLClassBaseDiff classDiff, UMLModelDiff modelDiff) throws RefactoringMinerTimedOutException {
-		super(modelDiff);
-		this.anonymousClass1 = anonymousClass1;
-		this.anonymousClass2 = anonymousClass2;
+	public UMLAnonymousClassDiff(UMLAnonymousClass anonymousClass1, UMLAnonymousClass anonymousClass2, UMLAbstractClassDiff classDiff, UMLModelDiff modelDiff) throws RefactoringMinerTimedOutException {
+		super(anonymousClass1, anonymousClass2, modelDiff);
 		this.classDiff = classDiff;
 	}
 
 	@Override
 	public void process() throws RefactoringMinerTimedOutException {
+		processInitializers();
 		processOperations();
 		createBodyMappers();
+		checkForOperationSignatureChanges();
 		processAttributes();
 		checkForAttributeChanges();
 		checkForInlinedOperations();
 		checkForExtractedOperations();
 	}
 
-	public List<Refactoring> getRefactorings() {
-		return refactorings;
+	public boolean isEmpty() {
+		return addedOperations.isEmpty() && removedOperations.isEmpty() &&
+			addedAttributes.isEmpty() && removedAttributes.isEmpty() &&
+			addedEnumConstants.isEmpty() && removedEnumConstants.isEmpty() &&
+			attributeDiffList.isEmpty() && enumConstantDiffList.isEmpty();
+	}
+
+	protected void processInitializers() throws RefactoringMinerTimedOutException {
+		for(UMLInitializer initializer1 : originalClass.getInitializers()) {
+			for(UMLInitializer initializer2 : nextClass.getInitializers()) {
+				if(initializer1.isStatic() == initializer2.isStatic()) {
+					UMLOperationBodyMapper mapper = new UMLOperationBodyMapper(initializer1, initializer2, classDiff);
+					int mappings = mapper.mappingsWithoutBlocks();
+					if(mappings > 0) {
+						int nonMappedElementsT1 = mapper.nonMappedElementsT1();
+						int nonMappedElementsT2 = mapper.nonMappedElementsT2();
+						if((mappings > nonMappedElementsT1 && mappings > nonMappedElementsT2) ||
+								isPartOfMethodExtracted(initializer1, initializer2) || isPartOfMethodInlined(initializer1, initializer2)) {
+							operationBodyMapperList.add(mapper);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	protected void processOperations() {
-		for(UMLOperation operation : anonymousClass1.getOperations()) {
-    		if(!anonymousClass2.getOperations().contains(operation))
+		for(UMLOperation operation : originalClass.getOperations()) {
+    		if(!nextClass.getOperations().contains(operation))
     			removedOperations.add(operation);
     	}
-    	for(UMLOperation operation : anonymousClass2.getOperations()) {
-    		if(!anonymousClass1.getOperations().contains(operation))
+    	for(UMLOperation operation : nextClass.getOperations()) {
+    		if(!originalClass.getOperations().contains(operation))
     			addedOperations.add(operation);
     	}
 	}
 
 	protected void processAttributes() throws RefactoringMinerTimedOutException {
-		for(UMLAttribute attribute : anonymousClass1.getAttributes()) {
-			UMLAttribute matchingAttribute = anonymousClass2.containsAttribute(attribute);
+		for(UMLAttribute attribute : originalClass.getAttributes()) {
+			UMLAttribute matchingAttribute = nextClass.containsAttribute(attribute);
     		if(matchingAttribute != null) {
     			UMLAttributeDiff attributeDiff = new UMLAttributeDiff(attribute, matchingAttribute, operationBodyMapperList);
     			if(!attributeDiff.isEmpty()) {
     				refactorings.addAll(attributeDiff.getRefactorings());
-    				attributeDiffList.add(attributeDiff);
+    				if(!attributeDiffList.contains(attributeDiff)) {
+						attributeDiffList.add(attributeDiff);
+					}
+    			}
+    			else {
+    				Pair<UMLAttribute, UMLAttribute> pair = Pair.of(attribute, matchingAttribute);
+    				if(!commonAtrributes.contains(pair)) {
+    					commonAtrributes.add(pair);
+    				}
+    				if(attributeDiff.encapsulated()) {
+    					refactorings.addAll(attributeDiff.getRefactorings());
+    				}
     			}
     		}
     		else {
     			removedAttributes.add(attribute);
     		}
     	}
-    	for(UMLAttribute attribute : anonymousClass2.getAttributes()) {
-    		UMLAttribute matchingAttribute = anonymousClass1.containsAttribute(attribute);
+    	for(UMLAttribute attribute : nextClass.getAttributes()) {
+    		UMLAttribute matchingAttribute = originalClass.containsAttribute(attribute);
     		if(matchingAttribute != null) {
     			UMLAttributeDiff attributeDiff = new UMLAttributeDiff(matchingAttribute, attribute, operationBodyMapperList);
     			if(!attributeDiff.isEmpty()) {
     				refactorings.addAll(attributeDiff.getRefactorings());
-    				attributeDiffList.add(attributeDiff);
+    				if(!attributeDiffList.contains(attributeDiff)) {
+						attributeDiffList.add(attributeDiff);
+					}
+    			}
+    			else {
+    				Pair<UMLAttribute, UMLAttribute> pair = Pair.of(matchingAttribute, attribute);
+    				if(!commonAtrributes.contains(pair)) {
+    					commonAtrributes.add(pair);
+    				}
+    				if(attributeDiff.encapsulated()) {
+    					refactorings.addAll(attributeDiff.getRefactorings());
+    				}
     			}
     		}
     		else {
@@ -80,23 +123,46 @@ public class UMLAnonymousClassDiff extends UMLAbstractClassDiff {
 
 	@Override
 	protected void createBodyMappers() throws RefactoringMinerTimedOutException {
-		for(UMLOperation operation1 : anonymousClass1.getOperations()) {
-			for(UMLOperation operation2 : anonymousClass2.getOperations()) {
-				if(operation1.equals(operation2) || operation1.equalSignature(operation2) || operation1.equalSignatureWithIdenticalNameIgnoringChangedTypes(operation2)) {	
+		for(UMLOperation operation1 : originalClass.getOperations()) {
+			for(UMLOperation operation2 : nextClass.getOperations()) {
+				if(operation1.equals(operation2) || operation1.equalSignature(operation2)) {	
 					UMLOperationBodyMapper mapper = new UMLOperationBodyMapper(operation1, operation2, classDiff);
 					int mappings = mapper.mappingsWithoutBlocks();
-					if(mappings > 0) {
+					boolean emptyBodiesWithIdenticalComments = operation1.emptyBodiesWithIdenticalComments(operation2);
+					boolean emptyBodiesWithEqualSignature = operation1.hasEmptyBody() && operation2.hasEmptyBody() && operation1.equals(operation2);
+					boolean matchingEmptyBodies = emptyBodiesWithIdenticalComments || emptyBodiesWithEqualSignature;
+					if(mappings > 0 || matchingEmptyBodies) {
 						int nonMappedElementsT1 = mapper.nonMappedElementsT1();
 						int nonMappedElementsT2 = mapper.nonMappedElementsT2();
-						if((mappings > nonMappedElementsT1 && mappings > nonMappedElementsT2) ||
+						if((mappings > nonMappedElementsT1 || mappings > nonMappedElementsT2) || matchingEmptyBodies ||
 								isPartOfMethodExtracted(operation1, operation2) || isPartOfMethodInlined(operation1, operation2)) {
 							operationBodyMapperList.add(mapper);
-							UMLOperationDiff operationDiff = new UMLOperationDiff(mapper);
-							operationDiffList.add(operationDiff);
 							removedOperations.remove(operation1);
 							addedOperations.remove(operation2);
-							refactorings.addAll(mapper.getRefactorings());
-							refactorings.addAll(operationDiff.getRefactorings());
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void checkForOperationSignatureChanges() throws RefactoringMinerTimedOutException {
+		for(UMLOperation operation1 : originalClass.getOperations()) {
+			for(UMLOperation operation2 : nextClass.getOperations()) {
+				if(!containsMapperForOperation1(operation1) && !containsMapperForOperation2(operation2)) {
+					if(operation1.equalSignatureWithIdenticalNameIgnoringChangedTypes(operation2) ||
+						(operation1.getName().equals(operation2.getName()) && operation1.compatibleSignature(operation2))) {
+						UMLOperationBodyMapper mapper = new UMLOperationBodyMapper(operation1, operation2, classDiff);
+						int mappings = mapper.mappingsWithoutBlocks();
+						if(mappings > 0) {
+							int nonMappedElementsT1 = mapper.nonMappedElementsT1();
+							int nonMappedElementsT2 = mapper.nonMappedElementsT2();
+							if((mappings > nonMappedElementsT1 && mappings > nonMappedElementsT2) ||
+									isPartOfMethodExtracted(operation1, operation2) || isPartOfMethodInlined(operation1, operation2)) {
+								operationBodyMapperList.add(mapper);
+								removedOperations.remove(operation1);
+								addedOperations.remove(operation2);
+							}
 						}
 					}
 				}
@@ -115,7 +181,9 @@ public class UMLAnonymousClassDiff extends UMLAbstractClassDiff {
 					addedAttributeIterator.remove();
 					removedAttributeIterator.remove();
 					refactorings.addAll(attributeDiff.getRefactorings());
-					attributeDiffList.add(attributeDiff);
+					if(!attributeDiffList.contains(attributeDiff)) {
+						attributeDiffList.add(attributeDiff);
+					}
 					break;
 				}
 			}

@@ -10,7 +10,7 @@ import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
 
 import gr.uom.java.xmi.UMLAnnotation;
-import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
 public class ModifyVariableAnnotationRefactoring implements Refactoring {
@@ -18,18 +18,20 @@ public class ModifyVariableAnnotationRefactoring implements Refactoring {
 	private UMLAnnotation annotationAfter;
 	private VariableDeclaration variableBefore;
 	private VariableDeclaration variableAfter;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
+	private VariableDeclarationContainer operationBefore;
+	private VariableDeclarationContainer operationAfter;
+	private boolean insideExtractedOrInlinedMethod;
 	
 	public ModifyVariableAnnotationRefactoring(UMLAnnotation annotationBefore, UMLAnnotation annotationAfter,
-			VariableDeclaration variableBefore, VariableDeclaration variableAfter, UMLOperation operationBefore,
-			UMLOperation operationAfter) {
+			VariableDeclaration variableBefore, VariableDeclaration variableAfter, VariableDeclarationContainer operationBefore,
+			VariableDeclarationContainer operationAfter, boolean insideExtractedOrInlinedMethod) {
 		this.annotationBefore = annotationBefore;
 		this.annotationAfter = annotationAfter;
 		this.variableBefore = variableBefore;
 		this.variableAfter = variableAfter;
 		this.operationBefore = operationBefore;
 		this.operationAfter = operationAfter;
+		this.insideExtractedOrInlinedMethod = insideExtractedOrInlinedMethod;
 	}
 
 	public UMLAnnotation getAnnotationBefore() {
@@ -48,13 +50,18 @@ public class ModifyVariableAnnotationRefactoring implements Refactoring {
 		return variableAfter;
 	}
 
-	public UMLOperation getOperationBefore() {
+	public VariableDeclarationContainer getOperationBefore() {
 		return operationBefore;
 	}
 
-	public UMLOperation getOperationAfter() {
+	public VariableDeclarationContainer getOperationAfter() {
 		return operationAfter;
 	}
+
+	public boolean isInsideExtractedOrInlinedMethod() {
+		return insideExtractedOrInlinedMethod;
+	}
+
 	@Override
 	public List<CodeRange> leftSide() {
 		List<CodeRange> ranges = new ArrayList<CodeRange>();
@@ -64,8 +71,9 @@ public class ModifyVariableAnnotationRefactoring implements Refactoring {
 		ranges.add(variableBefore.codeRange()
 				.setDescription("original variable declaration")
 				.setCodeElement(variableBefore.toString()));
+		String elementType = operationBefore.getElementType();
 		ranges.add(operationBefore.codeRange()
-				.setDescription("original method declaration")
+				.setDescription("original " + elementType + " declaration")
 				.setCodeElement(operationBefore.toString()));
 		return ranges;
 	}
@@ -79,8 +87,9 @@ public class ModifyVariableAnnotationRefactoring implements Refactoring {
 		ranges.add(variableAfter.codeRange()
 				.setDescription("variable declaration with modified annotation")
 				.setCodeElement(variableAfter.toString()));
+		String elementType = operationAfter.getElementType();
 		ranges.add(operationAfter.codeRange()
-				.setDescription("method declaration with modified variable annotation")
+				.setDescription(elementType + " declaration with modified variable annotation")
 				.setCodeElement(operationAfter.toString()));
 		return ranges;
 	}
@@ -124,7 +133,8 @@ public class ModifyVariableAnnotationRefactoring implements Refactoring {
 		else
 			sb.append(" in variable ");
 		sb.append(variableAfter);
-		sb.append(" in method ");
+		String elementType = operationAfter.getElementType();
+		sb.append(" in " + elementType + " ");
 		sb.append(operationAfter);
 		sb.append(" from class ");
 		sb.append(operationAfter.getClassName());

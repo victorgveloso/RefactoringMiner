@@ -4,7 +4,7 @@ import gr.uom.java.xmi.diff.UMLClassDiff;
 import gr.uom.java.xmi.diff.UMLModelDiff;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -12,11 +12,16 @@ import java.util.Set;
 
 import org.refactoringminer.api.RefactoringMinerTimedOutException;
 
+import com.github.gumtreediff.tree.TreeContext;
+
 public class UMLModel {
 	private Set<String> repositoryDirectories;
     private List<UMLClass> classList;
     private List<UMLGeneralization> generalizationList;
     private List<UMLRealization> realizationList;
+    private boolean partial;
+    private Map<String, TreeContext> treeContextMap = new LinkedHashMap<>();
+    private Map<String, List<UMLComment>> commentMap = new LinkedHashMap<>();
 
     public UMLModel(Set<String> repositoryDirectories) {
     	this.repositoryDirectories = repositoryDirectories;
@@ -24,6 +29,22 @@ public class UMLModel {
         generalizationList = new ArrayList<UMLGeneralization>();
         realizationList = new ArrayList<UMLRealization>();
     }
+
+	public Map<String, TreeContext> getTreeContextMap() {
+		return treeContextMap;
+	}
+
+	public Map<String, List<UMLComment>> getCommentMap() {
+		return commentMap;
+	}
+
+	public boolean isPartial() {
+		return partial;
+	}
+
+	public void setPartial(boolean partial) {
+		this.partial = partial;
+	}
 
 	public void addClass(UMLClass umlClass) {
         classList.add(umlClass);
@@ -107,11 +128,7 @@ public class UMLModel {
     	return null;
     }
 
-    public UMLModelDiff diff(UMLModel umlModel) throws RefactoringMinerTimedOutException {
-    	return this.diff(umlModel, Collections.<String, String>emptyMap());
-    }
-
-	public UMLModelDiff diff(UMLModel umlModel, Map<String, String> renamedFileHints) throws RefactoringMinerTimedOutException {
+	public UMLModelDiff diff(UMLModel umlModel) throws RefactoringMinerTimedOutException {
     	UMLModelDiff modelDiff = new UMLModelDiff(this, umlModel);
     	for(UMLClass umlClass : classList) {
     		if(!umlModel.classList.contains(umlClass))
@@ -121,8 +138,8 @@ public class UMLModel {
     		if(!this.classList.contains(umlClass))
     			modelDiff.reportAddedClass(umlClass);
     	}
-    	modelDiff.checkForMovedClasses(renamedFileHints, umlModel.repositoryDirectories, new UMLClassMatcher.Move());
-    	modelDiff.checkForRenamedClasses(renamedFileHints, new UMLClassMatcher.Rename());
+    	modelDiff.checkForMovedClasses(umlModel.repositoryDirectories, new UMLClassMatcher.Move());
+    	modelDiff.checkForRenamedClasses(new UMLClassMatcher.Rename());
     	for(UMLGeneralization umlGeneralization : generalizationList) {
     		if(!umlModel.generalizationList.contains(umlGeneralization))
     			modelDiff.reportRemovedGeneralization(umlGeneralization);
@@ -145,12 +162,11 @@ public class UMLModel {
     		if(umlModel.classList.contains(umlClass)) {
     			UMLClassDiff classDiff = new UMLClassDiff(umlClass, umlModel.getClass(umlClass), modelDiff);
     			classDiff.process();
-    			if(!classDiff.isEmpty())
-    				modelDiff.addUMLClassDiff(classDiff);
+    			modelDiff.addUMLClassDiff(classDiff);
     		}
     	}
-    	modelDiff.checkForMovedClasses(renamedFileHints, umlModel.repositoryDirectories, new UMLClassMatcher.RelaxedMove());
-    	modelDiff.checkForRenamedClasses(renamedFileHints, new UMLClassMatcher.RelaxedRename());
+    	modelDiff.checkForMovedClasses(umlModel.repositoryDirectories, new UMLClassMatcher.RelaxedMove());
+    	modelDiff.checkForRenamedClasses(new UMLClassMatcher.RelaxedRename());
     	return modelDiff;
     }
 }

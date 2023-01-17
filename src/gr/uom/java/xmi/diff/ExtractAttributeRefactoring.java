@@ -9,21 +9,24 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
 
+import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLAttribute;
-import gr.uom.java.xmi.UMLClass;
 import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 
-public class ExtractAttributeRefactoring implements Refactoring {
+public class ExtractAttributeRefactoring implements Refactoring, ReferenceBasedRefactoring {
 	private UMLAttribute attributeDeclaration;
-	private UMLClass originalClass;
-	private UMLClass nextClass;
+	private UMLAbstractClass originalClass;
+	private UMLAbstractClass nextClass;
 	private Set<AbstractCodeMapping> references;
+	private boolean insideExtractedOrInlinedMethod;
 
-	public ExtractAttributeRefactoring(UMLAttribute variableDeclaration, UMLClass originalClass, UMLClass nextClass) {
+	public ExtractAttributeRefactoring(UMLAttribute variableDeclaration, UMLAbstractClass originalClass, UMLAbstractClass nextClass,
+			boolean insideExtractedOrInlinedMethod) {
 		this.attributeDeclaration = variableDeclaration;
 		this.originalClass = originalClass;
 		this.nextClass = nextClass;
 		this.references = new LinkedHashSet<AbstractCodeMapping>();
+		this.insideExtractedOrInlinedMethod = insideExtractedOrInlinedMethod;
 	}
 
 	public void addReference(AbstractCodeMapping mapping) {
@@ -46,6 +49,10 @@ public class ExtractAttributeRefactoring implements Refactoring {
 		return references;
 	}
 
+	public boolean isInsideExtractedOrInlinedMethod() {
+		return insideExtractedOrInlinedMethod;
+	}
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getName()).append("\t");
@@ -62,11 +69,11 @@ public class ExtractAttributeRefactoring implements Refactoring {
 		return attributeDeclaration.codeRange();
 	}
 
-	public UMLClass getOriginalClass() {
+	public UMLAbstractClass getOriginalClass() {
 		return originalClass;
 	}
 
-	public UMLClass getNextClass() {
+	public UMLAbstractClass getNextClass() {
 		return nextClass;
 	}
 
@@ -74,7 +81,7 @@ public class ExtractAttributeRefactoring implements Refactoring {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((attributeDeclaration == null) ? 0 : attributeDeclaration.hashCode());
+		result = prime * result + ((attributeDeclaration.getVariableDeclaration() == null) ? 0 : attributeDeclaration.getVariableDeclaration().hashCode());
 		return result;
 	}
 
@@ -90,7 +97,7 @@ public class ExtractAttributeRefactoring implements Refactoring {
 		if (attributeDeclaration == null) {
 			if (other.attributeDeclaration != null)
 				return false;
-		} else if (!attributeDeclaration.equals(other.attributeDeclaration))
+		} else if (!attributeDeclaration.getVariableDeclaration().equals(other.attributeDeclaration.getVariableDeclaration()))
 			return false;
 		return true;
 	}

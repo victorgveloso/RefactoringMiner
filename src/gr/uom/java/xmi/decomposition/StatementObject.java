@@ -2,7 +2,6 @@ package gr.uom.java.xmi.decomposition;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -17,58 +16,65 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.diff.CodeRange;
+import static gr.uom.java.xmi.decomposition.Visitor.stringify;
 
 public class StatementObject extends AbstractStatement {
 	
 	private String statement;
 	private LocationInfo locationInfo;
-	private List<String> variables;
+	private List<LeafExpression> variables;
 	private List<String> types;
 	private List<VariableDeclaration> variableDeclarations;
-	private Map<String, List<OperationInvocation>> methodInvocationMap;
+	private List<AbstractCall> methodInvocations;
 	private List<AnonymousClassDeclarationObject> anonymousClassDeclarations;
-	private List<String> stringLiterals;
-	private List<String> numberLiterals;
-	private List<String> nullLiterals;
-	private List<String> booleanLiterals;
-	private List<String> typeLiterals;
-	private Map<String, List<ObjectCreation>> creationMap;
-	private List<String> infixExpressions;
+	private List<LeafExpression> stringLiterals;
+	private List<LeafExpression> numberLiterals;
+	private List<LeafExpression> nullLiterals;
+	private List<LeafExpression> booleanLiterals;
+	private List<LeafExpression> typeLiterals;
+	private List<AbstractCall> creations;
+	private List<LeafExpression> infixExpressions;
 	private List<String> infixOperators;
-	private List<String> arrayAccesses;
-	private List<String> prefixExpressions;
-	private List<String> postfixExpressions;
-	private List<String> arguments;
+	private List<LeafExpression> arrayAccesses;
+	private List<LeafExpression> prefixExpressions;
+	private List<LeafExpression> postfixExpressions;
+	private List<LeafExpression> thisExpressions;
+	private List<LeafExpression> arguments;
+	private List<LeafExpression> parenthesizedExpressions;
 	private List<TernaryOperatorExpression> ternaryOperatorExpressions;
 	private List<LambdaExpressionObject> lambdas;
 	
-	public StatementObject(CompilationUnit cu, String filePath, Statement statement, int depth, CodeElementType codeElementType) {
+	public StatementObject(CompilationUnit cu, String filePath, Statement statement, int depth, CodeElementType codeElementType, VariableDeclarationContainer container) {
 		super();
 		this.locationInfo = new LocationInfo(cu, filePath, statement, codeElementType);
-		Visitor visitor = new Visitor(cu, filePath);
+		Visitor visitor = new Visitor(cu, filePath, container);
 		statement.accept(visitor);
 		this.variables = visitor.getVariables();
 		this.types = visitor.getTypes();
 		this.variableDeclarations = visitor.getVariableDeclarations();
-		this.methodInvocationMap = visitor.getMethodInvocationMap();
+		this.methodInvocations = visitor.getMethodInvocations();
 		this.anonymousClassDeclarations = visitor.getAnonymousClassDeclarations();
 		this.stringLiterals = visitor.getStringLiterals();
 		this.numberLiterals = visitor.getNumberLiterals();
 		this.nullLiterals = visitor.getNullLiterals();
 		this.booleanLiterals = visitor.getBooleanLiterals();
 		this.typeLiterals = visitor.getTypeLiterals();
-		this.creationMap = visitor.getCreationMap();
+		this.creations = visitor.getCreations();
 		this.infixExpressions = visitor.getInfixExpressions();
 		this.infixOperators = visitor.getInfixOperators();
 		this.arrayAccesses = visitor.getArrayAccesses();
 		this.prefixExpressions = visitor.getPrefixExpressions();
 		this.postfixExpressions = visitor.getPostfixExpressions();
+		this.thisExpressions = visitor.getThisExpressions();
 		this.arguments = visitor.getArguments();
+		this.parenthesizedExpressions = visitor.getParenthesizedExpressions();
 		this.ternaryOperatorExpressions = visitor.getTernaryOperatorExpressions();
 		this.lambdas = visitor.getLambdas();
 		setDepth(depth);
-		if(Visitor.METHOD_INVOCATION_PATTERN.matcher(statement.toString()).matches()) {
+		String statementAsString = stringify(statement);
+		if(Visitor.METHOD_INVOCATION_PATTERN.matcher(statementAsString).matches()) {
 			if(statement instanceof VariableDeclarationStatement) {
 				VariableDeclarationStatement variableDeclarationStatement = (VariableDeclarationStatement)statement;
 				StringBuilder sb = new StringBuilder();
@@ -76,7 +82,7 @@ public class StatementObject extends AbstractStatement {
 				for(IExtendedModifier modifier : modifiers) {
 					sb.append(modifier.toString()).append(" ");
 				}
-				sb.append(variableDeclarationStatement.getType().toString());
+				sb.append(stringify(variableDeclarationStatement.getType()));
 				List<VariableDeclarationFragment> fragments = variableDeclarationStatement.fragments();
 				for(VariableDeclarationFragment fragment : fragments) {
 					sb.append(fragment.getName().getIdentifier());
@@ -125,17 +131,17 @@ public class StatementObject extends AbstractStatement {
 				this.statement = sb.toString();
 			}
 			else {
-				this.statement = statement.toString();
+				this.statement = statementAsString;
 			}
 		}
 		else {
-			this.statement = statement.toString();
+			this.statement = statementAsString;
 		}
 	}
 
 	@Override
-	public List<StatementObject> getLeaves() {
-		List<StatementObject> leaves = new ArrayList<StatementObject>();
+	public List<AbstractCodeFragment> getLeaves() {
+		List<AbstractCodeFragment> leaves = new ArrayList<AbstractCodeFragment>();
 		leaves.add(this);
 		return leaves;
 	}
@@ -145,7 +151,7 @@ public class StatementObject extends AbstractStatement {
 	}
 
 	@Override
-	public List<String> getVariables() {
+	public List<LeafExpression> getVariables() {
 		return variables;
 	}
 
@@ -160,8 +166,8 @@ public class StatementObject extends AbstractStatement {
 	}
 
 	@Override
-	public Map<String, List<OperationInvocation>> getMethodInvocationMap() {
-		return methodInvocationMap;
+	public List<AbstractCall> getMethodInvocations() {
+		return methodInvocations;
 	}
 
 	@Override
@@ -170,37 +176,37 @@ public class StatementObject extends AbstractStatement {
 	}
 
 	@Override
-	public List<String> getStringLiterals() {
+	public List<LeafExpression> getStringLiterals() {
 		return stringLiterals;
 	}
 
 	@Override
-	public List<String> getNumberLiterals() {
+	public List<LeafExpression> getNumberLiterals() {
 		return numberLiterals;
 	}
 
 	@Override
-	public List<String> getNullLiterals() {
+	public List<LeafExpression> getNullLiterals() {
 		return nullLiterals;
 	}
 
 	@Override
-	public List<String> getBooleanLiterals() {
+	public List<LeafExpression> getBooleanLiterals() {
 		return booleanLiterals;
 	}
 
 	@Override
-	public List<String> getTypeLiterals() {
+	public List<LeafExpression> getTypeLiterals() {
 		return typeLiterals;
 	}
 
 	@Override
-	public Map<String, List<ObjectCreation>> getCreationMap() {
-		return creationMap;
+	public List<AbstractCall> getCreations() {
+		return creations;
 	}
 
 	@Override
-	public List<String> getInfixExpressions() {
+	public List<LeafExpression> getInfixExpressions() {
 		return infixExpressions;
 	}
 
@@ -210,23 +216,33 @@ public class StatementObject extends AbstractStatement {
 	}
 
 	@Override
-	public List<String> getArrayAccesses() {
+	public List<LeafExpression> getArrayAccesses() {
 		return arrayAccesses;
 	}
 
 	@Override
-	public List<String> getPrefixExpressions() {
+	public List<LeafExpression> getPrefixExpressions() {
 		return prefixExpressions;
 	}
 
 	@Override
-	public List<String> getPostfixExpressions() {
+	public List<LeafExpression> getPostfixExpressions() {
 		return postfixExpressions;
 	}
 
 	@Override
-	public List<String> getArguments() {
+	public List<LeafExpression> getThisExpressions() {
+		return thisExpressions;
+	}
+
+	@Override
+	public List<LeafExpression> getArguments() {
 		return arguments;
+	}
+
+	@Override
+	public List<LeafExpression> getParenthesizedExpressions() {
+		return parenthesizedExpressions;
 	}
 
 	@Override
@@ -257,6 +273,13 @@ public class StatementObject extends AbstractStatement {
 		for(VariableDeclaration declaration : variableDeclarations) {
 			if(declaration.getVariableName().equals(variableName)) {
 				return declaration;
+			}
+		}
+		for(LambdaExpressionObject lambda : getLambdas()) {
+			for(VariableDeclaration declaration : lambda.getParameters()) {
+				if(declaration.getVariableName().equals(variableName)) {
+					return declaration;
+				}
 			}
 		}
 		return null;

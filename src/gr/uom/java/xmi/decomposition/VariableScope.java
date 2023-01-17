@@ -1,7 +1,7 @@
 package gr.uom.java.xmi.decomposition;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -15,8 +15,8 @@ public class VariableScope {
 	private int startColumn;
 	private int endLine;
 	private int endColumn;
-	private List<AbstractCodeFragment> statementsInScope = new ArrayList<>();
-	private List<AbstractCodeFragment> statementsInScopeUsingVariable = new ArrayList<>();
+	private Set<AbstractCodeFragment> statementsInScopeUsingVariable = new LinkedHashSet<>();
+	private String parentSignature = "";
 	
 	public VariableScope(CompilationUnit cu, String filePath, int startOffset, int endOffset) {
 		//ASTNode parent = node.getParent();
@@ -93,19 +93,11 @@ public class VariableScope {
 		return sb.toString();
 	}
 
-	public void addStatement(AbstractCodeFragment statement) {
-		this.statementsInScope.add(statement);
-	}
-
 	public void addStatementUsingVariable(AbstractCodeFragment statement) {
 		this.statementsInScopeUsingVariable.add(statement);
 	}
 
-	public List<AbstractCodeFragment> getStatementsInScope() {
-		return statementsInScope;
-	}
-
-	public List<AbstractCodeFragment> getStatementsInScopeUsingVariable() {
+	public Set<AbstractCodeFragment> getStatementsInScopeUsingVariable() {
 		return statementsInScopeUsingVariable;
 	}
 
@@ -113,5 +105,26 @@ public class VariableScope {
 		return this.filePath.equals(other.getFilePath()) &&
 				this.startOffset <= other.getStartOffset() &&
 				this.endOffset >= other.getEndOffset();
+	}
+	
+	public boolean overlaps(VariableScope other) {
+		return this.filePath.equals(other.filePath) &&
+				this.startOffset <= other.endOffset && this.endOffset >= other.startOffset;
+	}
+	
+	public int getStartOffset() {
+		return startOffset;
+	}
+
+	public int getEndOffset() {
+		return endOffset;
+	}
+
+	public String getParentSignature() {
+		return parentSignature;
+	}
+
+	public void setParentSignature(String parentSignature) {
+		this.parentSignature = parentSignature;
 	}
 }

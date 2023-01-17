@@ -1,11 +1,11 @@
 package gr.uom.java.xmi;
 
+import gr.uom.java.xmi.decomposition.AbstractCall;
 import gr.uom.java.xmi.decomposition.AbstractStatement;
 import gr.uom.java.xmi.decomposition.AnonymousClassDeclarationObject;
-import gr.uom.java.xmi.decomposition.CompositeStatementObject;
 import gr.uom.java.xmi.decomposition.LambdaExpressionObject;
+import gr.uom.java.xmi.decomposition.LeafExpression;
 import gr.uom.java.xmi.decomposition.OperationBody;
-import gr.uom.java.xmi.decomposition.OperationInvocation;
 import gr.uom.java.xmi.decomposition.StatementObject;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 import gr.uom.java.xmi.diff.CodeRange;
@@ -13,27 +13,29 @@ import gr.uom.java.xmi.diff.StringDistance;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.refactoringminer.util.AstUtils;
 
-public class UMLOperation implements Comparable<UMLOperation>, Serializable, LocationInfoProvider {
+public class UMLOperation implements Comparable<UMLOperation>, Serializable, VariableDeclarationContainer {
 	private LocationInfo locationInfo;
 	private String name;
-	private String visibility;
+	private Visibility visibility;
 	private boolean isAbstract;
 	private List<UMLParameter> parameters;
 	private String className;
 	private boolean isConstructor;
 	private boolean isFinal;
 	private boolean isStatic;
+	private boolean isNative;
 	private boolean isSynchronized;
-	private boolean emptyBody;
-	private boolean declaredInAnonymousClass;
+	private Optional<UMLAnonymousClass> anonymousClassContainer;
 	private OperationBody operationBody;
 	private List<UMLAnonymousClass> anonymousClassList;
 	private List<UMLTypeParameter> typeParameters;
@@ -86,11 +88,15 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Loc
 		return name;
 	}
 
-	public String getVisibility() {
+	public String getElementType() {
+		return "method";
+	}
+
+	public Visibility getVisibility() {
 		return visibility;
 	}
 
-	public void setVisibility(String visibility) {
+	public void setVisibility(Visibility visibility) {
 		this.visibility = visibility;
 	}
 
@@ -134,20 +140,24 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Loc
 		this.isSynchronized = isSynchronized;
 	}
 
-	public boolean hasEmptyBody() {
-		return emptyBody;
+	public boolean isNative() {
+		return isNative;
 	}
 
-	public void setEmptyBody(boolean emptyBody) {
-		this.emptyBody = emptyBody;
+	public void setNative(boolean isNative) {
+		this.isNative = isNative;
 	}
 
 	public boolean isDeclaredInAnonymousClass() {
-		return declaredInAnonymousClass;
+		return anonymousClassContainer != null && anonymousClassContainer.isPresent();
 	}
 
-	public void setDeclaredInAnonymousClass(boolean declaredInAnonymousClass) {
-		this.declaredInAnonymousClass = declaredInAnonymousClass;
+	public Optional<UMLAnonymousClass> getAnonymousClassContainer() {
+		return anonymousClassContainer;
+	}
+
+	public void setAnonymousClassContainer(UMLAnonymousClass anonymousClass) {
+		this.anonymousClassContainer = Optional.of(anonymousClass);
 	}
 
 	public OperationBody getBody() {
@@ -172,6 +182,15 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Loc
 		return false;
 	}
 
+	public boolean hasDataProviderAnnotation() {
+		for(UMLAnnotation annotation : annotations) {
+			if(annotation.getTypeName().equals("DataProvider")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public UMLJavadoc getJavadoc() {
 		return javadoc;
 	}
@@ -184,10 +203,10 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Loc
 		return comments;
 	}
 
-	public List<OperationInvocation> getAllOperationInvocations() {
+	public List<AbstractCall> getAllOperationInvocations() {
 		if(operationBody != null)
 			return operationBody.getAllOperationInvocations();
-		return new ArrayList<OperationInvocation>();
+		return Collections.emptyList();
 	}
 
 	public boolean containsAssertion() {
@@ -199,51 +218,13 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Loc
 	public List<LambdaExpressionObject> getAllLambdas() {
 		if(operationBody != null)
 			return operationBody.getAllLambdas();
-		return new ArrayList<LambdaExpressionObject>();
+		return Collections.emptyList();
 	}
 
 	public List<String> getAllVariables() {
 		if(operationBody != null)
 			return operationBody.getAllVariables();
-		return new ArrayList<String>();
-	}
-
-	public List<VariableDeclaration> getAllVariableDeclarations() {
-		if(operationBody != null) {
-			List<VariableDeclaration> allVariableDeclarations = new ArrayList<VariableDeclaration>();
-			allVariableDeclarations.addAll(this.getParameterDeclarationList());
-			allVariableDeclarations.addAll(operationBody.getAllVariableDeclarations());
-			return allVariableDeclarations;
-		}
-		return getParameterDeclarationList();
-	}
-
-	public List<VariableDeclaration> getVariableDeclarationsInScope(LocationInfo location) {
-		List<VariableDeclaration> variableDeclarations = new ArrayList<VariableDeclaration>();
-		for(VariableDeclaration parameterDeclaration : getParameterDeclarationList()) {
-			if(parameterDeclaration.getScope().subsumes(location)) {
-				variableDeclarations.add(parameterDeclaration);
-			}
-		}
-		if(operationBody != null) {
-			variableDeclarations.addAll(operationBody.getVariableDeclarationsInScope(location));
-		}
-		return variableDeclarations;
-	}
-
-	public VariableDeclaration getVariableDeclaration(String variableName) {
-		if(operationBody != null) {
-			VariableDeclaration variableDeclatation = operationBody.getVariableDeclaration(variableName);
-			if(variableDeclatation != null) {
-				return variableDeclatation;
-			}
-		}
-		for(VariableDeclaration parameterDeclaration : getParameterDeclarationList()) {
-			if(parameterDeclaration.getVariableName().equals(variableName)) {
-				return parameterDeclaration;
-			}
-		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	public Map<String, Set<VariableDeclaration>> variableDeclarationMap() {
@@ -267,12 +248,6 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Loc
 		if(operationBody != null)
 			return operationBody.statementCount();
 		return 0;
-	}
-
-	public List<String> stringRepresentation() {
-		if(operationBody != null)
-			return operationBody.stringRepresentation();
-		return new ArrayList<String>();
 	}
 
 	public void setBody(OperationBody body) {
@@ -458,21 +433,6 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Loc
 		return params;
 	}
 
-	public List<UMLType> commonParameterTypes(UMLOperation operation) {
-		List<UMLType> commonParameterTypes = new ArrayList<UMLType>();
-		List<UMLType> thisParameterTypeList = getParameterTypeList();
-		List<UMLType> otherParameterTypeList = operation.getParameterTypeList();
-		int min = Math.min(thisParameterTypeList.size(), otherParameterTypeList.size());
-		for(int i=0; i<min; i++) {
-			UMLType thisParameterType = thisParameterTypeList.get(i);
-			UMLType otherParameterType = otherParameterTypeList.get(i);
-			if(thisParameterType.equals(otherParameterType)) {
-				commonParameterTypes.add(thisParameterType);
-			}
-		}
-		return commonParameterTypes;
-	}
-
 	public List<UMLParameter> getParameterizedTypesInSignature() {
 		List<UMLParameter> params = new ArrayList<UMLParameter>();
 		for(UMLParameter parameter : parameters) {
@@ -529,18 +489,15 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Loc
 		return false;
 	}
 
-	public OperationInvocation isDelegate() {
+	public AbstractCall isDelegate() {
 		if(getBody() != null) {
 			List<AbstractStatement> statements = getBody().getCompositeStatement().getStatements();
 			if(statements.size() == 1 && statements.get(0) instanceof StatementObject) {
 				StatementObject statement = (StatementObject)statements.get(0);
-				Map<String, List<OperationInvocation>> operationInvocationMap = statement.getMethodInvocationMap();
-				for(String key : operationInvocationMap.keySet()) {
-					List<OperationInvocation> operationInvocations = operationInvocationMap.get(key);
-					for(OperationInvocation operationInvocation : operationInvocations) {
-						if(operationInvocation.matchesOperation(this, this, null) || operationInvocation.getMethodName().equals(this.getName())) {
-							return operationInvocation;
-						}
+				for(AbstractCall operationInvocation : statement.getMethodInvocations()) {
+					if(operationInvocation.matchesOperation(this, this, null) ||
+							(operationInvocation.getName().equals(this.getName()) && (operationInvocation.getExpression() == null || operationInvocation.getExpression().endsWith("this")))) {
+						return operationInvocation;
 					}
 				}
 			}
@@ -555,7 +512,8 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Loc
 			if(statements.size() == 1 && statements.get(0) instanceof StatementObject) {
 				StatementObject statement = (StatementObject)statements.get(0);
 				if(statement.getString().startsWith("return ")) {
-					for(String variable : statement.getVariables()) {
+					for(LeafExpression variableExpression : statement.getVariables()) {
+						String variable = variableExpression.getString();
 						if(statement.getString().equals("return " + variable + ";\n") && parameters.size() == 0) {
 							return true;
 						}
@@ -586,7 +544,8 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Loc
 			List<AbstractStatement> statements = getBody().getCompositeStatement().getStatements();
 			if(statements.size() == 1 && statements.get(0) instanceof StatementObject) {
 				StatementObject statement = (StatementObject)statements.get(0);
-				for(String variable : statement.getVariables()) {
+				for(LeafExpression variableExpression : statement.getVariables()) {
+					String variable = variableExpression.getString();
 					if(statement.getString().equals(variable + "=" + parameterNames.get(0) + ";\n")) {
 						return true;
 					}
@@ -603,7 +562,8 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Loc
 			List<AbstractStatement> statements = getBody().getCompositeStatement().getStatements();
 			for(AbstractStatement statement : statements) {
 				if(statement instanceof StatementObject) {
-					for(String variable : statement.getVariables()) {
+					for(LeafExpression variableExpression : statement.getVariables()) {
+						String variable = variableExpression.getString();
 						if(statement.getString().startsWith(variable + "=")) {
 							for(String parameterName : parameterNames) {
 								if(statement.getString().equals(variable + "=" + parameterName + ";\n")) {
@@ -973,28 +933,10 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Loc
 		return false;
 	}
 
-	public Map<String, Set<String>> aliasedAttributes() {
-		if(operationBody != null && isConstructor) {
-			List<String> parameterNames = getParameterNameList();
-			Map<String, Set<String>> map = operationBody.aliasedAttributes();
-			Set<String> keysToBeRemoved = new LinkedHashSet<String>();
-			for(String key : map.keySet()) {
-				if(!parameterNames.contains(key)) {
-					keysToBeRemoved.add(key);
-				}
-			}
-			for(String key : keysToBeRemoved) {
-				map.remove(key);
-			}
-			return map;
-		}
-		return new LinkedHashMap<String, Set<String>>();
-	}
-
-	public CompositeStatementObject loopWithVariables(String currentElementName, String collectionName) {
-		if(operationBody != null) {
-			return operationBody.loopWithVariables(currentElementName, collectionName);
-		}
-		return null;
+	public List<String> getSignatureIdentifiers() {
+		List<String> signature = new ArrayList<>();
+		signature.add(name);
+		signature.addAll(getParameterNameList());
+		return signature;
 	}
 }

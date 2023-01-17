@@ -6,7 +6,7 @@ public class LeafType extends UMLType {
 	private String classType;
 	private String nonQualifiedClassType;
 	private volatile int hashCode = 0;
-	private static final Pattern CAMEL_CASE_SPLIT_PATTERN = Pattern.compile("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
+	public static final Pattern CAMEL_CASE_SPLIT_PATTERN = Pattern.compile("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
 	
 	public LeafType(String type) {
 		this.classType = type;
@@ -105,7 +105,9 @@ public class LeafType extends UMLType {
 					leafType.getClassType().endsWith(this.getClassType()) ||
 					this.containsTypeArgument(leafType.getClassType()) ||
 					leafType.containsTypeArgument(this.getClassType()) ||
-					this.commonTokenInClassType(leafType);
+					this.commonTokenInClassType(leafType) ||
+					(this.getClassType().equals("List") && leafType.getClassType().equals("Set") && this.getTypeArguments().equals(leafType.getTypeArguments())) ||
+					(this.getClassType().equals("ArrayList") && leafType.getClassType().equals("LinkedHashSet") && this.getTypeArguments().equals(leafType.getTypeArguments()));
 		}
 		return false;
 	}

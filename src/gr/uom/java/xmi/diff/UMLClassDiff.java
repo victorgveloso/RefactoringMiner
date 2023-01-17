@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.refactoringminer.api.RefactoringMinerTimedOutException;
 
-import gr.uom.java.xmi.UMLAnonymousClass;
 import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLClass;
 import gr.uom.java.xmi.UMLOperation;
@@ -49,7 +49,18 @@ public class UMLClassDiff extends UMLClassBaseDiff {
     			UMLAttributeDiff attributeDiff = new UMLAttributeDiff(attribute, matchingAttribute, this, modelDiff);
     			if(!attributeDiff.isEmpty()) {
 	    			refactorings.addAll(attributeDiff.getRefactorings());
-	    			this.attributeDiffList.add(attributeDiff);
+	    			if(!attributeDiffList.contains(attributeDiff)) {
+						attributeDiffList.add(attributeDiff);
+					}
+    			}
+    			else {
+    				Pair<UMLAttribute, UMLAttribute> pair = Pair.of(attribute, matchingAttribute);
+    				if(!commonAtrributes.contains(pair)) {
+    					commonAtrributes.add(pair);
+    				}
+    				if(attributeDiff.encapsulated()) {
+    					refactorings.addAll(attributeDiff.getRefactorings());
+    				}
     			}
     		}
     	}
@@ -62,7 +73,18 @@ public class UMLClassDiff extends UMLClassBaseDiff {
     			UMLAttributeDiff attributeDiff = new UMLAttributeDiff(matchingAttribute, attribute, this, modelDiff);
     			if(!attributeDiff.isEmpty()) {
 	    			refactorings.addAll(attributeDiff.getRefactorings());
-					this.attributeDiffList.add(attributeDiff);
+	    			if(!attributeDiffList.contains(attributeDiff)) {
+						attributeDiffList.add(attributeDiff);
+					}
+    			}
+    			else {
+    				Pair<UMLAttribute, UMLAttribute> pair = Pair.of(matchingAttribute, attribute);
+    				if(!commonAtrributes.contains(pair)) {
+    					commonAtrributes.add(pair);
+    				}
+    				if(attributeDiff.encapsulated()) {
+    					refactorings.addAll(attributeDiff.getRefactorings());
+    				}
     			}
     		}
     	}
@@ -70,30 +92,50 @@ public class UMLClassDiff extends UMLClassBaseDiff {
 
 	protected void processOperations() {
 		for(UMLOperation operation : originalClass.getOperations()) {
-    		if(!nextClass.getOperations().contains(operation))
+			int index = nextClass.getOperations().indexOf(operation);
+			UMLOperation operation2 = null;
+			if(index != -1) {
+				operation2 = nextClass.getOperations().get(index);
+			}
+    		if(index == -1 || differentParameterNames(operation, operation2))
     			this.reportRemovedOperation(operation);
     	}
     	for(UMLOperation operation : nextClass.getOperations()) {
-    		if(!originalClass.getOperations().contains(operation))
+    		int index = originalClass.getOperations().indexOf(operation);
+    		UMLOperation operation1 = null;
+    		if(index != -1) {
+    			operation1 = originalClass.getOperations().get(index);
+    		}
+    		if(index == -1 || differentParameterNames(operation1, operation))
     			this.reportAddedOperation(operation);
     	}
 	}
 
-	protected void processAnonymousClasses() {
-		for(UMLAnonymousClass umlAnonymousClass : originalClass.getAnonymousClassList()) {
-    		if(!nextClass.getAnonymousClassList().contains(umlAnonymousClass))
-    			this.reportRemovedAnonymousClass(umlAnonymousClass);
-    	}
-    	for(UMLAnonymousClass umlAnonymousClass : nextClass.getAnonymousClassList()) {
-    		if(!originalClass.getAnonymousClassList().contains(umlAnonymousClass))
-    			this.reportAddedAnonymousClass(umlAnonymousClass);
-    	}
+	private boolean differentParameterNames(UMLOperation operation1, UMLOperation operation2) {
+		if(operation1 != null && operation2 != null && !operation1.getParameterNameList().equals(operation2.getParameterNameList())) {
+			int methodsWithIdenticalName1 = 0;
+			for(UMLOperation operation : originalClass.getOperations()) {
+				if(operation != operation1 && operation.getName().equals(operation1.getName()) && !operation.hasVarargsParameter()) {
+					methodsWithIdenticalName1++;
+				}
+			}
+			int methodsWithIdenticalName2 = 0;
+			for(UMLOperation operation : nextClass.getOperations()) {
+				if(operation != operation2 && operation.getName().equals(operation2.getName()) && !operation.hasVarargsParameter()) {
+					methodsWithIdenticalName2++;
+				}
+			}
+			if(methodsWithIdenticalName1 > 0 && methodsWithIdenticalName2 > 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	protected void createBodyMappers() throws RefactoringMinerTimedOutException {
 		for(UMLOperation originalOperation : originalClass.getOperations()) {
 			for(UMLOperation nextOperation : nextClass.getOperations()) {
-				if(originalOperation.equalsQualified(nextOperation)) {
+				if(originalOperation.equalsQualified(nextOperation) && !differentParameterNames(originalOperation, nextOperation)) {
 					if(getModelDiff() != null) {
 						List<UMLOperationBodyMapper> mappers = getModelDiff().findMappersWithMatchingSignature2(nextOperation);
 						if(mappers.size() > 0) {
@@ -113,8 +155,8 @@ public class UMLClassDiff extends UMLClassBaseDiff {
 			}
 		}
 		for(UMLOperation operation : originalClass.getOperations()) {
-			if(!containsMapperForOperation1(operation) && nextClass.getOperations().contains(operation) && !removedOperations.contains(operation)) {
-    			int index = nextClass.getOperations().indexOf(operation);
+			int index = nextClass.getOperations().indexOf(operation);
+			if(!containsMapperForOperation1(operation) && index != -1 && !removedOperations.contains(operation) && !differentParameterNames(operation, nextClass.getOperations().get(index))) {
     			int lastIndex = nextClass.getOperations().lastIndexOf(operation);
     			int finalIndex = index;
     			if(index != lastIndex) {
@@ -137,13 +179,13 @@ public class UMLClassDiff extends UMLClassBaseDiff {
 		List<UMLOperation> addedOperationsToBeRemoved = new ArrayList<UMLOperation>();
 		for(UMLOperation removedOperation : removedOperations) {
 			for(UMLOperation addedOperation : addedOperations) {
-				if(removedOperation.equalsIgnoringVisibility(addedOperation)) {
+				if(removedOperation.equalsIgnoringVisibility(addedOperation) && !differentParameterNames(removedOperation, addedOperation)) {
 					UMLOperationBodyMapper operationBodyMapper = new UMLOperationBodyMapper(removedOperation, addedOperation, this);
 					this.addOperationBodyMapper(operationBodyMapper);
 					removedOperationsToBeRemoved.add(removedOperation);
 					addedOperationsToBeRemoved.add(addedOperation);
 				}
-				else if(removedOperation.equalsIgnoringNameCase(addedOperation)) {
+				else if(removedOperation.equalsIgnoringNameCase(addedOperation) && !differentParameterNames(removedOperation, addedOperation)) {
 					UMLOperationBodyMapper operationBodyMapper = new UMLOperationBodyMapper(removedOperation, addedOperation, this);
 					if(!removedOperation.getName().equals(addedOperation.getName()) &&
 							!(removedOperation.isConstructor() && addedOperation.isConstructor())) {
@@ -170,25 +212,27 @@ public class UMLClassDiff extends UMLClassBaseDiff {
 					refactorings.addAll(attributeDiff.getRefactorings());
 					addedAttributeIterator.remove();
 					removedAttributeIterator.remove();
-					attributeDiffList.add(attributeDiff);
+					if(!attributeDiffList.contains(attributeDiff)) {
+						attributeDiffList.add(attributeDiff);
+					}
 					break;
 				}
 			}
 		}
 	}
 
-	private boolean containsMapperForOperation1(UMLOperation operation) {
+	protected boolean containsMapperForOperation1(UMLOperation operation) {
 		for(UMLOperationBodyMapper mapper : getOperationBodyMapperList()) {
-			if(mapper.getOperation1().equalsQualified(operation)) {
+			if(mapper.getOperation1() != null && mapper.getOperation1().equalsQualified(operation)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private boolean containsMapperForOperation2(UMLOperation operation) {
+	protected boolean containsMapperForOperation2(UMLOperation operation) {
 		for(UMLOperationBodyMapper mapper : getOperationBodyMapperList()) {
-			if(mapper.getOperation2().equalsQualified(operation)) {
+			if(mapper.getOperation2() != null && mapper.getOperation2().equalsQualified(operation)) {
 				return true;
 			}
 		}

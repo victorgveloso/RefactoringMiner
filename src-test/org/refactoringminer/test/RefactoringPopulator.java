@@ -112,9 +112,21 @@ public class RefactoringPopulator {
 		MergePackage(new BigInteger("604462909807314587353088")),
 		MovePackage(new BigInteger("1208925819614629174706176")),
 		LocalizeParameter(new BigInteger("2417851639229258349412352")),
-		ReplaceTryAndFailWithRule(new BigInteger("2417851639229258349412352")),
-		ReplaceExpectAnnotationWithAssertThrows(new BigInteger("9671406556917033397649408")),
-		All(new BigInteger("19342813113834066795298815"));
+		ChangeTypeDeclarationKind(new BigInteger("4835703278458516698824704")),
+		CollapseHierarchy(new BigInteger("9671406556917033397649408")),
+		ReplaceLoopWithPipeline(new BigInteger("19342813113834066795298816")),
+		ReplaceAnonymousWithLambda(new BigInteger("38685626227668133590597632")),
+		MergeClass(new BigInteger("77371252455336267181195264")),
+		InlineAttribute(new BigInteger("154742504910672534362390528")),
+		ReplacePipelineWithLoop(new BigInteger("309485009821345068724781056")),
+		SplitClass(new BigInteger("618970019642690137449562112")),
+		SplitConditional(new BigInteger("1237940039285380274899124224")),
+		InvertCondition(new BigInteger("2475880078570760549798248448")),
+		MergeConditional(new BigInteger("4951760157141521099596496896")),
+		MergeCatch(new BigInteger("9903520314283042199192993792")),
+		ReplaceTryAndFailWithRule(new BigInteger("19807040628566084398385987583")),
+		ReplaceExpectAnnotationWithAssertThrows(new BigInteger("39614081257132168796771975166")),
+		All(new BigInteger("79228162514264337593543950332"));
 
 		private BigInteger value;
 

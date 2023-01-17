@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jgit.lib.Repository;
@@ -46,7 +48,7 @@ public class RefactoringMiner {
 		}
 	}
 
-	private static void detectAll(String[] args) throws Exception {
+	public static void detectAll(String[] args) throws Exception {
 		int maxArgLength = processJSONoption(args, 3);
 		if (args.length > maxArgLength) {
 			throw argumentException();
@@ -92,7 +94,7 @@ public class RefactoringMiner {
 		return args.length == 3 || (args.length > 3 && args[3].equalsIgnoreCase("-json"));
 	}
 
-	private static void detectBetweenCommits(String[] args) throws Exception {
+	public static void detectBetweenCommits(String[] args) throws Exception {
 		int maxArgLength = processJSONoption(args, 4);
 		if (!(args.length == maxArgLength-1 || args.length == maxArgLength)) {
 			throw argumentException();
@@ -132,7 +134,7 @@ public class RefactoringMiner {
 		}
 	}
 
-	private static void detectBetweenTags(String[] args) throws Exception {
+	public static void detectBetweenTags(String[] args) throws Exception {
 		int maxArgLength = processJSONoption(args, 4);
 		if (!(args.length == maxArgLength-1 || args.length == maxArgLength)) {
 			throw argumentException();
@@ -176,7 +178,7 @@ public class RefactoringMiner {
 		return args.length == 4 || (args.length > 4 && args[4].equalsIgnoreCase("-json"));
 	}
 
-	private static void detectAtCommit(String[] args) throws Exception {
+	public static void detectAtCommit(String[] args) throws Exception {
 		int maxArgLength = processJSONoption(args, 3);
 		if (args.length != maxArgLength) {
 			throw argumentException();
@@ -204,7 +206,7 @@ public class RefactoringMiner {
 		}
 	}
 
-	private static void detectAtGitHubCommit(String[] args) throws Exception {
+	public static void detectAtGitHubCommit(String[] args) throws Exception {
 		int maxArgLength = processJSONoption(args, 4);
 		if (args.length != maxArgLength) {
 			throw argumentException();
@@ -217,6 +219,8 @@ public class RefactoringMiner {
 		detector.detectAtCommit(gitURL, commitId, new RefactoringHandler() {
 			@Override
 			public void handle(String commitId, List<Refactoring> refactorings) {
+				Comparator<Refactoring> comparator = (Refactoring r1, Refactoring r2) -> r1.toString().compareTo(r2.toString());
+				Collections.sort(refactorings, comparator);
 				commitJSON(gitURL, commitId, refactorings);
 			}
 
@@ -229,7 +233,7 @@ public class RefactoringMiner {
 		endJSON();
 	}
 
-	private static void detectAtGitHubPullRequest(String[] args) throws Exception {
+	public static void detectAtGitHubPullRequest(String[] args) throws Exception {
 		int maxArgLength = processJSONoption(args, 4);
 		if (args.length != maxArgLength) {
 			throw argumentException();
@@ -243,6 +247,8 @@ public class RefactoringMiner {
 			private int commitCount = 0;
 			@Override
 			public void handle(String commitId, List<Refactoring> refactorings) {
+				Comparator<Refactoring> comparator = (Refactoring r1, Refactoring r2) -> r1.toString().compareTo(r2.toString());
+				Collections.sort(refactorings, comparator);
 				if(commitCount > 0) {
 					betweenCommitsJSON();
 				}
@@ -263,7 +269,12 @@ public class RefactoringMiner {
 		if (args[args.length-2].equalsIgnoreCase("-json")) {
 			path = Paths.get(args[args.length-1]);
 			try {
-				Files.createFile(path);
+				if(Files.exists(path)) {
+					Files.delete(path);
+				}
+				if(Files.notExists(path)) {
+					Files.createFile(path);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

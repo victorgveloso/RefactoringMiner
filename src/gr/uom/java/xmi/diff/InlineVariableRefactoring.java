@@ -9,25 +9,32 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
 
-import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
-public class InlineVariableRefactoring implements Refactoring {
+public class InlineVariableRefactoring implements Refactoring, ReferenceBasedRefactoring {
 	private VariableDeclaration variableDeclaration;
-	private UMLOperation operationBefore;
-	private UMLOperation operationAfter;
+	private VariableDeclarationContainer operationBefore;
+	private VariableDeclarationContainer operationAfter;
 	private Set<AbstractCodeMapping> references;
+	private boolean insideExtractedOrInlinedMethod;
 
-	public InlineVariableRefactoring(VariableDeclaration variableDeclaration, UMLOperation operationBefore, UMLOperation operationAfter) {
+	public InlineVariableRefactoring(VariableDeclaration variableDeclaration, VariableDeclarationContainer operationBefore, VariableDeclarationContainer operationAfter,
+			boolean insideExtractedOrInlinedMethod) {
 		this.variableDeclaration = variableDeclaration;
 		this.operationBefore = operationBefore;
 		this.operationAfter = operationAfter;
 		this.references = new LinkedHashSet<AbstractCodeMapping>();
+		this.insideExtractedOrInlinedMethod = insideExtractedOrInlinedMethod;
 	}
 
 	public void addReference(AbstractCodeMapping mapping) {
 		references.add(mapping);
+	}
+
+	public void addReferences(Set<AbstractCodeMapping> mappings) {
+		references.addAll(mappings);
 	}
 
 	public RefactoringType getRefactoringType() {
@@ -42,11 +49,11 @@ public class InlineVariableRefactoring implements Refactoring {
 		return variableDeclaration;
 	}
 
-	public UMLOperation getOperationBefore() {
+	public VariableDeclarationContainer getOperationBefore() {
 		return operationBefore;
 	}
 
-	public UMLOperation getOperationAfter() {
+	public VariableDeclarationContainer getOperationAfter() {
 		return operationAfter;
 	}
 
@@ -54,11 +61,16 @@ public class InlineVariableRefactoring implements Refactoring {
 		return references;
 	}
 
+	public boolean isInsideExtractedOrInlinedMethod() {
+		return insideExtractedOrInlinedMethod;
+	}
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getName()).append("\t");
 		sb.append(variableDeclaration);
-		sb.append(" in method ");
+		String elementType = operationBefore.getElementType();
+		sb.append(" in " + elementType + " ");
 		sb.append(operationBefore);
 		sb.append(" from class ");
 		sb.append(operationBefore.getClassName());
@@ -124,8 +136,9 @@ public class InlineVariableRefactoring implements Refactoring {
 		for(AbstractCodeMapping mapping : references) {
 			ranges.add(mapping.getFragment1().codeRange().setDescription("statement with the name of the inlined variable"));
 		}
+		String elementType = operationBefore.getElementType();
 		ranges.add(operationBefore.codeRange()
-				.setDescription("original method declaration")
+				.setDescription("original " + elementType + " declaration")
 				.setCodeElement(operationBefore.toString()));
 		return ranges;
 	}
@@ -136,8 +149,9 @@ public class InlineVariableRefactoring implements Refactoring {
 		for(AbstractCodeMapping mapping : references) {
 			ranges.add(mapping.getFragment2().codeRange().setDescription("statement with the initializer of the inlined variable"));
 		}
+		String elementType = operationAfter.getElementType();
 		ranges.add(operationAfter.codeRange()
-				.setDescription("method declaration with inlined variable")
+				.setDescription(elementType + " declaration with inlined variable")
 				.setCodeElement(operationAfter.toString()));
 		return ranges;
 	}
