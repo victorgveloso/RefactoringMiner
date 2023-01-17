@@ -30,7 +30,6 @@ sourceSets {
 
 repositories {
     mavenCentral()
-    jcenter()
 }
 
 dependencies {
@@ -42,11 +41,6 @@ dependencies {
     compile 'org.kohsuke:github-api:1.123'
     compile 'io.github.java-diff-utils:java-diff-utils:4.10'
 
-    compileOnly 'org.projectlombok:lombok:1.18.20'
-    annotationProcessor 'org.projectlombok:lombok:1.18.20'
-    compile 'org.assertj:assertj-core:3.20.2'
-    testCompileOnly 'org.projectlombok:lombok:1.18.20'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
     testCompile 'junit:junit:4.11'
 }
 

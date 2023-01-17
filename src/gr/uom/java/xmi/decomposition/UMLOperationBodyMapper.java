@@ -5000,7 +5000,7 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 		}
 		for(String line : lines) {
 			line = VariableReplacementAnalysis.prepareLine(line);
-			if(SubMethodNodeVisitor.METHOD_SIGNATURE_PATTERN.matcher(line).matches()) {
+			if(Visitor.METHOD_SIGNATURE_PATTERN.matcher(line).matches()) {
 				return true;
 			}
 		}

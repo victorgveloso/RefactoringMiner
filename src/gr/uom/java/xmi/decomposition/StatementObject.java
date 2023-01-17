@@ -46,7 +46,7 @@ public class StatementObject extends AbstractStatement {
 	public StatementObject(CompilationUnit cu, String filePath, Statement statement, int depth, CodeElementType codeElementType) {
 		super();
 		this.locationInfo = new LocationInfo(cu, filePath, statement, codeElementType);
-		SubMethodNodeVisitor visitor = new SubMethodNodeVisitor(cu, filePath);
+		Visitor visitor = new Visitor(cu, filePath);
 		statement.accept(visitor);
 		this.variables = visitor.getVariables();
 		this.types = visitor.getTypes();
@@ -68,7 +68,7 @@ public class StatementObject extends AbstractStatement {
 		this.ternaryOperatorExpressions = visitor.getTernaryOperatorExpressions();
 		this.lambdas = visitor.getLambdas();
 		setDepth(depth);
-		if(SubMethodNodeVisitor.METHOD_INVOCATION_PATTERN.matcher(statement.toString()).matches()) {
+		if(Visitor.METHOD_INVOCATION_PATTERN.matcher(statement.toString()).matches()) {
 			if(statement instanceof VariableDeclarationStatement) {
 				VariableDeclarationStatement variableDeclarationStatement = (VariableDeclarationStatement)statement;
 				StringBuilder sb = new StringBuilder();
@@ -85,11 +85,11 @@ public class StatementObject extends AbstractStatement {
 						sb.append(" = ");
 						if(initializer instanceof MethodInvocation) {
 							MethodInvocation methodInvocation = (MethodInvocation)initializer;
-							sb.append(SubMethodNodeVisitor.processMethodInvocation(methodInvocation));
+							sb.append(Visitor.processMethodInvocation(methodInvocation));
 						}
 						else if(initializer instanceof ClassInstanceCreation) {
 							ClassInstanceCreation classInstanceCreation = (ClassInstanceCreation)initializer;
-							sb.append(SubMethodNodeVisitor.processClassInstanceCreation(classInstanceCreation));
+							sb.append(Visitor.processClassInstanceCreation(classInstanceCreation));
 						}
 					}
 				}
@@ -102,11 +102,11 @@ public class StatementObject extends AbstractStatement {
 				Expression expression = returnStatement.getExpression();
 				if(expression instanceof MethodInvocation) {
 					MethodInvocation methodInvocation = (MethodInvocation)expression;
-					sb.append(SubMethodNodeVisitor.processMethodInvocation(methodInvocation));
+					sb.append(Visitor.processMethodInvocation(methodInvocation));
 				}
 				else if(expression instanceof ClassInstanceCreation) {
 					ClassInstanceCreation classInstanceCreation = (ClassInstanceCreation)expression;
-					sb.append(SubMethodNodeVisitor.processClassInstanceCreation(classInstanceCreation));
+					sb.append(Visitor.processClassInstanceCreation(classInstanceCreation));
 				}
 				this.statement = sb.toString();
 			}
@@ -116,11 +116,11 @@ public class StatementObject extends AbstractStatement {
 				Expression expression = expressionStatement.getExpression();
 				if(expression instanceof MethodInvocation) {
 					MethodInvocation methodInvocation = (MethodInvocation)expression;
-					sb.append(SubMethodNodeVisitor.processMethodInvocation(methodInvocation));
+					sb.append(Visitor.processMethodInvocation(methodInvocation));
 				}
 				else if(expression instanceof ClassInstanceCreation) {
 					ClassInstanceCreation classInstanceCreation = (ClassInstanceCreation)expression;
-					sb.append(SubMethodNodeVisitor.processClassInstanceCreation(classInstanceCreation));
+					sb.append(Visitor.processClassInstanceCreation(classInstanceCreation));
 				}
 				this.statement = sb.toString();
 			}
