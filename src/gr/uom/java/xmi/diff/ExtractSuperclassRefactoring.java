@@ -20,10 +20,11 @@ public class ExtractSuperclassRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-        return getName() + "\t" +
+        String sb = getName() + "\t" +
                 extractedClass +
                 " from classes " +
                 subclassSet;
+        return sb;
 	}
 
 	public String getName() {

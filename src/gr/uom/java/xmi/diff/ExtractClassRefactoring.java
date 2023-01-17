@@ -29,10 +29,11 @@ public class ExtractClassRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-        return getName() + "\t" +
+        String sb = getName() + "\t" +
                 extractedClass +
                 " from class " +
                 classDiff.getOriginalClass();
+        return sb;
 	}
 
 	public RefactoringType getRefactoringType() {

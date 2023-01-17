@@ -22,10 +22,11 @@ public class MoveAndRenameClassRefactoring implements PackageLevelRefactoring {
 	}
 
 	public String toString() {
-        return getName() + "\t" +
+        String sb = getName() + "\t" +
                 originalClass.getName() +
                 " moved and renamed to " +
                 renamedClass.getName();
+        return sb;
 	}
 
 	public RenamePattern getRenamePattern() {

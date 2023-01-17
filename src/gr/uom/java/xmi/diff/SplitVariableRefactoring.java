@@ -85,13 +85,14 @@ public class SplitVariableRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		return getName() + "\t" +
+		String sb = getName() + "\t" +
 				oldVariable +
 				" to " +
 				splitVariables +
 				" in method " +
 				operationAfter +
 				" from class " + operationAfter.getClassName();
+		return sb;
 	}
 
 	@Override

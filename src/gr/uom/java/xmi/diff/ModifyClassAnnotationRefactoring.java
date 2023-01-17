@@ -91,12 +91,13 @@ public class ModifyClassAnnotationRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		return getName() + "\t" +
+		String sb = getName() + "\t" +
 				annotationBefore +
 				" to " +
 				annotationAfter +
 				" in class " +
 				classAfter.getName();
+		return sb;
 	}
 	@Override
 	public int hashCode() {

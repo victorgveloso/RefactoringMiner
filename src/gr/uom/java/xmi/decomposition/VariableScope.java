@@ -84,9 +84,10 @@ public class VariableScope {
 	}
 
 	public String toString() {
-		return startLine + ":" + startColumn +
+		String sb = startLine + ":" + startColumn +
 				"-" +
 				endLine + ":" + endColumn;
+		return sb;
 	}
 
 	public void addStatement(AbstractCodeFragment statement) {

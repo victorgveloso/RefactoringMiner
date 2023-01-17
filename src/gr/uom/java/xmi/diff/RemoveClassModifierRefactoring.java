@@ -77,10 +77,11 @@ public class RemoveClassModifierRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		return getName() + "\t" +
+		String sb = getName() + "\t" +
 				modifier +
 				" in class " +
 				classBefore.getName();
+		return sb;
 	}
 
 	@Override

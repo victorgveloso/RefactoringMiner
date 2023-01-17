@@ -94,10 +94,11 @@ public class EncapsulateAttributeRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		return getName() + "\t" +
+		String sb = getName() + "\t" +
 				attributeAfter +
 				" from class " +
 				attributeAfter.getClassName();
+		return sb;
 	}
 
 	@Override

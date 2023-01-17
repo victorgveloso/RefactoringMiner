@@ -46,10 +46,11 @@ public class ExtractAttributeRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		return getName() + "\t" +
+		String sb = getName() + "\t" +
 				attributeDeclaration +
 				" in class " +
 				attributeDeclaration.getClassName();
+		return sb;
 	}
 
 	/**

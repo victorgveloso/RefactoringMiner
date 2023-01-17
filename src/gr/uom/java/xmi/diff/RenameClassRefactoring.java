@@ -22,10 +22,11 @@ public class RenameClassRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-        return getName() + "\t" +
+        String sb = getName() + "\t" +
                 originalClass.getName() +
                 " renamed to " +
                 renamedClass.getName();
+        return sb;
 	}
 
 	public String getName() {

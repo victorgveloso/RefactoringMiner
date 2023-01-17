@@ -83,12 +83,13 @@ public class ChangeClassAccessModifierRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		return getName() + "\t" +
+		String sb = getName() + "\t" +
 				originalAccessModifier +
 				" to " +
 				changedAccessModifier +
 				" in class " +
 				classAfter.getName();
+		return sb;
 	}
 
 	@Override

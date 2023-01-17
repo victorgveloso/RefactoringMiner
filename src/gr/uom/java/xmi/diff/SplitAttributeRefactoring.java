@@ -57,11 +57,12 @@ public class SplitAttributeRefactoring implements Refactoring {
 	}
 
 	public String toString() {
-		return getName() + "\t" +
+		String sb = getName() + "\t" +
 				oldAttribute.getVariableDeclaration() +
 				" to " +
 				getSplitVariables() +
 				" in class " + classNameAfter;
+		return sb;
 	}
 
 	@Override
