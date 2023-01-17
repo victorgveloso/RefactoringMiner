@@ -1,5 +1,6 @@
 package org.refactoringminer.test;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.test.RefactoringPopulator.Refactorings;
@@ -105,6 +106,7 @@ public class TestAllRefactorings {
 		test.assertExpectations(19,0,0);
 	}
 
+	@Ignore("Deleted repository")
 	@Test
 	public void testARefactoring_ReplaceExpectAnnotationWithAssertThrows2() throws Exception {
 		GitHistoryRefactoringMinerImpl detector = new GitHistoryRefactoringMinerImpl();
