@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Set;
 
 public class MoveAttributeRefactoring implements Refactoring {
-	protected final UMLAttribute originalAttribute;
-	protected final UMLAttribute movedAttribute;
+	protected UMLAttribute originalAttribute;
+	protected UMLAttribute movedAttribute;
 	private volatile int hashCode = 0;
 	
 	public MoveAttributeRefactoring(UMLAttribute originalAttribute, UMLAttribute movedAttribute) {

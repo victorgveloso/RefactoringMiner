@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Set;
 
 public class ExtractAttributeRefactoring implements Refactoring {
-	private final UMLAttribute attributeDeclaration;
-	private final UMLClass originalClass;
-	private final UMLClass nextClass;
-	private final Set<AbstractCodeMapping> references;
+	private UMLAttribute attributeDeclaration;
+	private UMLClass originalClass;
+	private UMLClass nextClass;
+	private Set<AbstractCodeMapping> references;
 
 	public ExtractAttributeRefactoring(UMLAttribute variableDeclaration, UMLClass originalClass, UMLClass nextClass) {
 		this.attributeDeclaration = variableDeclaration;

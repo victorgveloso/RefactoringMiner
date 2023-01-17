@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class CallTree {
-	private final CallTreeNode root;
+	private CallTreeNode root;
 	
 	public CallTree(CallTreeNode root) {
 		this.root = root;

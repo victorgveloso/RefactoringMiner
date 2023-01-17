@@ -1,17 +1,23 @@
 package gr.uom.java.xmi.diff;
 
-import gr.uom.java.xmi.*;
-import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
-import org.refactoringminer.api.RefactoringMinerTimedOutException;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.refactoringminer.api.RefactoringMinerTimedOutException;
+
+import gr.uom.java.xmi.UMLAnonymousClass;
+import gr.uom.java.xmi.UMLAttribute;
+import gr.uom.java.xmi.UMLClass;
+import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.UMLType;
+import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
+import gr.uom.java.xmi.decomposition.replacement.MethodInvocationReplacement;
+
 public class UMLClassDiff extends UMLClassBaseDiff {
 	
-	private final String className;
+	private String className;
 	public UMLClassDiff(UMLClass originalClass, UMLClass nextClass, UMLModelDiff modelDiff) {
 		super(originalClass, nextClass, modelDiff);
 		this.className = originalClass.getName();

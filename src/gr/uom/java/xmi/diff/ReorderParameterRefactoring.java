@@ -14,10 +14,10 @@ import gr.uom.java.xmi.UMLParameter;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
 public class ReorderParameterRefactoring implements Refactoring {
-	private final List<VariableDeclaration> parametersBefore;
-	private final List<VariableDeclaration> parametersAfter;
-	private final UMLOperation operationBefore;
-	private final UMLOperation operationAfter;
+	private List<VariableDeclaration> parametersBefore;
+	private List<VariableDeclaration> parametersAfter;
+	private UMLOperation operationBefore;
+	private UMLOperation operationAfter;
 
 	public ReorderParameterRefactoring(UMLOperation operationBefore, UMLOperation operationAfter) {
 		this.operationBefore = operationBefore;

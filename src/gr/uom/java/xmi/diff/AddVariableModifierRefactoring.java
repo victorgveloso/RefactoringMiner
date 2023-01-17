@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.Set;
 
 public class AddVariableModifierRefactoring implements Refactoring {
-	private final String modifier;
-	private final VariableDeclaration variableBefore;
-	private final VariableDeclaration variableAfter;
-	private final UMLOperation operationBefore;
-	private final UMLOperation operationAfter;
+	private String modifier;
+	private VariableDeclaration variableBefore;
+	private VariableDeclaration variableAfter;
+	private UMLOperation operationBefore;
+	private UMLOperation operationAfter;
 
 	public AddVariableModifierRefactoring(String modifier, VariableDeclaration variableBefore,
 			VariableDeclaration variableAfter, UMLOperation operationBefore, UMLOperation operationAfter) {

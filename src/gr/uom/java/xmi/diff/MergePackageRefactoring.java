@@ -1,18 +1,18 @@
 package gr.uom.java.xmi.diff;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringType;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
+
 public class MergePackageRefactoring implements Refactoring {
-	private final Set<String> mergedPackages;
+	private Set<String> mergedPackages;
 	private String newPackage;
-	private final Set<RenamePackageRefactoring> renamePackageRefactorings;
+	private Set<RenamePackageRefactoring> renamePackageRefactorings;
 
 	public MergePackageRefactoring(Set<RenamePackageRefactoring> renamePackageRefactorings) {
 		this.renamePackageRefactorings = renamePackageRefactorings;

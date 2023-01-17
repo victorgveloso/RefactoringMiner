@@ -1,8 +1,8 @@
 package gr.uom.java.xmi.diff;
 
 public class RenamePattern {
-	private final String before;
-	private final String after;
+	private String before;
+	private String after;
 	
 	public RenamePattern(String originalPath, String movedPath) {
 		this.before = originalPath;

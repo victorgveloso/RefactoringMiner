@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Set;
 
 public class AddAttributeAnnotationRefactoring implements Refactoring {
-	private final UMLAnnotation annotation;
-	private final UMLAttribute attributeBefore;
-	private final UMLAttribute attributeAfter;
+	private UMLAnnotation annotation;
+	private UMLAttribute attributeBefore;
+	private UMLAttribute attributeAfter;
 
 	public AddAttributeAnnotationRefactoring(UMLAnnotation annotation, UMLAttribute attributeBefore,
 			UMLAttribute attributeAfter) {

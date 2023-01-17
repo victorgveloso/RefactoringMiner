@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Set;
 
 public class ChangeThrownExceptionTypeRefactoring implements Refactoring {
-	private final Set<UMLType> originalTypes;
-	private final Set<UMLType> changedTypes;
-	private final UMLOperation operationBefore;
-	private final UMLOperation operationAfter;
+	private Set<UMLType> originalTypes;
+	private Set<UMLType> changedTypes;
+	private UMLOperation operationBefore;
+	private UMLOperation operationAfter;
 	
 	public ChangeThrownExceptionTypeRefactoring(Set<UMLType> originalTypes, Set<UMLType> changedTypes,
 			UMLOperation operationBefore, UMLOperation operationAfter) {

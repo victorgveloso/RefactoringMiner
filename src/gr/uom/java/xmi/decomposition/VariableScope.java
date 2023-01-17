@@ -1,21 +1,22 @@
 package gr.uom.java.xmi.decomposition;
 
-import gr.uom.java.xmi.LocationInfo;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.CompilationUnit;
+
+import gr.uom.java.xmi.LocationInfo;
+
 public class VariableScope {
-	private final String filePath;
-	private final int startOffset;
-	private final int endOffset;
-	private final int startLine;
+	private String filePath;
+	private int startOffset;
+	private int endOffset;
+	private int startLine;
 	private int startColumn;
-	private final int endLine;
+	private int endLine;
 	private int endColumn;
-	private final List<AbstractCodeFragment> statementsInScope = new ArrayList<>();
-	private final List<AbstractCodeFragment> statementsInScopeUsingVariable = new ArrayList<>();
+	private List<AbstractCodeFragment> statementsInScope = new ArrayList<>();
+	private List<AbstractCodeFragment> statementsInScopeUsingVariable = new ArrayList<>();
 	
 	public VariableScope(CompilationUnit cu, String filePath, int startOffset, int endOffset) {
 		//ASTNode parent = node.getParent();

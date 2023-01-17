@@ -13,14 +13,14 @@ import java.util.List;
 import java.util.Set;
 
 public class ExtractOperationRefactoring implements Refactoring {
-	private final UMLOperation extractedOperation;
-	private final UMLOperation sourceOperationBeforeExtraction;
-	private final UMLOperation sourceOperationAfterExtraction;
-	private final List<OperationInvocation> extractedOperationInvocations;
-	private final Set<Replacement> replacements;
-	private final Set<AbstractCodeFragment> extractedCodeFragmentsFromSourceOperation;
-	private final Set<AbstractCodeFragment> extractedCodeFragmentsToExtractedOperation;
-	private final UMLOperationBodyMapper bodyMapper;
+	private UMLOperation extractedOperation;
+	private UMLOperation sourceOperationBeforeExtraction;
+	private UMLOperation sourceOperationAfterExtraction;
+	private List<OperationInvocation> extractedOperationInvocations;
+	private Set<Replacement> replacements;
+	private Set<AbstractCodeFragment> extractedCodeFragmentsFromSourceOperation;
+	private Set<AbstractCodeFragment> extractedCodeFragmentsToExtractedOperation;
+	private UMLOperationBodyMapper bodyMapper;
 
 	public ExtractOperationRefactoring(UMLOperationBodyMapper bodyMapper, UMLOperation sourceOperationAfterExtraction, List<OperationInvocation> operationInvocations) {
 		this.bodyMapper = bodyMapper;

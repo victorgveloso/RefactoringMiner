@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CallTreeNode {
-	private final UMLOperation originalOperation;
-	private final UMLOperation invokedOperation;
-	private final OperationInvocation invocation;
+	private UMLOperation originalOperation;
+	private UMLOperation invokedOperation;
+	private OperationInvocation invocation;
 	private CallTreeNode parent;
-	private final List<CallTreeNode> children = new ArrayList<>();
+	private List<CallTreeNode> children = new ArrayList<>();
 
 	public CallTreeNode(UMLOperation originalOperation, UMLOperation invokedOperation,
 			OperationInvocation invocation) {

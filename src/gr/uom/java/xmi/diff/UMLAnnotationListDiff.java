@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import gr.uom.java.xmi.UMLAnnotation;
 
 public class UMLAnnotationListDiff {
-	private final List<UMLAnnotation> removedAnnotations;
-	private final List<UMLAnnotation> addedAnnotations;
-	private final List<UMLAnnotationDiff> annotationDiffList;
+	private List<UMLAnnotation> removedAnnotations;
+	private List<UMLAnnotation> addedAnnotations;
+	private List<UMLAnnotationDiff> annotationDiffList;
 
 	public UMLAnnotationListDiff(List<UMLAnnotation> annotations1, List<UMLAnnotation> annotations2) {
 		this.removedAnnotations = new ArrayList<>();

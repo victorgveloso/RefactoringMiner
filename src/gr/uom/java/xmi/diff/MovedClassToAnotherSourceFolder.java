@@ -6,10 +6,10 @@ import gr.uom.java.xmi.UMLClass;
 
 public class MovedClassToAnotherSourceFolder {
 	//private String className;
-	private final UMLClass originalClass;
-	private final UMLClass movedClass;
-	private final String originalPath;
-	private final String movedPath;
+	private UMLClass originalClass;
+	private UMLClass movedClass;
+	private String originalPath;
+	private String movedPath;
 
 	public MovedClassToAnotherSourceFolder(UMLClass originalClass, UMLClass movedClass,
 			String originalPath, String movedPath) {

@@ -11,11 +11,11 @@ import org.refactoringminer.api.RefactoringType;
 import java.util.*;
 
 public class RenameOperationRefactoring implements Refactoring {
-	private final UMLOperation originalOperation;
-	private final UMLOperation renamedOperation;
-	private final Set<Replacement> replacements;
+	private UMLOperation originalOperation;
+	private UMLOperation renamedOperation;
+	private Set<Replacement> replacements;
 	private UMLOperationBodyMapper bodyMapper;
-	private final Set<MethodInvocationReplacement> callReferences;
+	private Set<MethodInvocationReplacement> callReferences;
 	
 	public RenameOperationRefactoring(UMLOperationBodyMapper bodyMapper, Set<MethodInvocationReplacement> callReferences) {
 		this.bodyMapper = bodyMapper;

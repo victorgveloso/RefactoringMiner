@@ -13,8 +13,8 @@ import org.refactoringminer.util.PrefixSuffixUtils;
 
 public class MoveAndRenameClassRefactoring implements PackageLevelRefactoring {
 
-	private final UMLClass originalClass;
-	private final UMLClass renamedClass;
+	private UMLClass originalClass;
+	private UMLClass renamedClass;
 	
 	public MoveAndRenameClassRefactoring(UMLClass originalClass,  UMLClass renamedClass) {
 		this.originalClass = originalClass;

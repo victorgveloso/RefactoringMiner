@@ -1,20 +1,21 @@
 package gr.uom.java.xmi.diff;
 
-import gr.uom.java.xmi.UMLAnonymousClass;
-import gr.uom.java.xmi.UMLAttribute;
-import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringMinerTimedOutException;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringMinerTimedOutException;
+
+import gr.uom.java.xmi.UMLAnonymousClass;
+import gr.uom.java.xmi.UMLAttribute;
+import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
+
 public class UMLAnonymousClassDiff extends UMLAbstractClassDiff {
-	private final UMLAnonymousClass anonymousClass1;
-	private final UMLAnonymousClass anonymousClass2;
-	private final UMLClassBaseDiff classDiff;
+	private UMLAnonymousClass anonymousClass1;
+	private UMLAnonymousClass anonymousClass2;
+	private UMLClassBaseDiff classDiff;
 	
 	public UMLAnonymousClassDiff(UMLAnonymousClass anonymousClass1, UMLAnonymousClass anonymousClass2, UMLClassBaseDiff classDiff, UMLModelDiff modelDiff) throws RefactoringMinerTimedOutException {
 		super(modelDiff);

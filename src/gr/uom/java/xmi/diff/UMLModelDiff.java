@@ -17,25 +17,25 @@ import java.util.regex.Pattern;
 public class UMLModelDiff {
    private static final Pattern RETURN_NUMBER_LITERAL = Pattern.compile("return \\d+;\n");
    private static final int MAXIMUM_NUMBER_OF_COMPARED_METHODS = 200;
-   private final UMLModel parentModel;
-   private final UMLModel childModel;
-   private final List<UMLClass> addedClasses;
-   private final List<UMLClass> removedClasses;
+   private UMLModel parentModel;
+   private UMLModel childModel;
+   private List<UMLClass> addedClasses;
+   private List<UMLClass> removedClasses;
    
-   private final List<UMLGeneralization> addedGeneralizations;
-   private final List<UMLGeneralization> removedGeneralizations;
-   private final List<UMLGeneralizationDiff> generalizationDiffList;
-   private final List<UMLRealization> addedRealizations;
-   private final List<UMLRealization> removedRealizations;
-   private final List<UMLRealizationDiff> realizationDiffList;
+   private List<UMLGeneralization> addedGeneralizations;
+   private List<UMLGeneralization> removedGeneralizations;
+   private List<UMLGeneralizationDiff> generalizationDiffList;
+   private List<UMLRealization> addedRealizations;
+   private List<UMLRealization> removedRealizations;
+   private List<UMLRealizationDiff> realizationDiffList;
    
-   private final List<UMLClassDiff> commonClassDiffList;
-   private final List<UMLClassMoveDiff> classMoveDiffList;
-   private final List<UMLClassMoveDiff> innerClassMoveDiffList;
-   private final List<UMLClassRenameDiff> classRenameDiffList;
-   private final List<Refactoring> refactorings;
-   private final Set<String> deletedFolderPaths;
-   private final Set<Pair<UMLOperation, UMLOperation>> processedOperationPairs = new HashSet<>();
+   private List<UMLClassDiff> commonClassDiffList;
+   private List<UMLClassMoveDiff> classMoveDiffList;
+   private List<UMLClassMoveDiff> innerClassMoveDiffList;
+   private List<UMLClassRenameDiff> classRenameDiffList;
+   private List<Refactoring> refactorings;
+   private Set<String> deletedFolderPaths;
+   private Set<Pair<UMLOperation, UMLOperation>> processedOperationPairs = new HashSet<>();
    
    public UMLModelDiff(UMLModel parentModel, UMLModel childModel) {
       this.parentModel = parentModel;
@@ -2354,7 +2354,7 @@ public class UMLModelDiff {
 	         }
 	         if(!operationBodyMapperMap.isEmpty()) {
 	            List<UMLOperationBodyMapper> firstMappers = firstMappers(operationBodyMapperMap);
-	            firstMappers.sort(new UMLOperationBodyMapperComparator());
+	            Collections.sort(firstMappers, new UMLOperationBodyMapperComparator());
 	            addedOperationIterator.remove();
 	            boolean sameSourceAndTargetClass = sameSourceAndTargetClass(firstMappers);
 	            if(sameSourceAndTargetClass) {
@@ -2456,7 +2456,7 @@ public class UMLModelDiff {
 	         }
 	         if(!operationBodyMapperMap.isEmpty()) {
 	            List<UMLOperationBodyMapper> firstMappers = firstMappers(operationBodyMapperMap);
-	            firstMappers.sort(new UMLOperationBodyMapperComparator());
+	            Collections.sort(firstMappers, new UMLOperationBodyMapperComparator());
 	            removedOperationIterator.remove();
 	            boolean sameSourceAndTargetClass = sameSourceAndTargetClass(firstMappers);
 	            if(sameSourceAndTargetClass) {
@@ -2697,7 +2697,12 @@ public class UMLModelDiff {
 		Set<OperationInvocation> removedOperationInvocationsWithIntersectionsAndGetterInvocationsSubtracted = new LinkedHashSet<>(removedOperationInvocations);
 		removedOperationInvocationsWithIntersectionsAndGetterInvocationsSubtracted.removeAll(intersection);
 		removedOperationInvocationsWithIntersectionsAndGetterInvocationsSubtracted.removeAll(newIntersection);
-		removedOperationInvocationsWithIntersectionsAndGetterInvocationsSubtracted.removeIf(invocation -> invocation.getMethodName().startsWith("get"));
+		for(Iterator<OperationInvocation> operationInvocationIterator = removedOperationInvocationsWithIntersectionsAndGetterInvocationsSubtracted.iterator(); operationInvocationIterator.hasNext();) {
+			OperationInvocation invocation = operationInvocationIterator.next();
+			if(invocation.getMethodName().startsWith("get")) {
+				operationInvocationIterator.remove();
+			}
+		}
 		int numberOfInvocationsOriginallyCalledByRemovedOperationFoundInOtherAddedOperations = newIntersection.size();
 		int numberOfInvocationsMissingFromRemovedOperationWithoutThoseFoundInOtherAddedOperations = numberOfInvocationsMissingFromRemovedOperation - numberOfInvocationsOriginallyCalledByRemovedOperationFoundInOtherAddedOperations;
 		return numberOfInvocationsOriginallyCalledByRemovedOperationFoundInOtherAddedOperations > numberOfInvocationsMissingFromRemovedOperationWithoutThoseFoundInOtherAddedOperations ||

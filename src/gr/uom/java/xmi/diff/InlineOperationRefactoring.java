@@ -19,14 +19,14 @@ import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
 import gr.uom.java.xmi.decomposition.replacement.Replacement;
 
 public class InlineOperationRefactoring implements Refactoring {
-	private final UMLOperation inlinedOperation;
-	private final UMLOperation targetOperationAfterInline;
-	private final UMLOperation targetOperationBeforeInline;
-	private final List<OperationInvocation> inlinedOperationInvocations;
-	private final Set<Replacement> replacements;
-	private final Set<AbstractCodeFragment> inlinedCodeFragmentsFromInlinedOperation;
-	private final Set<AbstractCodeFragment> inlinedCodeFragmentsInTargetOperation;
-	private final UMLOperationBodyMapper bodyMapper;
+	private UMLOperation inlinedOperation;
+	private UMLOperation targetOperationAfterInline;
+	private UMLOperation targetOperationBeforeInline;
+	private List<OperationInvocation> inlinedOperationInvocations;
+	private Set<Replacement> replacements;
+	private Set<AbstractCodeFragment> inlinedCodeFragmentsFromInlinedOperation;
+	private Set<AbstractCodeFragment> inlinedCodeFragmentsInTargetOperation;
+	private UMLOperationBodyMapper bodyMapper;
 	
 	public InlineOperationRefactoring(UMLOperationBodyMapper bodyMapper, UMLOperation targetOperationBeforeInline,
 			List<OperationInvocation> operationInvocations) {

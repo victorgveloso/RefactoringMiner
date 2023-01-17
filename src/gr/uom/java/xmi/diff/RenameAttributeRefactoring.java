@@ -12,11 +12,11 @@ import org.refactoringminer.api.RefactoringType;
 import gr.uom.java.xmi.UMLAttribute;
 
 public class RenameAttributeRefactoring implements Refactoring {
-	private final UMLAttribute originalAttribute;
-	private final UMLAttribute renamedAttribute;
-	private final Set<CandidateAttributeRefactoring> attributeRenames;
-	private final String classNameBefore;
-	private final String classNameAfter;
+	private UMLAttribute originalAttribute;
+	private UMLAttribute renamedAttribute;
+	private Set<CandidateAttributeRefactoring> attributeRenames;
+	private String classNameBefore;
+	private String classNameAfter;
 
 	public RenameAttributeRefactoring(UMLAttribute originalAttribute, UMLAttribute renamedAttribute,
 			Set<CandidateAttributeRefactoring> attributeRenames) {

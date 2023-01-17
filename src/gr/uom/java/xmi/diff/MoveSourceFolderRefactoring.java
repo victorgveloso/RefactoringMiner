@@ -12,9 +12,9 @@ import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
 
 public class MoveSourceFolderRefactoring implements Refactoring {
-	private final List<MovedClassToAnotherSourceFolder> movedClassesToAnotherSourceFolder = new ArrayList<>();
-	private final Map<String, String> identicalFilePaths = new HashMap<>();
-	private final RenamePattern pattern;
+	private List<MovedClassToAnotherSourceFolder> movedClassesToAnotherSourceFolder = new ArrayList<>();
+	private Map<String, String> identicalFilePaths = new HashMap<>();
+	private RenamePattern pattern;
 	
 	public MoveSourceFolderRefactoring(RenamePattern pattern) {
 		this.pattern = pattern;

@@ -20,7 +20,7 @@ public class ListCompositeType extends UMLType {
 	/**
 	 * Each type belonging to the composite
 	 */
-	private final List<UMLType> types;
+	private List<UMLType> types;
 	/**
 	 * Composition kind.
 	 */

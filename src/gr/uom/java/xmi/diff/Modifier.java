@@ -8,7 +8,7 @@ public enum Modifier implements IExtendedModifier {
     STATIC("static"),
     SYNCHRONIZED("synchronized");
 
-    final String mod;
+    String mod;
 
     Modifier(String mod) {
         this.mod = mod;

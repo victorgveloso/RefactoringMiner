@@ -54,7 +54,7 @@ public class TestBuilder {
 	}
 
 	private static class Counter {
-		final int[] c = new int[5];
+		int[] c = new int[5];
 	}
 
 	private void count(int type, String refactoring) {

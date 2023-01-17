@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Set;
 
 public class ConvertAnonymousClassToTypeRefactoring implements Refactoring {
-	private final UMLAnonymousClass anonymousClass;
-	private final UMLClass addedClass;
+	private UMLAnonymousClass anonymousClass;
+	private UMLClass addedClass;
 	
 	public ConvertAnonymousClassToTypeRefactoring(UMLAnonymousClass anonymousClass, UMLClass addedClass) {
 		this.anonymousClass = anonymousClass;

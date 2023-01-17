@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Set;
 
 public class AddAttributeModifierRefactoring implements Refactoring {
-	private final String modifier;
-	private final UMLAttribute attributeBefore;
-	private final UMLAttribute attributeAfter;
+	private String modifier;
+	private UMLAttribute attributeBefore;
+	private UMLAttribute attributeAfter;
 
 	public AddAttributeModifierRefactoring(String modifier, UMLAttribute attributeBefore, UMLAttribute attributeAfter) {
 		this.modifier = modifier;

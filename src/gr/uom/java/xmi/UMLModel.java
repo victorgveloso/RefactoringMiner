@@ -7,10 +7,10 @@ import org.refactoringminer.api.RefactoringMinerTimedOutException;
 import java.util.*;
 
 public class UMLModel {
-	private final Set<String> repositoryDirectories;
-    private final List<UMLClass> classList;
-    private final List<UMLGeneralization> generalizationList;
-    private final List<UMLRealization> realizationList;
+	private Set<String> repositoryDirectories;
+    private List<UMLClass> classList;
+    private List<UMLGeneralization> generalizationList;
+    private List<UMLRealization> realizationList;
 
     public UMLModel(Set<String> repositoryDirectories) {
     	this.repositoryDirectories = repositoryDirectories;

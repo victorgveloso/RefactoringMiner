@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Set;
 
 public class EncapsulateAttributeRefactoring implements Refactoring {
-	private final UMLAttribute attributeBefore;
-	private final UMLAttribute attributeAfter;
-	private final UMLOperation addedGetter;
-	private final UMLOperation addedSetter;
+	private UMLAttribute attributeBefore;
+	private UMLAttribute attributeAfter;
+	private UMLOperation addedGetter;
+	private UMLOperation addedSetter;
 
 	public EncapsulateAttributeRefactoring(UMLAttribute attributeBefore, UMLAttribute attributeAfter,
 			UMLOperation addedGetter, UMLOperation addedSetter) {

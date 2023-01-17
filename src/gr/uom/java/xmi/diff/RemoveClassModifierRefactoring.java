@@ -12,9 +12,9 @@ import org.refactoringminer.api.RefactoringType;
 import gr.uom.java.xmi.UMLClass;
 
 public class RemoveClassModifierRefactoring implements Refactoring {
-	private final String modifier;
-	private final UMLClass classBefore;
-	private final UMLClass classAfter;
+	private String modifier;
+	private UMLClass classBefore;
+	private UMLClass classAfter;
 
 	public RemoveClassModifierRefactoring(String modifier, UMLClass classBefore, UMLClass classAfter) {
 		this.modifier = modifier;

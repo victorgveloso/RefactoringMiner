@@ -3,8 +3,8 @@ package gr.uom.java.xmi.diff;
 import gr.uom.java.xmi.UMLGeneralization;
 
 public class UMLGeneralizationDiff implements Comparable<UMLGeneralizationDiff> {
-	private final UMLGeneralization removedGeneralization;
-	private final UMLGeneralization addedGeneralization;
+	private UMLGeneralization removedGeneralization;
+	private UMLGeneralization addedGeneralization;
 	private boolean parentChanged;
 	private boolean childChanged;
 	

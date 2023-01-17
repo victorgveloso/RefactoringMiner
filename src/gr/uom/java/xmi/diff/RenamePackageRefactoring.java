@@ -11,8 +11,8 @@ import org.refactoringminer.api.RefactoringType;
 
 public class RenamePackageRefactoring implements Refactoring {
 
-	private final List<PackageLevelRefactoring> moveClassRefactorings;
-	private final RenamePattern pattern;
+	private List<PackageLevelRefactoring> moveClassRefactorings;
+	private RenamePattern pattern;
 	
 	public RenamePackageRefactoring(RenamePattern pattern) {
 		this.moveClassRefactorings = new ArrayList<>();

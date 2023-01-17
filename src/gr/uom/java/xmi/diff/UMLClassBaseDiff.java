@@ -42,10 +42,10 @@ public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements C
 
 	private static final int MAXIMUM_NUMBER_OF_COMPARED_METHODS = 30;
 	public static final double MAX_OPERATION_NAME_DISTANCE = 0.4;
-	protected final UMLClass originalClass;
-	protected final UMLClass nextClass;
-	private final List<UMLEnumConstant> addedEnumConstants;
-	private final List<UMLEnumConstant> removedEnumConstants;
+	protected UMLClass originalClass;
+	protected UMLClass nextClass;
+	private List<UMLEnumConstant> addedEnumConstants;
+	private List<UMLEnumConstant> removedEnumConstants;
 	private boolean visibilityChanged;
 	private String oldVisibility;
 	private String newVisibility;
@@ -57,19 +57,19 @@ public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements C
 	private boolean superclassChanged;
 	private UMLType oldSuperclass;
 	private UMLType newSuperclass;
-	private final List<UMLType> addedImplementedInterfaces;
-	private final List<UMLType> removedImplementedInterfaces;
-	private final List<UMLAnonymousClass> addedAnonymousClasses;
-	private final List<UMLAnonymousClass> removedAnonymousClasses;
+	private List<UMLType> addedImplementedInterfaces;
+	private List<UMLType> removedImplementedInterfaces;
+	private List<UMLAnonymousClass> addedAnonymousClasses;
+	private List<UMLAnonymousClass> removedAnonymousClasses;
 	private UMLAnnotationListDiff annotationListDiff;
-	private final List<UMLEnumConstantDiff> enumConstantDiffList;
+	private List<UMLEnumConstantDiff> enumConstantDiffList;
 	private Map<MethodInvocationReplacement, UMLOperationBodyMapper> consistentMethodInvocationRenames;
-	private final Set<CandidateAttributeRefactoring> candidateAttributeRenames = new LinkedHashSet<>();
-	private final Set<CandidateMergeVariableRefactoring> candidateAttributeMerges = new LinkedHashSet<>();
-	private final Set<CandidateSplitVariableRefactoring> candidateAttributeSplits = new LinkedHashSet<>();
-	private final Map<Replacement, Set<CandidateAttributeRefactoring>> renameMap = new LinkedHashMap<>();
-	private final Map<MergeVariableReplacement, Set<CandidateMergeVariableRefactoring>> mergeMap = new LinkedHashMap<>();
-	private final Map<SplitVariableReplacement, Set<CandidateSplitVariableRefactoring>> splitMap = new LinkedHashMap<>();
+	private Set<CandidateAttributeRefactoring> candidateAttributeRenames = new LinkedHashSet<>();
+	private Set<CandidateMergeVariableRefactoring> candidateAttributeMerges = new LinkedHashSet<>();
+	private Set<CandidateSplitVariableRefactoring> candidateAttributeSplits = new LinkedHashSet<>();
+	private Map<Replacement, Set<CandidateAttributeRefactoring>> renameMap = new LinkedHashMap<>();
+	private Map<MergeVariableReplacement, Set<CandidateMergeVariableRefactoring>> mergeMap = new LinkedHashMap<>();
+	private Map<SplitVariableReplacement, Set<CandidateSplitVariableRefactoring>> splitMap = new LinkedHashMap<>();
 
 	public UMLClassBaseDiff(UMLClass originalClass, UMLClass nextClass, UMLModelDiff modelDiff) {
 		super(modelDiff);

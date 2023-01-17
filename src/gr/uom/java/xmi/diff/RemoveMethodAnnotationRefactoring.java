@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Set;
 
 public class RemoveMethodAnnotationRefactoring implements Refactoring {
-	private final UMLAnnotation annotation;
-	private final UMLOperation operationBefore;
-	private final UMLOperation operationAfter;
+	private UMLAnnotation annotation;
+	private UMLOperation operationBefore;
+	private UMLOperation operationAfter;
 	
 	public RemoveMethodAnnotationRefactoring(UMLAnnotation annotation, UMLOperation operationBefore,
 			UMLOperation operationAfter) {

@@ -3,8 +3,8 @@ package gr.uom.java.xmi.diff;
 import gr.uom.java.xmi.UMLType;
 
 public class CandidateExtractClassRefactoring implements Comparable<CandidateExtractClassRefactoring> {
-	private final UMLClassBaseDiff classDiff;
-	private final ExtractClassRefactoring refactoring;
+	private UMLClassBaseDiff classDiff;
+	private ExtractClassRefactoring refactoring;
 	
 	public CandidateExtractClassRefactoring(UMLClassBaseDiff classDiff, ExtractClassRefactoring refactoring) {
 		this.classDiff = classDiff;

@@ -1,20 +1,21 @@
 package gr.uom.java.xmi.diff;
 
+import java.util.List;
+import java.util.Set;
+
 import com.fasterxml.jackson.core.io.JsonStringEncoder;
+
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
 
-import java.util.List;
-import java.util.Set;
-
 public class CodeRange {
-	private final String filePath;
-	private final int startLine;
-	private final int endLine;
-	private final int startColumn;
-	private final int endColumn;
-	private final CodeElementType codeElementType;
+	private String filePath;
+	private int startLine;
+	private int endLine;
+	private int startColumn;
+	private int endColumn;
+	private CodeElementType codeElementType;
 	private String description;
 	private String codeElement;
 

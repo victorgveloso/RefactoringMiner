@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Set;
 
 public class RemoveMethodModifierRefactoring implements Refactoring {
-    private final Modifier modifier;
-    private final UMLOperation operationBefore;
-    private final UMLOperation operationAfter;
+    private Modifier modifier;
+    private UMLOperation operationBefore;
+    private UMLOperation operationAfter;
 
     public RemoveMethodModifierRefactoring(Modifier modifier, UMLOperation operationBefore, UMLOperation operationAfter) {
         this.modifier = modifier;

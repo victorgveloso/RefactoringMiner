@@ -14,17 +14,17 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class UMLParameterDiff {
-	private final UMLParameter removedParameter;
-	private final UMLParameter addedParameter;
-	private final UMLOperation removedOperation;
-	private final UMLOperation addedOperation;
+	private UMLParameter removedParameter;
+	private UMLParameter addedParameter;
+	private UMLOperation removedOperation;
+	private UMLOperation addedOperation;
 	private boolean typeChanged;
 	private boolean qualifiedTypeChanged;
 	private boolean nameChanged;
 	private boolean varArgsChanged;
 	private boolean finalChanged;
-	private final Set<AbstractCodeMapping> mappings;
-	private final UMLAnnotationListDiff annotationListDiff;
+	private Set<AbstractCodeMapping> mappings;
+	private UMLAnnotationListDiff annotationListDiff;
 	
 	public UMLParameterDiff(UMLParameter removedParameter, UMLParameter addedParameter,
 			UMLOperation removedOperation, UMLOperation addedOperation,
