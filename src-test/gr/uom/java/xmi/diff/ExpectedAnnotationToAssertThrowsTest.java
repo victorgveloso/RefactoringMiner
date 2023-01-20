@@ -183,11 +183,11 @@ public class ExpectedAnnotationToAssertThrowsTest {
             Assert.assertEquals("IllegalArgumentException.class",refactoring.getException().getExpression());
             Assert.assertEquals(1,refactoring.getLambda().getBody().getCompositeStatement().getStatements().size());
             Assert.assertEquals(LocationInfo.CodeElementType.EXPRESSION_STATEMENT,refactoring.getLambda().getBody().getCompositeStatement().getStatements().get(0).codeRange().getCodeElementType());
-            Assert.assertEquals(2,refactoring.getAssertThrows().getArguments().size());
-            Assert.assertEquals("IllegalArgumentException.class",refactoring.getAssertThrows().getArguments().get(0));
+            Assert.assertEquals(2,refactoring.getAssertThrows().arguments().size());
+            Assert.assertEquals("IllegalArgumentException.class",refactoring.getAssertThrows().arguments().get(0));
             Assert.assertEquals("() -> {\n" +
                     "  exampleObj.exampleMethod(0);\n" +
-                    "}\n",refactoring.getAssertThrows().getArguments().get(1));
+                    "}\n",refactoring.getAssertThrows().arguments().get(1));
         }
     }
 

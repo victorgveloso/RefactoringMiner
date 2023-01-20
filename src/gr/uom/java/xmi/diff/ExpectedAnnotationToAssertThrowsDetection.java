@@ -37,8 +37,8 @@ public class ExpectedAnnotationToAssertThrowsDetection {
             annotationChange = expectedRemovalFromTestAnnotation.orElseThrow();
             exception = annotationChange.getAnnotationBefore().getMemberValuePairs().get("expected");
             operationInvocation = getAssertThrows(operationAfter).stream()
-                    .filter(i -> i.getArguments().get(0).equals(exception.getExpression()))
-                    .filter(i -> containsAtLeastOneLineInCommon(operationBefore, i.getArguments().get(1)))
+                    .filter(i -> i.arguments().get(0).equals(exception.getExpression()))
+                    .filter(i -> containsAtLeastOneLineInCommon(operationBefore, i.arguments().get(1)))
                     .findAny()
                     .orElseThrow();
             lambda = operationAfter.getAllLambdas().stream()
@@ -60,9 +60,8 @@ public class ExpectedAnnotationToAssertThrowsDetection {
                 invocationRange.getEndColumn() >= lambdaRange.getEndColumn();
     }
 
-    private boolean containsAtLeastOneLineInCommon(UMLOperation operation, LeafExpression lambda) {
+    private boolean containsAtLeastOneLineInCommon(UMLOperation operation, String lambda) {
         return lambda
-                .getString()
                 .lines()
                 .map(String::strip)
                 .map(line -> lambdaBodyIsExpression(line) ? extractExpressionAndConvertToStatement(line) : line)
