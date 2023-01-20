@@ -1,11 +1,11 @@
 package org.refactoringminer.api;
 
+import org.refactoringminer.util.AstUtils;
+import org.refactoringminer.utils.RefactoringRelationship;
+
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.refactoringminer.util.AstUtils;
-import org.refactoringminer.utils.RefactoringRelationship;
 
 public enum RefactoringType {
 
@@ -206,7 +206,9 @@ public enum RefactoringType {
 		SPLIT_CONDITIONAL,
 		INVERT_CONDITION,
 		MERGE_CONDITIONAL,
-		MERGE_CATCH
+		MERGE_CATCH,
+		REPLACE_EXPECTED_WITH_ASSERT_THROWS,
+		REPLACE_TRY_FAIL_WITH_RULE
 	};
 
 	private RefactoringType(String displayName, String regex, int ... aggregateGroups) {
