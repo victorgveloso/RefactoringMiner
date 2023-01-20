@@ -1,12 +1,13 @@
 package org.kohsuke.github;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.commons.lang3.tuple.Triple;
 import org.junit.Assert;
 import org.junit.Test;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GHRepositoryWrapperTest {
 	private final GitHistoryRefactoringMinerImpl gitHistoryRefactoringMiner = new GitHistoryRefactoringMinerImpl();
@@ -26,25 +27,22 @@ public class GHRepositoryWrapperTest {
     }
 
     @Test
-    public void testNumberOfChangedFiles() {
+    public void testNumberOfChangedFiles() throws IOException {
         int numberOfTestCase = 0;
         for (Triple<String, String, Integer> testCase : TEST_CASES_LIST) {
-            Assert.assertEquals(testCase.getRight().intValue(), getNumberOfChangedFile(testCase.getLeft(), testCase.getMiddle()));
+            int actualChangedFiles = getNumberOfChangedFile(testCase.getLeft(), testCase.getMiddle());
+            Assert.assertEquals(testCase.getRight().intValue(), actualChangedFiles);
             numberOfTestCase++;
         }
         Assert.assertEquals(10, numberOfTestCase);
     }
 
 
-    private int getNumberOfChangedFile(String cloneUrl, String commitId) {
-        try {
-            List<GHCommit.File> commitFiles = new ArrayList<>();
-            GHRepository ghRepository = gitHistoryRefactoringMiner.getGitHubRepository(cloneUrl);
-            GHRepositoryWrapper ghRepositoryWrapper = new GHRepositoryWrapper(ghRepository);
-			ghRepositoryWrapper.getCommit(commitId, commitFiles);
-            return commitFiles.size();
-        } catch (IOException e) {
-            return -1;
-        }
+    private int getNumberOfChangedFile(String cloneUrl, String commitId) throws IOException {
+        List<GHCommit.File> commitFiles = new ArrayList<>();
+        GHRepository ghRepository = gitHistoryRefactoringMiner.getGitHubRepository(cloneUrl);
+        GHRepositoryWrapper ghRepositoryWrapper = new GHRepositoryWrapper(ghRepository);
+        ghRepositoryWrapper.getCommit(commitId, commitFiles);
+        return commitFiles.size();
     }
 }
