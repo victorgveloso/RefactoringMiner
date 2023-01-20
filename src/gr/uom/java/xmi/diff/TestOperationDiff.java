@@ -17,7 +17,7 @@ public class TestOperationDiff {
     private List<UMLAttribute> addedAttributes;
     private UMLOperationBodyMapper mapper;
 
-    public TestOperationDiff(UMLOperationBodyMapper mapper, UMLClassBaseDiff classDiff, Collection<Refactoring> refactorings) {
+    public TestOperationDiff(UMLOperationBodyMapper mapper, UMLAbstractClassDiff classDiff, Collection<Refactoring> refactorings) {
         this(mapper.getOperation1(), mapper.getOperation2(), refactorings);
         addedAttributes = classDiff.addedAttributes;
         this.mapper = mapper;

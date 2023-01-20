@@ -1,25 +1,6 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringMinerTimedOutException;
-import org.refactoringminer.util.PrefixSuffixUtils;
-
-import gr.uom.java.xmi.UMLAbstractClass;
-import gr.uom.java.xmi.UMLAnonymousClass;
-import gr.uom.java.xmi.UMLAttribute;
-import gr.uom.java.xmi.UMLEnumConstant;
-import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.VariableDeclarationContainer;
+import gr.uom.java.xmi.*;
 import gr.uom.java.xmi.decomposition.AbstractCall;
 import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
 import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
@@ -29,6 +10,13 @@ import gr.uom.java.xmi.decomposition.replacement.MergeVariableReplacement;
 import gr.uom.java.xmi.decomposition.replacement.Replacement;
 import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
 import gr.uom.java.xmi.decomposition.replacement.SplitVariableReplacement;
+import org.apache.commons.lang3.tuple.Pair;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringMinerTimedOutException;
+import org.refactoringminer.util.PrefixSuffixUtils;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class UMLAbstractClassDiff {
 	protected List<UMLOperation> addedOperations;
@@ -480,7 +468,15 @@ public abstract class UMLAbstractClassDiff {
 				}
 			}
 		}
+		getTestRelatedRefactorings(refactorings);
 		return refactorings;
+	}
+
+	private void getTestRelatedRefactorings(List<Refactoring> refactorings) {
+		refactorings.addAll(operationBodyMapperList.stream()
+				.map(mapper -> new TestOperationDiff(mapper, this, refactorings))
+				.flatMap(testDiff -> testDiff.getRefactorings().stream())
+				.collect(Collectors.toList()));
 	}
 
 	public List<Refactoring> getRefactoringsBeforePostProcessing() {
