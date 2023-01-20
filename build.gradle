@@ -28,6 +28,9 @@ sourceSets {
     }
 }
 
+test {
+    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+}
 repositories {
 	//maven {
     //    url 'https://raw.githubusercontent.com/jmini/ecentral/HEAD/repo'
