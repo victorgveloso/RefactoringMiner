@@ -126,8 +126,8 @@ public class TryWithFailToExpectedExceptionRuleTest {
             Assert.assertEquals(1, detector.getExpectInvocations().size());
             Assert.assertEquals("ExpectedException", detector.getExpectedExceptionFieldDeclaration().getType().getClassType());
             Assert.assertEquals(1, detector.getExpectInvocations().size());
-            Assert.assertEquals(1, detector.getExpectInvocations().get(0).getArguments().size());
-            Assert.assertEquals("IllegalArgumentException.class", detector.getExpectInvocations().get(0).getArguments().get(0));
+            Assert.assertEquals(1, detector.getExpectInvocations().get(0).arguments().size());
+            Assert.assertEquals("IllegalArgumentException.class", detector.getExpectInvocations().get(0).arguments().get(0));
             Assert.assertEquals(1, detector.getCapturedExceptions().size());
             Assert.assertEquals("IllegalArgumentException.class", detector.getCapturedExceptions().get(0));
         }
@@ -168,7 +168,7 @@ public class TryWithFailToExpectedExceptionRuleTest {
             Assert.assertEquals("public", r.getRuleFieldDeclaration().getVisibility());
             Assert.assertEquals("ExpectedException", r.getRuleFieldDeclaration().getType().getClassType());
             Assert.assertEquals(2, r.getTryStatement().getStatements().size());
-            Assert.assertEquals("IllegalArgumentException.class", r.getThrownExpectInvocations().getArguments().get(0));
+            Assert.assertEquals("IllegalArgumentException.class", r.getThrownExpectInvocations().arguments().get(0));
         }
 
     }
@@ -199,13 +199,13 @@ public class TryWithFailToExpectedExceptionRuleTest {
             Assert.assertEquals(1, thrownExpectInvocations.size());
             var thrownExpect = thrownExpectInvocations.get(0);
             var ruleAnnotatedVariableName = thrownExpect.getExpression();
-            Assert.assertEquals(1, thrownExpect.getArguments().size());
+            Assert.assertEquals(1, thrownExpect.arguments().size());
 
             var ruleFieldDeclaration = classDiff.getAddedAttributes().get(0);
             Assert.assertEquals("ExpectedException", ruleFieldDeclaration.getType().getClassType());
             Assert.assertEquals(ruleAnnotatedVariableName, ruleFieldDeclaration.getName());
-            Assert.assertEquals(1, thrownExpect.getArguments().size());
-            Assert.assertEquals("IllegalArgumentException.class", thrownExpect.getArguments().get(0));
+            Assert.assertEquals(1, thrownExpect.arguments().size());
+            Assert.assertEquals("IllegalArgumentException.class", thrownExpect.arguments().get(0));
         }
 
         private boolean hasExpectedException(List<String> capturedExceptions, AbstractCall invocation) {
@@ -213,7 +213,7 @@ public class TryWithFailToExpectedExceptionRuleTest {
         }
 
         private boolean isAnyArgumentPassedTo(List<String> arguments, AbstractCall invocation) {
-            return arguments.contains(invocation.getArguments().get(0));
+            return arguments.contains(invocation.arguments().get(0));
         }
 
         private Stream<AbstractCall> extractMethodInvocations(List<AbstractCodeFragment> addedStmts) {

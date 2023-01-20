@@ -77,8 +77,8 @@ public class TryWithFailToExpectedExceptionRuleDetection {
     private TryWithFailToExpectedExceptionRuleRefactoring createRefactoring() {
         var tryStmt = tryStatements.get(0);
         var assertFailInvocation = assertFailInvocationsFound.get(0);
-        var expectInvocation = expectInvocations.stream().filter(op -> capturedExceptions.contains(op.getArguments().get(0))).findAny().orElseThrow();
-        var capturedException = expectInvocation.getArguments().get(0);
+        var expectInvocation = expectInvocations.stream().filter(op -> capturedExceptions.contains(op.arguments().get(0))).findAny().orElseThrow();
+        var capturedException = expectInvocation.arguments().get(0);
         return new TryWithFailToExpectedExceptionRuleRefactoring(operationBefore, operationAfter, tryStmt, assertFailInvocation, capturedException, expectInvocation, expectedExceptionFieldDeclaration);
     }
 
@@ -109,8 +109,8 @@ public class TryWithFailToExpectedExceptionRuleDetection {
         return extractMethodInvocationsStream(addedStmts)
                 .filter(invocation -> isExpectedExceptionExpectInvocation(capturedExceptions, invocation))
                 .filter(expectInvocation -> expectedExceptionRuleFieldDeclaration.getName().equals(expectInvocation.getExpression()))
-                .filter(expectInvocation -> expectInvocation.getArguments().size() == 1)
-                .filter(expectInvocation -> capturedExceptions.contains(expectInvocation.getArguments().get(0)));
+                .filter(expectInvocation -> expectInvocation.arguments().size() == 1)
+                .filter(expectInvocation -> capturedExceptions.contains(expectInvocation.arguments().get(0)));
     }
 
     private static boolean isExpectedExceptionExpectInvocation(List<String> candidateExceptions, AbstractCall invocation) {
@@ -118,7 +118,7 @@ public class TryWithFailToExpectedExceptionRuleDetection {
     }
 
     private static boolean isAnyArgumentPassedTo(List<String> arguments, AbstractCall invocation) {
-        return arguments.contains(invocation.getArguments().get(0));
+        return arguments.contains(invocation.arguments().get(0));
     }
 
     private static Stream<AbstractCall> extractMethodInvocationsStream(List<AbstractCodeFragment> addedStmts) {

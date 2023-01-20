@@ -3,7 +3,6 @@ package gr.uom.java.xmi.diff;
 import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.AbstractCall;
-import gr.uom.java.xmi.decomposition.LeafExpression;
 import gr.uom.java.xmi.decomposition.TryStatementObject;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.refactoringminer.api.Refactoring;
@@ -24,7 +23,7 @@ public class TryWithFailToExpectedExceptionRuleRefactoring implements Refactorin
     private final UMLOperation operationAfter;
     private final TryStatementObject tryStatement;
     private final AbstractCall assertFailInvocation;
-    private final LeafExpression exception;
+    private final String exception;
     private final AbstractCall thrownExpectInvocations;
     private final UMLAttribute ruleFieldDeclaration;
 
@@ -44,7 +43,7 @@ public class TryWithFailToExpectedExceptionRuleRefactoring implements Refactorin
         return assertFailInvocation;
     }
 
-    public LeafExpression getException() {
+    public String getException() {
         return exception;
     }
 
@@ -56,7 +55,7 @@ public class TryWithFailToExpectedExceptionRuleRefactoring implements Refactorin
         return ruleFieldDeclaration;
     }
 
-    public TryWithFailToExpectedExceptionRuleRefactoring(UMLOperation operationBefore, UMLOperation operationAfter, TryStatementObject tryStatement, AbstractCall assertFailInvocation, LeafExpression capturedException, AbstractCall thrownExpectInvocation, UMLAttribute ruleFieldDeclaration) {
+    public TryWithFailToExpectedExceptionRuleRefactoring(UMLOperation operationBefore, UMLOperation operationAfter, TryStatementObject tryStatement, AbstractCall assertFailInvocation, String capturedException, AbstractCall thrownExpectInvocation, UMLAttribute ruleFieldDeclaration) {
         this.operationBefore = operationBefore;
         this.operationAfter = operationAfter;
         this.tryStatement = tryStatement;
