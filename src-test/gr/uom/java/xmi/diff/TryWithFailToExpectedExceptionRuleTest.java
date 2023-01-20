@@ -3,6 +3,7 @@ package gr.uom.java.xmi.diff;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLModelASTReader;
+import gr.uom.java.xmi.Visibility;
 import gr.uom.java.xmi.decomposition.*;
 import org.junit.Assert;
 import org.junit.Before;
@@ -165,7 +166,7 @@ public class TryWithFailToExpectedExceptionRuleTest {
             Assert.assertArrayEquals(rightSideCodeElementTypes, r.rightSide().stream().map(CodeRange::getCodeElementType).toArray());
             Assert.assertEquals("fail", r.getAssertFailInvocation().getName());
             Assert.assertEquals("thrown", r.getRuleFieldDeclaration().getName());
-            Assert.assertEquals("public", r.getRuleFieldDeclaration().getVisibility());
+            Assert.assertEquals(Visibility.PUBLIC, r.getRuleFieldDeclaration().getVisibility());
             Assert.assertEquals("ExpectedException", r.getRuleFieldDeclaration().getType().getClassType());
             Assert.assertEquals(2, r.getTryStatement().getStatements().size());
             Assert.assertEquals("IllegalArgumentException.class", r.getThrownExpectInvocations().arguments().get(0));
