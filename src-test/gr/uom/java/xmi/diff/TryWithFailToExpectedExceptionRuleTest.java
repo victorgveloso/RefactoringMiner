@@ -5,9 +5,11 @@ import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLModelASTReader;
 import gr.uom.java.xmi.Visibility;
 import gr.uom.java.xmi.decomposition.*;
+import gr.uom.java.xmi.utils.FastTests;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.refactoringminer.api.RefactoringMinerTimedOutException;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RunWith(Enclosed.class)
+@Category(FastTests.class)
 public class TryWithFailToExpectedExceptionRuleTest {
     abstract public static class ModelDiffFieldSetUp {
         UMLModelDiff modelDiff;
@@ -33,6 +36,7 @@ public class TryWithFailToExpectedExceptionRuleTest {
             modelDiff = before.diff(after);
         }
     }
+    @Category(FastTests.class)
     public static class RegressionTest  {
         UMLModelDiff modelDiff;
         UMLModel after;
@@ -105,6 +109,7 @@ public class TryWithFailToExpectedExceptionRuleTest {
         }
 
     }
+    @Category(FastTests.class)
     public static class ImplementationTest extends ModelDiffFieldSetUp {
         @Test
         public void testFromTryFailToRule() {
@@ -173,6 +178,7 @@ public class TryWithFailToExpectedExceptionRuleTest {
         }
 
     }
+    @Category(FastTests.class)
     public static class ExploringTest extends ModelDiffFieldSetUp {
 
         @Test

@@ -7,10 +7,12 @@ import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.AbstractCall;
 import gr.uom.java.xmi.decomposition.LeafExpression;
 import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
+import gr.uom.java.xmi.utils.FastTests;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.refactoringminer.api.Refactoring;
@@ -24,6 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RunWith(Enclosed.class)
+@Category(FastTests.class)
 public class ExpectedAnnotationToAssertThrowsTest {
     abstract public static class ModelDiffFieldSetUp {
         UMLModelDiff modelDiff;
@@ -39,6 +42,7 @@ public class ExpectedAnnotationToAssertThrowsTest {
             modelDiff = before.diff(after);
         }
     }
+    @Category(FastTests.class)
     public static class RegressionTest {
         UMLModelDiff modelDiff;
 
@@ -121,6 +125,7 @@ public class ExpectedAnnotationToAssertThrowsTest {
         }
     }
 
+    @Category(FastTests.class)
     public static class ImplementationTest extends ModelDiffFieldSetUp {
         @Test
         public void testFromInlineToAssertThrows_detector() {
