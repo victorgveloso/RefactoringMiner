@@ -15,11 +15,13 @@ public class TestOperationDiff {
     private final UMLOperation added;
     private final Collection<Refactoring> refactorings = new LinkedHashSet<>();
     private List<UMLAttribute> addedAttributes;
+    private List<UMLAttribute> removedAttributes;
     private UMLOperationBodyMapper mapper;
 
     public TestOperationDiff(UMLOperationBodyMapper mapper, UMLAbstractClassDiff classDiff, Collection<Refactoring> refactorings) {
         this(mapper.getOperation1(), mapper.getOperation2(), refactorings);
         addedAttributes = classDiff.addedAttributes;
+        removedAttributes = classDiff.removedAttributes;
         this.mapper = mapper;
     }
 
@@ -51,8 +53,7 @@ public class TestOperationDiff {
     }
 
     public TryWithFailAndExpectedExceptionRuleRefactoring getJUnit3AssertFailToJUnit4ExpectedExceptionRefactoring() {
-        TryWithFailToExpectedExceptionRuleDetection detector;
-        detector = new TryWithFailToExpectedExceptionRuleDetection(mapper, addedAttributes, Collections.emptyList());
+        var detector = new TryWithFailToExpectedExceptionRuleDetection(mapper, addedAttributes, removedAttributes);
         return detector.check();
     }
 
