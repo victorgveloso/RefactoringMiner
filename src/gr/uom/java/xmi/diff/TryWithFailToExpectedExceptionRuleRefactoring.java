@@ -18,7 +18,7 @@ import java.util.Set;
  * JUnit3 relies on try-catch containing an Assert.fail call to expect thrown exceptions
  * JUnit4 usually relies on @Rule ExpectedException, a Single Member annotated field, which provides an expect method
  */
-public class TryWithFailToExpectedExceptionRuleRefactoring implements Refactoring {
+public class TryWithFailToExpectedExceptionRuleRefactoring implements TryWithFailAndExpectedExceptionRuleRefactoring {
     private final UMLOperation operationBefore;
     private final UMLOperation operationAfter;
     private final TryStatementObject tryStatement;
@@ -27,30 +27,37 @@ public class TryWithFailToExpectedExceptionRuleRefactoring implements Refactorin
     private final AbstractCall thrownExpectInvocations;
     private final UMLAttribute ruleFieldDeclaration;
 
+    @Override
     public UMLOperation getOperationBefore() {
         return operationBefore;
     }
 
+    @Override
     public UMLOperation getOperationAfter() {
         return operationAfter;
     }
 
+    @Override
     public TryStatementObject getTryStatement() {
         return tryStatement;
     }
 
+    @Override
     public AbstractCall getAssertFailInvocation() {
         return assertFailInvocation;
     }
 
+    @Override
     public String getException() {
         return exception;
     }
 
+    @Override
     public AbstractCall getThrownExpectInvocations() {
         return thrownExpectInvocations;
     }
 
+    @Override
     public UMLAttribute getRuleFieldDeclaration() {
         return ruleFieldDeclaration;
     }

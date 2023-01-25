@@ -50,7 +50,7 @@ public class TestOperationDiff {
         return refactorings;
     }
 
-    public TryWithFailToExpectedExceptionRuleRefactoring getJUnit3AssertFailToJUnit4ExpectedExceptionRefactoring() {
+    public TryWithFailAndExpectedExceptionRuleRefactoring getJUnit3AssertFailToJUnit4ExpectedExceptionRefactoring() {
         TryWithFailToExpectedExceptionRuleDetection detector;
         detector = new TryWithFailToExpectedExceptionRuleDetection(mapper, addedAttributes, Collections.emptyList());
         return detector.check();

@@ -82,7 +82,7 @@ public class TryWithFailToExpectedExceptionRuleDetection {
         this.removedAttr = Collections.emptyList();
     }
 
-    public TryWithFailToExpectedExceptionRuleRefactoring check() {
+    public TryWithFailAndExpectedExceptionRuleRefactoring check() {
         try {
             if (checkFromTryWithFail() && checkToExpectedException()) {
                 return createRefactoring();
@@ -94,7 +94,7 @@ public class TryWithFailToExpectedExceptionRuleDetection {
         }
     }
 
-    private TryWithFailToExpectedExceptionRuleRefactoring createRefactoring() {
+    private TryWithFailAndExpectedExceptionRuleRefactoring createRefactoring() {
         var tryStmt = tryStatements.get(0);
         var assertFailInvocation = assertFailInvocationsFound.get(0);
         var expectInvocation = expectInvocations.stream().filter(op -> capturedExceptions.contains(op.arguments().get(0))).findAny().orElseThrow();
