@@ -120,7 +120,7 @@ public class TryWithFailToExpectedExceptionRuleTest {
             var possibleMapper = operationMappers.stream().filter(op-> !(op.operationNameEditDistance() == 0 && op.getOperation1().getName().equals("setUp"))).findAny();
             Assert.assertTrue(possibleMapper.isPresent());
             var mapper = possibleMapper.get();
-            var detector = new TryWithFailToExpectedExceptionRuleDetection(mapper, classDiff.addedAttributes);
+            var detector = new TryWithFailToExpectedExceptionRuleDetection(mapper, classDiff.addedAttributes, Collections.emptyList());
             var refactoring = detector.check();
             Assert.assertNotNull(refactoring);
             Assert.assertEquals(mapper.getOperation2(), refactoring.getOperationAfter());

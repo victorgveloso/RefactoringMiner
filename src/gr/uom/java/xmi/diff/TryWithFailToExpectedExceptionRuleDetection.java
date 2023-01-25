@@ -16,13 +16,16 @@ import java.util.stream.Stream;
 public class TryWithFailToExpectedExceptionRuleDetection {
     private final UMLOperation operationBefore;
     private final UMLOperation operationAfter;
-    private final List<UMLAttribute> addedAttributes;
+    private final List<UMLAttribute> addedAttr;
     private final List<CompositeStatementObject> removedCompositeStmts;
     private final List<AbstractCodeFragment> addedStmts;
     private List<TryStatementObject> tryStatements;
     private List<String> capturedExceptions;
     private List<AbstractCall> assertFailInvocationsFound;
     private UMLAttribute expectedExceptionFieldDeclaration;
+    private List<CompositeStatementObject> addedCompositeStmts;
+    private List<AbstractCodeFragment> removedStmts;
+    private List<UMLAttribute> removedAttr;
 
     List<TryStatementObject> getTryStatements() {
         return tryStatements;
@@ -47,19 +50,36 @@ public class TryWithFailToExpectedExceptionRuleDetection {
     private List<AbstractCall> expectInvocations;
 
     public TryWithFailToExpectedExceptionRuleDetection(UMLOperationBodyMapper mapper, UMLClassBaseDiff classDiff) {
-        this(mapper,classDiff.addedAttributes);
+        this(mapper,classDiff.addedAttributes, classDiff.removedAttributes);
+    }
+    public TryWithFailToExpectedExceptionRuleDetection(UMLOperationBodyMapper mapper, List<UMLAttribute> addedAttributes) {
+        this(mapper.getOperation1(), mapper.getOperation2(), mapper.getNonMappedInnerNodesT1(), mapper.getNonMappedInnerNodesT2(), mapper.getNonMappedLeavesT2(), mapper.getNonMappedLeavesT1(), addedAttributes, Collections.emptyList());
     }
 
-    public TryWithFailToExpectedExceptionRuleDetection(UMLOperationBodyMapper mapper, List<UMLAttribute> addedAttributes) {
-        this(mapper.getOperation1(), mapper.getOperation2(), mapper.getNonMappedInnerNodesT1(), mapper.getNonMappedLeavesT2(), addedAttributes);
+    public TryWithFailToExpectedExceptionRuleDetection(UMLOperationBodyMapper mapper, List<UMLAttribute> addedAttributes, List<UMLAttribute> removedAttributes) {
+        this(mapper.getOperation1(), mapper.getOperation2(), mapper.getNonMappedInnerNodesT1(), mapper.getNonMappedInnerNodesT2(), mapper.getNonMappedLeavesT2(), mapper.getNonMappedLeavesT1(), addedAttributes, removedAttributes);
+    }
+
+    public TryWithFailToExpectedExceptionRuleDetection(UMLOperation operationBefore, UMLOperation operationAfter, List<CompositeStatementObject> removedCompositeStmts, List<CompositeStatementObject> addedCompositeStatements, List<AbstractCodeFragment> addedStmts, List<AbstractCodeFragment> removedStmts, List<UMLAttribute> addedAttributes, List<UMLAttribute> removedAttributes) {
+        this.operationBefore = operationBefore;
+        this.operationAfter = operationAfter;
+        this.removedCompositeStmts = removedCompositeStmts;
+        this.addedCompositeStmts = addedCompositeStatements;
+        this.removedStmts = removedStmts;
+        this.addedStmts = addedStmts;
+        this.addedAttr = addedAttributes;
+        this.removedAttr = removedAttributes;
     }
 
     public TryWithFailToExpectedExceptionRuleDetection(UMLOperation operationBefore, UMLOperation operationAfter, List<CompositeStatementObject> removedCompositeStmts, List<AbstractCodeFragment> addedStmts, List<UMLAttribute> addedAttributes) {
         this.operationBefore = operationBefore;
         this.operationAfter = operationAfter;
         this.removedCompositeStmts = removedCompositeStmts;
+        this.addedCompositeStmts = Collections.emptyList();
+        this.removedStmts = Collections.emptyList();
         this.addedStmts = addedStmts;
-        this.addedAttributes = addedAttributes;
+        this.addedAttr = addedAttributes;
+        this.removedAttr = Collections.emptyList();
     }
 
     public TryWithFailToExpectedExceptionRuleRefactoring check() {
