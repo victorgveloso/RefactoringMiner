@@ -1,0 +1,178 @@
+package gr.uom.java.xmi.diff;
+
+import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.UMLModel;
+import gr.uom.java.xmi.UMLModelASTReader;
+import gr.uom.java.xmi.Visibility;
+import gr.uom.java.xmi.utils.FastTests;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+import org.refactoringminer.api.RefactoringMinerTimedOutException;
+import org.refactoringminer.api.RefactoringType;
+
+import java.util.*;
+
+@RunWith(Enclosed.class)
+public class ExpectedExceptionRuleToTryWithFailTest {
+    abstract public static class ModelDiffFieldSetUp {
+        UMLModelDiff modelDiff;
+
+        @Before
+        public void setUp() throws RefactoringMinerTimedOutException {
+            var ruleVersionTestMethod = TestOperationDiffMother.createExampleTestMethod_RuleVersion();
+            var ruleVersionTestClass = TestOperationDiffMother.createExampleClassTestCode(ruleVersionTestMethod);
+            var before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", ruleVersionTestClass), Set.of(), false).getUmlModel();
+            var tryCatchVersionTestMethod = TestOperationDiffMother.createExampleTestMethod_TryCatchVersion();
+            var tryCatchVersionTestClass = TestOperationDiffMother.createExampleClassTestCode(tryCatchVersionTestMethod);
+            var after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", tryCatchVersionTestClass), Set.of(), false).getUmlModel();
+            modelDiff = before.diff(after);
+        }
+    }
+    @Category(FastTests.class)
+    public static class RegressionTest  {
+        UMLModelDiff modelDiff;
+        UMLModel before;
+
+        @Before
+        public void setUp() {
+            var ruleVersionTestClass = "package android.support.test.espresso.intent.matcher;\n" +
+                    "\n" +
+                    "public class IntentMatchersTest {\n" +
+                    "    @Rule\n" +
+                    "    public ExpectedException expectedException = none();\n" +
+                    "    @Test\n" +
+                    "    public void toPackageTesting() {\n" +
+                    "        final String pkg = \"pkg1\";\n" +
+                    "        ResolvedIntent intent = new FakeResolvedIntent(pkg);\n" +
+                    "        assertTrue(toPackage(pkg).matches(intent));\n" +
+                    "        assertFalse(toPackage(\"notpkg1\").matches(intent));\n" +
+                    "        expectedException.expect(RuntimeException.class);\n" +
+                    "        toPackage(\"whatever\").matches(new Intent(Intent.ACTION_VIEW));\n" +
+                    "    }\n" +
+                    "}";
+            before = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", ruleVersionTestClass), Set.of(), false).getUmlModel();
+        }
+
+        @Test
+        public void testToTryFailToRule_LastTryChildStatementContainingZeroMethodInvocation_ShouldNotThrowIndexOutOfBoundsException() throws RefactoringMinerTimedOutException {
+            var tryCatchVersionTestClass = "package android.support.test.espresso.intent.matcher;\n" +
+                    "\n" +
+                    "public class IntentMatchersTest {\n" +
+                    "    public void testToPackage() {\n" +
+                    "        final String pkg = \"pkg1\";\n" +
+                    "        ResolvedIntent intent = new FakeResolvedIntent(pkg);\n" +
+                    "        assertTrue(toPackage(pkg).matches(intent));\n" +
+                    "        assertFalse(toPackage(\"notpkg1\").matches(intent));\n" +
+                    "        try {\n" +
+                    "            toPackage(\"whatever\").matches(new Intent(Intent.ACTION_VIEW));\n" +
+                    "            pkg = \"pkg2\";\n" +
+                    "        } catch (RuntimeException expected) {\n" +
+                    "\n" +
+                    "        }\n" +
+                    "        assertEquals(pkg, \"pkg1\");\n" +
+                    "    }\n" +
+                    "}";
+            var after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", tryCatchVersionTestClass), Set.of(), false).getUmlModel();
+            modelDiff = before.diff(after);
+            modelDiff.getRefactorings();
+        }
+
+        @Test
+        public void testToTryFailToRule_StaticallyImportedAssertFail_ShouldThrowNullPointerException() throws RefactoringMinerTimedOutException {
+            var tryCatchVersionTestClass = "package android.support.test.espresso.intent.matcher;\n" +
+                    "\n" +
+                    "public class IntentMatchersTest {\n" +
+                    "    public void testToPackage() {\n" +
+                    "        final String pkg = \"pkg1\";\n" +
+                    "        ResolvedIntent intent = new FakeResolvedIntent(pkg);\n" +
+                    "        assertTrue(toPackage(pkg).matches(intent));\n" +
+                    "        assertFalse(toPackage(\"notpkg1\").matches(intent));\n" +
+                    "        try {\n" +
+                    "            toPackage(\"whatever\").matches(new Intent(Intent.ACTION_VIEW));\n" +
+                    "            fail(\"Expected previous call to fail.\");\n" +
+                    "        } catch (RuntimeException expected) {\n" +
+                    "\n" +
+                    "        }\n" +
+                    "    }\n" +
+                    "}";
+            var after = new UMLModelASTReader(Map.of("productionClass", TestOperationDiffMother.createExampleClassCode(), "testClass", tryCatchVersionTestClass), Set.of(), false).getUmlModel();
+            modelDiff = before.diff(after);
+            modelDiff.getRefactorings();
+        }
+
+    }
+    @Category(FastTests.class)
+    public static class ImplementationTest extends ModelDiffFieldSetUp {
+        @Test
+        public void testFromTryFailToRule() {
+            var classDiff = modelDiff.getUMLClassDiff("ca.concordia.victor.exception.ExampleClassTest");
+            Assert.assertNotNull(classDiff);
+            var operationMappers = classDiff.getOperationBodyMapperList();
+            Assert.assertEquals(2, operationMappers.size());
+            var possibleMapper = operationMappers.stream().filter(op-> !(op.operationNameEditDistance() == 0 && op.getOperation1().getName().equals("setUp"))).findAny();
+            Assert.assertTrue(possibleMapper.isPresent());
+            var mapper = possibleMapper.get();
+            var detector = new TryWithFailToExpectedExceptionRuleDetection(mapper, classDiff.addedAttributes, classDiff.removedAttributes);
+            var refactoring = detector.check();
+            Assert.assertNotNull(refactoring);
+            Assert.assertTrue(refactoring instanceof ExpectedExceptionRuleToTryWithFailRefactoring);
+            Assert.assertEquals(mapper.getOperation2(), refactoring.getOperationAfter());
+            Assert.assertEquals(mapper.getOperation1(), refactoring.getOperationBefore());
+            Assert.assertNotNull(detector.getExpectedExceptionFieldDeclaration());
+            Assert.assertEquals(1, detector.getTryStatements().size());
+            Assert.assertEquals(1, detector.getAssertFailInvocationsFound().size());
+            Assert.assertEquals(1, detector.getCapturedExceptions().size());
+            Assert.assertEquals(1, detector.getExpectInvocations().size());
+            Assert.assertEquals("ExpectedException", detector.getExpectedExceptionFieldDeclaration().getType().getClassType());
+            Assert.assertEquals(1, detector.getExpectInvocations().size());
+            Assert.assertEquals(1, detector.getExpectInvocations().get(0).arguments().size());
+            Assert.assertEquals("IllegalArgumentException.class", detector.getExpectInvocations().get(0).arguments().get(0));
+            Assert.assertEquals(1, detector.getCapturedExceptions().size());
+            Assert.assertEquals("IllegalArgumentException.class", detector.getCapturedExceptions().get(0));
+        }
+        @Test
+        public void testFromTryFailToRule_ClassBaseDiff_getRefactorings() throws RefactoringMinerTimedOutException {
+            var classDiff = modelDiff.getUMLClassDiff("ca.concordia.victor.exception.ExampleClassTest");
+            Assert.assertNotNull(classDiff);
+            var refactorings = classDiff.getRefactorings();
+            Assert.assertEquals(1, refactorings.size());
+            Assert.assertTrue(refactorings.stream().anyMatch(r->r instanceof ExpectedExceptionRuleToTryWithFailRefactoring));
+        }
+        @Test
+        public void testFromTryFailToRule_ModelDiff_getRefactorings() throws RefactoringMinerTimedOutException {
+            var refactorings = modelDiff.getRefactorings();
+            Assert.assertEquals(1, refactorings.size());
+            Assert.assertTrue(refactorings.stream().anyMatch(r->r instanceof ExpectedExceptionRuleToTryWithFailRefactoring));
+            var r = (TryWithFailAndExpectedExceptionRuleRefactoring) refactorings.get(0);
+            Assert.assertEquals("IllegalArgumentException.class",r.getException());
+            Assert.assertEquals("Replace Try And Fail With Rule",r.getName());
+            Assert.assertEquals(RefactoringType.REPLACE_TRY_FAIL_WITH_RULE,r.getRefactoringType());
+            Assert.assertEquals(1,r.getInvolvedClassesAfterRefactoring().size());
+            Assert.assertEquals("testClass",new ArrayList<>(r.getInvolvedClassesAfterRefactoring()).get(0).left);
+            Assert.assertEquals("ca.concordia.victor.exception.ExampleClassTest",new ArrayList<>(r.getInvolvedClassesAfterRefactoring()).get(0).right);
+            Assert.assertEquals(1,r.getInvolvedClassesBeforeRefactoring().size());
+            Assert.assertEquals("testClass",new ArrayList<>(r.getInvolvedClassesBeforeRefactoring()).get(0).left);
+            Assert.assertEquals("ca.concordia.victor.exception.ExampleClassTest",new ArrayList<>(r.getInvolvedClassesBeforeRefactoring()).get(0).right);
+            Assert.assertEquals("Replace Try And Fail With Rule\tIllegalArgumentException.class from method public testExampleMethod_WrongGuess() : void in class ca.concordia.victor.exception.ExampleClassTest", r.toString());
+            var leftSideDescriptions = new String[]{"source method declaration before migration", "source method's try-statement", "source method's catch clause capturing the expected exception", "source method's assertFail invocation from the try-statement before migration"};
+            Assert.assertArrayEquals(leftSideDescriptions, r.leftSide().stream().map(CodeRange::getDescription).toArray());
+            var leftSideCodeElementTypes = new LocationInfo.CodeElementType[]{LocationInfo.CodeElementType.METHOD_DECLARATION,LocationInfo.CodeElementType.FIELD_DECLARATION,LocationInfo.CodeElementType.METHOD_INVOCATION};
+            Assert.assertArrayEquals(leftSideCodeElementTypes, r.rightSide().stream().map(CodeRange::getCodeElementType).toArray());
+            var rightSideDescriptions = new String[]{"method declaration after migration", "ExpectedException field annotated with @Rule", "method's statement invoking ExpectedException's expect method"};
+            Assert.assertArrayEquals(rightSideDescriptions, r.rightSide().stream().map(CodeRange::getDescription).toArray());
+            var rightSideCodeElementTypes = new LocationInfo.CodeElementType[]{LocationInfo.CodeElementType.METHOD_DECLARATION,LocationInfo.CodeElementType.FIELD_DECLARATION,LocationInfo.CodeElementType.METHOD_INVOCATION};
+            Assert.assertArrayEquals(rightSideCodeElementTypes, r.rightSide().stream().map(CodeRange::getCodeElementType).toArray());
+            Assert.assertEquals("fail", r.getAssertFailInvocation().getName());
+            Assert.assertEquals("thrown", r.getRuleFieldDeclaration().getName());
+            Assert.assertEquals(Visibility.PUBLIC, r.getRuleFieldDeclaration().getVisibility());
+            Assert.assertEquals("ExpectedException", r.getRuleFieldDeclaration().getType().getClassType());
+            Assert.assertEquals(2, r.getTryStatement().getStatements().size());
+            Assert.assertEquals("IllegalArgumentException.class", r.getThrownExpectInvocations().arguments().get(0));
+        }
+
+    }
+}

@@ -86,6 +86,8 @@ public class TryWithFailToExpectedExceptionRuleDetection {
         try {
             if (checkFromTryWithFail() && checkToExpectedException()) {
                 return createRefactoring();
+            } else if (checkToTryWithFail() && checkFromExpectedException()) {
+                return createReverseRefactoring();
             }
             return null;
         }
@@ -99,11 +101,35 @@ public class TryWithFailToExpectedExceptionRuleDetection {
         var assertFailInvocation = assertFailInvocationsFound.get(0);
         var expectInvocation = expectInvocations.stream().filter(op -> capturedExceptions.contains(op.arguments().get(0))).findAny().orElseThrow();
         var capturedException = expectInvocation.arguments().get(0);
+        return createRefactoring(tryStmt, assertFailInvocation, expectInvocation, capturedException);
+    }
+
+    private TryWithFailToExpectedExceptionRuleRefactoring createRefactoring(TryStatementObject tryStmt, AbstractCall assertFailInvocation, AbstractCall expectInvocation, String capturedException) {
         return new TryWithFailToExpectedExceptionRuleRefactoring(operationBefore, operationAfter, tryStmt, assertFailInvocation, capturedException, expectInvocation, expectedExceptionFieldDeclaration);
     }
 
+    private ExpectedExceptionRuleToTryWithFailRefactoring createReverseRefactoring(TryStatementObject tryStmt, AbstractCall assertFailInvocation, AbstractCall expectInvocation, String capturedException) {
+        return new ExpectedExceptionRuleToTryWithFailRefactoring(operationAfter, operationBefore, tryStmt, assertFailInvocation, capturedException, expectInvocation, expectedExceptionFieldDeclaration);
+    }
+
+    private TryWithFailAndExpectedExceptionRuleRefactoring createReverseRefactoring() {
+        var tryStmt = tryStatements.get(0);
+        var assertFailInvocation = assertFailInvocationsFound.get(0);
+        var expectInvocation = expectInvocations.stream().filter(op -> capturedExceptions.contains(op.arguments().get(0))).findAny().orElseThrow();
+        var capturedException = expectInvocation.arguments().get(0);
+        return createReverseRefactoring(tryStmt, assertFailInvocation, expectInvocation, capturedException);
+    }
+
+    private boolean checkToTryWithFail() {
+        return checkTryWithFail(addedCompositeStmts);
+    }
+
     private boolean checkFromTryWithFail() {
-        tryStatements = filterTryStatement(removedCompositeStmts).collect(Collectors.toList());
+        return checkTryWithFail(removedCompositeStmts);
+    }
+
+    private boolean checkTryWithFail(List<CompositeStatementObject> changedStmts) {
+        tryStatements = filterTryStatement(changedStmts).collect(Collectors.toList());
         capturedExceptions = tryStatements.stream()
                 .filter(stmt -> detectAssertFailInvocationAtTheEndOf(stmt).findAny().isPresent())
                 .flatMap(TryWithFailToExpectedExceptionRuleDetection::detectCatchExceptions)
@@ -116,11 +142,18 @@ public class TryWithFailToExpectedExceptionRuleDetection {
     }
 
     private boolean checkToExpectedException() {
-        expectedExceptionFieldDeclaration = addedAttributes.stream()
+        return checkExpectedException(addedAttr, addedStmts);
+    }
+    private boolean checkFromExpectedException() {
+        return checkExpectedException(removedAttr, removedStmts);
+    }
+
+    private boolean checkExpectedException(List<UMLAttribute> changedAttributes, List<AbstractCodeFragment> changedStatements) {
+        expectedExceptionFieldDeclaration = changedAttributes.stream()
                 .filter(field -> field.getType().getClassType().equals("ExpectedException"))
                 .findAny()
                 .orElseThrow();
-        expectInvocations = detectAddedExpectInvocations(addedStmts,capturedExceptions, expectedExceptionFieldDeclaration)
+        expectInvocations = detectAddedExpectInvocations(changedStatements, capturedExceptions, expectedExceptionFieldDeclaration)
                 .collect(Collectors.toList());
         return expectInvocations.size() > 0;
     }
