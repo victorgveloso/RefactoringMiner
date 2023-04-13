@@ -1,7 +1,7 @@
 package org.refactoringminer.test;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.refactoringminer.RefactoringMiner;
 
@@ -25,7 +25,7 @@ public class TestCommandLine {
 
         List<String> expected = IOUtils.readLines(new FileReader(System.getProperty("user.dir") + "/src-test/Data/mondrian-bc-expected.json"));
         List<String> actual = IOUtils.readLines(new FileReader(jsonPath));
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -43,7 +43,7 @@ public class TestCommandLine {
 
         List<String> expected = IOUtils.readLines(new FileReader(System.getProperty("user.dir") + "/src-test/Data/mondrian-bt-expected.json"));
         List<String> actual = IOUtils.readLines(new FileReader(jsonPath));
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class TestCommandLine {
 
         List<String> expected = IOUtils.readLines(new FileReader(System.getProperty("user.dir") + "/src-test/Data/refactoring-toy-example-all-expected.json"));
         List<String> actual = IOUtils.readLines(new FileReader(jsonPath));
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class TestCommandLine {
 
         List<String> expected = IOUtils.readLines(new FileReader(System.getProperty("user.dir") + "/src-test/Data/refactoring-toy-example-branch-expected.json"));
         List<String> actual = IOUtils.readLines(new FileReader(jsonPath));
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class TestCommandLine {
 
         List<String> expected = IOUtils.readLines(new FileReader(System.getProperty("user.dir") + "/src-test/Data/refactoring-toy-example-commit-expected.json"));
         List<String> actual = IOUtils.readLines(new FileReader(jsonPath));
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -122,7 +122,7 @@ public class TestCommandLine {
 
     		List<String> expected = IOUtils.readLines(new FileReader(System.getProperty("user.dir") + "/src-test/Data/drill-" + commit + "-expected.json"));
     		List<String> actual = IOUtils.readLines(new FileReader(jsonPath));
-    		Assert.assertEquals(expected, actual);
+    		Assertions.assertEquals(expected, actual);
     	}
     }
 
@@ -141,6 +141,6 @@ public class TestCommandLine {
 
         List<String> expected = IOUtils.readLines(new FileReader(System.getProperty("user.dir") + "/src-test/Data/drill-gp-expected.json"));
         List<String> actual = IOUtils.readLines(new FileReader(jsonPath));
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 }
