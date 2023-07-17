@@ -6,19 +6,17 @@ import org.apache.commons.lang3.function.TriFunction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
+import java.util.HashMap;
 
 public abstract class SourceAnnotation {
-    protected static final Map<String, TriFunction<UMLAnnotation, UMLOperation, UMLModel, SourceAnnotation>> implementations = Map.of(
-            CsvSourceAnnotation.ANNOTATION_TYPENAME, CsvSourceAnnotation::new,
-            CsvFileSourceAnnotation.ANNOTATION_TYPENAME, CsvFileSourceAnnotation::new,
-            ValueSourceAnnotation.ANNOTATION_TYPENAME, ValueSourceAnnotation::new,
-            EnumSourceAnnotation.ANNOTATION_TYPENAME, EnumSourceAnnotation::new,
-            NullAndEmptySourceAnnotation.ANNOTATION_TYPENAME, NullAndEmptySourceAnnotation::new,
-            EmptySourceAnnotation.ANNOTATION_TYPENAME, EmptySourceAnnotation::new,
-            NullSourceAnnotation.ANNOTATION_TYPENAME, NullSourceAnnotation::new
-    );
+    protected static final Map<String, TriFunction<UMLAnnotation, UMLOperation, UMLModel, SourceAnnotation>> implementations = new HashMap<>();
     protected List<List<String>> testParameters;
     protected UMLAnnotation annotation;
+
+    static {
+        loadSourceAnnotationProviders();
+    }
 
     protected SourceAnnotation(UMLAnnotation annotation, String typeName) {
         assert annotation.getTypeName().equals(typeName) : "Annotation is not a " + typeName + " annotation";
@@ -31,6 +29,17 @@ public abstract class SourceAnnotation {
             return implementations.get(annotation.getTypeName()).apply(annotation, operation, model);
         }
         throw new IllegalArgumentException("Annotation type " + annotation.getTypeName() + " is not supported");
+    }
+
+    private static void loadSourceAnnotationProviders() {
+        if (implementations.isEmpty()) {
+            ServiceLoader<SourceAnnotationFactory> loader = ServiceLoader.load(SourceAnnotationFactory.class);
+            for (SourceAnnotationFactory impl : loader) {
+                if (impl != null) {
+                    implementations.put(impl.getTypeName(), (a, o, m) -> impl.create(a,o,m));
+                }
+            }
+        }
     }
 
     protected static String sanitizeLiteral(String literal) {
