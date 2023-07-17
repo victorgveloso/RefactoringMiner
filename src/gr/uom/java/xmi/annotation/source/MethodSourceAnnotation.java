@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MethodSourceAnnotation extends SourceAnnotation implements SingleMemberAnnotation, MarkerAnnotation {
-    private static final String ANNOTATION_TYPENAME = "MethodSource";
+    public static final String ANNOTATION_TYPENAME = "MethodSource";
     private final UMLOperation annotatedOperation;
 
     public MethodSourceAnnotation(UMLAnnotation annotation, UMLOperation operation, UMLModel model) {

@@ -6,9 +6,10 @@ import gr.uom.java.xmi.annotation.SingleMemberAnnotation;
 
 import java.util.List;
 
-class ArgumentsSourceAnnotation extends SourceAnnotation implements SingleMemberAnnotation {
+public class ArgumentsSourceAnnotation extends SourceAnnotation implements SingleMemberAnnotation {
+    public static final String ANNOTATION_TYPENAME = "ArgumentsSource";
     public ArgumentsSourceAnnotation(UMLAnnotation annotation) {
-        super(annotation, "ArgumentsSource");
+        super(annotation, ANNOTATION_TYPENAME);
     }
 
     @Override
