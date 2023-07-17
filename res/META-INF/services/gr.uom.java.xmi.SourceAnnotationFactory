@@ -1,0 +1,7 @@
+gr.uom.java.xmi.annotation.source.CsvFileSourceAnnotationFactory
+gr.uom.java.xmi.annotation.source.CsvSourceAnnotationFactory
+gr.uom.java.xmi.annotation.source.EmptySourceAnnotationFactory
+gr.uom.java.xmi.annotation.source.EnumSourceAnnotationFactory
+gr.uom.java.xmi.annotation.source.NullAndEmptySourceAnnotationFactory
+gr.uom.java.xmi.annotation.source.NullSourceAnnotationFactory
+gr.uom.java.xmi.annotation.source.ValueSourceAnnotationFactory
