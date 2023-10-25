@@ -30,6 +30,13 @@ test {
 }
 
 dependencies {
+    implementation 'mysql:mysql-connector-java:5.1.40'
+    implementation('org.hibernate:hibernate-entitymanager:4.2.6.Final')
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+    implementation 'javax.json:javax.json-api:1.0'
+    implementation 'com.jcabi:jcabi-github:1.8.0'
+    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'
     implementation 'org.eclipse.jgit:org.eclipse.jgit:6.7.0.202309050840-r'
     implementation 'org.slf4j:slf4j-api:2.0.9'
     implementation 'org.slf4j:slf4j-simple:2.0.9'

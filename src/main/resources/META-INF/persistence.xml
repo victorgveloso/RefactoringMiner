@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+    <persistence-unit name="lambda-study">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider> <!-- Note the provider class -->
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.ProjectGit</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.RevisionGit</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.CrudProjectDaoGit</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.Database</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.ExtractMethodInfo</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.LambdaDBEntity</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.LambdaParametersDBEntity</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.LambdaTagsDBEntity</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.ProjectsAdditionalInfo</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.RefactoringGit</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.RefactoringMotivation</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.RevisionTag</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.SurveyMail</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.SurveyResponse</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.Tag</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.User</class>
+        <properties>
+            <!-- JDBC Database connection settings -->
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://lab:3306/refactoring?useSSL=false" />
+            <property name="javax.persistence.jdbc.user" value="root" />
+            <property name="javax.persistence.jdbc.password" value="secret" />
+
+            <!-- Hibernate specific settings -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" /> <!-- Use MySQLDialect instead of MySQL8Dialect -->
+            <property name="hibernate.hbm2ddl.auto" value="update" />
+            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.archive.autodetection" value="class, hbm" />
+            <property name="hibernate.package_scanner.autodetection" value="true" />
+            <property name="hibernate.package_scanner_base_package" value="br.ufmg.dcc.labsoft.refactoringanalyzer.dao"/>
+        </properties>
+
+    </persistence-unit>
+</persistence>
