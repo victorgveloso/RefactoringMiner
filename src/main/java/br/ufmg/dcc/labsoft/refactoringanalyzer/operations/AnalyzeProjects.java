@@ -44,7 +44,7 @@ public class AnalyzeProjects extends TaskWithProjectLock {
 		Repository repo = gitService.cloneIfNotExists(projectFile.getPath(), project.getCloneUrl()/*, project.getDefault_branch()*/);
 
 		GitHistoryRefactoringMiner detector = new GitHistoryRefactoringMinerImpl();
-		detector.detectAll(repo, project.getDefault_branch(), new AnalyzeProjectsHandler(db, project));
+		detector.detectAll(repo, project.getDefault_branch(), new AnalyzeProjectsHandler(db, project, repo));
 		repo.close();
 	}
 }

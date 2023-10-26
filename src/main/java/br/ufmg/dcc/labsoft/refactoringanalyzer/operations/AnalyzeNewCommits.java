@@ -47,7 +47,7 @@ public class AnalyzeNewCommits extends TaskWithProjectLock {
 		Repository repo = gitService.cloneIfNotExists(projectFile.getPath(), project.getCloneUrl());
 		
 		GitHistoryRefactoringMiner detector = new GitHistoryRefactoringMinerImpl();
-		detector.fetchAndDetectNew(repo, new AnalyzeNewCommitsHandler(db1, project));
+		detector.fetchAndDetectNew(repo, new AnalyzeNewCommitsHandler(db1, project, repo));
 		repo.close();
 	}
 
