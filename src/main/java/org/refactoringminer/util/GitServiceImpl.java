@@ -42,9 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GitServiceImpl implements GitService {
+	private static Logger logger = LoggerFactory.getLogger(GitServiceImpl.class);
 
 	private static final String REMOTE_REFS_PREFIX = "refs/remotes/origin/";
-	Logger logger = LoggerFactory.getLogger(GitServiceImpl.class);
 
 	DefaultCommitsFilter commitsFilter = new DefaultCommitsFilter();
 	
@@ -206,6 +206,7 @@ public class GitServiceImpl implements GitService {
 	}
 
 	public RevWalk createAllRevsWalk(Repository repository, String branch) throws Exception {
+		logger.info("Listing all commits of repository {}", repository.getDirectory().toString());
 		List<ObjectId> currentRemoteRefs = new ArrayList<ObjectId>(); 
 		for (Ref ref : repository.getRefDatabase().getRefs()) {
 			String refName = ref.getName();

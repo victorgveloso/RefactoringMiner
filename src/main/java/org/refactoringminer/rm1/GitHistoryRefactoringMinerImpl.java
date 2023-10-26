@@ -1,5 +1,6 @@
 package org.refactoringminer.rm1;
 
+import br.ufmg.dcc.labsoft.refactoringanalyzer.operations.GitProjectFinder;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLModelASTReader;
 import gr.uom.java.xmi.diff.MoveSourceFolderRefactoring;
@@ -100,6 +101,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 	}
 	
 	private void detect(GitService gitService, Repository repository, final RefactoringHandler handler, Iterator<RevCommit> i) {
+		logger.info("Detecting refactorings at " + repository.getDirectory());
 		int commitsCount = 0;
 		int errorCommitsCount = 0;
 		int refactoringsCount = 0;
@@ -111,6 +113,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 		long time = System.currentTimeMillis();
 		while (i.hasNext()) {
 			RevCommit currentCommit = i.next();
+			logger.info(String.format("Analyzing commit %s [%d/%d]", currentCommit.getId().getName(), commitsCount, errorCommitsCount));
 			try {
 				List<Refactoring> refactoringsAtRevision = detectRefactorings(gitService, repository, handler, currentCommit);
 				refactoringsCount += refactoringsAtRevision.size();
@@ -576,11 +579,13 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 		GitService gitService = new GitServiceImpl() {
 			@Override
 			public boolean isCommitAnalyzed(String sha1) {
+				logger.info("Skipping analyzed commit " + sha1);
 				return handler.skipCommit(sha1);
 			}
 		};
 		RevWalk walk = gitService.fetchAndCreateNewRevsWalk(repository);
 		try {
+			logger.info("hasNext: " + walk.iterator().hasNext());
 			detect(gitService, repository, handler, walk.iterator());
 		} finally {
 			walk.dispose();
