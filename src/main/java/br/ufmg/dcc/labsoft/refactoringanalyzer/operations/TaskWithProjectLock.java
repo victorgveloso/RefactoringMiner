@@ -34,17 +34,23 @@ public abstract class TaskWithProjectLock {
 		
 		try {
 			ProjectGit project = null;
+			ProjectGit previousProject = null;
 			while ((project = this.findNextProject(db, pid)) != null) {
+				if (previousProject != null && previousProject.equals(project)) {
+					logger.warn("Skipping project " + project.getId() + " because it was already processed");
+					continue;
+				}
 				try {
 					this.doTask(db, pid, project);
 				} catch (Exception e) {
-					// This may be a temporary connection problem with github, so log the erro and move on ...
-					logger.warn("Skiping project due to error", e);
+					// This may be a temporary connection problem with github, so log the error and move on ...
+					logger.warn("Skipping project due to error", e);
 				}
 				finally {
 					db.releaseLocks(pid.toString());
 					logger.info("Locks released");
 				}
+				previousProject = project;
 			}
 			logger.info("No more projects");
 			
