@@ -35,7 +35,7 @@ public class AnalyzeAllCommits extends TaskWithProjectLock{
 
     @Override
     protected ProjectGit findNextProject(Database db, Pid pid) throws Exception {
-        return db.findProjectToMonitorAndLock(pid.toString(), startTime);
+        return db.findNewProjectAndLock(pid.toString());
     }
 
     @Override
