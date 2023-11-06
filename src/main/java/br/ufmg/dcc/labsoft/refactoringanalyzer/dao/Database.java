@@ -101,6 +101,27 @@ public class Database {
 		perform(em -> em.createNamedQuery("projectGit.releaseLocks").setParameter("pid", pid).executeUpdate());
 	}
 
+	public ProjectGit findNewProjectAndLock(String pid) {
+		ProjectGit project = null;
+		em.getTransaction().begin();
+		try {
+			@SuppressWarnings("unchecked")
+			List<ProjectGit> projects = em.createNamedQuery("projectGit.findNew").setMaxResults(1).getResultList();
+			if (projects.size() > 0) {
+				project = projects.get(0);
+				project.setRunning_pid(pid);
+				em.merge(project);
+			}
+			em.getTransaction().commit();
+			return project;
+		} catch (Exception e) {
+			em.getTransaction().rollback();
+			throw e;
+		} finally {
+			em.clear();
+		}
+	}
+
 	public ProjectGit findNonAnalyzedProjectAndLock(String pid) {
 		ProjectGit project = null;
 		em.getTransaction().begin();
