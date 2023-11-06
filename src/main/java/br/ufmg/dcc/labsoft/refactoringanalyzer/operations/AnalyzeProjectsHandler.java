@@ -6,13 +6,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import br.ufmg.dcc.labsoft.refactoringanalyzer.dao.Failure;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringHandler;
@@ -120,5 +120,28 @@ class AnalyzeProjectsHandler extends RefactoringHandler {
 		}
 		project.setError_commits_count(errorCommitsCount);
 		db.update(project);
+	}
+
+	@Override
+	public void handleException(String commitId, Exception e) {
+		logger.error("Error analyzing commit " + commitId, e);
+		try {
+			RevisionGit revision = db.getRevisionById(project, commitId);
+			if (revision == null) {
+				revision = new RevisionGit();
+				revision.setProjectGit(project);
+				revision.setIdCommit(commitId);
+				db.insert(revision);
+			}
+			Failure f = new Failure();
+			f.setRevision(revision);
+			f.setMessage(e.getMessage());
+			f.setType(e.getClass().getName());
+			f.setStackTrace(e.getStackTrace().toString());
+			db.insert(f);
+		} finally {
+			logger.error("Error saving failure of commit " + commitId);
+		}
+		e.printStackTrace();
 	}
 }
