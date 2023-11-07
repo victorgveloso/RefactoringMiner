@@ -4,6 +4,8 @@ import org.hibernate.annotations.Index;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -15,6 +17,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @Table(name = "failure")
 public class Failure {
+    @Id
+    @GeneratedValue
+    private int id;
     @ManyToOne
     @JoinColumn(name = "revision")
     @Index(name="index_failure_revision")
