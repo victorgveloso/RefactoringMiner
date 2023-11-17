@@ -1,5 +1,7 @@
 package br.ufmg.dcc.labsoft.refactoringanalyzer.dao;
 
+import org.hibernate.Session;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -91,6 +93,10 @@ public class Database {
 
 	public void insert(final Failure failure) {
 		perform(em -> em.persist(failure));
+	}
+
+	public void upsert(final Failure failure) {
+		perform(em -> em.unwrap(Session.class).saveOrUpdate(failure));
 	}
 
 	public void insert(final ExtractMethodInfo emi) {
