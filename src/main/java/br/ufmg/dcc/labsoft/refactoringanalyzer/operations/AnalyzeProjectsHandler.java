@@ -138,7 +138,9 @@ class AnalyzeProjectsHandler extends RefactoringHandler {
 			f.setMessage(e.getMessage());
 			f.setType(e.getClass().getName());
 			f.setStackTrace(e.getStackTrace().toString());
-			db.insert(f);
+			db.upsert(f);
+		} catch (Exception ignored) {
+			// ignore
 		} finally {
 			logger.error("Error saving failure of commit " + commitId);
 		}
