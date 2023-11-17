@@ -21,7 +21,7 @@
         <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.SurveyResponse</class>
         <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.Tag</class>
         <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.User</class>
-        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.F</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.Failure</class>
         <properties>
             <!-- JDBC Database connection settings -->
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
