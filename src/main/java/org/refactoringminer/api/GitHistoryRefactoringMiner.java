@@ -27,6 +27,20 @@ public interface GitHistoryRefactoringMiner {
 	void detectAll(Repository repository, String branch, RefactoringHandler handler) throws Exception;
 
 	/**
+	 * Iterate over each commit of a git repository and detect all refactorings performed in the
+	 * entire repository history. Merge commits are ignored to avoid detecting the same refactoring
+	 * multiple times.
+	 *
+	 * @param repository A git repository (from JGit library).
+	 * @param branch A branch to start the log lookup. If null, commits from all branches are analyzed.
+	 * @param handler A handler object that is responsible to process the detected refactorings and
+	 *                control when to skip a commit.
+	 * @param timeout A timeout, in seconds. When timeout is reached for each commit, the operation skips to next commit.
+	 * @throws Exception propagated from JGit library.
+	 */
+	void detectAll(Repository repository, String branch, RefactoringHandler handler, int timeout) throws Exception;
+
+	/**
 	 * Iterate over commits between two release tags of a git repository and detect the performed refactorings.
 	 * 
 	 * @param repository A git repository (from JGit library).

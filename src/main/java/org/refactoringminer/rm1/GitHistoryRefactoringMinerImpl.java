@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -734,6 +735,78 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 			handler.handleException(commitId, e);
 		} finally {
 			walk.close();
+			walk.dispose();
+		}
+	}
+	private void detect(GitService gitService, Repository repository, final RefactoringHandler handler, Iterator<RevCommit> i, int timeout) {
+		ExecutorService service = Executors.newSingleThreadExecutor();
+		logger.info("Detecting refactorings at " + repository.getDirectory());
+		int commitsCount = 0;
+		int errorCommitsCount = 0;
+		int refactoringsCount = 0;
+
+		File metadataFolder = repository.getDirectory();
+		File projectFolder = metadataFolder.getParentFile();
+		String projectName = projectFolder.getName();
+
+		long time = System.currentTimeMillis();
+		try {
+
+			while (i.hasNext()) {
+				RevCommit currentCommit = i.next();
+				logger.info(String.format("Analyzing commit %s [%d/%d]", currentCommit.getId().getName(), commitsCount, errorCommitsCount));
+				Future<List<Refactoring>> f = null;
+				try {
+					Callable<List<Refactoring>> func = () -> detectRefactorings(gitService, repository, handler, currentCommit);
+					f = service.submit(func);
+					List<Refactoring> refactoringsAtRevision = f.get(timeout, TimeUnit.SECONDS);
+					refactoringsCount += refactoringsAtRevision.size();
+				} catch (TimeoutException e) {
+					logger.warn(String.format("Ignored revision %s due to error", currentCommit.getId().getName()), e);
+					handler.handleException(currentCommit.getId().getName(),e);
+					errorCommitsCount++;
+					f.cancel(true);
+				} catch (ExecutionException e) {
+					logger.warn(String.format("Ignored revision %s due to error", currentCommit.getId().getName()), e);
+					handler.handleException(currentCommit.getId().getName(),e);
+					errorCommitsCount++;
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					logger.warn(String.format("Ignored revision %s due to error", currentCommit.getId().getName()), e);
+					handler.handleException(currentCommit.getId().getName(),e);
+					errorCommitsCount++;
+					e.printStackTrace();
+				}
+
+
+				commitsCount++;
+				long time2 = System.currentTimeMillis();
+				if ((time2 - time) > 20000) {
+					time = time2;
+					logger.info(String.format("Processing %s [Commits: %d, Errors: %d, Refactorings: %d]", projectName, commitsCount, errorCommitsCount, refactoringsCount));
+				}
+			}
+		} finally {
+			service.shutdown();
+		}
+
+
+		handler.onFinish(refactoringsCount, commitsCount, errorCommitsCount);
+		logger.info(String.format("Analyzed %s [Commits: %d, Errors: %d, Refactorings: %d]", projectName, commitsCount, errorCommitsCount, refactoringsCount));
+	}
+
+	@Override
+	public void detectAll(Repository repository, String branch, RefactoringHandler handler, int timeout) throws Exception {
+		GitService gitService = new GitServiceImpl() {
+			@Override
+			public boolean isCommitAnalyzed(String sha1) {
+				return handler.skipCommit(sha1);
+			}
+		};
+		RevWalk walk = gitService.createAllRevsWalk(repository, branch);
+		try {
+			detect(gitService, repository, handler, walk.iterator(), timeout);
+		} finally {
 			walk.dispose();
 		}
 	}
