@@ -15,7 +15,10 @@ import org.hibernate.annotations.Index;
 )
 public class RevisionTag extends AbstractEntity {
 
-	private String user;
+	@ManyToOne
+	@JoinColumn(name = "user")
+	@Index(name="index_revisiontag_user")
+	private User user;
 
 	@ManyToOne
 	@JoinColumn(name = "revision")
@@ -37,11 +40,11 @@ public class RevisionTag extends AbstractEntity {
 		this.id = id;
 	}
 
-	public String getUser() {
+	public User getUser() {
 		return user;
 	}
 
-	public void setUser(String user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 
