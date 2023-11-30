@@ -1,6 +1,7 @@
 package br.ufmg.dcc.labsoft.refactoringanalyzer.dao;
 
 import org.hibernate.Session;
+import org.hibernate.TransactionException;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -12,10 +13,15 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 
 public class Database {
+	private static int ERROR_COUNTDOWN;
 
 	EntityManager em;
+	private static void resetErrorCountdown() {
+		ERROR_COUNTDOWN = 10;
+	}
 
 	public Database() {
+		resetErrorCountdown();
 		EntityManagerFactory factory = Persistence.createEntityManagerFactory("lambda-study");
 		em = factory.createEntityManager();
 	}
@@ -26,15 +32,24 @@ public class Database {
 	
 	private void perform(Transaction transaction) {
 		//EntityManager em = createEm();
-		em.getTransaction().begin();
 		try {
+			em.getTransaction().begin();
 			transaction.run(em);
 			em.getTransaction().commit();
 		} catch (Exception e) {
-			em.getTransaction().rollback();
-			throw e;
+			if (ERROR_COUNTDOWN > 0) {
+				ERROR_COUNTDOWN--;
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException ignored) {/* Do nothing */}
+				perform(transaction);
+			} else {
+				em.getTransaction().rollback();
+				throw e;
+			}
 		} finally {
 			em.clear();
+			resetErrorCountdown();
 		}
 	}
 	
@@ -83,7 +98,12 @@ public class Database {
 		try {
 			perform(em -> em.persist(project));
 		} catch (PersistenceException ex) {
-			ex.printStackTrace();// ignore
+			ex.printStackTrace();
+		} catch (TransactionException ex) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException ignored) {/* Do nothing */}
+			insertIfNotExists(project);
 		}
 	}
 
