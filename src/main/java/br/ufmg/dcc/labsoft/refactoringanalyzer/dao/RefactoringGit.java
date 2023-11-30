@@ -1,16 +1,24 @@
 package br.ufmg.dcc.labsoft.refactoringanalyzer.dao;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import gr.uom.java.xmi.diff.CodeRange;
 import org.hibernate.annotations.Index;
 
 @Entity
@@ -29,6 +37,9 @@ public class RefactoringGit extends AbstractEntity {
 	@JoinColumn(name = "revision")
 	@Index(name="index_refactoringgit_revision")
 	private RevisionGit revision;
+
+	@OneToMany(mappedBy = "refactoring", targetEntity = CodeRangeGit.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private List<CodeRangeGit> codeRanges = new ArrayList<>();
 
 	private Boolean truePositive;
 
@@ -112,4 +123,15 @@ public class RefactoringGit extends AbstractEntity {
 		this.entity = entity;
 	}
 
+	public void setCodeRangeBefore(List<CodeRange> leftSide) {
+		codeRanges.addAll(leftSide.stream().map((codeRange) ->
+				CodeRangeGit.fromCodeRange(codeRange, this, CodeRangeGit.DiffSide.LEFT)
+		).collect(Collectors.toList()));
+	}
+
+	public void setCodeRangeAfter(List<CodeRange> rightSide) {
+		codeRanges.addAll(rightSide.stream().map((codeRange) ->
+				CodeRangeGit.fromCodeRange(codeRange, this, CodeRangeGit.DiffSide.RIGHT)
+		).collect(Collectors.toList()));
+	}
 }
