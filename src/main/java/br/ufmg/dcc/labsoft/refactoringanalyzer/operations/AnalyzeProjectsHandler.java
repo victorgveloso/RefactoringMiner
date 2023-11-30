@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import br.ufmg.dcc.labsoft.refactoringanalyzer.dao.Failure;
+import br.ufmg.dcc.labsoft.refactoringanalyzer.dao.CodeRangeGit;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
@@ -104,6 +104,8 @@ class AnalyzeProjectsHandler extends RefactoringHandler {
 			refact.setRefactoringType(refactoring.getName());
 			refact.setDescription(refactoring.toString());
 			refact.setRevision(revision);
+			refact.setCodeRangeBefore(refactoring.leftSide()); //.forEach(db::insert);
+			refact.setCodeRangeAfter(refactoring.rightSide()); //.forEach(db::insert);
 			refactoringSet.add(refact);
 		}
 		revision.setRefactorings(refactoringSet);
@@ -133,12 +135,6 @@ class AnalyzeProjectsHandler extends RefactoringHandler {
 				revision.setIdCommit(commitId);
 				db.insert(revision);
 			}
-			Failure f = new Failure();
-			f.setRevision(revision);
-			f.setMessage(e.getMessage());
-			f.setType(e.getClass().getName());
-			f.setStackTrace(e.getStackTrace().toString());
-			db.upsert(f);
 		} catch (Exception ignored) {
 			// ignore
 		} finally {

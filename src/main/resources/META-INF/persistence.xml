@@ -21,11 +21,11 @@
         <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.SurveyResponse</class>
         <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.Tag</class>
         <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.User</class>
-        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.Failure</class>
+        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.CodeRangeGit</class>
         <properties>
             <!-- JDBC Database connection settings -->
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://lab:3306/refactoring?useSSL=false" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://lab:3306/refactoringBKP?useSSL=false" />
             <property name="javax.persistence.jdbc.user" value="root" />
             <property name="javax.persistence.jdbc.password" value="secret" />
 
