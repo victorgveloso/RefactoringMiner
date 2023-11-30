@@ -2,6 +2,7 @@ package br.ufmg.dcc.labsoft.refactoringanalyzer.dao;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -30,6 +31,10 @@ public class SurveyMail extends AbstractEntity {
 	
 	@Column(columnDefinition="TEXT")
 	private String body;
+
+	@ManyToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "revision")
+	private RevisionGit revision;
 	
 	@Override
 	public Long getId() {
