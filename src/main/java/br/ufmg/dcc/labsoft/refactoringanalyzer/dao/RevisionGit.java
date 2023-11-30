@@ -56,6 +56,9 @@ public class RevisionGit extends AbstractEntity {
 
 	@OneToMany(mappedBy = "revision", targetEntity = RefactoringGit.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<RefactoringGit> refactorings;
+
+	@OneToMany(mappedBy = "revision", targetEntity = SurveyMail.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<SurveyMail> surveyMails;
 	
 //	@OneToMany(mappedBy = "revision", targetEntity = LambdaDBEntity.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 //	private Set<LambdaDBEntity> lambdas;
