@@ -111,18 +111,6 @@ public class Database {
 		perform(em -> em.persist(revision));
 	}
 
-//	public void insert(final CodeRangeGit range) {
-//		perform(em -> em.persist(range));
-//	}
-//
-//	public void insert(final Failure failure) {
-//		perform(em -> em.persist(failure));
-//	}
-//
-//	public void upsert(final Failure failure) {
-//		perform(em -> em.unwrap(Session.class).saveOrUpdate(failure));
-//	}
-
 	public void insert(final ExtractMethodInfo emi) {
 		perform(em -> em.persist(emi));
 	}
