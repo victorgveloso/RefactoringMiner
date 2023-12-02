@@ -14,6 +14,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
 
 import org.eclipse.jgit.revwalk.RevCommit;
 
@@ -27,6 +29,12 @@ import org.eclipse.jgit.revwalk.RevCommit;
 	uniqueConstraints = {@UniqueConstraint(columnNames = {"project", "commitId"})}
 )
 public class RevisionGit extends AbstractEntity {
+	enum Status {
+		NEW,
+		SEEN,
+		AUTHOR_CONTACTED,
+		EMAIL_SENT
+	}
 
 	private String commitId;
 	private String commitIdParent;
@@ -59,11 +67,23 @@ public class RevisionGit extends AbstractEntity {
 
 	@OneToMany(mappedBy = "revision", targetEntity = SurveyMail.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<SurveyMail> surveyMails;
+
+	@Enumerated(EnumType.STRING)
+	@Column(columnDefinition = "VARCHAR(30) DEFAULT 'NEW'")
+	private Status status = Status.NEW;
 	
 //	@OneToMany(mappedBy = "revision", targetEntity = LambdaDBEntity.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 //	private Set<LambdaDBEntity> lambdas;
 
 	public RevisionGit() {
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
 	@Override
