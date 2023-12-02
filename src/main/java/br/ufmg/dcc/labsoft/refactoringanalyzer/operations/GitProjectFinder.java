@@ -3,7 +3,9 @@ package br.ufmg.dcc.labsoft.refactoringanalyzer.operations;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.json.*;
 
@@ -117,12 +119,32 @@ public class GitProjectFinder {
 				r = r.strip();
 				r = r.substring(0, r.length() - 1);
 			}
+			logger.debug("Fetching repo {}", r);
 			Repo repo = github.repos().get(new Coordinates.Https(r));
+			logger.debug("Repo {} fetched. Parsing data...", r);
 			JsonObject repoData = repo.json();
-			ProjectGit p = createProjectGit(repoData);
-
-			db.insertIfNotExists(p);
-			this.logger.info("Project {}", p.getCloneUrl());
+			ProjectGit p = db.getProjectByCloneUrl(repoData.getString("clone_url"));
+			String found = Objects.isNull(p) ? "not found" : "found";
+			logger.debug("Project {} {} in DB", repoData.getString("clone_url"), found);
+			if (p != null) {
+				logger.info("Found existing project {}", p.getCloneUrl());
+				Date createdAt = StringToDate.parseDatePatterns(repoData.getString("created_at"));
+				logger.debug("Created at: {}", createdAt);
+				Date updatedAt = StringToDate.parseDatePatterns(repoData.getString("updated_at"));
+				logger.debug("Updated at: {}", updatedAt);
+				Date pushedAt = StringToDate.parseDatePatterns(repoData.getString("pushed_at"));
+				logger.debug("Pushed at: {}", pushedAt);
+				p.setCreated_at(createdAt);
+				p.setUpdated_at(updatedAt);
+				p.setPushed_at(pushedAt);
+				p.setLast_update(pushedAt);
+				db.update(p);
+			} else {
+				logger.info("Not found project in DB. Creating new project {}", repoData.getString("clone_url"));
+				p = createProjectGit(repoData);
+				db.insertIfNotExists(p);
+			}
+			this.logger.info("Project {} processed", p.getCloneUrl());
 		}
 	}
 
