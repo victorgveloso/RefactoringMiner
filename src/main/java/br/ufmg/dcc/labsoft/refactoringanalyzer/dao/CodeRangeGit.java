@@ -41,7 +41,7 @@ public class CodeRangeGit extends AbstractEntity {
         LEFT, RIGHT;
     }
     @Enumerated(EnumType.STRING)
-    @Column(name = "diff_side", nullable = false)
+    @Column(name = "diffSide", nullable = false)
     DiffSide diffSide;
     @ManyToOne
     @JoinColumn(name = "refactoring")
