@@ -1,9 +1,8 @@
 package br.ufmg.dcc.labsoft.refactoringanalyzer.dao;
 
-import org.hibernate.Session;
 import org.hibernate.TransactionException;
 
-import java.util.Calendar;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
+import javax.persistence.Query;
 
 public class Database {
 	private static int ERROR_COUNTDOWN;
@@ -51,6 +51,14 @@ public class Database {
 			em.clear();
 			resetErrorCountdown();
 		}
+	}
+
+	public boolean isAuthorContacted(String recipient) {
+		List<BigInteger> revisions = em
+				.createNativeQuery("SELECT EXISTS (SELECT 1 FROM surveymail s WHERE recipient = :recipient)")
+				.setParameter("recipient", "vitorgvbh@gmail.com")
+				.getResultList();
+		return revisions.size() > 0 && revisions.get(0).equals(BigInteger.ONE);
 	}
 	
 	public ProjectGit getProjectById(Long id) {

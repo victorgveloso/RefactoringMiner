@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import br.ufmg.dcc.labsoft.refactoringanalyzer.dao.CodeRangeGit;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
@@ -97,7 +96,9 @@ class AnalyzeProjectsHandler extends RefactoringHandler {
 	public void handle(RevCommit curRevision, List<Refactoring> refactorings) {
 		logger.info("Commit changing tests found! Saving commit {}", curRevision.getName());
 		RevisionGit revision = RevisionGit.getFromRevCommit(curRevision, db.getProjectById(project.getId()));
-
+		if (db.isAuthorContacted(revision.getAuthorEmail())) {
+			revision.setStatus(RevisionGit.Status.AUTHOR_CONTACTED);
+		}
 		Set<RefactoringGit> refactoringSet = new HashSet<RefactoringGit>();
 		for (Refactoring refactoring : refactorings) {
 			RefactoringGit refact = new RefactoringGit();

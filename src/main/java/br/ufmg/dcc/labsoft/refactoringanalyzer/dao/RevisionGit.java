@@ -29,7 +29,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 	uniqueConstraints = {@UniqueConstraint(columnNames = {"project", "commitId"})}
 )
 public class RevisionGit extends AbstractEntity {
-	enum Status {
+	public enum Status {
 		NEW,
 		SEEN,
 		AUTHOR_CONTACTED,
