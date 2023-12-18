@@ -151,7 +151,7 @@ public class GitProjectFinder {
 	private void findRepos(int page, Github github) throws IOException {
 		Request request = github.entry()
 				.uri().path("/search/repositories")
-				.queryParam("q", "language:Java created:<=2014-06-01")
+				.queryParam("q", "stars:>=500 pushed:>2023-12-01 language:Java created:<=2021-12-01 forks:>=120")
 				.queryParam("sort", "stars")
 				.queryParam("order", "desc")
 				.queryParam("per_page", "100")
