@@ -70,7 +70,19 @@ public class ProjectGit extends AbstractEntity {
 		this.id = id;
 	}
 
-	
+
+	public String getOwner() {
+		String prefix = "://github.com/";
+		String httpPrefx = "http" + prefix;
+		String httpsPrefx = "https" + prefix;
+		if (this.cloneUrl.startsWith(httpsPrefx)) {
+			return this.cloneUrl.substring(httpsPrefx.length() + 1, this.cloneUrl.indexOf(getName()) - 2);
+		} else if (this.cloneUrl.startsWith(httpPrefx)) {
+			return this.cloneUrl.substring(httpPrefx.length() + 1, this.cloneUrl.indexOf(getName()) - 2);
+		} else {
+			throw new RuntimeException("Invalid clone url (neither HTTPS nor HTTP prefix found): " + this.cloneUrl);
+		}
+	}
 
 	public String getName() {
 		return name;
