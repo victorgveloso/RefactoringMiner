@@ -98,7 +98,7 @@ public class GitProjectFinder {
 		p.setUpdated_at(StringToDate.parseDatePatterns(repoData.getString("updated_at")));
 		p.setPushed_at(StringToDate.parseDatePatterns(repoData.getString("pushed_at")));
 		p.setLast_update(StringToDate.parseDatePatterns(repoData.getString("pushed_at")));
-		p.setLanguage(repoData.getString("language"));
+//		p.setLanguage(repoData.getString("language"));
 		p.setCloneUrl(repoData.getString("clone_url"));
 		p.setStatus("new");
 		p.setMonitoring_enabled(false);
