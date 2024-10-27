@@ -1,17 +1,22 @@
 package org.refactoringminer.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.eclipse.jgit.api.CheckoutCommand;
+import org.eclipse.jgit.api.FetchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.diff.DiffAlgorithm;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -47,10 +52,38 @@ public class GitServiceImpl implements GitService {
 	private static final String REMOTE_REFS_PREFIX = "refs/remotes/origin/";
 
 	DefaultCommitsFilter commitsFilter = new DefaultCommitsFilter();
+
+	private String readOauthToken() {
+		String token = System.getenv("GITHUB_OAUTH");
+		if (token == null) {
+			token = System.getProperty("github.oauth");
+		}
+		if (token == null) {
+			token = System.getProperty("OAuthToken");
+		}
+		if (token == null) {
+			Properties prop = new Properties();
+            InputStream input = null;
+            try {
+                input = new FileInputStream("github-oauth.properties");
+				prop.load(input);
+				String oAuthToken = prop.getProperty("OAuthToken");
+            } catch (IOException ignored) {
+			} finally {
+				if (input != null) {
+					try {
+						input.close();
+					} catch (IOException ignored) {
+					}
+				}
+			}
+		}
+		return token;
+	}
 	
 	@Override
 	public Repository cloneIfNotExists(String projectPath, String cloneUrl/*, String branch*/) throws Exception {
-		return cloneIfNotExists(projectPath, cloneUrl, null, null);
+		return cloneIfNotExists(projectPath, cloneUrl, null, readOauthToken());
 	}
 
 	@Override
@@ -154,7 +187,9 @@ public class GitServiceImpl implements GitService {
 	private List<TrackingRefUpdate> fetch(Repository repository) throws Exception {
         logger.info("Fetching changes of repository {}", repository.getDirectory().toString());
         try (Git git = new Git(repository)) {
-    		FetchResult result = git.fetch().call();
+			FetchCommand fetch = git.fetch();
+			fetch.setCredentialsProvider(new UsernamePasswordCredentialsProvider(null, readOauthToken()));
+			FetchResult result = fetch.call();
     		
     		Collection<TrackingRefUpdate> updates = result.getTrackingRefUpdates();
     		List<TrackingRefUpdate> remoteRefsChanges = new ArrayList<TrackingRefUpdate>();
