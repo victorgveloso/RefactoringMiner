@@ -1,0 +1,355 @@
+[ {
+  "repo" : "https://github.com/RohanNagar/thunder.git",
+  "commit" : "48776d511a0152f7b9cbe4460c8967bdd5ec3dc4"
+}, {
+  "repo" : "https://github.com/atlanmod/NeoEMF.git",
+  "commit" : "0188e9aa280b800710848d68a93af4cb28b050da"
+}, {
+  "repo" : "https://github.com/cbeust/testng.git",
+  "commit" : "706dcf52c5df3591e7d9d49f0fb980f041fae385"
+}, {
+  "repo" : "https://github.com/dCache/dcache.git",
+  "commit" : "4a6e55f40f1c"
+}, {
+  "repo" : "https://github.com/apache/kafka.git",
+  "commit" : "4a958c6cb12392746b100431f2ff8ab3c5f53b1a"
+}, {
+  "repo" : "https://github.com/apache/hadoop.git",
+  "commit" : "25089dc9ee193e10b057fad22a06b7e01df735b6"
+}, {
+  "repo" : "https://github.com/apache/camel.git",
+  "commit" : "ee55a3bc6e04fea"
+}, {
+  "repo" : "https://github.com/apache/struts.git",
+  "commit" : "0a71e2c3b92d2d58fda40f252a6a5a4392fa58b7"
+}, {
+  "repo" : "https://github.com/orientechnologies/orientdb.git",
+  "commit" : "1b371c7cecbc7ec14b81a3f8a08c2ab71d12577f"
+}, {
+  "repo" : "https://github.com/apache/hbase.git",
+  "commit" : "587f5bc11f9d5d37557baf36c7df110af860a95c"
+}, {
+  "repo" : "https://github.com/geoserver/geoserver.git",
+  "commit" : "6a386c2b22b03d91b307887dd74be45818900c2f"
+}, {
+  "repo" : "https://github.com/orientechnologies/orientdb.git",
+  "commit" : "a9dd54d60f46d09e38e3f2170190d078bcafc390"
+}, {
+  "repo" : "https://github.com/neo4j-contrib/neo4j-apoc-procedures.git",
+  "commit" : "1bdf82988624ac5d1690ebab72769e540d4f8a01"
+}, {
+  "repo" : "https://github.com/spring-projects/spring-integration.git",
+  "commit" : "fa6aff376168e5c5b1e021aa767630485d35d036"
+}, {
+  "repo" : "https://github.com/apache/druid.git",
+  "commit" : "76cb06a8d8161d29d985ef048b89e6a82b489058"
+}, {
+  "repo" : "https://github.com/apache/hadoop.git",
+  "commit" : "2f6bc250443c8d6fa6f18aab256c2ac8e585983b"
+}, {
+  "repo" : "https://github.com/apache/hadoop.git",
+  "commit" : "4334976187100afe3be499d63ead8f17f09f8a14"
+}, {
+  "repo" : "https://github.com/apache/hadoop.git",
+  "commit" : "699d4204977cff31ac689457b4b99317e3bdc0d3"
+}, {
+  "repo" : "https://github.com/apache/hbase.git",
+  "commit" : "484ccb7af4d614429f77f0c14d9b14c6fe8c9e17"
+}, {
+  "repo" : "https://github.com/orientechnologies/orientdb.git",
+  "commit" : "04242466a2d96209105515f915cb673f4e98f83a"
+}, {
+  "repo" : "https://github.com/orientechnologies/orientdb.git",
+  "commit" : "279dd2c2120883ee157b924faa0af2fa1981f6a9"
+}, {
+  "repo" : "https://github.com/orientechnologies/orientdb.git",
+  "commit" : "2949af2283c5e43403c99221ab2ab971925e47c6"
+}, {
+  "repo" : "https://github.com/apache/druid.git",
+  "commit" : "da32e1ae534a99c29ff60c5535f2d4cb0e344a73"
+}, {
+  "repo" : "https://github.com/apache/hadoop.git",
+  "commit" : "973987089090b428ae34a86926c8ef8ebca45aa5"
+}, {
+  "repo" : "https://github.com/apache/hbase.git",
+  "commit" : "2306820df8b41d9af5227465ee2cf9e18b8f0b5c"
+}, {
+  "repo" : "https://github.com/aws/aws-sdk-java-v2.git",
+  "commit" : "4236a962dc0ca45149845317caa144a1ba768c5f"
+}, {
+  "repo" : "https://github.com/elastic/elasticsearch.git",
+  "commit" : "e015a7c383813242dcc656ae632e51d22a17913d"
+}, {
+  "repo" : "https://github.com/Atrox/haikunatorjava.git",
+  "commit" : "42679988419b68dd51f0a7b3c045536b3c5ef37b"
+}, {
+  "repo" : "https://github.com/opentripplanner/OpenTripPlanner.git",
+  "commit" : "1abed1191c2df7a747ef21cd3b669c14d54c3011"
+}, {
+  "repo" : "https://github.com/samtools/htsjdk.git",
+  "commit" : "17c4b9d29dc0ee7573d32e7364d36fc92e4b2493"
+}, {
+  "repo" : "https://github.com/apache/hadoop.git",
+  "commit" : "4d01dbda508691beb07a4c8bfe113ec568166ddc"
+}, {
+  "repo" : "https://github.com/apache/kafka.git",
+  "commit" : "c575ba238dc5d85a04d0ee7c533b1de5360460a1"
+}, {
+  "repo" : "https://github.com/hawkular/hawkular-metrics.git",
+  "commit" : "b21a37a2aa1adbcf441411c17d6b67ab19ebaf37"
+}, {
+  "repo" : "https://github.com/HubSpot/Baragon.git",
+  "commit" : "42990c1a5a8e5de52b99e9fc343bfa2466a64ec9"
+}, {
+  "repo" : "https://github.com/iluwatar/java-design-patterns.git",
+  "commit" : "6694d742a370e0f181530734481284de8d5dd8ef"
+}, {
+  "repo" : "https://github.com/rapidoid/rapidoid.git",
+  "commit" : "8596c1d82e9f0a36f40cd7ec393c6829e697836d"
+}, {
+  "repo" : "https://github.com/strimzi/strimzi-kafka-operator.git",
+  "commit" : "9ab848e76f4c0b0399fb556c9d853fcbdf1c55f1"
+}, {
+  "repo" : "https://github.com/weld/core.git",
+  "commit" : "608fa2025c6d32143ccaa118b43bdfb881ded838"
+}, {
+  "repo" : "https://github.com/cloudfoundry/uaa.git",
+  "commit" : "69e3c6d3ce2b263b3fd3da61cabb8ca6d8bd563c"
+}, {
+  "repo" : "https://github.com/apache/hadoop.git",
+  "commit" : "36198b5edf5b761b46fa5d1696ad6aa85b35b72a"
+}, {
+  "repo" : "https://github.com/apache/druid.git",
+  "commit" : "c353ccfdeff39dae99e1ebe5ce34bbacc7dd083f"
+}, {
+  "repo" : "https://github.com/apache/druid.git",
+  "commit" : "935aa187a0b2c3ccacb1cf1289818428913ebc40"
+}, {
+  "repo" : "https://github.com/apache/hadoop.git",
+  "commit" : "c11b6ab8e43d800cd75b2b34b6e7309b381817e2"
+}, {
+  "repo" : "https://github.com/hapifhir/hapi-fhir.git",
+  "commit" : "0f84ccd14c7f455fc213321959a2a124f23df6d4"
+}, {
+  "repo" : "https://github.com/SonarSource/sonarqube.git",
+  "commit" : "6381e5a67c6363e66d1ef7b4d6d5ed6919894d87"
+}, {
+  "repo" : "https://github.com/strimzi/strimzi-kafka-operator.git",
+  "commit" : "e0e032d73d79e0e3be1730b93c46c60a15e9d19f"
+}, {
+  "repo" : "https://github.com/qt/qt.git",
+  "commit" : "9a2573dc13b3e8df6cd15bef64370ea407480fc7"
+}, {
+  "repo" : "https://github.com/orientechnologies/orientdb.git",
+  "commit" : "a8ac595e36c8b4c2c3069c365dcbed220726424d"
+}, {
+  "repo" : "https://github.com/debezium/debezium.git",
+  "commit" : "66bb7958604527aa975e72aa23be45163de39246"
+}, {
+  "repo" : "https://github.com/apache/plc4x.git",
+  "commit" : "4312eb178b6cb000ea8a3c78df70567182341331"
+}, {
+  "repo" : "https://github.com/apache/plc4x.git",
+  "commit" : "86da20c173ad291e5f3d5fe4c56f37d7f3c2c538"
+}, {
+  "repo" : "https://github.com/alexvictoor/pitest-cucumber-plugin.git",
+  "commit" : "dfac4228503de86c06b4ab5a91de9588e8bd4eb0"
+}, {
+  "repo" : "https://github.com/andreschaffer/event-sourcing-cqrs-examples.git",
+  "commit" : "29d173c3636e87d9e2f6514b26f83ee3ced36b79"
+}, {
+  "repo" : "https://github.com/apache/james-project.git",
+  "commit" : "98c2921758c1a6895abd6c83db93447ae475ff92"
+}, {
+  "repo" : "https://github.com/apache/camel.git",
+  "commit" : "01dc016efddca11c00ccacbccd83bf2bdcee0de3"
+}, {
+  "repo" : "https://github.com/apache/camel.git",
+  "commit" : "0fb200411d8381e5999961cef2103284c1887156"
+}, {
+  "repo" : "https://github.com/apache/iceberg.git",
+  "commit" : "fac03ea3c0d8555d85b1e85c8e9f6ce178bc4e9b"
+}, {
+  "repo" : "https://github.com/apache/storm.git",
+  "commit" : "d6a1e730ea200b36c42475f9ce45d11ee940c949"
+}, {
+  "repo" : "https://github.com/elastic/elasticsearch.git",
+  "commit" : "ed473e272dfa"
+}, {
+  "repo" : "https://github.com/apache/kafka.git",
+  "commit" : "d4c95cfc2a48bf5f09e5a213e172c8883b484534"
+}, {
+  "repo" : "https://github.com/apache/kafka.git",
+  "commit" : "e6f2624c48ceab032811693e1013b70c6ee16c74"
+}, {
+  "repo" : "https://github.com/apache/james-project.git",
+  "commit" : "37829b367a4e3ee6df42b3a0b92130a1f4f2dbd1"
+}, {
+  "repo" : "https://github.com/apache/cassandra-java-driver.git",
+  "commit" : "7d962af9291f69f0da6115375efd5bd5224a2353"
+}, {
+  "repo" : "https://github.com/apache/clerezza.git",
+  "commit" : "d77dbe2085ffa89b2a933637c5432d113b7432b8"
+}, {
+  "repo" : "https://github.com/apache/storm.git",
+  "commit" : "60799cf0f9420f1e4878a41cff8de20949f6d363"
+}, {
+  "repo" : "https://github.com/Baralga/baralga.git",
+  "commit" : "daec6b84e0c893b38c217beb15e90b5f0ce3c91b"
+}, {
+  "repo" : "https://github.com/CMSgov/qpp-conversion-tool.git",
+  "commit" : "9faac3f7bc42eefd52562de390886e82aab14b91"
+}, {
+  "repo" : "https://github.com/DbMaintain/dbmaintain.git",
+  "commit" : "9016d5b470d43abf022be0c879135b564c50083e"
+}, {
+  "repo" : "https://github.com/EnMasseProject/enmasse.git",
+  "commit" : "5e0e683531b756ac62a497cca15ddb7211a34e24"
+}, {
+  "repo" : "https://github.com/hypergraphdb/hypergraphdb.git",
+  "commit" : "c98811719edb1686e59d606fe9f0061d64c9af46"
+}, {
+  "repo" : "https://github.com/meraki-analytics/orianna.git",
+  "commit" : "33092925683952adb31b82d90d0b178ebcbec29c"
+}, {
+  "repo" : "https://github.com/SAP/olingo-jpa-processor-v4.git",
+  "commit" : "5e77141293d32b015a92e48d099195840f2b2e87"
+}, {
+  "repo" : "https://github.com/FamilySearch/gedcomx-java.git",
+  "commit" : "e6727ae0d1bc2ade6782c8d00398884644e00af3"
+}, {
+  "repo" : "https://github.com/JabRef/jabref.git",
+  "commit" : "ff24c3d"
+}, {
+  "repo" : "https://github.com/LMAX-Exchange/disruptor.git",
+  "commit" : "340f23ef88a32ceb8341820c15bfd9537303219c"
+}, {
+  "repo" : "https://github.com/OpenGamma/Strata.git",
+  "commit" : "1dd64e965041a1e3fb81adf8ce9156c451d8252b"
+}, {
+  "repo" : "https://github.com/OpenGamma/Strata.git",
+  "commit" : "3ebc739351b45ac12712ad80852e49555e02929f"
+}, {
+  "repo" : "https://github.com/OpenGamma/Strata.git",
+  "commit" : "956bbd57300d1001bcbf3144b8dd36a6dc3f6e50"
+}, {
+  "repo" : "https://github.com/OpenGamma/Strata.git",
+  "commit" : "b2b9b629685ebc7e89e9a1667de88f2e878d5fc4"
+}, {
+  "repo" : "https://github.com/OpenGamma/Strata.git",
+  "commit" : "e007f826c49075500def8638de8367960c054c19"
+}, {
+  "repo" : "https://github.com/RoboZonky/robozonky.git",
+  "commit" : "1056fa8c36e498012da3a3698f286a6300ff9650"
+}, {
+  "repo" : "https://github.com/alexruiz/fest-swing-1.x.git",
+  "commit" : "033bdd7832ca9a9647c8f7b7ecaa985d3115b206"
+}, {
+  "repo" : "https://github.com/apache/camel.git",
+  "commit" : "8a2207e0904c0dcd879eb75fe66425a61356688d"
+}, {
+  "repo" : "https://github.com/apache/commons-csv.git",
+  "commit" : "e2f0a4d8a83a41eaa984086636a3712c682307ea"
+}, {
+  "repo" : "https://github.com/apache/flink.git",
+  "commit" : "2c5bc580e6c10fb3a2724a945847b5cc6b28df27"
+}, {
+  "repo" : "https://github.com/apache/flink.git",
+  "commit" : "35498b29836b0704ef092637d9728ce27f42d277"
+}, {
+  "repo" : "https://github.com/apache/flink.git",
+  "commit" : "95c3499ea80d07c448c297e36fa5a1b5b4caea2b"
+}, {
+  "repo" : "https://github.com/apache/flink.git",
+  "commit" : "9b61b137bdc7eff773847b84e5cde116e6280c1d"
+}, {
+  "repo" : "https://github.com/apache/hadoop.git",
+  "commit" : "5c61ad24887f76dfc5a5935b2c5dceb6bfd99417"
+}, {
+  "repo" : "https://github.com/apache/jmeter.git",
+  "commit" : "d5b5b2f38c3341cbb934693c17d0574a241ad4f9"
+}, {
+  "repo" : "https://github.com/apache/kafka.git",
+  "commit" : "0cb7d747fbd94ae2387cdd1da5729b4bbbec6f2a"
+}, {
+  "repo" : "https://github.com/apache/kafka.git",
+  "commit" : "6f179d011d430ec06629ccda9d424a4994c23169"
+}, {
+  "repo" : "https://github.com/apache/storm.git",
+  "commit" : "349980f10757a58624ffa601cd4bad5a8c03fd5f"
+}, {
+  "repo" : "https://github.com/assertj/assertj-swing.git",
+  "commit" : "033bdd7832ca9a9647c8f7b7ecaa985d3115b206"
+}, {
+  "repo" : "https://github.com/camunda/camunda.git",
+  "commit" : "8724d9c296898d70899cd1bf56de615a0a85ac8a"
+}, {
+  "repo" : "https://github.com/camunda/camunda.git",
+  "commit" : "9c49a85e3113534271eb2932be8991b85d4de5ff"
+}, {
+  "repo" : "https://github.com/cloudfoundry/uaa.git",
+  "commit" : "d6458aab657ad7214c68b0a3ac36e40113610f6f"
+}, {
+  "repo" : "https://github.com/cqframework/clinical_quality_language.git",
+  "commit" : "06b42c0bf811df6934138e39cffffa92fa617893"
+}, {
+  "repo" : "https://github.com/eclipse/eclipse-collections.git",
+  "commit" : "f26addbce8e843f208805aa22f45dcfb6f8177f7"
+}, {
+  "repo" : "https://github.com/elastic/elasticsearch.git",
+  "commit" : "0d53be3bed94daf761cf2b3c6e5d6d41cf93f4a4"
+}, {
+  "repo" : "https://github.com/elastic/elasticsearch.git",
+  "commit" : "e53a5cb2903533c096645cc7a718614cc1277f51"
+}, {
+  "repo" : "https://github.com/hapifhir/hapi-fhir.git",
+  "commit" : "ad470cff726d800cbf9baa49abd6a9a536781ec0"
+}, {
+  "repo" : "https://github.com/jdbi/jdbi.git",
+  "commit" : "33aece6c6e33c604eabb7a0c87d68d726a62ad32"
+}, {
+  "repo" : "https://github.com/jdbi/jdbi.git",
+  "commit" : "9059667d4789b0c5e1fb93baae7763e3d4748e84"
+}, {
+  "repo" : "https://github.com/mapstruct/mapstruct.git",
+  "commit" : "293a12d7ffa22c29ad3f2d433b6e420514e29a8b"
+}, {
+  "repo" : "https://github.com/neo4j/neo4j.git",
+  "commit" : "b44c62bcdd6f7218bc97dae183ea0f6587bacd29"
+}, {
+  "repo" : "https://github.com/novoda/download-manager.git",
+  "commit" : "4fac5356a8ed579e8f9ece5c5d4c5a559244dcd4"
+}, {
+  "repo" : "https://github.com/novoda/download-manager.git",
+  "commit" : "aaba7dd0b9498eeedf434af333b6e4555c4d064b"
+}, {
+  "repo" : "https://github.com/pbauerochse/youtrack-worklog-viewer.git",
+  "commit" : "40cc4a7a11aa40e08ec710c18e9fadb566685133"
+}, {
+  "repo" : "https://github.com/qt/qtbase.git",
+  "commit" : "b7de9e7353a0"
+}, {
+  "repo" : "https://github.com/samtools/htsjdk.git",
+  "commit" : "1734eb99e5dcf16d92febead5e1b62323e0b6199"
+}, {
+  "repo" : "https://github.com/spring-projects/spring-boot.git",
+  "commit" : "064f6478df06e23544cd9896600cc6096cd59c20"
+}, {
+  "repo" : "https://github.com/spring-projects/spring-integration.git",
+  "commit" : "0ead69529ea1fec992483c96f78c94e303eb6818"
+}, {
+  "repo" : "https://github.com/spring-projects/spring-integration.git",
+  "commit" : "7edc55f5bf0fce164dabc26f005cc8cb2d008100"
+}, {
+  "repo" : "https://github.com/spring-projects/spring-integration.git",
+  "commit" : "d5d954def737038a5982ca34ecc8f14610061090"
+}, {
+  "repo" : "https://github.com/zalando/nakadi.git",
+  "commit" : "d222710b00c3ada2d82fac540e20b34fdc3058f5"
+}, {
+  "repo" : "https://github.com/zalando/problem.git",
+  "commit" : "1b987b88ecb5cc2c8df58ac8eda188fb2d6f5998"
+}, {
+  "repo" : "https://github.com/zanata/zanata-platform.git",
+  "commit" : "0297e0513ac1f487f1570b1cc38979a73ac97da8"
+} ]

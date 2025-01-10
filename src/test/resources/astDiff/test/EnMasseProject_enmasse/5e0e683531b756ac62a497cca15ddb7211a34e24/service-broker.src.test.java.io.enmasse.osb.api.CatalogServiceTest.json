@@ -1,0 +1,122 @@
+[ {
+  "firstType" : "CompilationUnit",
+  "secondType" : "CompilationUnit",
+  "firstLabel" : "",
+  "secondLabel" : "",
+  "firstParentType" : "",
+  "secondParentType" : "",
+  "firstPos" : 0,
+  "secondPos" : 0,
+  "firstEndPos" : 1818,
+  "secondEndPos" : 1834
+}, {
+  "firstType" : "BlockComment",
+  "secondType" : "BlockComment",
+  "firstLabel" : "/*\n * Copyright 2016-2018, EnMasse authors.\n * License: Apache License 2.0 (see the file LICENSE or http://apache.org/licenses/LICENSE-2.0.html).\n */",
+  "secondLabel" : "/*\n * Copyright 2016-2018, EnMasse authors.\n * License: Apache License 2.0 (see the file LICENSE or http://apache.org/licenses/LICENSE-2.0.html).\n */",
+  "firstParentType" : "CompilationUnit",
+  "secondParentType" : "CompilationUnit",
+  "firstPos" : 0,
+  "secondPos" : 0,
+  "firstEndPos" : 149,
+  "secondEndPos" : 149
+}, {
+  "firstType" : "PackageDeclaration",
+  "secondType" : "PackageDeclaration",
+  "firstLabel" : "",
+  "secondLabel" : "",
+  "firstParentType" : "CompilationUnit",
+  "secondParentType" : "CompilationUnit",
+  "firstPos" : 151,
+  "secondPos" : 151,
+  "firstEndPos" : 178,
+  "secondEndPos" : 178
+}, {
+  "firstType" : "QualifiedName",
+  "secondType" : "QualifiedName",
+  "firstLabel" : "io.enmasse.osb.api",
+  "secondLabel" : "io.enmasse.osb.api",
+  "firstParentType" : "PackageDeclaration",
+  "secondParentType" : "PackageDeclaration",
+  "firstPos" : 159,
+  "secondPos" : 159,
+  "firstEndPos" : 177,
+  "secondEndPos" : 177
+}, {
+  "firstType" : "TypeDeclaration",
+  "secondType" : "TypeDeclaration",
+  "firstLabel" : "",
+  "secondLabel" : "",
+  "firstParentType" : "CompilationUnit",
+  "secondParentType" : "CompilationUnit",
+  "firstPos" : 206,
+  "secondPos" : 220,
+  "firstEndPos" : 1817,
+  "secondEndPos" : 1833
+}, {
+  "firstType" : "Modifier",
+  "secondType" : "Modifier",
+  "firstLabel" : "public",
+  "secondLabel" : "public",
+  "firstParentType" : "TypeDeclaration",
+  "secondParentType" : "TypeDeclaration",
+  "firstPos" : 214,
+  "secondPos" : 230,
+  "firstEndPos" : 220,
+  "secondEndPos" : 236
+}, {
+  "firstType" : "TYPE_DECLARATION_KIND",
+  "secondType" : "TYPE_DECLARATION_KIND",
+  "firstLabel" : "class",
+  "secondLabel" : "class",
+  "firstParentType" : "TypeDeclaration",
+  "secondParentType" : "TypeDeclaration",
+  "firstPos" : 221,
+  "secondPos" : 237,
+  "firstEndPos" : 226,
+  "secondEndPos" : 242
+}, {
+  "firstType" : "SimpleName",
+  "secondType" : "SimpleName",
+  "firstLabel" : "CatalogServiceTest",
+  "secondLabel" : "CatalogServiceTest",
+  "firstParentType" : "TypeDeclaration",
+  "secondParentType" : "TypeDeclaration",
+  "firstPos" : 227,
+  "secondPos" : 243,
+  "firstEndPos" : 245,
+  "secondEndPos" : 261
+}, {
+  "firstType" : "SimpleName",
+  "secondType" : "SimpleName",
+  "firstLabel" : "OSBTestBase",
+  "secondLabel" : "OSBTestBase",
+  "firstParentType" : "SimpleType",
+  "secondParentType" : "SimpleType",
+  "firstPos" : 254,
+  "secondPos" : 270,
+  "firstEndPos" : 265,
+  "secondEndPos" : 281
+}, {
+  "firstType" : "SimpleType",
+  "secondType" : "SimpleType",
+  "firstLabel" : "",
+  "secondLabel" : "",
+  "firstParentType" : "TypeDeclaration",
+  "secondParentType" : "TypeDeclaration",
+  "firstPos" : 254,
+  "secondPos" : 270,
+  "firstEndPos" : 265,
+  "secondEndPos" : 281
+}, {
+  "firstType" : "BlockComment",
+  "secondType" : "BlockComment",
+  "firstLabel" : "/*\n    @Test\n    public void testCatalog() throws IOException {\n        OSBCatalogService catalogService = new OSBCatalogService(new TestAddressSpaceApi(), schemaProvider, \"controller\");\n\n        Response response = catalogService.getCatalog(getSecurityContext());\n        CatalogResponse catalogResponse = (CatalogResponse) response.getEntity();\n        List<Service> services = catalogResponse.getServices();\n\n        assertThat(services.size(), is(4));\n        assertService(services.get(0), \"enmasse-anycast\", \"standard\");\n        assertService(services.get(1), \"enmasse-multicast\", \"standard\");\n        assertService(services.get(2), \"enmasse-queue\", \"inmemory\", \"persisted\", \"pooled-inmemory\", \"pooled-persisted\");\n        assertService(services.get(3), \"enmasse-topic\", \"inmemory\", \"persisted\");\n\n        Service service = services.get(2);\n        Plan plan = service.getPlans().get(0);\n        assertThat(plan.getMetadata().get(\"displayName\"), is(\"In-memory\"));\n        assertThat(plan.getDescription(), is(\"Creates a standalone broker cluster for queues. Messages are not persisted on stable storage.\"));\n    }\n\n    private void assertService(Service service, String name, String... planNames) {\n        assertThat(service.getName(), is(name));\n        assertThat(service.getPlans().size(), is(planNames.length));\n        for (int i = 0; i < planNames.length; i++) {\n            String planName = planNames[i];\n            Plan plan = service.getPlans().get(i);\n            assertThat(plan.getName(), is(planName));\n        }\n    }\n    */",
+  "secondLabel" : "/*\n    @Test\n    public void testCatalog() throws IOException {\n        OSBCatalogService catalogService = new OSBCatalogService(new TestAddressSpaceApi(), schemaProvider, \"controller\");\n\n        Response response = catalogService.getCatalog(getSecurityContext());\n        CatalogResponse catalogResponse = (CatalogResponse) response.getEntity();\n        List<Service> services = catalogResponse.getServices();\n\n        assertThat(services.size(), is(4));\n        assertService(services.get(0), \"enmasse-anycast\", \"standard\");\n        assertService(services.get(1), \"enmasse-multicast\", \"standard\");\n        assertService(services.get(2), \"enmasse-queue\", \"inmemory\", \"persisted\", \"pooled-inmemory\", \"pooled-persisted\");\n        assertService(services.get(3), \"enmasse-topic\", \"inmemory\", \"persisted\");\n\n        Service service = services.get(2);\n        Plan plan = service.getPlans().get(0);\n        assertThat(plan.getMetadata().get(\"displayName\"), is(\"In-memory\"));\n        assertThat(plan.getDescription(), is(\"Creates a standalone broker cluster for queues. Messages are not persisted on stable storage.\"));\n    }\n\n    private void assertService(Service service, String name, String... planNames) {\n        assertThat(service.getName(), is(name));\n        assertThat(service.getPlans().size(), is(planNames.length));\n        for (int i = 0; i < planNames.length; i++) {\n            String planName = planNames[i];\n            Plan plan = service.getPlans().get(i);\n            assertThat(plan.getName(), is(planName));\n        }\n    }\n    */",
+  "firstParentType" : "TypeDeclaration",
+  "secondParentType" : "TypeDeclaration",
+  "firstPos" : 268,
+  "secondPos" : 284,
+  "firstEndPos" : 1815,
+  "secondEndPos" : 1831
+} ]
