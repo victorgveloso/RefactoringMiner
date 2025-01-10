@@ -26,7 +26,10 @@ public class UtilMethods {
     private static final String problematicInfoFile = "cases-problematic.json";
     public static final String REPOS = System.getProperty("user.dir") + "/src/test/resources/oracle/commits";
     private static final String DEFECTS4J_MAPPING_PATH = DIFF_DATA_PATH + "defects4j/";
+    private static final String TEST_MAPPING_PATH = DIFF_DATA_PATH + "test/";
     public static String getDefects4jMappingPath() { return DEFECTS4J_MAPPING_PATH; }
+
+    public static String getTestMappingPath() { return TEST_MAPPING_PATH; }
 
     public static String getSnapShotPath(String path){
         return path.replace("/resources/astDiff/", "/resources/astDiff/PREV-SNAPSHOT/");

@@ -70,8 +70,18 @@ public enum DiffDataSet {
         public ProjectASTDiff getProjectASTDiff(String url, String repo, String commit) {
             return RefOracle.getProjectASTDiff(url, repo, commit);
         }
-    } // Miscellaneous
-    ;
+    }, // Miscellaneous
+    Test {
+        @Override
+        public String getDir() {
+            return getTestMappingPath();
+        }
+
+        @Override
+        public ProjectASTDiff getProjectASTDiff(String url, String repo, String commit) {
+            return RefOracle.getProjectASTDiff(url, repo, commit);
+        }
+    };
     public abstract String getDir();
     String getPerfect() {
         return getPerfectInfoFile();
