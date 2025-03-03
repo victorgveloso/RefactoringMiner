@@ -1,0 +1,8 @@
+public testVoiceOutput() : void -> package testVoiceOutput(number int, timeOfDay String, currentWeather String, currentEnvironment String) : void
+public testVoiceOutput() : void -> package testVoiceOutput(number int, timeOfDay String, currentWeather String, currentEnvironment String) : void
+public testVoiceOutput() : void -> package testVoiceOutput(number int, timeOfDay String, currentWeather String, currentEnvironment String) : void
+public testVoiceOutput() : void -> package testVoiceOutput(number int, timeOfDay String, currentWeather String, currentEnvironment String) : void
+null -> null
+null -> null
+public testVoiceOutput() : void -> package testVoiceOutput(number int, timeOfDay String, currentWeather String, currentEnvironment String) : void
+public testVoiceOutput() : void -> package testVoiceOutput(number int, timeOfDay String, currentWeather String, currentEnvironment String) : void

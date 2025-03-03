@@ -1,0 +1,4 @@
+null -> null
+public testSomeInputGivesExpectedOutput() : void -> public testFunctionality() : void
+public testSomeInputGivesExpectedOutput() : void -> public testFunctionality() : void
+line range:15-15==line range:34-34

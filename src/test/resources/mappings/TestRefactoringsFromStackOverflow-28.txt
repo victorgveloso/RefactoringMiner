@@ -1,0 +1,5 @@
+null -> null
+package insertionSort(arrayCase ArrayCase) : void -> package testSorting(arrayCase ArrayCase) : void
+package insertionSort(arrayCase ArrayCase) : void -> package testSorting(arrayCase ArrayCase) : void
+line range:28-31==line range:19-22
+null -> null

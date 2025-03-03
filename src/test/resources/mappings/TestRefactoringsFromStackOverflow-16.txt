@@ -1,0 +1,3 @@
+null -> null
+null -> null
+private testCaseService1 : TestCaseService1 -> protected testCaseService1 : TestCaseService1

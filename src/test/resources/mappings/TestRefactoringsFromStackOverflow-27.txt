@@ -1,0 +1,11 @@
+public testProduct() : void -> public testProduct() : void
+package AssertProduct(product JsonElement) -> private AssertProduct(product JsonElement)
+public testProduct() : void -> package ofName(name String) : AssertProduct
+public testProduct() : void -> package ofName(name String) : AssertProduct
+line range:15-15==line range:29-29
+public testProduct() : void -> package ofType(type String) : AssertProduct
+public testProduct() : void -> package ofType(type String) : AssertProduct
+line range:14-14==line range:34-34
+public testProduct() : void -> package ofType(type String) : AssertProduct
+public testProduct() : void -> package ofType(type String) : AssertProduct
+line range:14-14==line range:34-34

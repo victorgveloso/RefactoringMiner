@@ -1,0 +1,16 @@
+public testCase() : void -> package expectsException(callback Callback) : void
+public testCase() : void -> package expectsException(callback Callback) : void
+line range:15-15==line range:19-19
+public testCase() : void -> package expectsException(callback Callback) : void
+line range:18-24==line range:12-20
+public testCase() : void -> package expectsException(callback Callback) : void
+line range:22-24==line range:15-20
+public testCase() : void -> package expectsException(callback Callback) : void
+public testCase() : void -> package expectsException(callback Callback) : void
+line range:23-23==line range:19-19
+public testCase() : void -> package expectsException(callback Callback) : void
+line range:10-16==line range:12-20
+public testCase() : void -> package expectsException(callback Callback) : void
+line range:14-16==line range:15-20
+public testCase() : void -> package expectsException(callback Callback) : void
+public testCase() : void -> package expectsException(callback Callback) : void
