@@ -1,31 +1,35 @@
 package br.ufmg.dcc.labsoft.refactoringanalyzer.dao;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 import gr.uom.java.xmi.diff.CodeRange;
-import org.hibernate.annotations.Index;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @NamedQueries({
-	@NamedQuery(name = "refactoringGit.extractMethods", query = "select ref from RefactoringGit ref join ref.revision as rev join rev.project as p where refactoringType in ('Extract Operation', 'Extract & Move Operation') and rev.commitId = :commitId and p.cloneUrl = :cloneUrl")
+		@NamedQuery(
+				name = "refactoringGit.extractMethods",
+				query = "select ref from RefactoringGit ref join ref.revision as rev join rev.project as p where ref.refactoringType in ('Extract Operation', 'Extract & Move Operation') and rev.commitId = :commitId and p.cloneUrl = :cloneUrl"
+		)
 })
-@Table(name = "refactoringgit")
+@Table(name = "refactoringgit",
+		indexes = {
+				@Index(name = "index_refactoringgit_revision", columnList = "revision"),
+				@Index(name = "index_refactoringgit_entity", columnList = "entity")
+		})
 public class RefactoringGit extends AbstractEntity {
 
 	private String refactoringType;
@@ -35,7 +39,6 @@ public class RefactoringGit extends AbstractEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "revision")
-	@Index(name="index_refactoringgit_revision")
 	private RevisionGit revision;
 
 	@OneToMany(mappedBy = "refactoring", targetEntity = CodeRangeGit.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -44,9 +47,8 @@ public class RefactoringGit extends AbstractEntity {
 	private Boolean truePositive;
 
 	@Column(length = 255)
-	@Index(name="index_refactoringgit_entity")
 	private String entity;
-	
+
 	@Override
 	public Long getId() {
 		return id;
@@ -124,13 +126,13 @@ public class RefactoringGit extends AbstractEntity {
 	}
 
 	public void setCodeRangeBefore(List<CodeRange> leftSide) {
-		codeRanges.addAll(leftSide.stream().map((codeRange) ->
+		codeRanges.addAll(leftSide.stream().map(codeRange ->
 				CodeRangeGit.fromCodeRange(codeRange, this, CodeRangeGit.DiffSide.LEFT)
 		).collect(Collectors.toList()));
 	}
 
 	public void setCodeRangeAfter(List<CodeRange> rightSide) {
-		codeRanges.addAll(rightSide.stream().map((codeRange) ->
+		codeRanges.addAll(rightSide.stream().map(codeRange ->
 				CodeRangeGit.fromCodeRange(codeRange, this, CodeRangeGit.DiffSide.RIGHT)
 		).collect(Collectors.toList()));
 	}

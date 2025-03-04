@@ -3,35 +3,29 @@ package br.ufmg.dcc.labsoft.refactoringanalyzer.operations;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import javax.json.*;
-
-import br.ufmg.dcc.labsoft.refactoringanalyzer.operations.utils.StringToDate;
-import com.jcabi.github.Coordinates;
-import com.jcabi.github.Repo;
-import jakarta.ws.rs.core.HttpHeaders;
-
-import com.jcabi.github.FromProperties;
-import com.jcabi.http.request.JdkRequest;
-import com.jcabi.http.wire.AutoRedirectingWire;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import br.ufmg.dcc.labsoft.refactoringanalyzer.dao.Database;
 import br.ufmg.dcc.labsoft.refactoringanalyzer.dao.ProjectGit;
+import br.ufmg.dcc.labsoft.refactoringanalyzer.operations.utils.StringToDate;
+import jakarta.ws.rs.core.HttpHeaders;
 
-import com.jcabi.github.Github;
-import com.jcabi.github.RtGithub;
-import com.jcabi.http.Request;
-import com.jcabi.http.response.JsonResponse;
+import org.kohsuke.github.GitHub;
+import org.kohsuke.github.GitHubBuilder;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.PagedIterator;
+import org.kohsuke.github.PagedSearchIterable;
+import org.kohsuke.github.GHRepositorySearchBuilder;
+import org.kohsuke.github.GHDirection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GitProjectFinder {
 
 	Logger logger = LoggerFactory.getLogger(GitProjectFinder.class);
-	
+
 	private Database db = new Database();
 
 	public static void main(String[] args) throws IOException {
@@ -53,7 +47,8 @@ public class GitProjectFinder {
 		}
 		GitProjectFinder gitProjectFinder = new GitProjectFinder();
 		List<String> repos = Files.readAllLines(Path.of(args[1]));
-		gitProjectFinder.loadRepos(new RtGithub(args[0]), repos);
+		GitHub github = new GitHubBuilder().withOAuthToken(args[0]).build();
+		gitProjectFinder.loadRepos(github, repos);
 	}
 
 	private static void paginatePopularRepos(String[] args) throws IOException {
@@ -63,54 +58,44 @@ public class GitProjectFinder {
 		}
 	}
 
-	private void findRepos(int page, String password) throws IOException {
-		Request req = new JdkRequest("https://api.github.com")
-				.header(
-						HttpHeaders.USER_AGENT,
-						new FromProperties("jcabigithub.properties").format()
-				)
-				.header(
-						HttpHeaders.AUTHORIZATION,
-						String.format("token %s", password)
-				)
-				.header(HttpHeaders.ACCEPT, "application/json")
-				.header(HttpHeaders.CONTENT_TYPE, "application/json")
-				.through(AutoRedirectingWire.class);
-		Github github = new RtGithub(req);
-		findRepos(page, github);
-	}
-	private void findRepos(int page, String username, String password) throws IOException {
-		Github github = new RtGithub(username, password);
+	private void findRepos(int page, String token) throws IOException {
+		GitHub github = new GitHubBuilder().withOAuthToken(token).build();
 		findRepos(page, github);
 	}
 
-	private static ProjectGit createProjectGit(JsonObject repoData) {
+	// (Optional) Basic authentication version – note that token-based auth is recommended.
+	private void findRepos(int page, String username, String password) throws IOException {
+		GitHub github = GitHub.connectUsingPassword(username, password);
+		findRepos(page, github);
+	}
+
+	private static ProjectGit createProjectGit(GHRepository repo) throws IOException {
 		ProjectGit p = new ProjectGit();
-		p.setName(repoData.getString("name"));
-		p.setSize(repoData.getInt("size"));
-		p.setFork(repoData.getBoolean("fork"));
-		p.setStargazers_count(repoData.getInt("stargazers_count"));
-		p.setWatchers_count(repoData.getInt("watchers_count"));
-		p.setForks_count(repoData.getInt("forks_count"));
-		p.setDefault_branch(repoData.getString("default_branch"));
-		p.setOpen_issues(repoData.getInt("open_issues"));
-		p.setCreated_at(StringToDate.parseDatePatterns(repoData.getString("created_at")));
-		p.setUpdated_at(StringToDate.parseDatePatterns(repoData.getString("updated_at")));
-		p.setPushed_at(StringToDate.parseDatePatterns(repoData.getString("pushed_at")));
-		p.setLast_update(StringToDate.parseDatePatterns(repoData.getString("pushed_at")));
-//		p.setLanguage(repoData.getString("language"));
-		p.setCloneUrl(repoData.getString("clone_url"));
+		p.setName(repo.getName());
+		p.setSize(repo.getSize());
+		p.setFork(repo.isFork());
+		p.setStargazers_count(repo.getStargazersCount());
+		p.setWatchers_count(repo.getWatchersCount());
+		p.setForks_count(repo.getForksCount());
+		p.setDefault_branch(repo.getDefaultBranch());
+		p.setOpen_issues(repo.getOpenIssueCount());
+		// The hub4j API already returns Date objects:
+		p.setCreated_at(repo.getCreatedAt());
+		p.setUpdated_at(repo.getUpdatedAt());
+		p.setPushed_at(repo.getPushedAt());
+		p.setLast_update(repo.getPushedAt());
+		// Use the HTTP clone URL, similar to the previous "clone_url" field.
+		p.setCloneUrl(repo.getHttpTransportUrl());
 		p.setStatus("new");
 		p.setMonitoring_enabled(false);
-
-		if (!repoData.isNull("description")) {
-			p.setDescription(repoData.getString("description"));
+		if (repo.getDescription() != null) {
+			p.setDescription(repo.getDescription());
 		}
 		p.setAnalyzed(false);
 		return p;
 	}
 
-	private void loadRepos(Github github, List<String> repos) throws IOException {
+	private void loadRepos(GitHub github, List<String> repos) throws IOException {
 		for (String r : repos) {
 			if (r.stripLeading().startsWith("#")) {
 				continue;
@@ -120,52 +105,62 @@ public class GitProjectFinder {
 				r = r.substring(0, r.length() - 1);
 			}
 			logger.debug("Fetching repo {}", r);
-			Repo repo = github.repos().get(new Coordinates.Https(r));
+			String fullName = extractFullName(r);
+			GHRepository repo = github.getRepository(fullName);
 			logger.debug("Repo {} fetched. Parsing data...", r);
-			JsonObject repoData = repo.json();
-			ProjectGit p = db.getProjectByCloneUrl(repoData.getString("clone_url"));
+			ProjectGit p = db.getProjectByCloneUrl(repo.getHttpTransportUrl());
 			String found = Objects.isNull(p) ? "not found" : "found";
-			logger.debug("Project {} {} in DB", repoData.getString("clone_url"), found);
+			logger.debug("Project {} {} in DB", repo.getHttpTransportUrl(), found);
 			if (p != null) {
-				logger.info("Found existing project {}", p.getCloneUrl());
-				Date createdAt = StringToDate.parseDatePatterns(repoData.getString("created_at"));
-				logger.debug("Created at: {}", createdAt);
-				Date updatedAt = StringToDate.parseDatePatterns(repoData.getString("updated_at"));
-				logger.debug("Updated at: {}", updatedAt);
-				Date pushedAt = StringToDate.parseDatePatterns(repoData.getString("pushed_at"));
-				logger.debug("Pushed at: {}", pushedAt);
-				p.setCreated_at(createdAt);
-				p.setUpdated_at(updatedAt);
-				p.setPushed_at(pushedAt);
-				p.setLast_update(pushedAt);
+				logger.info("Found existing project {}", repo.getHttpTransportUrl());
+				p.setCreated_at(repo.getCreatedAt());
+				p.setUpdated_at(repo.getUpdatedAt());
+				p.setPushed_at(repo.getPushedAt());
+				p.setLast_update(repo.getPushedAt());
 				db.update(p);
 			} else {
-				logger.info("Not found project in DB. Creating new project {}", repoData.getString("clone_url"));
-				p = createProjectGit(repoData);
+				logger.info("Not found project in DB. Creating new project {}", repo.getHttpTransportUrl());
+				p = createProjectGit(repo);
 				db.insertIfNotExists(p);
 			}
-			this.logger.info("Project {} processed", p.getCloneUrl());
+			logger.info("Project {} processed", repo.getHttpTransportUrl());
 		}
 	}
 
-	private void findRepos(int page, Github github) throws IOException {
-		Request request = github.entry()
-				.uri().path("/search/repositories")
-				.queryParam("q", "stars:>=500 pushed:>2023-12-01 language:Java created:<=2021-12-01 forks:>=120")
-				.queryParam("sort", "stars")
-				.queryParam("order", "desc")
-				.queryParam("per_page", "100")
-				.queryParam("page", "" + page).back()
-				.method(Request.GET);
-
-		JsonArray items = request.fetch().as(JsonResponse.class).json().readObject().getJsonArray("items");
-		for (JsonValue item : items) {
-			JsonObject repoData = (JsonObject) item;
-			ProjectGit p = createProjectGit(repoData);
-
+	private void findRepos(int page, GitHub github) throws IOException {
+		String query = "stars:>=500 pushed:>2023-12-01 language:Java created:<=2021-12-01 forks:>=120";
+		PagedSearchIterable<GHRepository> search = github.searchRepositories()
+				.q(query)
+				.sort(GHRepositorySearchBuilder.Sort.STARS)
+				.order(GHDirection.DESC)
+				.list();
+		// Retrieve a specific page (with 100 items per page) using an iterator over pages
+		int currentPage = 0;
+		var pages = search.withPageSize(100)._iterator(100);
+		List<GHRepository> reposPage = pages.nextPage();
+		for (; pages.hasNext() && currentPage < page; currentPage++, reposPage = pages.nextPage()) {
+		}
+		if (currentPage < page) {
+			return;
+		}
+		for (GHRepository repo : reposPage) {
+			ProjectGit p = createProjectGit(repo);
 			db.insertIfNotExists(p);
-			this.logger.info("Project {}", p.getCloneUrl());
+			logger.info("Project {}", repo.getHttpTransportUrl());
 		}
 	}
 
+
+	/**
+	 * Helper method to extract the "owner/repo" full name from a GitHub URL.
+	 * Assumes the URL is in the form "https://github.com/owner/repo".
+	 */
+	private String extractFullName(String repoUrl) {
+		if (repoUrl.startsWith("https://github.com/")) {
+			return repoUrl.substring("https://github.com/".length());
+		} else if (repoUrl.startsWith("http://github.com/")) {
+			return repoUrl.substring("http://github.com/".length());
+		}
+		return repoUrl;
+	}
 }

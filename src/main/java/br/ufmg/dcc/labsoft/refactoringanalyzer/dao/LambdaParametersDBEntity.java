@@ -1,17 +1,21 @@
 package br.ufmg.dcc.labsoft.refactoringanalyzer.dao;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Index;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
 @Entity
-@Table(name = "lambdaparameterstable", uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "lambda", "type", "name" }) })
+@Table(name = "lambdaparameterstable",
+		uniqueConstraints = {
+			@UniqueConstraint(columnNames = { "lambda", "type", "name" })
+		},
+		indexes = {
+			@Index(name="index_lambdaparameters_lambda", columnList = "lambda")
+		}
+)
 public class LambdaParametersDBEntity extends AbstractEntity {
 
 	@Transient
@@ -19,7 +23,6 @@ public class LambdaParametersDBEntity extends AbstractEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "lambda")
-	@Index(name="index_lambdaparameters_lambda")
 	private LambdaDBEntity lambda;
 
 	private String type;

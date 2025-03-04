@@ -1,33 +1,37 @@
 package br.ufmg.dcc.labsoft.refactoringanalyzer.dao;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Index;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "lambda_tags", uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "lambda", "user", "tag" }) })
+@Table(name = "lambda_tags",
+		uniqueConstraints = {
+			@UniqueConstraint(columnNames = { "lambda", "user", "tag" })
+		},
+		indexes = {
+				@Index(name = "index_lambdatag_lambda", columnList = "lambda"),
+				@Index(name = "index_lambdatag_user", columnList = "user"),
+				@Index(name = "index_lambdatag_tag", columnList = "tag")
+		}
+)
 public class LambdaTagsDBEntity extends AbstractEntity {
 
 	private static final long serialVersionUID = 2789968607998931526L;
 	
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "lambda")
-	@Index(name="index_lambdatag_lambda")
 	private LambdaDBEntity lambda;
 
 	@ManyToOne(cascade = CascadeType.PERSIST) 
 	@JoinColumn(name="user")
-	@Index(name="index_lambdatag_user")
 	private User user;
 
 	@ManyToOne(cascade = CascadeType.PERSIST) 
-	@Index(name="index_lambdatag_tag")
 	@JoinColumn(name="tag")
 	private Tag tag;
 	

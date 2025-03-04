@@ -4,28 +4,34 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
 
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.diff.CodeRange;
-import org.hibernate.annotations.Index;
 
 import gr.uom.java.xmi.decomposition.LambdaExpressionObject;
 
 @Entity
-@Table(name = "lambdastable", uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "revision", "offset", "length" }) })
+@Table(name = "lambdastable",
+		uniqueConstraints = {
+			@UniqueConstraint(columnNames = { "revision", "offset", "length" })
+		},
+		indexes = {
+			@Index(name = "index_lambdastable_revision", columnList = "revision")
+		}
+)
 public class LambdaDBEntity extends AbstractEntity {
 
 	public enum LambdaStatus {
@@ -40,7 +46,6 @@ public class LambdaDBEntity extends AbstractEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "revision")
-	@Index(name = "index_lambdastable_revision")
 	private RevisionGit revision;
 
 	@OneToMany(mappedBy = "lambda", targetEntity = LambdaTagsDBEntity.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)

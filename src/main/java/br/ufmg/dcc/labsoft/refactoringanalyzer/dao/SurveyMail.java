@@ -2,26 +2,28 @@ package br.ufmg.dcc.labsoft.refactoringanalyzer.dao;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Index;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "surveymail")
+@Table(name = "surveymail",
+		indexes = {
+			@Index(name = "index_surveymail_recipient", columnList = "recipient"),
+			@Index(name = "index_surveymail_alternative", columnList = "alternativeAddress"),
+			@Index(name = "index_surveymail_sender", columnList = "sender")
+		}
+)
 public class SurveyMail extends AbstractEntity {
 
-	@Index(name="index_surveymail_recipient")
 	private String recipient;
 	
-	@Index(name="index_surveymail_alternative")
 	private String alternativeAddress;
 	
-	@Index(name="index_surveymail_sender")
 	private String sender;
 	
 	@Column(length = 1024)

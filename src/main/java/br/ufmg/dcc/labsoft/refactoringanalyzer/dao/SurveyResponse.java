@@ -2,19 +2,22 @@ package br.ufmg.dcc.labsoft.refactoringanalyzer.dao;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Index;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "surveyresponse")
+@Table(name = "surveyresponse",
+		indexes = {
+			@Index(name = "index_surveyresponse_fromAddress", columnList = "fromAddress"),
+			@Index(name = "index_surveyresponse_survey", columnList = "survey")
+		}
+)
 public class SurveyResponse extends AbstractEntity {
 
-	@Index(name="index_surveyresponse_fromAddress")
 	private String fromAddress;
 
 	private String subject;
@@ -29,7 +32,6 @@ public class SurveyResponse extends AbstractEntity {
 	
 	@ManyToOne
 	@JoinColumn(name = "survey")
-	@Index(name="index_surveyresponse_survey")
 	private SurveyMail survey;
 	
 	@Override

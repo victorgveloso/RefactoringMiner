@@ -1,16 +1,15 @@
 package br.ufmg.dcc.labsoft.refactoringanalyzer.dao;
 
-import org.hibernate.TransactionException;
-
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.Query;
+import jakarta.persistence.RollbackException;
 
 public class Database {
 	private static int ERROR_COUNTDOWN;
@@ -105,13 +104,13 @@ public class Database {
 	public void insertIfNotExists(final ProjectGit project) {
 		try {
 			perform(em -> em.persist(project));
-		} catch (PersistenceException ex) {
-			ex.printStackTrace();
-		} catch (TransactionException ex) {
+		} catch (RollbackException ex) {
 			try {
 				Thread.sleep(1000);
-			} catch (InterruptedException ignored) {/* Do nothing */}
+			} catch (InterruptedException ignored) { /* Do nothing */ }
 			insertIfNotExists(project);
+		} catch (PersistenceException ex) {
+			ex.printStackTrace();
 		}
 	}
 

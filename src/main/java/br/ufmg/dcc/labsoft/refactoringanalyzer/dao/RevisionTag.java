@@ -1,33 +1,34 @@
 package br.ufmg.dcc.labsoft.refactoringanalyzer.dao;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Index;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(
 	name = "revisiontag",
-	uniqueConstraints = {@UniqueConstraint(columnNames = {"user", "revision", "tag"})}
+	uniqueConstraints = {@UniqueConstraint(columnNames = {"user", "revision", "tag"})},
+	indexes = {
+		@Index(name="index_revisiontag_user", columnList = "user"),
+		@Index(name="index_revisiontag_revision", columnList = "revision"),
+		@Index(name="index_revisiontag_tag", columnList = "tag")
+	}
 )
 public class RevisionTag extends AbstractEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "user")
-	@Index(name="index_revisiontag_user")
 	private User user;
 
 	@ManyToOne
 	@JoinColumn(name = "revision")
-	@Index(name="index_revisiontag_revision")
 	private RevisionGit revision;
 	
 	@ManyToOne
 	@JoinColumn(name = "tag")
-	@Index(name="index_revisiontag_tag")
 	private Tag tag;
 	
 	@Override

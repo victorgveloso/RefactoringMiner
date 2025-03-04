@@ -4,22 +4,25 @@ import com.fasterxml.jackson.core.io.JsonStringEncoder;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
 import gr.uom.java.xmi.diff.CodeRange;
-import org.hibernate.annotations.Index;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import jakarta.persistence.Index;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "coderangegit")
+@Table(name = "coderangegit",
+        indexes = {
+            @Index(name = "index_refactoringgit_filePath", columnList = "filePath"),
+            @Index(name = "index_refactoringgit_codeElementType", columnList = "codeElementType")
+		})
 public class CodeRangeGit extends AbstractEntity {
     public static CodeRangeGit fromCodeRange(CodeRange from, RefactoringGit refactoring, DiffSide diffSide) {
         Objects.requireNonNull(refactoring, "refactoring cannot be null");
@@ -48,12 +51,12 @@ public class CodeRangeGit extends AbstractEntity {
     private RefactoringGit refactoring;
 
     @Column(length = 255, nullable = false)
-    @Index(name="index_refactoringgit_filePath")
     private String filePath;
 
     @Column(length = 127, nullable = false)
-    @Index(name="index_refactoringgit_codeElementType")
     private String codeElementType;
+    private int startOffset;
+    private int endOffset;
     private int startLine;
     private int endLine;
     private int startColumn;
@@ -62,6 +65,15 @@ public class CodeRangeGit extends AbstractEntity {
     private String description;
     @Column(length = 5000)
     private String codeElement;
+
+    public int getStartOffset() {
+        return startOffset;
+    }
+
+    public int getEndOffset() {
+        return endOffset;
+    }
+
     public String getFilePath() {
         return filePath;
     }
@@ -164,24 +176,6 @@ public class CodeRangeGit extends AbstractEntity {
     }
 
     public static CodeRange computeRange(Set<AbstractCodeFragment> codeFragments) {
-        String filePath = null;
-        int minStartLine = 0;
-        int maxEndLine = 0;
-        int startColumn = 0;
-        int endColumn = 0;
-
-        for(AbstractCodeFragment fragment : codeFragments) {
-            LocationInfo info = fragment.getLocationInfo();
-            filePath = info.getFilePath();
-            if(minStartLine == 0 || info.getStartLine() < minStartLine) {
-                minStartLine = info.getStartLine();
-                startColumn = info.getStartColumn();
-            }
-            if(info.getEndLine() > maxEndLine) {
-                maxEndLine = info.getEndLine();
-                endColumn = info.getEndColumn();
-            }
-        }
-        return new CodeRange(filePath, minStartLine, maxEndLine, startColumn, endColumn, LocationInfo.CodeElementType.LIST_OF_STATEMENTS);
+        return CodeRange.computeRange(codeFragments);
     }
 }

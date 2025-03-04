@@ -1,22 +1,24 @@
 package br.ufmg.dcc.labsoft.refactoringanalyzer.dao;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Index;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "projectsadditionalinfo")
+@Table(name = "projectsadditionalinfo",
+		indexes = {
+			@Index(name = "index_project_additional_info", columnList = "project")
+		}
+)
 public class ProjectsAdditionalInfo extends AbstractEntity {
 
 	private static final long serialVersionUID = -5254386622041377955L;
 	
 	@ManyToOne(cascade = CascadeType.PERSIST) 
 	@JoinColumn(name = "project")
-	@Index(name="index_project_additional_info")
 	private ProjectGit project;
 	
 	private double lambdaDensityPerClass;
