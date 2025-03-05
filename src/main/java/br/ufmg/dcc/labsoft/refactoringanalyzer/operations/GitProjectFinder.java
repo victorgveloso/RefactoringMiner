@@ -12,6 +12,7 @@ import br.ufmg.dcc.labsoft.refactoringanalyzer.dao.ProjectGit;
 import br.ufmg.dcc.labsoft.refactoringanalyzer.operations.utils.StringToDate;
 import jakarta.ws.rs.core.HttpHeaders;
 
+import org.kohsuke.github.GHFileNotFoundException;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 import org.kohsuke.github.GHRepository;
@@ -106,7 +107,14 @@ public class GitProjectFinder {
 			}
 			logger.debug("Fetching repo {}", r);
 			String fullName = extractFullName(r);
-			GHRepository repo = github.getRepository(fullName);
+			GHRepository repo = null;
+			try {
+				repo = github.getRepository(fullName);
+			} catch (GHFileNotFoundException e) {
+				logger.error("Repository {} not found", r);
+				continue;
+			}
+
 			logger.debug("Repo {} fetched. Parsing data...", r);
 			ProjectGit p = db.getProjectByCloneUrl(repo.getHttpTransportUrl());
 			String found = Objects.isNull(p) ? "not found" : "found";

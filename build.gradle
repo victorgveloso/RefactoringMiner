@@ -77,7 +77,8 @@ tasks.processTestResources {
     }
 }
 dependencies {
-    implementation 'mysql:mysql-connector-java:5.1.40'
+    implementation 'org.hibernate.orm:hibernate-community-dialects:6.2.7.Final'
+    implementation 'org.xerial:sqlite-jdbc:3.41.2.1'
 //    implementation('org.hibernate:hibernate-entitymanager:4.2.6.Final')
     implementation 'org.hibernate.orm:hibernate-core:6.2.7.Final'
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
@@ -183,6 +184,7 @@ tasks.withType(Sign) {
 
 def jarName = project.hasProperty('jarName') ? project.jarName : 'RM-fat.jar'
 shadowJar {
+    zip64 = true
     manifest {
         attributes 'Main-Class': 'org.refactoringminer.RefactoringMiner'
     }

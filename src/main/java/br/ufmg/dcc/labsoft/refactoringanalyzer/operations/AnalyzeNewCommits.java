@@ -44,7 +44,7 @@ public class AnalyzeNewCommits extends TaskWithProjectLock {
 		final Database db1 = db;
 		GitService gitService = new GitServiceImpl();
 		File projectDir = new File(workingDir, project.getOwner());
-		projectDir.mkdir();
+		projectDir.mkdirs();
 		File projectFile = new File(projectDir, project.getName());
 		Repository repo = gitService.cloneIfNotExists(projectFile.getPath(), project.getCloneUrl());
 		

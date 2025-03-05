@@ -20,8 +20,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 	@NamedQuery(name = "projectGit.findAll", query = "SELECT i FROM ProjectGit i"),
 	@NamedQuery(name = "projectGit.findByCloneUrl", query = "SELECT i FROM ProjectGit i where i.cloneUrl = :cloneUrl"),
 	@NamedQuery(name = "projectGit.releaseLocks", query = "update ProjectGit i set i.running_pid = NULL where i.running_pid = :pid"),
-	@NamedQuery(name = "projectGit.findNonAnalyzed", query = "SELECT i FROM ProjectGit i where i.analyzed = false and i.running_pid is null and i.status = 'pending' order by rand() asc"),
-	@NamedQuery(name = "projectGit.findNew", query = "SELECT i FROM ProjectGit i where i.analyzed = false and i.running_pid is null and i.status = 'new' order by rand() asc"),
+	@NamedQuery(name = "projectGit.findNonAnalyzed", query = "SELECT i FROM ProjectGit i where i.analyzed = false and i.running_pid is null and i.status = 'pending' order by random() asc"), // Replace with rand for MySQL
+	@NamedQuery(name = "projectGit.findNew", query = "SELECT i FROM ProjectGit i where i.analyzed = false and i.running_pid is null and i.status = 'new' order by random() asc"), // Replace with rand for MySQL
 	@NamedQuery(name = "projectGit.findToMonitor", query = "SELECT i FROM ProjectGit i where i.monitoring_enabled = true and i.running_pid is null and i.last_update < :date order by i.last_update asc"),
 	@NamedQuery(name = "projectGit.findNonCounted", query = "SELECT i FROM ProjectGit i where i.analyzed = false and commits_count = 0 and i.running_pid is null order by i.size asc")
 })
@@ -72,16 +72,8 @@ public class ProjectGit extends AbstractEntity {
 
 
 	public String getOwner() {
-		String prefix = "://github.com/";
-		String httpPrefx = "http" + prefix;
-		String httpsPrefx = "https" + prefix;
-		if (this.cloneUrl.startsWith(httpsPrefx)) {
-			return this.cloneUrl.substring(httpsPrefx.length() + 1, this.cloneUrl.indexOf(getName()) - 2);
-		} else if (this.cloneUrl.startsWith(httpPrefx)) {
-			return this.cloneUrl.substring(httpPrefx.length() + 1, this.cloneUrl.indexOf(getName()) - 2);
-		} else {
-			throw new RuntimeException("Invalid clone url (neither HTTPS nor HTTP prefix found): " + this.cloneUrl);
-		}
+		String[] parts = cloneUrl.split("/");
+		return parts[3];  // After "https://github.com/"
 	}
 
 	public String getName() {

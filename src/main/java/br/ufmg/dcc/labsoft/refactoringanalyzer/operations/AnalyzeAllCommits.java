@@ -46,7 +46,7 @@ public class AnalyzeAllCommits extends TaskWithProjectLock{
     public void analyzeProject(final Database db, final ProjectGit project) throws Exception {
         GitService gitService = new GitServiceImpl();
         File projectDir = new File(workingDir, project.getOwner());
-        projectDir.mkdir();
+        projectDir.mkdirs();
         File projectFile = new File(projectDir, project.getName());
         Repository repo = gitService.cloneIfNotExists(projectFile.getPath(), project.getCloneUrl()/*, project.getDefault_branch()*/);
 
