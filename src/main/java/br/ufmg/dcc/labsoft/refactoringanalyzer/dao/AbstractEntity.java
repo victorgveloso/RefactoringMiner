@@ -19,7 +19,8 @@ public abstract class AbstractEntity implements Serializable {
     @Transient
     private static final long serialVersionUID = -3038903536445432584L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false)
     protected Long id;
     @Column(nullable = false, name = "addedAt", columnDefinition = "DATETIME")
     @Temporal(TemporalType.TIMESTAMP)
@@ -27,18 +28,15 @@ public abstract class AbstractEntity implements Serializable {
 
     @PrePersist
     private void onPersistCallback() {
-        // this will only ever be called once, on a Persist event (when the insert occurs).
         this.addedAt = new Date();
     }
 
-
     public Long getId() {
-        id = null;
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = null;
+    protected void setId(Long id) {
+        this.id = id;
     }
 
 }
