@@ -22,7 +22,7 @@ public abstract class AbstractEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
     protected Long id;
-    @Column(nullable = false, name = "addedAt", columnDefinition = "DATETIME")
+    @Column(nullable = false, name = "addedAt", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     protected Date addedAt;
 
