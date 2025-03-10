@@ -70,16 +70,5 @@ public abstract class TaskWithProjectLock {
 		if (!workingDir.exists()) {
 			workingDir.mkdir();
 		}
-//		String logFilePath = addFileLogger(workingDir, logger, pid.toString());
-//		logger.info("Log file: " + logFilePath);
 	}
-
-//	private String addFileLogger(File workingDir, final Logger logger,  final String pid) throws IOException {
-//		// setting up a FileAppender dynamically...
-//		String logFilePath = workingDir.getPath() + "/rd." + pid + ".log";
-//		PatternLayout layout = new PatternLayout("%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n");
-//		FileAppender appender = new FileAppender(layout, logFilePath, true);
-//		org.apache.log4j.Logger.getRootLogger().addAppender(appender);
-//		return logFilePath;
-//	}
 }

@@ -71,9 +71,6 @@ public class RevisionGit extends AbstractEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(columnDefinition = "VARCHAR(30) DEFAULT 'NEW'")
 	private Status status = Status.NEW;
-	
-//	@OneToMany(mappedBy = "revision", targetEntity = LambdaDBEntity.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//	private Set<LambdaDBEntity> lambdas;
 
 	public RevisionGit() {
 	}
@@ -225,14 +222,6 @@ public class RevisionGit extends AbstractEntity {
 	public void setOk(Boolean ok) {
 		this.ok = ok;
 	}
-	
-//	public void setLambdas(Set<LambdaDBEntity> lambdas) {
-//		this.lambdas = lambdas;
-//	}
-//
-//	public Set<LambdaDBEntity> getLambdas() {
-//		return lambdas;
-//	}
 	
 	public void setLinesAdded(int linesAdded) {
 		this.linesAdded = linesAdded;

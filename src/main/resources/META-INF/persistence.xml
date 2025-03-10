@@ -10,10 +10,6 @@
         <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.CrudProjectDaoGit</class>
         <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.Database</class>
         <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.ExtractMethodInfo</class>
-        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.LambdaDBEntity</class>
-        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.LambdaParametersDBEntity</class>
-        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.LambdaTagsDBEntity</class>
-        <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.ProjectsAdditionalInfo</class>
         <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.RefactoringGit</class>
         <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.RefactoringMotivation</class>
         <class>br.ufmg.dcc.labsoft.refactoringanalyzer.dao.RevisionTag</class>
