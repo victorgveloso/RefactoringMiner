@@ -23,6 +23,10 @@ import jakarta.persistence.Table;
 		@NamedQuery(
 				name = "refactoringGit.extractMethods",
 				query = "select ref from RefactoringGit ref join ref.revision as rev join rev.project as p where ref.refactoringType in ('Extract Operation', 'Extract & Move Operation') and rev.commitId = :commitId and p.cloneUrl = :cloneUrl"
+		),
+		@NamedQuery(
+				name = "refactoringGit.findRefactoringDuplicates",
+				query = "select ref from RefactoringGit ref join ref.revision as rev where rev.commitId = :hash GROUP BY ref.revision, ref.refactoringType, ref.description HAVING COUNT(ref) > 1"
 		)
 })
 @Table(name = "refactoringgit",

@@ -136,7 +136,7 @@ public class CrudProjectDaoGit<T extends AbstractEntity> {
 		return q.getResultList();
 	}
 
-	public List<RefactoringGit> findRefactoringDuplicado(String hash) {
+	public List<RefactoringGit> findRefactoringDuplicates(String hash) {
 		
 		return (List<RefactoringGit>) em
 				.createNamedQuery("refactoringGit.findRefactoringDuplicates")
