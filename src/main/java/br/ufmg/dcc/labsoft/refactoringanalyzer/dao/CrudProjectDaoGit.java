@@ -9,8 +9,11 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.Query;
 import jakarta.validation.ConstraintViolationException;
+import org.slf4j.LoggerFactory;
 
 public class CrudProjectDaoGit<T extends AbstractEntity> {
+
+	private static org.slf4j.Logger logger = LoggerFactory.getLogger(CrudProjectDaoGit.class);
 
 	private static EntityManager em;
 
@@ -35,7 +38,7 @@ public class CrudProjectDaoGit<T extends AbstractEntity> {
 			em.persist(obj);
 			em.getTransaction().commit();
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error persisting object", ex);
 			em.getTransaction().rollback();
 		}finally{
 			//em.close();
@@ -49,7 +52,7 @@ public class CrudProjectDaoGit<T extends AbstractEntity> {
 			em.persist(r);
 			em.getTransaction().commit();
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error persisting revision", ex);
 			em.getTransaction().rollback();
 		}finally{
 			//em.close();
@@ -69,11 +72,9 @@ public class CrudProjectDaoGit<T extends AbstractEntity> {
 			        t = t.getCause();
 			    }
 			    if (t instanceof ConstraintViolationException) {
-			    	System.out.println("Operação já foi incluida!!!");
-					e.printStackTrace();
+					logger.error("Operation has already been executed", e);
 			    }else{
-			    	System.out.println("Exception: ");
-					e.printStackTrace();
+					logger.error("Error merging object", e);
 			    }
 			    	
 			}finally{
@@ -82,13 +83,13 @@ public class CrudProjectDaoGit<T extends AbstractEntity> {
 		return obj;
 	}
 
-	public List<T> listarProject(String classe) {
-		return em.createQuery("from " + classe + " c ").getResultList();
+	public List<T> listProjects(String aClass) {
+		return em.createQuery("from " + aClass + " c ").getResultList();
 	}
 
-	public void salvarList(List<T> objList) {
+	public void saveList(List<T> objs) {
 		em.getTransaction().begin();
-		em.merge(objList);
+		em.merge(objs);
 		em.flush();
 		em.getTransaction().commit();
 	}
@@ -104,8 +105,7 @@ public class CrudProjectDaoGit<T extends AbstractEntity> {
 	}
 
 	public List<T> getProjects() {
-		// String sqlQuery = "SELECT * FROM projectGit;";
-		String sqlQuery = "SELECT * FROM projectgit where finalizado = 0 order by size;";
+		String sqlQuery = "SELECT * FROM projectgit where analyzed = 0 order by size;";
 		Query q = em.createNativeQuery(sqlQuery, ProjectGit.class);
 		return q.getResultList();
 	}
@@ -118,29 +118,19 @@ public class CrudProjectDaoGit<T extends AbstractEntity> {
 	}
 
 	public List<T> getMaxForksProjects() {
-		// String sqlQuery =
-		// "SELECT * FROM project order by count desc limit 3";
-		String sqlQuery = "SELECT * FROM ProjectGit where finalizado = 1 order by forks_count desc;";
-		// String sqlQuery = "SELECT * FROM urlPreProjectGit where id = 46;";
+		String sqlQuery = "SELECT * FROM ProjectGit where analyzed = 1 order by forks_count desc;";
 		Query q = em.createNativeQuery(sqlQuery, ProjectGit.class);
-
 		return q.getResultList();
 	}
 
-	public T getProjectSelected(long id) {
-
+	public T getSelectedProject(long id) {
 		String sqlQuery = "SELECT * FROM ProjectGit where id=" + id + ";";
 		Query q = em.createNativeQuery(sqlQuery, ProjectGit.class);
-
 		return (T) q.getSingleResult();
 	}
 
 	public List<T> getRevisionsProjects() {
-		// String sqlQuery =
-		// "SELECT * FROM project order by count desc limit 3";
-		// String sqlQuery =
-		// "SELECT * FROM projectGit where finalizado = 1 order by countCommits desc limit 20;";
-		String sqlQuery = "SELECT * FROM projectGit where finalizado = 1 order by forks;";
+		String sqlQuery = "SELECT * FROM projectGit where analyzed = 1 order by forks;";
 		Query q = em.createNativeQuery(sqlQuery, ProjectGit.class);
 
 		return q.getResultList();
@@ -149,12 +139,7 @@ public class CrudProjectDaoGit<T extends AbstractEntity> {
 	public List<RefactoringGit> findRefactoringDuplicado(String hash) {
 		
 		return (List<RefactoringGit>) em
-				.createNamedQuery("refactoringGit.findRefactoringDuplicado")
-				.setParameter("hashOperacao", hash).getResultList();
+				.createNamedQuery("refactoringGit.findRefactoringDuplicates")
+				.setParameter("hash", hash).getResultList();
 	}
-
-	/*
-	 * SELECT * FROM project p where DATE_FORMAT(lastDateCommit,'%d/%m/%Y') =
-	 * '12/09/2014';
-	 */
 }

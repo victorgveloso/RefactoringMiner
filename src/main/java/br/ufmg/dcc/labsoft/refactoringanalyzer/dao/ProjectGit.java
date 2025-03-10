@@ -200,8 +200,8 @@ public class ProjectGit extends AbstractEntity {
 		this.running_pid = pid;
 	}
 
-	public void setAnalyzed(boolean finalizado) {
-		this.analyzed = finalizado;
+	public void setAnalyzed(boolean analyzed) {
+		this.analyzed = analyzed;
 	}
 
 	public List<RevisionGit> getRevisionGitList() {
