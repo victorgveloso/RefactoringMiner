@@ -10,8 +10,11 @@ import jakarta.persistence.Persistence;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Query;
 import jakarta.persistence.RollbackException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Database {
+	private static final Logger logger = LoggerFactory.getLogger(Database.class);
 	private static int ERROR_COUNTDOWN;
 
 	EntityManager em;
@@ -53,11 +56,29 @@ public class Database {
 	}
 
 	public boolean isAuthorContacted(String recipient) {
-		List<BigInteger> revisions = em
+		List<?> results = em
 				.createNativeQuery("SELECT EXISTS (SELECT 1 FROM surveymail s WHERE recipient = :recipient)")
-				.setParameter("recipient", "vitorgvbh@gmail.com")
+				.setParameter("recipient", recipient)  // Use the parameter instead of hardcoded email
 				.getResultList();
-		return revisions.size() > 0 && revisions.get(0).equals(BigInteger.ONE);
+
+		if (results.isEmpty()) {
+			return false;
+		}
+
+		Object result = results.get(0);
+
+		// Handle different numeric types that could be returned
+		if (result instanceof BigInteger) {
+			return !BigInteger.ZERO.equals(result);
+		} else if (result instanceof Integer) {
+			return (Integer)result != 0;
+		} else if (result instanceof Long) {
+			return (Long)result != 0L;
+		} else if (result instanceof Number) {
+			return ((Number)result).intValue() != 0;
+		}
+
+		return false;  // Unknown type, assume not contacted
 	}
 	
 	public ProjectGit getProjectById(Long id) {
@@ -144,6 +165,7 @@ public class Database {
 			em.getTransaction().commit();
 			return project;
 		} catch (Exception e) {
+			logger.error("Error finding new project, rolling back...", e);
 			em.getTransaction().rollback();
 			throw e;
 		} finally {
