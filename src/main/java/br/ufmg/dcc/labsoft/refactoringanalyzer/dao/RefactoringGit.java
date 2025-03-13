@@ -29,11 +29,7 @@ import jakarta.persistence.Table;
 				query = "select ref from RefactoringGit ref join ref.revision as rev where rev.commitId = :hash GROUP BY ref.revision, ref.refactoringType, ref.description HAVING COUNT(ref) > 1"
 		)
 })
-@Table(name = "refactoringgit",
-		indexes = {
-				@Index(name = "index_refactoringgit_revision", columnList = "revision"),
-				@Index(name = "index_refactoringgit_entity", columnList = "entity")
-		})
+@Table(name = "refactoringgit")
 public class RefactoringGit extends AbstractEntity {
 
 	private String refactoringType;

@@ -18,11 +18,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "coderangegit",
-        indexes = {
-            @Index(name = "index_refactoringgit_filePath", columnList = "filePath"),
-            @Index(name = "index_refactoringgit_codeElementType", columnList = "codeElementType")
-		})
+@Table(name = "coderangegit")
 public class CodeRangeGit extends AbstractEntity {
     public static CodeRangeGit fromCodeRange(CodeRange from, RefactoringGit refactoring, DiffSide diffSide) {
         Objects.requireNonNull(refactoring, "refactoring cannot be null");
