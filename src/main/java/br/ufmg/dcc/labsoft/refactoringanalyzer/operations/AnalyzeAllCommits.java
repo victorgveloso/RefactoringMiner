@@ -39,7 +39,7 @@ public class AnalyzeAllCommits extends TaskWithProjectLock{
     }
 
     @Override
-    protected void doTask(Database db, Pid pid, ProjectGit project) throws Exception {
+    protected void doTask(Database db, ProjectGit project) throws Exception {
         this.analyzeProject(db, project);
     }
 

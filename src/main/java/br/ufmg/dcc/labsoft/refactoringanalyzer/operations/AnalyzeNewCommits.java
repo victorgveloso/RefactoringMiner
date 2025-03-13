@@ -40,12 +40,12 @@ public class AnalyzeNewCommits extends TaskWithProjectLock {
 	}
 
 	@Override
-	protected void doTask(Database db, Pid pid, ProjectGit project) throws Exception {
+	protected void doTask(Database db, ProjectGit project) throws Exception {
 		final Database db1 = db;
 		GitService gitService = new GitServiceImpl();
 		File projectDir = new File(workingDir, project.getOwner());
-		projectDir.mkdirs();
 		File projectFile = new File(projectDir, project.getName());
+		projectFile.mkdirs();
 		Repository repo = gitService.cloneIfNotExists(projectFile.getPath(), project.getCloneUrl());
 		
 		GitHistoryRefactoringMiner detector = new GitHistoryRefactoringMinerImpl();

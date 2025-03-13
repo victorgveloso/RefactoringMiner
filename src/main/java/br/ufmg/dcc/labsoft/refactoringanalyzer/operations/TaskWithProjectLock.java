@@ -18,7 +18,7 @@ public abstract class TaskWithProjectLock {
 	protected Database db;
 	protected File workingDir = new File("tmp");
 
-	public TaskWithProjectLock(Database db) {
+	protected TaskWithProjectLock(Database db) {
 		this.db = db;
 	}
 
@@ -41,7 +41,7 @@ public abstract class TaskWithProjectLock {
 					continue;
 				}
 				try {
-					this.doTask(db, pid, project);
+					this.doTask(db, project);
 				} catch (Exception e) {
 					// This may be a temporary connection problem with github, so log the error and move on ...
 					logger.warn("Skipping project due to error", e);
@@ -59,7 +59,7 @@ public abstract class TaskWithProjectLock {
 		}
 	}
 	
-	protected abstract void doTask(Database db, Pid pid, ProjectGit project) throws Exception;
+	protected abstract void doTask(Database db, ProjectGit project) throws Exception;
 
 	protected abstract ProjectGit findNextProject(Database db, Pid pid) throws Exception;
 

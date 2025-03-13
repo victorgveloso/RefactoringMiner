@@ -136,7 +136,8 @@ class AnalyzeProjectsHandler extends RefactoringHandler {
 				revision.setIdCommit(commitId);
 				db.insert(revision);
 			}
-		} catch (Exception ignored) {
+		} catch (Exception ex) {
+			logger.error("Error happened while saving failure of commit " + commitId, ex);
 			// ignore
 		} finally {
 			logger.error("Error saving failure of commit " + commitId);
