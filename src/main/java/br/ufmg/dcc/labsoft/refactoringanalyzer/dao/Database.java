@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 public class Database {
 	private static final Logger logger = LoggerFactory.getLogger(Database.class);
 	private static int ERROR_COUNTDOWN;
+	private static final Object TRANSACTION_LOCK = new Object();
 
 	EntityManager em;
 	private static void resetErrorCountdown() {
@@ -34,24 +35,31 @@ public class Database {
 	
 	private void perform(Transaction transaction) {
 		//EntityManager em = createEm();
-		try {
-			em.getTransaction().begin();
-			transaction.run(em);
-			em.getTransaction().commit();
-		} catch (Exception e) {
-			if (ERROR_COUNTDOWN > 0) {
-				ERROR_COUNTDOWN--;
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException ignored) {/* Do nothing */}
-				perform(transaction);
-			} else {
-				em.getTransaction().rollback();
-				throw e;
+		synchronized (TRANSACTION_LOCK) {
+			try {
+				// Only start a transaction if none is active
+				if (!em.getTransaction().isActive()) {
+					em.getTransaction().begin();
+				}
+				transaction.run(em);
+				em.getTransaction().commit();
+			} catch (Exception e) {
+				if (ERROR_COUNTDOWN > 0) {
+					ERROR_COUNTDOWN--;
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException ignored) { }
+					perform(transaction);
+				} else {
+					if (em.getTransaction().isActive()) {
+						em.getTransaction().rollback();
+					}
+					throw e;
+				}
+			} finally {
+				em.clear();
+				resetErrorCountdown();
 			}
-		} finally {
-			em.clear();
-			resetErrorCountdown();
 		}
 	}
 
