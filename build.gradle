@@ -106,6 +106,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.0'
     testImplementation 'net.joshka:junit-json-params:5.9.2-r0'
     testImplementation 'org.skyscreamer:jsonassert:1.5.1'
+    testImplementation 'org.mockito:mockito-core:5.16.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 

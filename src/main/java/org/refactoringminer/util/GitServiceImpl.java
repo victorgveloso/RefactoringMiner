@@ -5,9 +5,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -18,6 +20,7 @@ import java.util.stream.StreamSupport;
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.FetchCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.diff.DiffAlgorithm;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
@@ -45,6 +48,8 @@ import org.refactoringminer.api.Churn;
 import org.refactoringminer.api.GitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
 
 public class GitServiceImpl implements GitService {
 	private static Logger logger = LoggerFactory.getLogger(GitServiceImpl.class);
@@ -206,6 +211,16 @@ public class GitServiceImpl implements GitService {
     		}
     		return remoteRefsChanges;
         }
+	}
+
+	@Override
+	public TemporaryRemote createTemporaryLocalRemote(Repository repository, @Nullable Path dir) throws Exception {
+		TemporaryRemote temporaryRemote = new TemporaryRemote(repository, dir);
+
+		fetch(repository);
+		fetch(temporaryRemote.getTmpRepository());
+
+		return temporaryRemote;
 	}
 
 	public RevWalk fetchAndCreateNewRevsWalk(Repository repository) throws Exception {
