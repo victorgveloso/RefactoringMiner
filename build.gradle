@@ -88,6 +88,8 @@ dependencies {
     implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
 //    implementation 'com.jcabi:jcabi-github:1.8.0'
     implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'
+    implementation 'org.graalvm.polyglot:polyglot:24.1.2'
+    implementation 'org.graalvm.polyglot:python:24.1.2'
 
     implementation 'org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r'
     implementation 'org.slf4j:slf4j-api:2.0.16'

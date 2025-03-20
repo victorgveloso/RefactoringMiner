@@ -20,7 +20,21 @@ public class LocationInfo {
 	private int endColumn;
 	private int compilationUnitLength;
 	private CodeElementType codeElementType;
-	
+
+	public LocationInfo(String sourceFolder, String filePath, int startOffset, int endOffset, int length, int startLine, int startColumn, int endLine, int endColumn, int compilationUnitLength, CodeElementType codeElementType) {
+		this.sourceFolder = sourceFolder;
+		this.filePath = filePath;
+		this.startOffset = startOffset;
+		this.endOffset = endOffset;
+		this.length = length;
+		this.startLine = startLine;
+		this.startColumn = startColumn;
+		this.endLine = endLine;
+		this.endColumn = endColumn;
+		this.compilationUnitLength = compilationUnitLength;
+		this.codeElementType = codeElementType;
+	}
+
 	public LocationInfo(CompilationUnit cu, String sourceFolder, String filePath, ASTNode node, CodeElementType codeElementType) {
 		this.sourceFolder = sourceFolder;
 		this.filePath = filePath;
