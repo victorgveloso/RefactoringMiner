@@ -52,7 +52,7 @@ class UMLCodeGenerator(ast.NodeVisitor):
         # Calculate package name from file path
         package_name = self.source_folder.replace(os.path.sep, '.')
 
-        # Create location info
+        # Create location info for the class
         location = self._create_location_info(node, CodeElementType.CLASS_DECLARATION)
 
         # Create UML Class
@@ -60,18 +60,12 @@ class UMLCodeGenerator(ast.NodeVisitor):
             package_name,
             node.name,
             location,
-            False,  # is_package_member
-            []       # imported_types
+            False,  # is_package_member topLevel flag; adjust if needed
+            []      # imported_types (empty list for now)
         )
 
-        # Handle inheritance
-        for base in node.bases:
-            base_type = self._parse_type(base)
-            generalization = UMLGeneralization(uml_class, base_type.getClassType())
-            self.uml_model.addGeneralization(generalization)
-
-        # Handle abstract classes
-        if any(issubclass_(b, "ABCMeta") for b in node.keywords):
+        # If the class explicitly defines ABCMeta as its metaclass, mark as abstract.
+        if self._is_abc_metaclass(node):
             uml_class.setAbstract(True)
 
         # Push class context
@@ -79,7 +73,7 @@ class UMLCodeGenerator(ast.NodeVisitor):
         self.current_class = uml_class
         self.uml_model.addClass(uml_class)
 
-        # Visit body elements
+        # Process body elements (methods, inner classes, etc.)
         self.generic_visit(node)
 
         # Pop class context
@@ -87,20 +81,24 @@ class UMLCodeGenerator(ast.NodeVisitor):
         self.current_class = self.class_stack[-1] if self.class_stack else None
 
     def visit_FunctionDef(self, node):
+        # Only process methods defined within a class
         if not self.current_class:
-            return  # Skip module-level functions
+            return
 
         location = self._create_location_info(node, CodeElementType.METHOD_DECLARATION)
         operation = UMLOperation(node.name, location)
 
-        # Set abstract for @abstractmethod
+        # Set the operation as abstract if any decorator indicates it
         if any(self._is_abstract_decorator(d) for d in node.decorator_list):
             operation.setAbstract(True)
 
         # Process parameters
         for param in node.args.args:
             param_name = param.arg
-            param_type = self._parse_type(param.annotation) if param.annotation else UMLType("Any")
+            if param.annotation:
+                param_type = self._parse_type(param.annotation)
+            else:
+                param_type = UMLType("Any")
             uml_param = UMLParameter(param_name, param_type, "in", False)
             operation.addParameter(uml_param)
 
@@ -127,6 +125,7 @@ class UMLCodeGenerator(ast.NodeVisitor):
             self.uml_model.addImport(uml_import)
 
     def visit_AnnAssign(self, node):
+        # Process annotated assignments as attributes if inside a class
         if isinstance(node.target, ast.Name) and self.current_class:
             attr_name = node.target.id
             attr_type = self._parse_type(node.annotation)
@@ -136,6 +135,7 @@ class UMLCodeGenerator(ast.NodeVisitor):
             self.current_class.addAttribute(attribute)
 
     def _create_location_info(self, node, element_type):
+        # Calculate start and end offsets based on line and column info.
         start = self._get_offset(node.lineno, node.col_offset)
         end = self._get_offset(node.end_lineno, node.end_col_offset)
         return LocationInfo(
@@ -152,15 +152,19 @@ class UMLCodeGenerator(ast.NodeVisitor):
             offset = 0
             for l in self.source_content.split('\n'):
                 self._line_offsets.append(offset)
-                offset += len(l) + 1  # +1 for newline
-        return self._line_offsets[line-1] + column
+                offset += len(l) + 1  # +1 for the newline character
+        return self._line_offsets[line - 1] + column
 
     def _parse_type(self, node):
         if isinstance(node, ast.Name):
             return UMLType(node.id)
         elif isinstance(node, ast.Subscript):
             base = self._parse_type(node.value)
-            subscript = self._parse_type(node.slice)
+            # Handle subscript slices that might be wrapped in an Index node in older Python versions.
+            if hasattr(node, 'slice'):
+                subscript = self._parse_type(node.slice)
+            else:
+                subscript = UMLType("Any")
             return UMLType(f"{base.getType()}[{subscript.getType()}]")
         elif isinstance(node, ast.Attribute):
             return UMLType(self._parse_qualified_name(node))
@@ -181,5 +185,17 @@ class UMLCodeGenerator(ast.NodeVisitor):
         return Visibility.PUBLIC
 
     def _is_abstract_decorator(self, decorator):
-        return (isinstance(decorator, ast.Name) and decorator.id == "abstractmethod") or \
-            (isinstance(decorator, ast.Attribute) and decorator.attr == "abstractmethod")
+        # Only handle simple Name or Attribute nodes.
+        if isinstance(decorator, ast.Name):
+            return decorator.id == "abstractmethod"
+        elif isinstance(decorator, ast.Attribute):
+            return decorator.attr == "abstractmethod"
+        return False
+
+    def _is_abc_metaclass(self, node):
+        # Check for keyword arguments in class definition that define the metaclass.
+        for kw in node.keywords:
+            if kw.arg == 'metaclass' and isinstance(kw.value, ast.Name):
+                if kw.value.id == "ABCMeta":
+                    return True
+        return False
