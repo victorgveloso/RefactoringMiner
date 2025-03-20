@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,11 +16,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.FetchCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.diff.DiffAlgorithm;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -221,6 +224,34 @@ public class GitServiceImpl implements GitService {
 		fetch(temporaryRemote.getTmpRepository());
 
 		return temporaryRemote;
+	}
+
+	@Override
+	public RevCommit resetToLastCommitBefore(Repository repository, Date before) throws Exception {
+		try (RevWalk walk = new RevWalk(repository)) {
+			Git git = new Git(repository);
+			if (repository.isBare()) {
+				throw new IllegalStateException("Cannot reset bare repositories!");
+			}
+			if (git.remoteList().call().getFirst().getURIs().getFirst().isRemote()) {
+				throw new IllegalStateException("This operation is not safe to use in repositories with remotes in other system. Please, create a temporary local git-remote!");
+			}
+			Ref ref = repository.findRef(MessageFormat.format("refs/remotes/origin/{0}", repository.getBranch()));
+			ObjectId commit = ref.getObjectId();
+			RevCommit c = walk.parseCommit(commit);
+			walk.markStart(c);
+			for (RevCommit revCommit : walk) {
+				Date commitTime = new Date(revCommit.getCommitTime() * 1000L);
+				if (commitTime.before(before)) {
+					ResetCommand reset = git.reset();
+					reset.setRef(revCommit.getName());
+					reset.call();
+					git.push().setForce(true).call();
+					return revCommit;
+				}
+			}
+		}
+		return null;
 	}
 
 	public RevWalk fetchAndCreateNewRevsWalk(Repository repository) throws Exception {

@@ -50,6 +50,8 @@ public interface GitService {
 
 	TemporaryRemote createTemporaryLocalRemote(Repository repository, @Nullable Path dir) throws Exception;
 
+	RevCommit resetToLastCommitBefore(Repository repository, Date before) throws Exception;
+
 	RevWalk fetchAndCreateNewRevsWalk(Repository repository, String branch) throws Exception;
 
 	RevWalk createAllRevsWalk(Repository repository) throws Exception;

@@ -51,7 +51,7 @@ public class TemporaryRemote implements AutoCloseable {
 
         Path tempDir = Files.createTempDirectory(dir, null);
         File tempDirFile = tempDir.toFile();
-        tempGit = Git.cloneRepository().setURI(uri.toString()).setDirectory(tempDirFile).call();
+        tempGit = Git.cloneRepository().setBare(true).setURI(uri.toString()).setDirectory(tempDirFile).call();
         tmpRepository = tempGit.getRepository();
 
         URIish tmpOrigin = new URIish(this.tmpRepository.getDirectory().toString());
