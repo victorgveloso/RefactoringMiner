@@ -12,6 +12,7 @@ import org.refactoringminer.api.RefactoringHandler;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -25,7 +26,7 @@ class GitHistoryRefactoringMinerImplTest {
         try (Git localGit = Git.cloneRepository().setDirectory(localDir.toFile()).setURI(remoteUri).call()) {
             Repository repo = localGit.getRepository();
             ObjectId latestCommit = repo.findRef(MessageFormat.format("refs/remotes/origin/{0}", repo.getBranch())).getObjectId();
-            sut.fetchAndDetectFromDate(localGit.getRepository(), new RefactoringHandler() {}, new Date("Mar 10, 2025"), tmpDir);
+            sut.fetchAndDetectFromDate(localGit.getRepository(), new RefactoringHandler() {}, LocalDate.of(2025,3,10), tmpDir);
             ObjectId olderCommit = repo.findRef(MessageFormat.format("refs/remotes/origin/{0}", repo.getBranch())).getObjectId();
             assertNotEquals(latestCommit, olderCommit);
         }

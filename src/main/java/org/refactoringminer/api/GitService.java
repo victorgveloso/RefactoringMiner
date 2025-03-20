@@ -1,7 +1,7 @@
 package org.refactoringminer.api;
 
 import java.nio.file.Path;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,7 +50,7 @@ public interface GitService {
 
 	TemporaryRemote createTemporaryLocalRemote(Repository repository, @Nullable Path dir) throws Exception;
 
-	RevCommit resetToLastCommitBefore(Repository repository, Date before) throws Exception;
+	RevCommit resetToLastCommitBefore(Repository repository, LocalDate before) throws Exception;
 
 	RevWalk fetchAndCreateNewRevsWalk(Repository repository, String branch) throws Exception;
 

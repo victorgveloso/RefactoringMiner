@@ -2,7 +2,7 @@ package org.refactoringminer.api;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -95,7 +95,7 @@ public interface GitHistoryRefactoringMiner {
 	 * @param dir A directory to store the temporary repository (if null, creates a temporary directory named after {@link org.refactoringminer.util.TemporaryRemote#TemporaryRemote(Repository, Path)}).
 	 * @throws Exception propagated from JGit library.
 	 */
-	void fetchAndDetectFromDate(Repository repository, RefactoringHandler handler, Date beginning, @Nullable Path dir) throws Exception;
+	void fetchAndDetectFromDate(Repository repository, RefactoringHandler handler, LocalDate beginning, @Nullable Path dir) throws Exception;
 
 	/**
 	 * Detect refactorings performed in the specified commit. 

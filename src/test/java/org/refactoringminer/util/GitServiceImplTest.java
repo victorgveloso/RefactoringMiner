@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.stream.Stream;
@@ -36,13 +37,13 @@ class GitServiceImplTest {
     GitServiceImpl sut = new GitServiceImpl();
     private static Git tmpGit;
     private static String url;
-    private static Date date;
+    private static LocalDate date;
 
     @BeforeAll
     static void setUp(@TempDir Path tmpDir) throws IOException, GitAPIException {
         url = "https://github.com/EmpiricalSEConcordia/Refactoringminer-Astdiff-Exporter.git";
         tmpGit = Git.cloneRepository().setBare(true).setDirectory(tmpDir.toFile()).setURI(url).call();
-        date = new Date("Mar 10, 2025");
+        date = LocalDate.of(2025,3,10);
     }
 
     @Test

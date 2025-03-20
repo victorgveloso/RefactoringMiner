@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
  import java.text.MessageFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,13 +19,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.FetchCommand;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.diff.DiffAlgorithm;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -222,7 +223,7 @@ public class GitServiceImpl implements GitService {
 	}
 
 	@Override
-	public RevCommit resetToLastCommitBefore(Repository repository, Date before) throws Exception {
+	public RevCommit resetToLastCommitBefore(Repository repository, LocalDate before) throws Exception {
 		try (RevWalk walk = new RevWalk(repository)) {
 			Git git = new Git(repository);
 			if (repository.isBare()) {
@@ -236,8 +237,8 @@ public class GitServiceImpl implements GitService {
 			RevCommit c = walk.parseCommit(commit);
 			walk.markStart(c);
 			for (RevCommit revCommit : walk) {
-				Date commitTime = new Date(revCommit.getCommitTime() * 1000L);
-				if (commitTime.before(before)) {
+				LocalDate commitTime = Instant.ofEpochSecond(revCommit.getCommitTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+				if (commitTime.isBefore(before)) {
 					ResetCommand reset = git.reset();
 					reset.setRef(revCommit.getName());
 					reset.call();

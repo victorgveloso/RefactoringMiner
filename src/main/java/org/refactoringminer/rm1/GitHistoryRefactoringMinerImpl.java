@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -787,7 +788,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 	}
 
     @Override
-    public void fetchAndDetectFromDate(Repository repository, RefactoringHandler handler, Date beginning, @Nullable Path dir) throws Exception {
+    public void fetchAndDetectFromDate(Repository repository, RefactoringHandler handler, LocalDate beginning, @Nullable Path dir) throws Exception {
         try (TemporaryRemote tmpRemote = gitService.createTemporaryLocalRemote(repository, dir)) {
 			gitService.resetToLastCommitBefore(tmpRemote.getLocalRepository(), beginning);
 		}
