@@ -2,12 +2,15 @@ package org.refactoringminer.api;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jgit.lib.Repository;
 import org.kohsuke.github.GitHub;
 import org.refactoringminer.astDiff.models.ProjectASTDiff;
+
+import javax.annotation.Nullable;
 
 /**
  * Detect refactorings in the git history.
@@ -82,6 +85,19 @@ public interface GitHistoryRefactoringMiner {
 	void fetchAndDetectNew(Repository repository, RefactoringHandler handler) throws Exception;
 
 	/**
+	 * Fetch commits later than a specified Date from the remote repo and detect all refactorings performed in these
+	 * commits.
+	 *
+	 * @param repository A git repository (from JGit library).
+	 * @param handler A handler object that is responsible to process the detected refactorings and
+	 *                control when to skip a commit.
+	 * @param beginning The initial commitTime to include in the refactoring detection.
+	 * @param dir A directory to store the temporary repository (if null, creates a temporary directory named after {@link org.refactoringminer.util.TemporaryRemote#TemporaryRemote(Repository, Path)}).
+	 * @throws Exception propagated from JGit library.
+	 */
+	void fetchAndDetectFromDate(Repository repository, RefactoringHandler handler, Date beginning, @Nullable Path dir) throws Exception;
+
+	/**
 	 * Detect refactorings performed in the specified commit. 
 	 * 
 	 * @param repository A git repository (from JGit library).
@@ -151,8 +167,8 @@ public interface GitHistoryRefactoringMiner {
 	void detectAtFileContents(Map<String, String> fileContentsBefore, Map<String, String> fileContentsAfter, RefactoringHandler handler);
 
 	/**
-	 * Detect refactorings for a commit range. 
-	 * 
+	 * Detect refactorings for a commit range.
+	 *
 	 * @param repository A git repository (from JGit library).
 	 * @param startCommit The SHA key that identifies the start commit.
 	 * @param endCommit The SHA key that identifies the end commit.
@@ -161,8 +177,8 @@ public interface GitHistoryRefactoringMiner {
 	List<Refactoring> detectAtCommitRange(Repository repository, String startCommit, String endCommit) throws Exception;
 
 	/**
-	 * Detect refactorings for a commit range. 
-	 * 
+	 * Detect refactorings for a commit range.
+	 *
 	 * @param gitURL The git URL of the repository.
 	 * @param startCommit The SHA key that identifies the start commit.
 	 * @param endCommit The SHA key that identifies the end commit.
@@ -224,8 +240,8 @@ public interface GitHistoryRefactoringMiner {
 	ProjectASTDiff diffAtDirectories(File previousFile, File nextFile);
 
 	/**
-	 * Generate the AST diff for a commit range. 
-	 * 
+	 * Generate the AST diff for a commit range.
+	 *
 	 * @param repository A git repository (from JGit library).
 	 * @param startCommit The SHA key that identifies the start commit.
 	 * @param endCommit The SHA key that identifies the end commit.
@@ -234,8 +250,8 @@ public interface GitHistoryRefactoringMiner {
 	ProjectASTDiff diffAtCommitRange(Repository repository, String startCommit, String endCommit) throws Exception;
 
 	/**
-	 * Generate the AST diff for a commit range. 
-	 * 
+	 * Generate the AST diff for a commit range.
+	 *
 	 * @param gitURL The git URL of the repository.
 	 * @param startCommit The SHA key that identifies the start commit.
 	 * @param endCommit The SHA key that identifies the end commit.

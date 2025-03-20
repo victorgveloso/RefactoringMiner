@@ -218,12 +218,7 @@ public class GitServiceImpl implements GitService {
 
 	@Override
 	public TemporaryRemote createTemporaryLocalRemote(Repository repository, @Nullable Path dir) throws Exception {
-		TemporaryRemote temporaryRemote = new TemporaryRemote(repository, dir);
-
-		fetch(repository);
-		fetch(temporaryRemote.getTmpRepository());
-
-		return temporaryRemote;
+        return new TemporaryRemote(repository, dir);
 	}
 
 	@Override

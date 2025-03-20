@@ -1,6 +1,5 @@
 package org.refactoringminer.rm1;
 
-import br.ufmg.dcc.labsoft.refactoringanalyzer.operations.GitProjectFinder;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLModelASTReader;
 import gr.uom.java.xmi.diff.MoveSourceFolderRefactoring;
@@ -23,20 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -81,6 +67,7 @@ import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.astDiff.models.ProjectASTDiff;
 import org.refactoringminer.astDiff.matchers.ProjectASTDiffer;
 import org.refactoringminer.util.GitServiceImpl;
+import org.refactoringminer.util.TemporaryRemote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,14 +75,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.difflib.DiffUtils;
 import com.github.difflib.UnifiedDiffUtils;
 
+import javax.annotation.Nullable;
+
 public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMiner {
 
 	private final static Logger logger = LoggerFactory.getLogger(GitHistoryRefactoringMinerImpl.class);
+	private final GitServiceImpl gitService;
 	private Set<RefactoringType> refactoringTypesToConsider = null;
 	private GitHub gitHub;
-	
+
 	public GitHistoryRefactoringMinerImpl() {
 		this.setRefactoringTypesToConsider(RefactoringType.ALL);
+		gitService = new GitServiceImpl() {};
 	}
 
 	public void setRefactoringTypesToConsider(RefactoringType ... types) {
@@ -792,6 +783,13 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 			detect(gitService, repository, handler, walk.iterator());
 		} finally {
 			walk.dispose();
+		}
+	}
+
+    @Override
+    public void fetchAndDetectFromDate(Repository repository, RefactoringHandler handler, Date beginning, @Nullable Path dir) throws Exception {
+        try (TemporaryRemote tempRemote = gitService.createTemporaryLocalRemote(repository, dir)) {
+			gitService.resetToLastCommitBefore(tempRemote.getLocalRepository(), beginning);
 		}
 	}
 
