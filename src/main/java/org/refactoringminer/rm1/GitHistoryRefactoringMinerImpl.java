@@ -788,8 +788,8 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 
     @Override
     public void fetchAndDetectFromDate(Repository repository, RefactoringHandler handler, Date beginning, @Nullable Path dir) throws Exception {
-        try (TemporaryRemote tempRemote = gitService.createTemporaryLocalRemote(repository, dir)) {
-			gitService.resetToLastCommitBefore(tempRemote.getLocalRepository(), beginning);
+        try (TemporaryRemote tmpRemote = gitService.createTemporaryLocalRemote(repository, dir)) {
+			gitService.resetToLastCommitBefore(tmpRemote.getLocalRepository(), beginning);
 		}
 	}
 

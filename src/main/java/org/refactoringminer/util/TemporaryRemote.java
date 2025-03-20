@@ -12,17 +12,19 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class TemporaryRemote implements AutoCloseable {
-    Git tempGit;
+    Git tmpGit;
     Repository tmpRepository;
     Git localGit;
     Repository localRepository;
 
     @Override
     public void close() throws Exception {
-        Optional<RemoteConfig> remotes = tempGit.remoteList().call().stream().filter(rem -> rem.getName().equals("origin")).findAny();
+        Optional<RemoteConfig> remotes = tmpGit.remoteList().call().stream().filter(rem -> rem.getName().equals("origin")).findAny();
         assert remotes.isPresent() : "No remote named 'origin' found";
         RemoteConfig origin = remotes.get();
 
@@ -31,8 +33,16 @@ public class TemporaryRemote implements AutoCloseable {
         URIish uri = first.get();
 
         var cfg = localGit.remoteSetUrl().setRemoteName(origin.getName()).setRemoteUri(uri).call();
-        tempGit.close();
+        tmpGit.close();
+        Path tmpPath = tmpRepository.getDirectory().toPath();
         tmpRepository.close();
+        if (Files.isDirectory(tmpPath)) {
+            try (Stream<Path> walk = Files.walk(tmpPath)) {
+                walk.sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+            }
+        }
     }
 
 
@@ -51,22 +61,22 @@ public class TemporaryRemote implements AutoCloseable {
 
         Path tempDir = Files.createTempDirectory(dir, null);
         File tempDirFile = tempDir.toFile();
-        tempGit = Git.cloneRepository().setBare(true).setURI(uri.toString()).setDirectory(tempDirFile).call();
-        tmpRepository = tempGit.getRepository();
+        tmpGit = Git.cloneRepository().setBare(true).setURI(uri.toString()).setDirectory(tempDirFile).call();
+        tmpRepository = tmpGit.getRepository();
 
         URIish tmpOrigin = new URIish(this.tmpRepository.getDirectory().toString());
         localGit.remoteSetUrl().setRemoteName(origin.getName()).setRemoteUri(tmpOrigin).call();
     }
 
-    public TemporaryRemote(Git tempGit, Repository tmpRepository, Git localGit, Repository localRepository) {
-        this.tempGit = tempGit;
+    public TemporaryRemote(Git tmpGit, Repository tmpRepository, Git localGit, Repository localRepository) {
+        this.tmpGit = tmpGit;
         this.tmpRepository = tmpRepository;
         this.localGit = localGit;
         this.localRepository = localRepository;
     }
 
-    public Git getTempGit() {
-        return tempGit;
+    public Git getTmpGit() {
+        return tmpGit;
     }
 
     public Repository getTmpRepository() {
