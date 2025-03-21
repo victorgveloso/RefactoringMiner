@@ -1,5 +1,6 @@
-import ast, os, java
+import ast, os, java, logging
 
+logging.basicConfig()
 # Import Java UML classes
 try:
     LocationInfo = java.type("gr.uom.java.xmi.LocationInfo")
@@ -14,8 +15,24 @@ try:
     UMLType = java.type("gr.uom.java.xmi.UMLType")
     Visibility = java.type("gr.uom.java.xmi.Visibility")
 except Exception as e:
-    print(f"Error loading Java classes: {e}")
+    logging.error(f"Error loading Java classes: {e}", exc_info=True, stack_info=True)
     exit(1)
+
+def populate_file_contents(base_path):
+    import glob
+    python_file_contents = {}
+    repository_directories = []
+    for path in glob.iglob(f"{base_path}/**/*.py", recursive=True):
+        with open(path, "r") as file:
+            python_file_contents[path] = file.read()
+        while 1:
+            directory, _ = os.path.split(path)
+            if len(directory) == 0:
+                break
+            else:
+                repository_directories.append(directory)
+                path = directory
+    return UMLModelASTReader(python_file_contents, repository_directories).get_uml_model()
 
 class UMLModelASTReader:
     def __init__(self, python_file_contents, repository_directories):
@@ -33,7 +50,7 @@ class UMLModelASTReader:
             generator = UMLCodeGenerator(source_folder, file_path, content, self.uml_model)
             generator.visit(tree)
         except SyntaxError as e:
-            print(f"Syntax error in {file_path}: {e}")
+            logging.error(f"Syntax error in {file_path}: {e}", exc_info=True, stack_info=True)
 
     def get_uml_model(self):
         return self.uml_model
