@@ -267,7 +267,8 @@ class UMLCodeGenerator(ast.NodeVisitor):
             return f"{self._parse_qualified_name(node.value)}.{node.attr}"
         return "Unknown"
 
-    def _determine_visibility(self, name):
+    @staticmethod
+    def _determine_visibility(name):
         if name.startswith("__"):
             logging.debug(f"Determined visibility for {name}: PRIVATE")
             return Visibility.PRIVATE
@@ -277,7 +278,8 @@ class UMLCodeGenerator(ast.NodeVisitor):
         logging.debug(f"Determined visibility for {name}: PUBLIC")
         return Visibility.PUBLIC
 
-    def _is_abstract_decorator(self, decorator):
+    @staticmethod
+    def _is_abstract_decorator(decorator):
         # Only handle simple Name or Attribute nodes.
         if isinstance(decorator, ast.Name):
             logging.debug(f"Decorator {decorator.id} is abstractmethod: {decorator.id == 'abstractmethod'}")
@@ -287,7 +289,8 @@ class UMLCodeGenerator(ast.NodeVisitor):
             return decorator.attr == "abstractmethod"
         return False
 
-    def _is_static_decorator(self, decorator):
+    @staticmethod
+    def _is_static_decorator(decorator):
         # Only handle simple Name or Attribute nodes.
         if isinstance(decorator, ast.Name):
             logging.debug(f"Decorator {decorator.id} is staticmethod: {decorator.id == 'staticmethod'}")
@@ -297,7 +300,8 @@ class UMLCodeGenerator(ast.NodeVisitor):
             return decorator.attr == 'staticmethod'
         return False
 
-    def _is_classmethod_decorator(self, decorator):
+    @staticmethod
+    def _is_classmethod_decorator(decorator):
         # Only handle simple Name or Attribute nodes.
         if isinstance(decorator, ast.Name):
             logging.debug(f"Decorator {decorator.id} is classmethod: {decorator.id == 'classmethod'}")
@@ -307,7 +311,8 @@ class UMLCodeGenerator(ast.NodeVisitor):
             return decorator.attr == 'classmethod'
         return False
 
-    def _is_abc_metaclass(self, node):
+    @staticmethod
+    def _is_abc_metaclass(node):
         # Check for keyword arguments in class definition that define the metaclass.
         for kw in node.keywords:
             if kw.arg == 'metaclass' and isinstance(kw.value, ast.Name):
