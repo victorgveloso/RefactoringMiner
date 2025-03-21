@@ -12,7 +12,8 @@ try:
     UMLImport = java.type("gr.uom.java.xmi.UMLImport")
     UMLAttribute = java.type("gr.uom.java.xmi.UMLAttribute")
     UMLGeneralization = java.type("gr.uom.java.xmi.UMLGeneralization")
-    UMLType = java.type("gr.uom.java.xmi.UMLType")
+    LeafType = java.type("gr.uom.java.xmi.LeafType")
+    CompositeType = java.type("gr.uom.java.xmi.CompositeType")
     Visibility = java.type("gr.uom.java.xmi.Visibility")
 except Exception as e:
     logging.error(f"Error loading Java classes: {e}", exc_info=True, stack_info=True)
@@ -21,19 +22,20 @@ except Exception as e:
 def populate_file_contents(base_path):
     logging.info(f"Populating file contents from base path: {base_path}")
     import glob
-    python_file_contents = {}
-    repository_directories = []
+    python_file_contents = java.type("java.util.LinkedHashMap")()
+    repository_directories = java.type("java.util.LinkedHashSet")()
     logging.debug("Initializing python_file_contents and repository_directories")
     for path in glob.iglob(f"{base_path}/**/*.py", recursive=True):
         with open(path, "r") as file:
-            python_file_contents[path] = file.read()
+            python_file_contents.put(path, file.read())
             logging.debug(f"Read file: {path}")
         while 1:
+            logging.debug(f"Processing repository directories for file: {path}")
             directory, _ = os.path.split(path)
-            if len(directory) == 0:
+            if directory in {"", os.sep}:
                 break
             else:
-                repository_directories.append(directory)
+                repository_directories.add(directory)
                 logging.debug(f"Added directory to repository_directories: {directory}")
                 path = directory
     return UMLModelASTReader(python_file_contents, repository_directories).get_uml_model()
@@ -46,7 +48,7 @@ class UMLModelASTReader:
         logging.info("Processed files")
 
     def process_files(self, python_file_contents):
-        for file_path, content in python_file_contents.items():
+        for file_path, content in python_file_contents.entrySet():
             logging.debug(f"Processing file: {file_path}")
             self.process_file(file_path, content)
 
@@ -74,6 +76,7 @@ class UMLCodeGenerator(ast.NodeVisitor):
         self.current_class = None
         self.class_stack = []
         self._line_offsets = None
+        self.imported_types = []
 
     def visit_ClassDef(self, node):
         logging.debug(f"Visiting class definition: {node.name}")
@@ -81,15 +84,15 @@ class UMLCodeGenerator(ast.NodeVisitor):
         package_name = self.source_folder.replace(os.path.sep, '.')
 
         # Create location info for the class
-        location = self._create_location_info(node, CodeElementType.CLASS_DECLARATION)
+        location = self._create_location_info(node, CodeElementType.TYPE_DECLARATION)
 
         # Create UML Class
         uml_class = UMLClass(
             package_name,
             node.name,
             location,
-            False,  # is_package_member topLevel flag; adjust if needed
-            []      # imported_types (empty list for now)
+            True,  # is_package_member topLevel flag; adjust if needed
+            self.imported_types
         )
 
         # If the class explicitly defines ABCMeta as its metaclass, mark as abstract.
@@ -121,24 +124,57 @@ class UMLCodeGenerator(ast.NodeVisitor):
 
         location = self._create_location_info(node, CodeElementType.METHOD_DECLARATION)
         operation = UMLOperation(node.name, location)
+        logging.debug(f"Created operation {node.name}")
+        # Handle magic methods (e.g., __init__, __str__)
+        if node.name.startswith("__") and node.name.endswith("__"):
+            operation.setVisibility(Visibility.PUBLIC)
+            if node.name == "__init__":
+                operation.setConstructor(True)
+                logging.debug(f"Function {node.name} is a constructor")
+        else:
+            # Set visibility based on method name if not a magic method
+            operation.setVisibility(self._determine_visibility(node.name))
+        _is_classmethod = False
+        # Set modifiers (i.e., isAbstract, isStatic) based on decorators
+        for d in node.decorator_list:
+            if self._is_static_decorator(d):
+                # Set the operation as static if any decorator indicates it
+                operation.setStatic(True)
+                logging.debug(f"Function {node.name} is static")
+            elif self._is_classmethod_decorator(d):
+                # Set the operation as class method if any decorator indicates it
+                operation.setStatic(True)
+                _is_classmethod = True
+                logging.debug(f"Function {node.name} is class method")
+            elif self._is_abstract_decorator(d):
+                # Set the operation as abstract if any decorator indicates it
+                operation.setAbstract(True)
+                logging.debug(f"Function {node.name} is abstract")
 
-        # Set the operation as abstract if any decorator indicates it
-        if any(self._is_abstract_decorator(d) for d in node.decorator_list):
-            operation.setAbstract(True)
-            logging.debug(f"Function {node.name} is abstract")
-
+        logging.debug(f"Processing parameters and return type for function {node.name}")
         # Process parameters
         for param in node.args.args:
+            logging.debug(f"Processing parameter: {param.arg}")
+            if param.arg == "self" and not operation.isStatic():
+                logging.debug(f'Skipping {param.arg} parameter for non static method as it corresponds to "this" keyword')
+                continue
+            if param.arg == "cls" and _is_classmethod:
+                logging.debug(f'Skipping {param.arg} parameter for class method as it corresponds to "this" keyword in static context')
+                continue
             param_name = param.arg
             if param.annotation:
+                logging.debug(f"Parameter {param_name} has type hint: {param.annotation}. Parsing type...")
                 param_type = self._parse_type(param.annotation)
             else:
-                param_type = UMLType("Any")
+                logging.debug(f"Parameter {param_name} has no type hint. Defaulting to Any")
+                param_type = LeafType("Any")
+            logging.debug(f"Adding parameter {param_name} to operation {node.name}")
             uml_param = UMLParameter(param_name, param_type, "in", False)
             operation.addParameter(uml_param)
 
         # Process return type
         if node.returns:
+            logging.debug(f"Function {node.name} has return type hint: {node.returns}. Parsing return type...")
             return_type = self._parse_type(node.returns)
             return_param = UMLParameter("return", return_type, "return", False)
             operation.addParameter(return_param)
@@ -146,12 +182,14 @@ class UMLCodeGenerator(ast.NodeVisitor):
         self.current_class.addOperation(operation)
         logging.debug(f"Added operation {node.name} to class {self.current_class.getName()}")
 
-    def visit_Import(self, node):
+    def visit_Import(self, node: ast.Import):
         logging.debug("Visiting import statement")
         for alias in node.names:
             location = self._create_location_info(node, CodeElementType.IMPORT_DECLARATION)
+            logging.debug(f"Creating UMLImport: {alias.name}")
             uml_import = UMLImport(alias.name, alias.name == "*", False, location)
-            self.uml_model.addImport(uml_import)
+            logging.debug(f"Adding UMLImport to model: {uml_import}")
+            self.imported_types.append(uml_import)
 
     def visit_ImportFrom(self, node):
         logging.debug(f"Visiting import from statement: {node.module}")
@@ -160,13 +198,14 @@ class UMLCodeGenerator(ast.NodeVisitor):
             full_name = f"{module}.{alias.name}" if module else alias.name
             location = self._create_location_info(node, CodeElementType.IMPORT_DECLARATION)
             uml_import = UMLImport(full_name, alias.name == "*", False, location)
-            self.uml_model.addImport(uml_import)
+            self.imported_types.append(uml_import)
 
     def visit_AnnAssign(self, node):
         logging.debug(f"Visiting annotated assignment: {node.target.id}")
         # Process annotated assignments as attributes if inside a class
         if isinstance(node.target, ast.Name) and self.current_class:
             attr_name = node.target.id
+            logging.debug(f"Variable declaration {attr_name} has type hint: {node.annotation}. Parsing type...")
             attr_type = self._parse_type(node.annotation)
             location = self._create_location_info(node, CodeElementType.FIELD_DECLARATION)
             attribute = UMLAttribute(attr_name, attr_type, location)
@@ -182,7 +221,13 @@ class UMLCodeGenerator(ast.NodeVisitor):
             self.source_folder,
             self.source_file,
             start,
+            end,
             end - start,
+            node.lineno,
+            node.col_offset,
+            node.end_lineno,
+            node.end_col_offset,
+            end - start, # XXX: Not sure if this is correct (what is compilationUnitLength?)
             element_type
         )
 
@@ -198,20 +243,22 @@ class UMLCodeGenerator(ast.NodeVisitor):
 
     def _parse_type(self, node):
         if isinstance(node, ast.Name):
-            logging.debug(f"Parsed type: {node.id}")
-            return UMLType(node.id)
+            logging.debug(f"Parsed type is LeafType: {node.id}")
+            return LeafType(node.id)
         elif isinstance(node, ast.Subscript):
+            logging.debug(f"Parsed type is Subscript: {node.value}")
             base = self._parse_type(node.value)
             # Handle subscript slices that might be wrapped in an Index node in older Python versions.
             if hasattr(node, 'slice'):
                 subscript = self._parse_type(node.slice)
             else:
-                subscript = UMLType("Any")
-            return UMLType(f"{base.getType()}[{subscript.getType()}]")
+                subscript = LeafType("Any")
+            return CompositeType(base, subscript) #LeafType(f"{base.getClassType()}[{subscript.getClassType()}]")
         elif isinstance(node, ast.Attribute):
-            logging.debug(f"Parsed qualified name: {self._parse_qualified_name(node)}")
-            return UMLType(self._parse_qualified_name(node))
-        return UMLType("Any")
+            qualified_name = self._parse_qualified_name(node)
+            logging.debug(f"Parsed qualified name: {qualified_name}")
+            return LeafType(qualified_name)
+        return LeafType("Any")
 
     def _parse_qualified_name(self, node):
         if isinstance(node, ast.Name):
@@ -238,6 +285,26 @@ class UMLCodeGenerator(ast.NodeVisitor):
         elif isinstance(decorator, ast.Attribute):
             logging.debug(f"Decorator {decorator.attr} is abstractmethod: {decorator.attr == 'abstractmethod'}")
             return decorator.attr == "abstractmethod"
+        return False
+
+    def _is_static_decorator(self, decorator):
+        # Only handle simple Name or Attribute nodes.
+        if isinstance(decorator, ast.Name):
+            logging.debug(f"Decorator {decorator.id} is staticmethod: {decorator.id == 'staticmethod'}")
+            return decorator.id == 'staticmethod'
+        elif isinstance(decorator, ast.Attribute):
+            logging.debug(f"Decorator {decorator.attr} is staticmethod: {decorator.attr == 'staticmethod'}")
+            return decorator.attr == 'staticmethod'
+        return False
+
+    def _is_classmethod_decorator(self, decorator):
+        # Only handle simple Name or Attribute nodes.
+        if isinstance(decorator, ast.Name):
+            logging.debug(f"Decorator {decorator.id} is classmethod: {decorator.id == 'classmethod'}")
+            return decorator.id == 'classmethod'
+        elif isinstance(decorator, ast.Attribute):
+            logging.debug(f"Decorator {decorator.attr} is classmethod: {decorator.attr == 'classmethod'}")
+            return decorator.attr == 'classmethod'
         return False
 
     def _is_abc_metaclass(self, node):
