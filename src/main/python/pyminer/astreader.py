@@ -12,6 +12,11 @@ try:
     UMLImport = java.type("gr.uom.java.xmi.UMLImport")
     UMLAttribute = java.type("gr.uom.java.xmi.UMLAttribute")
     UMLGeneralization = java.type("gr.uom.java.xmi.UMLGeneralization")
+    LeafExpression = java.type("gr.uom.java.xmi.LeafExpression")
+    VariableDeclaration = java.type("gr.uom.java.xmi.VariableDeclaration")
+    TernaryOperatorExpression = java.type("gr.uom.java.xmi.TernaryOperatorExpression")
+    LambdaExpressionObject = java.type("gr.uom.java.xmi.LambdaExpressionObject")
+    OperationInvocation = java.type("gr.uom.java.xmi.OperationInvocation")
     LeafType = java.type("gr.uom.java.xmi.LeafType")
     CompositeType = java.type("gr.uom.java.xmi.CompositeType")
     Visibility = java.type("gr.uom.java.xmi.Visibility")
@@ -57,7 +62,7 @@ class UMLModelASTReader:
             logging.debug(f"Parsed AST for file: {file_path}")
             tree = ast.parse(content)
             source_folder = os.path.dirname(file_path)
-            generator = UMLCodeGenerator(source_folder, file_path, content, self.uml_model)
+            generator = CodeGenerator(source_folder, file_path, content, self.uml_model)
             generator.visit(tree)
         except SyntaxError as e:
             logging.error(f"Syntax error in {file_path}: {e}", exc_info=True, stack_info=True)
@@ -77,6 +82,7 @@ class UMLCodeGenerator(ast.NodeVisitor):
         self.class_stack = []
         self._line_offsets = None
         self.imported_types = []
+        self.current_operation = None
 
     def visit_ClassDef(self, node):
         logging.debug(f"Visiting class definition: {node.name}")
@@ -180,7 +186,12 @@ class UMLCodeGenerator(ast.NodeVisitor):
             operation.addParameter(return_param)
 
         self.current_class.addOperation(operation)
-        logging.debug(f"Added operation {node.name} to class {self.current_class.getName()}")
+        self.current_operation = operation
+
+        for body_node in node.body:
+            self.visit(body_node)
+
+        self.current_operation = None
 
     def visit_Import(self, node: ast.Import):
         logging.debug("Visiting import statement")
@@ -316,7 +327,121 @@ class UMLCodeGenerator(ast.NodeVisitor):
         # Check for keyword arguments in class definition that define the metaclass.
         for kw in node.keywords:
             if kw.arg == 'metaclass' and isinstance(kw.value, ast.Name):
-                if kw.value.id == "ABCMeta":
-                    logging.debug(f"Class has ABCMeta as metaclass: {kw.value.id == 'ABCMeta'}")
-                    return True
+                return kw.value.id == "ABCMeta"
         return False
+
+class SubMethodLevelCodeGenerator(ast.NodeVisitor):
+    def __init__(self, source_folder, source_file, source_content):
+        self.source_folder = source_folder
+        self.source_file = source_file
+        self.source_content = source_content
+        self._line_offsets = None
+        self.variable_declarations = []
+        self.method_invocations = []
+        self.ternary_expressions = []
+        self.lambdas = []
+        self.infix_expressions = []
+        self.assignments = []
+        self.current_operation = None
+
+    def _get_offset(self, line, column):
+        if self._line_offsets is None:
+            self._line_offsets = []
+            offset = 0
+            for l in self.source_content.split('\n'):
+                self._line_offsets.append(offset)
+                offset += len(l) + 1
+        if line - 1 >= len(self._line_offsets):
+            return 0
+        return self._line_offsets[line - 1] + column
+
+    def _create_location_info(self, node, element_type):
+        start = self._get_offset(node.lineno, node.col_offset)
+        end = self._get_offset(node.end_lineno, node.end_col_offset)
+        return LocationInfo(
+            self.source_folder,
+            self.source_file,
+            start,
+            end,
+            end - start,
+            node.lineno,
+            node.col_offset,
+            node.end_lineno,
+            node.end_col_offset,
+            end - start,
+            element_type
+        )
+
+    def _get_node_source(self, node):
+        start = self._get_offset(node.lineno, node.col_offset)
+        end = self._get_offset(node.end_lineno, node.end_col_offset)
+        return self.source_content[start:end]
+
+    def visit_Assign(self, node):
+        code_element_type = CodeElementType.ASSIGNMENT
+        location_info = self._create_location_info(node, code_element_type)
+        code_str = self._get_node_source(node)
+        leaf_expr = LeafExpression(code_str, location_info)
+        self.assignments.append(leaf_expr)
+        self.generic_visit(node)
+
+    def visit_Call(self, node):
+        if isinstance(node.func, ast.Name) and node.func.id == 'isinstance':
+            code_element_type = CodeElementType.INSTANCEOF_EXPRESSION
+        else:
+            code_element_type = CodeElementType.METHOD_INVOCATION
+        location_info = self._create_location_info(node, code_element_type)
+        code_str = self._get_node_source(node)
+        leaf_expr = LeafExpression(code_str, location_info)
+        self.method_invocations.append(leaf_expr)
+        self.generic_visit(node)
+
+    def visit_Lambda(self, node):
+        code_element_type = CodeElementType.LAMBDA_EXPRESSION
+        location_info = self._create_location_info(node, code_element_type)
+        code_str = self._get_node_source(node)
+        lambda_expr = LambdaExpressionObject(code_str, location_info)
+        self.lambdas.append(lambda_expr)
+        self.generic_visit(node)
+
+    def visit_IfExp(self, node):
+        code_element_type = CodeElementType.TERNARY_OPERATOR_EXPRESSION
+        location_info = self._create_location_info(node, code_element_type)
+        code_str = self._get_node_source(node)
+        ternary_expr = TernaryOperatorExpression(code_str, location_info)
+        self.ternary_expressions.append(ternary_expr)
+        self.generic_visit(node)
+
+    def visit_BinOp(self, node):
+        code_element_type = CodeElementType.INFIX_EXPRESSION
+        location_info = self._create_location_info(node, code_element_type)
+        code_str = self._get_node_source(node)
+        leaf_expr = LeafExpression(code_str, location_info)
+        self.infix_expressions.append(leaf_expr)
+        self.generic_visit(node)
+
+    def visit_UnaryOp(self, node):
+        code_element_type = CodeElementType.PREFIX_EXPRESSION
+        location_info = self._create_location_info(node, code_element_type)
+        code_str = self._get_node_source(node)
+        leaf_expr = LeafExpression(code_str, location_info)
+        self.assignments.append(leaf_expr)
+        self.generic_visit(node)
+
+    def visit_Attribute(self, node):
+        code_element_type = CodeElementType.FIELD_ACCESS
+        location_info = self._create_location_info(node, code_element_type)
+        code_str = self._get_node_source(node)
+        leaf_expr = LeafExpression(code_str, location_info)
+        self.method_invocations.append(leaf_expr)
+        self.generic_visit(node)
+
+class CodeGenerator(UMLCodeGenerator, SubMethodLevelCodeGenerator):
+    def __init__(self, source_folder, source_file, source_content, uml_model):
+        UMLCodeGenerator.__init__(self, source_folder, source_file, source_content, uml_model)
+        SubMethodLevelCodeGenerator.__init__(self, source_folder, source_file, source_content)
+        self.uml_model = uml_model
+
+    def visit(self, node):
+        UMLCodeGenerator.visit(self, node)
+        SubMethodLevelCodeGenerator.visit(self, node)
