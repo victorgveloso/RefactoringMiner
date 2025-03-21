@@ -332,6 +332,7 @@ class UMLCodeGenerator(ast.NodeVisitor):
 
 class SubMethodLevelCodeGenerator(ast.NodeVisitor):
     def __init__(self, source_folder, source_file, source_content):
+        logging.info("Initializing SubMethodLevelCodeGenerator for %s", source_file)
         self.source_folder = source_folder
         self.source_file = source_file
         self.source_content = source_content
@@ -343,21 +344,30 @@ class SubMethodLevelCodeGenerator(ast.NodeVisitor):
         self.infix_expressions = []
         self.assignments = []
         self.current_operation = None
+        logging.debug("SubMethodLevelCodeGenerator initialized with source_folder=%s", source_folder)
 
     def _get_offset(self, line, column):
+        logging.debug("Calculating offset for line %d, column %d", line, column)
         if self._line_offsets is None:
+            logging.debug("Initializing line offset cache for sub-method analysis")
             self._line_offsets = []
             offset = 0
-            for l in self.source_content.split('\n'):
+            for idx, l in enumerate(self.source_content.split('\n')):
                 self._line_offsets.append(offset)
+                logging.debug("Line %d offset: %d", idx+1, offset)
                 offset += len(l) + 1
         if line - 1 >= len(self._line_offsets):
+            logging.warning("Line number %d exceeds file length", line)
             return 0
-        return self._line_offsets[line - 1] + column
+        result = self._line_offsets[line - 1] + column
+        logging.debug("Calculated sub-method offset: %d", result)
+        return result
 
     def _create_location_info(self, node, element_type):
+        logging.debug("Creating sub-method location info for %s", type(node).__name__)
         start = self._get_offset(node.lineno, node.col_offset)
         end = self._get_offset(node.end_lineno, node.end_col_offset)
+        logging.debug("Sub-method location range: %d-%d", start, end)
         return LocationInfo(
             self.source_folder,
             self.source_file,
@@ -373,77 +383,107 @@ class SubMethodLevelCodeGenerator(ast.NodeVisitor):
         )
 
     def _get_node_source(self, node):
+        logging.debug("Extracting source code for %s node", type(node).__name__)
         start = self._get_offset(node.lineno, node.col_offset)
         end = self._get_offset(node.end_lineno, node.end_col_offset)
         return self.source_content[start:end]
 
     def visit_Assign(self, node):
+        logging.info("Processing assignment statement")
         code_element_type = CodeElementType.ASSIGNMENT
+        logging.debug("Creating assignment location info")
         location_info = self._create_location_info(node, code_element_type)
         code_str = self._get_node_source(node)
+        logging.debug("Assignment code: %s", code_str)
         leaf_expr = LeafExpression(code_str, location_info)
         self.assignments.append(leaf_expr)
+        logging.info("Recorded assignment: %s", code_str)
         self.generic_visit(node)
 
     def visit_Call(self, node):
+        logging.info("Processing method call")
         if isinstance(node.func, ast.Name) and node.func.id == 'isinstance':
             code_element_type = CodeElementType.INSTANCEOF_EXPRESSION
+            logging.debug("Identified isinstance check")
         else:
             code_element_type = CodeElementType.METHOD_INVOCATION
+            logging.debug("Processing regular method invocation")
+
         location_info = self._create_location_info(node, code_element_type)
         code_str = self._get_node_source(node)
+        logging.debug("Call expression: %s", code_str)
         leaf_expr = LeafExpression(code_str, location_info)
         self.method_invocations.append(leaf_expr)
+        logging.info("Recorded method invocation: %s", code_str)
         self.generic_visit(node)
 
     def visit_Lambda(self, node):
+        logging.info("Processing lambda expression")
         code_element_type = CodeElementType.LAMBDA_EXPRESSION
         location_info = self._create_location_info(node, code_element_type)
         code_str = self._get_node_source(node)
+        logging.debug("Lambda code: %s", code_str)
         lambda_expr = LambdaExpressionObject(code_str, location_info)
         self.lambdas.append(lambda_expr)
+        logging.info("Recorded lambda expression: %s", code_str)
         self.generic_visit(node)
 
     # TODO: Implement all visitor for all type dependencies (AbstractExpression, AbstractCodeFragment, and their subclasses)
     # TODO: Implement alternative constructors for all classes that take a CompilationUnit as an argument
     # def visit_IfExp(self, node):
+    #     logging.info("Processing ternary expression")
     #     code_element_type = CodeElementType.TERNARY_OPERATOR
     #     location_info = self._create_location_info(node, code_element_type)
     #     code_str = self._get_node_source(node)
+    #     logging.debug("Ternary expression code: %s", code_str)
     #     ternary_expr = TernaryOperatorExpression(code_str, location_info)
     #     self.ternary_expressions.append(ternary_expr)
+    #     logging.info("Recorded ternary expression: %s", code_str)
     #     self.generic_visit(node)
 
     def visit_BinOp(self, node):
+        logging.info("Processing binary operation")
         code_element_type = CodeElementType.INFIX_EXPRESSION
         location_info = self._create_location_info(node, code_element_type)
         code_str = self._get_node_source(node)
+        logging.debug("Infix expression code: %s", code_str)
         leaf_expr = LeafExpression(code_str, location_info)
         self.infix_expressions.append(leaf_expr)
+        logging.info("Recorded infix expression: %s", code_str)
         self.generic_visit(node)
 
     def visit_UnaryOp(self, node):
+        logging.info("Processing unary operation")
         code_element_type = CodeElementType.PREFIX_EXPRESSION
         location_info = self._create_location_info(node, code_element_type)
         code_str = self._get_node_source(node)
+        logging.debug("Unary operation code: %s", code_str)
         leaf_expr = LeafExpression(code_str, location_info)
         self.assignments.append(leaf_expr)
+        logging.info("Recorded unary operation: %s", code_str)
         self.generic_visit(node)
 
     def visit_Attribute(self, node):
+        logging.info("Processing attribute access")
         code_element_type = CodeElementType.FIELD_ACCESS
         location_info = self._create_location_info(node, code_element_type)
         code_str = self._get_node_source(node)
+        logging.debug("Attribute access code: %s", code_str)
         leaf_expr = LeafExpression(code_str, location_info)
         self.method_invocations.append(leaf_expr)
+        logging.info("Recorded field access: %s", code_str)
         self.generic_visit(node)
 
 class CodeGenerator(UMLCodeGenerator, SubMethodLevelCodeGenerator):
     def __init__(self, source_folder, source_file, source_content, uml_model):
+        logging.info("Initializing combined CodeGenerator")
         UMLCodeGenerator.__init__(self, source_folder, source_file, source_content, uml_model)
         SubMethodLevelCodeGenerator.__init__(self, source_folder, source_file, source_content)
         self.uml_model = uml_model
+        logging.debug("CodeGenerator initialized with UML and sub-method components")
 
     def visit(self, node):
+        logging.info("Starting AST traversal")
         UMLCodeGenerator.visit(self, node)
         SubMethodLevelCodeGenerator.visit(self, node)
+        logging.info("Completed AST traversal")
