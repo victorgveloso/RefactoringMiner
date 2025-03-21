@@ -404,13 +404,15 @@ class SubMethodLevelCodeGenerator(ast.NodeVisitor):
         self.lambdas.append(lambda_expr)
         self.generic_visit(node)
 
-    def visit_IfExp(self, node):
-        code_element_type = CodeElementType.TERNARY_OPERATOR_EXPRESSION
-        location_info = self._create_location_info(node, code_element_type)
-        code_str = self._get_node_source(node)
-        ternary_expr = TernaryOperatorExpression(code_str, location_info)
-        self.ternary_expressions.append(ternary_expr)
-        self.generic_visit(node)
+    # TODO: Implement all visitor for all type dependencies (AbstractExpression, AbstractCodeFragment, and their subclasses)
+    # TODO: Implement alternative constructors for all classes that take a CompilationUnit as an argument
+    # def visit_IfExp(self, node):
+    #     code_element_type = CodeElementType.TERNARY_OPERATOR
+    #     location_info = self._create_location_info(node, code_element_type)
+    #     code_str = self._get_node_source(node)
+    #     ternary_expr = TernaryOperatorExpression(code_str, location_info)
+    #     self.ternary_expressions.append(ternary_expr)
+    #     self.generic_visit(node)
 
     def visit_BinOp(self, node):
         code_element_type = CodeElementType.INFIX_EXPRESSION
