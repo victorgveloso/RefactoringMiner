@@ -48,6 +48,9 @@ public class TemporaryRemote implements AutoCloseable {
 
     public TemporaryRemote(Repository localRepository, @Nullable Path dir) throws GitAPIException, IOException, URISyntaxException {
         dir = dir == null ? Path.of("tmp-repo") : dir;
+        if (!Files.exists(dir)) {
+            Files.createDirectories(dir);
+        }
         this.localGit = new Git(localRepository);
         this.localRepository = localRepository;
 
