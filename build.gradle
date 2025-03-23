@@ -15,7 +15,7 @@ version = project.hasProperty('buildVersion') ?
         : '3.0.10'
 
 applicationName = rootProject.name
-mainClassName = "br.ufmg.dcc.labsoft.refactoringanalyzer.operations.AnalyzeAllCommits"
+mainClassName = "org.refactoringminer.RefactoringMiner"
 
 idea {
     module {
@@ -112,7 +112,10 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+    implementation("org.graalvm.polyglot:polyglot:24.1.1")
+    implementation("org.graalvm.polyglot:python:24.1.1")
     implementation 'it.unimi.dsi:fastutil:8.5.15'
+    implementation 'com.sparkjava:spark-core:2.9.4'
     implementation('org.rendersnake:rendersnake:1.9.0') {
         exclude group: 'javax.servlet', module: 'servlet-api'
     }
@@ -187,7 +190,7 @@ shadowJar {
     mergeServiceFiles()
     zip64 = true
     manifest {
-        attributes 'Main-Class': 'br.ufmg.dcc.labsoft.refactoringanalyzer.operations.AnalyzeAllCommits'
+        attributes 'Main-Class': 'org.refactoringminer.RefactoringMiner'
     }
     archiveFileName = jarName
 }
