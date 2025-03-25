@@ -32,10 +32,9 @@ public class TemporaryRemote implements AutoCloseable {
         assert first.isPresent() : "No URI found for remote 'origin'";
         URIish uri = first.get();
 
-        var cfg = localGit.remoteSetUrl().setRemoteName(origin.getName()).setRemoteUri(uri).call();
-        tmpGit.close();
+        localGit.remoteSetUrl().setRemoteName(origin.getName()).setRemoteUri(uri).call();
         Path tmpPath = tmpRepository.getDirectory().toPath();
-        tmpRepository.close();
+        tmpGit.close();
         if (Files.isDirectory(tmpPath)) {
             try (Stream<Path> walk = Files.walk(tmpPath)) {
                 walk.sorted(Comparator.reverseOrder())
