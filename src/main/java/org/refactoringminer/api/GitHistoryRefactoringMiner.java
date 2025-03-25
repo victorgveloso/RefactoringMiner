@@ -155,6 +155,8 @@ public interface GitHistoryRefactoringMiner {
 	 */
 	void detectAtDirectories(File previousFile, File nextFile, RefactoringHandler handler);
 
+	void fetchAndDetectBetweenDates(Repository repository, RefactoringHandler handler, LocalDate from, LocalDate to, @Nullable Path dir) throws Exception;
+
 	/**
 	 * Detect refactorings performed in the specified file contents. 
 	 * 

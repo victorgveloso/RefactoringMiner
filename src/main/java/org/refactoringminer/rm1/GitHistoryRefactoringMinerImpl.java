@@ -22,7 +22,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -771,13 +773,16 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 
 	@Override
 	public void fetchAndDetectNew(Repository repository, final RefactoringHandler handler) throws Exception {
-		GitService gitService = new GitServiceImpl() {
-			@Override
-			public boolean isCommitAnalyzed(String sha1) {
-				logger.info("Skipping analyzed commit " + sha1);
-				return handler.skipCommit(sha1);
-			}
-		};
+        fetchAndDetectNew(repository, handler, new GitServiceImpl() {
+            @Override
+            public boolean isCommitAnalyzed(String sha1) {
+                logger.info("Skipping analyzed commit " + sha1);
+                return handler.skipCommit(sha1);
+            }
+        });
+	}
+
+	private void fetchAndDetectNew(Repository repository, RefactoringHandler handler, GitService gitService) throws Exception {
 		RevWalk walk = gitService.fetchAndCreateNewRevsWalk(repository);
 		try {
 			logger.info("hasNext: " + walk.iterator().hasNext());
@@ -787,11 +792,37 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 		}
 	}
 
-    @Override
+	@Override
     public void fetchAndDetectFromDate(Repository repository, RefactoringHandler handler, LocalDate beginning, @Nullable Path dir) throws Exception {
         try (TemporaryRemote tmpRemote = gitService.createTemporaryLocalRemote(repository, dir)) {
 			gitService.resetToLastCommitBefore(tmpRemote.getLocalRepository(), beginning);
 		}
+		fetchAndDetectNew(repository, handler);
+	}
+
+	@Override
+	public void fetchAndDetectBetweenDates(Repository repository, RefactoringHandler handler, LocalDate from, LocalDate to, @Nullable Path dir) throws Exception {
+		logger.info("Fetching and detecting refactorings between {} and {}", from, to);
+		try (TemporaryRemote tmpRemote = gitService.createTemporaryLocalRemote(repository, dir)) {
+			logger.info("Created temporary remote repository at {}", tmpRemote.getTmpRepository().getDirectory());
+			gitService.resetToLastCommitBefore(tmpRemote.getLocalRepository(), from);
+			logger.info("Reset local repository to last commit before {}", from);
+			Iterable<RevCommit> call = tmpRemote.getTmpGit().log().setMaxCount(2).call();
+			logger.info("After reset, the two most recent commits are:");
+			call.forEach(comm -> {
+				logger.info("Commit {} at {}", comm.getName(), Instant.ofEpochSecond(comm.getCommitTime()).atZone(ZoneId.systemDefault()).toLocalDate());
+			});
+		}
+		logger.info("Closed temporary repository and reset local repo's remote to GitHub. Fetching and detecting new refactorings...");
+        fetchAndDetectNew(repository, handler, new GitServiceImpl() {
+            @Override
+            public boolean isCommitAnalyzed(RevCommit commit) {
+                LocalDate commitTime = Instant.ofEpochSecond(commit.getCommitTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+				boolean isAfter = commitTime.isAfter(to);
+				logger.info("Commit {} at {} {} after {}", commit.getName(), commitTime, isAfter ? "is" : "is not", to);
+                return handler.skipCommit(commit.getName()) || isAfter;
+            }
+        });
 	}
 
 	public static UMLModel createModel(Map<String, String> fileContents, Set<String> repositoryDirectories) throws Exception {
