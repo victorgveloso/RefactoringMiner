@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
- import java.text.MessageFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -232,7 +231,7 @@ public class GitServiceImpl implements GitService {
 			if (git.remoteList().call().getFirst().getURIs().getFirst().isRemote()) {
 				throw new IllegalStateException("This operation is not safe to use in repositories with remotes in other system. Please, create a temporary local git-remote!");
 			}
-			Ref ref = repository.findRef(MessageFormat.format("refs/remotes/origin/{0}", repository.getBranch()));
+			Ref ref = repository.findRef(String.format("refs/remotes/origin/%s", repository.getBranch()));
 			ObjectId commit = ref.getObjectId();
 			RevCommit c = walk.parseCommit(commit);
 			walk.markStart(c);
@@ -350,14 +349,17 @@ public class GitServiceImpl implements GitService {
 		}
 	}
 
-	public boolean isCommitAnalyzed(String sha1) {
+	protected boolean isCommitAnalyzed(String sha1) {
 		return false;
 	}
 
+	protected boolean isCommitAnalyzed(RevCommit c) {
+		return false;
+	}
 	private class DefaultCommitsFilter extends RevFilter {
 		@Override
 		public final boolean include(final RevWalk walker, final RevCommit c) {
-			return c.getParentCount() == 1 && !isCommitAnalyzed(c.getName());
+			return c.getParentCount() == 1 && !isCommitAnalyzed(c.getName()) && !isCommitAnalyzed(c);
 		}
 
 		@Override
