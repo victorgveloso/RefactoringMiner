@@ -50,7 +50,7 @@ public class TemporaryRemote implements AutoCloseable {
         if (!Files.exists(dir)) {
             Files.createDirectories(dir);
         }
-        this.localGit = new Git(localRepository);
+        localGit = new Git(localRepository);
         this.localRepository = localRepository;
 
         Optional<RemoteConfig> remotes = localGit.remoteList().call().stream().filter(rem -> rem.getName().equals("origin")).findAny();
@@ -63,10 +63,18 @@ public class TemporaryRemote implements AutoCloseable {
 
         Path tempDir = Files.createTempDirectory(dir, null);
         File tempDirFile = tempDir.toFile();
-        tmpGit = Git.cloneRepository().setBare(true).setURI(uri.toString()).setDirectory(tempDirFile).call();
+        tmpGit = Git.cloneRepository()
+                .setNoTags()
+                .setNoCheckout(true)
+                .setBare(true)
+                .setURI(uri.toString())
+                .setDirectory(tempDirFile)
+                .call();
         tmpRepository = tmpGit.getRepository();
 
-        URIish tmpOrigin = new URIish(this.tmpRepository.getDirectory().toString());
+        Path tmpPath = this.tmpRepository.getDirectory().toPath();
+        Path localPath = localRepository.getDirectory().toPath().getParent();
+        URIish tmpOrigin = new URIish(localPath.relativize(tmpPath).toString());
         localGit.remoteSetUrl().setRemoteName(origin.getName()).setRemoteUri(tmpOrigin).call();
     }
 
