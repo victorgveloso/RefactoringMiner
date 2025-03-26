@@ -1,6 +1,5 @@
 package org.refactoringminer.api;
 
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Set;
@@ -8,9 +7,6 @@ import java.util.Set;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.refactoringminer.util.TemporaryRemote;
-
-import javax.annotation.Nullable;
 
 /**
  * Simple service to make git related tasks easier.  
@@ -48,11 +44,11 @@ public interface GitService {
 
 	RevWalk fetchAndCreateNewRevsWalk(Repository repository) throws Exception;
 
-	TemporaryRemote createTemporaryLocalRemote(Repository repository, @Nullable Path dir) throws Exception;
-
-	RevCommit resetToLastCommitBefore(Repository repository, LocalDate before) throws Exception;
+	RevWalk createRevsWalkSince(Repository repository, LocalDate before) throws Exception;
 
 	RevWalk fetchAndCreateNewRevsWalk(Repository repository, String branch) throws Exception;
+
+	RevWalk fetchAndCreateRevsWalkInRange(Repository repository, String branch, LocalDate from, LocalDate to) throws Exception;
 
 	RevWalk createAllRevsWalk(Repository repository) throws Exception;
 

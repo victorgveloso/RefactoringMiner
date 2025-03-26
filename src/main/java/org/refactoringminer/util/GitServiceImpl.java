@@ -5,14 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -23,7 +22,6 @@ import java.util.stream.StreamSupport;
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.FetchCommand;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.diff.DiffAlgorithm;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
@@ -52,10 +50,8 @@ import org.refactoringminer.api.GitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
-
 public class GitServiceImpl implements GitService {
-	private static Logger logger = LoggerFactory.getLogger(GitServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(GitServiceImpl.class);
 
 	private static final String REMOTE_REFS_PREFIX = "refs/remotes/origin/";
 
@@ -217,33 +213,27 @@ public class GitServiceImpl implements GitService {
 	}
 
 	@Override
-	public TemporaryRemote createTemporaryLocalRemote(Repository repository, @Nullable Path dir) throws Exception {
-        return new TemporaryRemote(repository, dir);
-	}
-
-	@Override
-	public RevCommit resetToLastCommitBefore(Repository repository, LocalDate before) throws Exception {
+	public RevWalk createRevsWalkSince(Repository repository, LocalDate before) throws Exception {
 		try (RevWalk walk = new RevWalk(repository)) {
-			Git git = new Git(repository);
-			if (repository.isBare()) {
-				throw new IllegalStateException("Cannot reset bare repositories!");
-			}
-			if (git.remoteList().call().getFirst().getURIs().getFirst().isRemote()) {
-				throw new IllegalStateException("This operation is not safe to use in repositories with remotes in other system. Please, create a temporary local git-remote!");
-			}
 			Ref ref = repository.findRef(String.format("refs/remotes/origin/%s", repository.getBranch()));
 			ObjectId commit = ref.getObjectId();
 			RevCommit c = walk.parseCommit(commit);
 			walk.markStart(c);
-			for (RevCommit revCommit : walk) {
-				LocalDate commitTime = Instant.ofEpochSecond(revCommit.getCommitTime()).atZone(ZoneId.systemDefault()).toLocalDate();
-				if (commitTime.isBefore(before)) {
-					ResetCommand reset = git.reset();
-					reset.setRef(revCommit.getName());
-					reset.call();
-					git.push().setForce(true).call();
-					return revCommit;
-				}
+			LocalDate commitTime = LocalDate.now();
+            for (Iterator<RevCommit> iterator = walk.iterator(); iterator.hasNext(); ) {
+                RevCommit revCommit = iterator.next();
+                commitTime = Instant.ofEpochSecond(revCommit.getCommitTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+                if (commitTime.isBefore(before)) {
+					walk.reset();
+					walk.markStart(c);
+					walk.markUninteresting(revCommit);
+                    return walk;
+                }
+            }
+			if (commitTime.isAfter(before)) {
+				walk.reset();
+				walk.markStart(c);
+				return walk;
 			}
 		}
 		return null;
@@ -275,6 +265,38 @@ public class GitServiceImpl implements GitService {
 		}
 		walk.setRevFilter(commitsFilter);
 		return walk;
+	}
+
+	@Override
+	public RevWalk fetchAndCreateRevsWalkInRange(Repository repository, String branch, LocalDate from, LocalDate to) throws Exception {
+		fetch(repository);
+		if (branch == null) {
+			branch = repository.getBranch();
+		}
+		ObjectId fromCommit = null, toCommit;
+		boolean isWithinRange = false;
+		try (RevWalk walk = new RevWalk(repository)) {
+			Ref ref = repository.findRef(REMOTE_REFS_PREFIX + branch);
+			ObjectId commit = ref.getObjectId();
+			RevCommit c = walk.parseCommit(commit);
+			walk.markStart(c);
+			for (Iterator<RevCommit> iterator = walk.iterator(); iterator.hasNext(); ) {
+				RevCommit revCommit = iterator.next();
+				LocalDate commitTime = Instant.ofEpochSecond(revCommit.getCommitTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+				if (!isWithinRange && commitTime.isBefore(to) && commitTime.isAfter(from)) {
+					isWithinRange = true;
+					fromCommit = revCommit.getId();
+				}
+				if (commitTime.isBefore(from)) {
+					toCommit = revCommit.getId();
+					walk.reset();
+					walk.markStart(walk.parseCommit(fromCommit));
+					walk.markUninteresting(walk.parseCommit(toCommit));
+					return walk;
+				}
+			}
+		}
+		return null;
 	}
 
 	public RevWalk createAllRevsWalk(Repository repository) throws Exception {

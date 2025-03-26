@@ -10,8 +10,6 @@ import org.eclipse.jgit.lib.Repository;
 import org.kohsuke.github.GitHub;
 import org.refactoringminer.astDiff.models.ProjectASTDiff;
 
-import javax.annotation.Nullable;
-
 /**
  * Detect refactorings in the git history.
  * 
@@ -89,13 +87,12 @@ public interface GitHistoryRefactoringMiner {
 	 * commits.
 	 *
 	 * @param repository A git repository (from JGit library).
-	 * @param handler A handler object that is responsible to process the detected refactorings and
-	 *                control when to skip a commit.
-	 * @param beginning The initial commitTime to include in the refactoring detection.
-	 * @param dir A directory to store the temporary repository (if null, creates a temporary directory named after {@link org.refactoringminer.util.TemporaryRemote#TemporaryRemote(Repository, Path)}).
+	 * @param handler    A handler object that is responsible to process the detected refactorings and
+	 *                   control when to skip a commit.
+	 * @param from  The initial commitTime to include in the refactoring detection.
 	 * @throws Exception propagated from JGit library.
 	 */
-	void fetchAndDetectFromDate(Repository repository, RefactoringHandler handler, LocalDate beginning, @Nullable Path dir) throws Exception;
+	void fetchAndDetectFromDate(Repository repository, RefactoringHandler handler, LocalDate from) throws Exception;
 
 	/**
 	 * Detect refactorings performed in the specified commit. 
@@ -155,7 +152,7 @@ public interface GitHistoryRefactoringMiner {
 	 */
 	void detectAtDirectories(File previousFile, File nextFile, RefactoringHandler handler);
 
-	void fetchAndDetectBetweenDates(Repository repository, RefactoringHandler handler, LocalDate from, LocalDate to, @Nullable Path dir) throws Exception;
+	void fetchAndDetectInDateRange(Repository repository, RefactoringHandler handler, LocalDate from, LocalDate to) throws Exception;
 
 	/**
 	 * Detect refactorings performed in the specified file contents. 

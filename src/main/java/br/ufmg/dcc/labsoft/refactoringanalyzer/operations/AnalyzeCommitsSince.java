@@ -11,19 +11,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
 import java.util.Locale;
 
 public class AnalyzeCommitsSince extends AnalyzeNewCommits {
 
-	private static Logger logger = LoggerFactory.getLogger(AnalyzeCommitsSince.class);
+	private static final Logger logger = LoggerFactory.getLogger(AnalyzeCommitsSince.class);
 	static Pid pid = new Pid();
 	private LocalDate commitsSinceDate;
-	private Date startTime = new Date();
 
 	public static void main(String[] args) {
 		try {
@@ -61,7 +58,7 @@ public class AnalyzeCommitsSince extends AnalyzeNewCommits {
 		Repository repo = gitService.cloneIfNotExists(projectFile.getPath(), project.getCloneUrl());
 		
 		GitHistoryRefactoringMiner detector = new GitHistoryRefactoringMinerImpl();
-		detector.fetchAndDetectFromDate(repo, new AnalyzeNewCommitsHandler(db1, project, repo), commitsSinceDate, null);
+		detector.fetchAndDetectFromDate(repo, new AnalyzeNewCommitsHandler(db1, project, repo), commitsSinceDate);
 		repo.close();
 	}
 
