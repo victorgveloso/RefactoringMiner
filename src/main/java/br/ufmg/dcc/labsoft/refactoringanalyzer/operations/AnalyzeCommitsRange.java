@@ -21,9 +21,8 @@ public class AnalyzeCommitsRange extends AnalyzeNewCommits {
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalyzeCommitsRange.class);
 	static Pid pid = new Pid();
-	private LocalDate commitsSinceDate;
-	private LocalDate commitsUntilDate;
-	private Path dir = null;
+	protected LocalDate commitsSinceDate;
+	protected LocalDate commitsUntilDate;
 
 	public static void main(String[] args) {
 		try {
@@ -66,13 +65,5 @@ public class AnalyzeCommitsRange extends AnalyzeNewCommits {
 		GitHistoryRefactoringMiner detector = new GitHistoryRefactoringMinerImpl();
 		detector.fetchAndDetectInDateRange(repo, new AnalyzeNewCommitsHandler(db, project, repo), commitsSinceDate, commitsUntilDate);
 		repo.close();
-	}
-
-	public Path getDir() {
-		return dir;
-	}
-
-	public void setDir(Path dir) {
-		this.dir = dir;
 	}
 }
