@@ -186,7 +186,7 @@ public abstract class AbstractCall extends LeafExpression {
 		if(expression == null) {
 			return true;
 		}
-		else if(expression.equals("this")) {
+		else if(expression.equals(JAVA.THIS)) {
 			return true;
 		}
 		return false;
