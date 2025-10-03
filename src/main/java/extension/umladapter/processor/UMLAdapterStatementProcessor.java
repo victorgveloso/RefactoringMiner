@@ -432,12 +432,9 @@ public class UMLAdapterStatementProcessor {
 
         composite.addStatement(ifComposite);
 
-        // Process the condition expression
-        if (ifStatement.getCondition() != null) {
-            ifStatement.getCondition().accept(new LangVisitor(
-                    ifStatement.getRootCompilationUnit(), sourceFolder, filePath, container));
+        if (ifStatement.getBody() != null) {
+            processStatement(ifStatement.getBody(), composite, sourceFolder, filePath, container);
         }
-
 
         // Process the else block if it exists
         if (ifStatement.getElseBody() != null) {
