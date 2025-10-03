@@ -5,6 +5,7 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'idea'
+    id 'antlr'
 //    id 'checkstyle'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
@@ -37,6 +38,7 @@ repositories {
 }
 
 test {
+    dependsOn generateGrammarSource
     useJUnitPlatform()
     afterTest { descriptor, result ->
         if (result.resultType == TestResult.ResultType.FAILURE) {
@@ -77,6 +79,8 @@ tasks.processTestResources {
     }
 }
 dependencies {
+    antlr 'org.antlr:antlr4:4.13.2'
+    implementation 'org.antlr:antlr4-runtime:4.13.2'
     implementation 'org.eclipse.jgit:org.eclipse.jgit:6.10.1.202505221210-r'
     implementation 'org.slf4j:slf4j-api:2.0.17'
     runtimeOnly 'ch.qos.logback:logback-classic:1.5.13'
@@ -103,6 +107,30 @@ dependencies {
     implementation('org.rendersnake:rendersnake:1.9.0') {
         exclude group: 'javax.servlet', module: 'servlet-api'
     }
+}
+
+tasks.generateGrammarSource {
+    outputDirectory = file('build/generated/antlr/main') // Specify where to generate the Java classes
+    arguments += ['-visitor', '-long-messages', '-package', 'antlr'] // Include necessary arguments for ANTLR
+}
+
+tasks.generateTestGrammarSource {
+    outputDirectory = file('build/generated/antlr/test/testpython') // Output for test source set
+    arguments += ['-visitor', '-long-messages', '-package', 'antlr'] // Same arguments as generateGrammarSource
+}
+
+
+tasks.named('generateGrammarSource') {
+    dependsOn 'clean'  // Ensure a clean run for generating code
+}
+
+tasks.register('sourcesJar', Jar) {
+    from sourceSets.main.allSource  // Include all source files in the JAR
+    archiveClassifier.set('sources')  // The classifier will be 'sources'
+}
+
+tasks.named('sourcesJar') {
+    dependsOn tasks.named('generateGrammarSource')  // Ensure generateGrammarSource runs before sourcesJar
 }
 
 java {

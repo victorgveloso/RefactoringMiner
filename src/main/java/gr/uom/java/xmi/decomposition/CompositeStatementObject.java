@@ -14,6 +14,9 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import extension.ast.node.LangASTNode;
+import extension.ast.node.unit.LangCompilationUnit;
+import extension.ast.visitor.LangVisitor;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.VariableDeclarationContainer;
@@ -28,6 +31,38 @@ public class CompositeStatementObject extends AbstractStatement {
 	private LocationInfo locationInfo;
 	//for composites which are roots, owner is the VariableDeclarationContainer
 	private Optional<VariableDeclarationContainer> owner = Optional.empty();
+
+	public CompositeStatementObject(LangCompilationUnit cu, String sourceFolder, String filePath,
+			LangASTNode statement, int depth, CodeElementType codeElementType) {
+		super();
+		this.setDepth(depth);
+		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType);
+		this.statementList = new ArrayList<AbstractStatement>();
+		this.expressionList = new ArrayList<AbstractExpression>();
+		this.variableDeclarations = new ArrayList<VariableDeclaration>();
+		this.tryContainer = Optional.empty();
+
+		String whole = LangVisitor.stringify(statement);
+		if (whole.contains(":")) {
+			// For Python statements like "if condition:", "for item in list:", etc.
+			this.actualSignature = whole.substring(0, whole.indexOf(":") + 1);
+		} else {
+			// For statements without colons or single-line statements
+			if (whole.contains("\n")) {
+				String[] lineArray = whole.split("\\r?\\n");
+				int chars = 0;
+				for (String line : lineArray) {
+					chars += line.length();
+					if (line.endsWith(":") || line.trim().isEmpty()) {
+						break;
+					}
+				}
+				this.actualSignature = whole.substring(0, Math.min(chars, whole.length()));
+			} else {
+				this.actualSignature = whole;
+			}
+		}
+	}
 
 	public CompositeStatementObject(CompilationUnit cu, String sourceFolder, String filePath, ASTNode statement, int depth, CodeElementType codeElementType, String javaFileContent) {
 		super();

@@ -11,6 +11,9 @@ import java.util.Set;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 
+import extension.ast.node.LangASTNode;
+import extension.ast.node.unit.LangCompilationUnit;
+import extension.ast.visitor.LangVisitor;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
@@ -49,7 +52,43 @@ public class AbstractExpression extends AbstractCodeFragment {
 	private List<LeafExpression> patternInstanceofExpressions;
 	private List<TernaryOperatorExpression> ternaryOperatorExpressions;
 	private List<LambdaExpressionObject> lambdas;
-    
+
+	public AbstractExpression(LangCompilationUnit cu, String sourceFolder, String filePath, LangASTNode langASTNode, CodeElementType codeElementType, VariableDeclarationContainer container) {
+		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, langASTNode, codeElementType);
+		LangVisitor visitor = new LangVisitor(cu, sourceFolder, filePath, container);
+		langASTNode.accept(visitor);
+		this.variables = visitor.getVariables();
+		this.types = visitor.getTypes();
+		this.variableDeclarations = visitor.getVariableDeclarations();
+		this.methodInvocations = visitor.getMethodInvocations();
+		this.anonymousClassDeclarations = visitor.getAnonymousClassDeclarations();
+		this.textBlocks = visitor.getTextBlocks();
+		this.stringLiterals = visitor.getStringLiterals();
+		this.charLiterals = visitor.getCharLiterals();
+		this.numberLiterals = visitor.getNumberLiterals();
+		this.nullLiterals = visitor.getNullLiterals();
+		this.booleanLiterals = visitor.getBooleanLiterals();
+		this.typeLiterals = visitor.getTypeLiterals();
+		this.creations = visitor.getCreations();
+		this.infixExpressions = visitor.getInfixExpressions();
+		this.assignments = visitor.getAssignments();
+		this.infixOperators = visitor.getInfixOperators();
+		this.arrayAccesses = visitor.getArrayAccesses();
+		this.prefixExpressions = visitor.getPrefixExpressions();
+		this.postfixExpressions = visitor.getPostfixExpressions();
+		this.thisExpressions = visitor.getThisExpressions();
+		this.arguments = visitor.getArguments();
+		this.parenthesizedExpressions = visitor.getParenthesizedExpressions();
+		this.castExpressions = visitor.getCastExpressions();
+		this.instanceofExpressions = visitor.getInstanceofExpressions();
+		this.patternInstanceofExpressions = visitor.getPatternInstanceofExpressions();
+		this.ternaryOperatorExpressions = visitor.getTernaryOperatorExpressions();
+		this.lambdas = visitor.getLambdas();
+		this.expression = LangVisitor.stringify(langASTNode);
+		this.owner = null;
+		this.lambdaOwner = null;
+	}
+
     public AbstractExpression(CompilationUnit cu, String sourceFolder, String filePath, Expression expression, CodeElementType codeElementType, VariableDeclarationContainer container, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String javaFileContent) {
     	this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, expression, codeElementType);
     	Visitor visitor = new Visitor(cu, sourceFolder, filePath, container, activeVariableDeclarations, javaFileContent);

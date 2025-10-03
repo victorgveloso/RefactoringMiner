@@ -9,6 +9,9 @@ import java.util.Objects;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import extension.ast.node.LangASTNode;
+import extension.ast.node.unit.LangCompilationUnit;
+import extension.ast.visitor.LangVisitor;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
@@ -18,6 +21,12 @@ public class LeafExpression extends AbstractCodeFragment {
 	private String string;
 	protected LocationInfo locationInfo;
 	protected VariableDeclarationContainer container;
+
+	public LeafExpression(LangCompilationUnit cu, String sourceFolder, String filePath, LangASTNode expression, CodeElementType codeElementType, VariableDeclarationContainer container) {
+		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, expression, codeElementType);
+		this.string = LangVisitor.stringify(expression);
+		this.container = container;
+	}
 
 	public LeafExpression(CompilationUnit cu, String sourceFolder, String filePath, ASTNode expression, CodeElementType codeElementType, VariableDeclarationContainer container) {
     	this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, expression, codeElementType);

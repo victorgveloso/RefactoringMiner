@@ -39,6 +39,9 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.dom.YieldStatement;
 
+import extension.ast.node.statement.LangBlock;
+import extension.ast.node.unit.LangCompilationUnit;
+import extension.ast.visitor.LangVisitor;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.UMLAnonymousClass;
@@ -56,6 +59,33 @@ public class OperationBody {
 	private VariableDeclarationContainer container;
 	private int bodyHashCode;
 	private List<UMLComment> comments;
+
+
+	public OperationBody(LangCompilationUnit cu, String sourceFolder, String filePath, LangBlock methodBody, VariableDeclarationContainer container, List<UMLAttribute> attributes) {
+		this.compositeStatement = new CompositeStatementObject(cu, sourceFolder, filePath, methodBody, 0, CodeElementType.BLOCK);
+		this.compositeStatement.setOwner(container);
+		this.comments = container.getComments();
+		this.container = container;
+		this.bodyHashCode = LangVisitor.stringify(methodBody).hashCode();
+		this.activeVariableDeclarations = new HashMap<String, Set<VariableDeclaration>>();
+		for(UMLAttribute attribute : attributes) {
+			addInActiveVariableDeclarations(attribute.getVariableDeclaration());
+		}
+		addAllInActiveVariableDeclarations(container != null ? container.getParameterDeclarationList() : Collections.emptyList());
+		if(container.isDeclaredInAnonymousClass()) {
+			UMLAnonymousClass anonymousClassContainer = container.getAnonymousClassContainer().get();
+			for(VariableDeclarationContainer parentContainer : anonymousClassContainer.getParentContainers()) {
+				for(VariableDeclaration parameterDeclaration : parentContainer.getParameterDeclarationList()) {
+					if(parameterDeclaration.isFinal()) {
+						addInActiveVariableDeclarations(parameterDeclaration);
+					}
+				}
+			}
+		}
+		//for (LangASTNode statement : methodBody.getStatements()) {
+		//	processStatement(cu, sourceFolder, filePath, compositeStatement, statement);
+		//}
+	}
 
 	public OperationBody(CompilationUnit cu, String sourceFolder, String filePath, Block methodBody, VariableDeclarationContainer container, List<UMLAttribute> attributes, String javaFileContent) {
 		this.compositeStatement = new CompositeStatementObject(cu, sourceFolder, filePath, methodBody, 0, CodeElementType.BLOCK, javaFileContent);

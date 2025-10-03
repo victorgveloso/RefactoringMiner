@@ -14,6 +14,8 @@ import java.util.Set;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import extension.ast.node.LangASTNode;
+import extension.ast.node.unit.LangCompilationUnit;
 import gr.uom.java.xmi.LeafType;
 import gr.uom.java.xmi.UMLType;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
@@ -37,6 +39,10 @@ public abstract class AbstractCall extends LeafExpression {
 	protected StatementCoverageType coverage = StatementCoverageType.NONE;
 	private static final List<String> logNames = List.of("trace", "debug", "info", "warn", "error", "fatal", "log");
 	private static final List<String> logGuardNames = List.of("isDebugEnabled", "isEnabled", "isErrorEnabled", "isFatalEnabled", "isInfoEnabled", "isTraceEnabled", "isWarnEnabled");
+
+	public AbstractCall(LangCompilationUnit cu, String sourceFolder, String filePath, LangASTNode expression, CodeElementType codeElementType, VariableDeclarationContainer container) {
+		super(cu, sourceFolder, filePath, expression, codeElementType, container);
+	}
 
 	public AbstractCall(CompilationUnit cu, String sourceFolder, String filePath, ASTNode expression, CodeElementType codeElementType, VariableDeclarationContainer container) {
 		super(cu, sourceFolder, filePath, expression, codeElementType, container);

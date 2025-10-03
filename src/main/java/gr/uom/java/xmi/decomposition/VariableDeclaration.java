@@ -31,6 +31,13 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
+import extension.ast.node.LangASTNode;
+import extension.ast.node.declaration.LangSingleVariableDeclaration;
+import extension.ast.node.expression.LangAssignment;
+import extension.ast.node.expression.LangFieldAccess;
+import extension.ast.node.expression.LangSimpleName;
+import extension.ast.node.metadata.LangAnnotation;
+import extension.ast.node.unit.LangCompilationUnit;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.LocationInfoProvider;
@@ -55,6 +62,184 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 	private List<UMLAnnotation> annotations;
 	private List<UMLModifier> modifiers;
 	private String actualSignature;
+
+	public VariableDeclaration(LangCompilationUnit cu, String sourceFolder, String filePath,
+							   LangSingleVariableDeclaration param) {
+		this.variableName = param.getLangSimpleName().getIdentifier();
+
+		// Extract type from parameter
+		if (param.hasTypeAnnotation() && param.getTypeAnnotation() != null) {
+			this.type = UMLType.extractTypeObject(param.getTypeAnnotation().getName());
+		} else {
+			this.type = UMLType.extractTypeObject("Object"); // Default for untyped Python parameters
+		}
+
+		this.varargsParameter = param.isVarArgs();
+		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, param,
+				LocationInfo.CodeElementType.SINGLE_VARIABLE_DECLARATION);
+
+		// Extract annotations and modifiers using existing processors
+		List<LangAnnotation> langAnnotations = param.getAnnotations();
+
+		this.annotations = new ArrayList<>();
+		for (LangAnnotation langAnnotation : langAnnotations) {
+			UMLAnnotation umlAnnotation = new UMLAnnotation(
+					langAnnotation.getRootCompilationUnit(),
+					sourceFolder,
+					filePath,
+					langAnnotation);
+			annotations.add(umlAnnotation);
+		}
+
+		modifiers = new ArrayList<>();
+		// Handle varargs parameters (*args, **kwargs)
+		if (param.isVarArgs()) {
+			UMLModifier varargsModifier = new UMLModifier(
+					param.getRootCompilationUnit(),
+					sourceFolder,
+					filePath,
+					"varargs",
+					param
+			);
+			modifiers.add(varargsModifier);
+		}
+
+		// Handle parameters with type annotations
+		if (param.hasTypeAnnotation()) {
+			UMLModifier typedModifier = new UMLModifier(
+					param.getRootCompilationUnit(),
+					sourceFolder,
+					filePath,
+					"typed",
+					param
+			);
+			modifiers.add(typedModifier);
+		}
+
+		// No initializer for parameters
+		this.initializer = null;
+
+		// Set characteristics directly from parameter
+		this.isAttribute = param.isAttribute();
+		this.isParameter = param.isParameter();
+		this.isEnumConstant = param.isEnumConstant();
+		this.isFinal = param.isFinal();
+
+		this.scope = new VariableScope(cu, filePath);
+		StringBuilder signature = new StringBuilder();
+		if (varargsParameter) {
+			if (variableName.startsWith("**")) {
+				signature.append(variableName); // **kwargs
+			} else if (variableName.startsWith("*")) {
+				signature.append(variableName); // *args
+			} else {
+				signature.append("*").append(variableName); // *param
+			}
+		} else {
+			signature.append(variableName);
+		}
+		if (type != null && !type.toString().equals("Object")) {
+			signature.append(": ").append(type.toString());
+		}
+		this.actualSignature = signature.toString();
+	}
+
+	public VariableDeclaration(LangCompilationUnit cu, String sourceFolder, String filePath,
+							   LangAssignment assignment, VariableDeclarationContainer container,
+							   String variableName) {
+		this.variableName = variableName;
+		this.type = UMLType.extractTypeObject("Object"); // Default type for Python attributes
+		this.varargsParameter = false;
+
+		// Determine element type based on assignment context
+		LocationInfo.CodeElementType elementType;
+		LangASTNode leftSide = assignment.getLeftSide();
+		if (leftSide instanceof LangFieldAccess) {
+			elementType = LocationInfo.CodeElementType.FIELD_DECLARATION; // self.attr = value
+		} else {
+			elementType = LocationInfo.CodeElementType.VARIABLE_DECLARATION_STATEMENT; // var = value
+		}
+		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, assignment, elementType);
+
+		// No annotations or modifiers for simple assignments
+		this.annotations = new ArrayList<>();
+		this.modifiers = new ArrayList<>();
+
+		// Extract the right-hand side of the assignment as the initializer
+		this.initializer = new AbstractExpression(
+				assignment.getRootCompilationUnit(),
+				sourceFolder,
+				filePath,
+				assignment.getRightSide(),
+				LocationInfo.CodeElementType.EXPRESSION,
+				container
+		);
+
+		this.isAttribute = false;
+		this.isParameter = false;
+		this.isEnumConstant = false;
+		this.isFinal = false;
+
+		if (leftSide instanceof LangFieldAccess fieldAccess) {
+			// Check if it's self.attribute
+			if (fieldAccess.getExpression() instanceof LangSimpleName simpleName) {
+				this.isAttribute = "self".equals(simpleName.getIdentifier());
+			}
+		}
+
+		if (leftSide instanceof LangSingleVariableDeclaration singleVariableDeclaration) {
+			this.isParameter = singleVariableDeclaration.isParameter();
+			this.isEnumConstant = singleVariableDeclaration.isEnumConstant();
+			this.isFinal = singleVariableDeclaration.isFinal();
+		}
+
+		this.scope = new VariableScope(cu, filePath);
+		StringBuilder signature = new StringBuilder();
+        signature.append(variableName);
+        if (!type.toString().equals("Object")) {
+			signature.append(": ").append(type.toString());
+		}
+		this.actualSignature = signature.toString();
+	}
+
+	public VariableDeclaration(LangCompilationUnit cu, String variableName, UMLType type, boolean varargsParameter,
+							   LocationInfo locationInfo, List<UMLAnnotation> annotations, List<UMLModifier> modifiers) {
+		this.variableName = variableName;
+		this.type = type;
+		this.varargsParameter = varargsParameter;
+		this.locationInfo = locationInfo;
+		this.annotations = annotations != null ? annotations : java.util.Collections.emptyList();
+		this.modifiers = modifiers != null ? modifiers : java.util.Collections.emptyList();
+		this.initializer = null;
+
+		if (LocationInfo.CodeElementType.FIELD_DECLARATION.equals(locationInfo.getCodeElementType())) {
+			this.isAttribute = true;
+		}
+		if (LocationInfo.CodeElementType.SINGLE_VARIABLE_DECLARATION.equals(locationInfo.getCodeElementType())) {
+			this.isParameter = true;
+		}
+
+		this.scope = new VariableScope(cu, locationInfo.getFilePath());
+		this.isFinal = false;
+
+		// Generate proper signature for parameters
+		StringBuilder signature = new StringBuilder();
+		if (varargsParameter) {
+			if (variableName.startsWith("**")) {
+				signature.append(variableName); // **kwargs
+			} else if (variableName.startsWith("*")) {
+				signature.append(variableName); // *args
+			} else {
+				signature.append("*").append(variableName); // *param
+			}
+		} else {
+			signature.append(variableName);
+		}
+		if (type != null && !type.toString().equals("Object")) {
+			signature.append(": ").append(type.toString());
+		}
+		this.actualSignature = signature.toString();
+	}
 
 	public VariableDeclaration(CompilationUnit cu, String sourceFolder, String filePath, VariableDeclarationFragment fragment, VariableDeclarationContainer container, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String javaFileContent) {
 		this.annotations = new ArrayList<UMLAnnotation>();

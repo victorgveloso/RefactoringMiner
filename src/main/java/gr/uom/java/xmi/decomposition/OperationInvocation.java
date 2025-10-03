@@ -43,6 +43,15 @@ import org.eclipse.jdt.core.dom.Type;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.util.PrefixSuffixUtils;
 
+import extension.ast.node.LangASTNode;
+import extension.ast.node.expression.LangAssignment;
+import extension.ast.node.expression.LangFieldAccess;
+import extension.ast.node.expression.LangInfixExpression;
+import extension.ast.node.expression.LangMethodInvocation;
+import extension.ast.node.expression.LangSimpleName;
+import extension.ast.node.unit.LangCompilationUnit;
+import extension.ast.visitor.LangVisitor;
+
 public class OperationInvocation extends AbstractCall {
 	private String methodName;
 	private List<String> subExpressions = new ArrayList<String>();
@@ -107,7 +116,87 @@ public class OperationInvocation extends AbstractCall {
 			processExpression(invocation.getExpression(), this.subExpressions);
 		}
 	}
-	
+
+	public OperationInvocation(LangCompilationUnit cu, String sourceFolder, String filePath, LangMethodInvocation methodInvocation, VariableDeclarationContainer container) {
+		super(cu, sourceFolder, filePath, methodInvocation, CodeElementType.METHOD_INVOCATION, container);
+		if (methodInvocation.getExpression() instanceof LangSimpleName simpleName) {
+			this.methodName = simpleName.getIdentifier();
+			this.expression = simpleName.getIdentifier();
+		} else if (methodInvocation.getExpression() instanceof LangFieldAccess fieldAccess) {
+			this.methodName = fieldAccess.getName().getIdentifier();
+			this.expression = LangVisitor.stringify(fieldAccess.getExpression()); // "self"
+			if (fieldAccess.getExpression() instanceof LangSimpleName simpleName) {
+				// CORRECT: Set expression to just the object part
+				this.expression = simpleName.getIdentifier(); // "self"
+				// The method name is already set via this.methodName = methodInvocation.extractMethodName()
+			}
+
+		} else {
+			this.methodName = "unknownMethod";
+			this.expression = "unknown";
+		}
+		// FIX: Handle null arguments list
+		if (methodInvocation.getArguments() != null) {
+			this.numberOfArguments = methodInvocation.getArguments().size();
+		} else {
+			this.numberOfArguments = 0;
+		}
+		this.arguments = new ArrayList<>();
+		if (methodInvocation.getArguments() != null) {
+			for (LangASTNode argument : methodInvocation.getArguments()) {
+				String argString = LangVisitor.stringify(argument);
+				this.arguments.add(argString);
+			}
+		}
+		if (methodInvocation.getExpression() != null) {
+			processExpression(methodInvocation.getExpression(), this.subExpressions);
+		}
+	}
+
+	private void processExpression(LangASTNode node, List<String> subExpressions) {
+		if (node instanceof LangMethodInvocation methodInvocation) {
+			LangASTNode expr = methodInvocation.getExpression();
+			if (expr != null) {
+				String exprAsString = LangVisitor.stringify(expr);
+				String invocationAsString = LangVisitor.stringify(methodInvocation);
+
+				// The suffix is the part after the receiver, including the operator (like ".add(x,y)")
+				if (invocationAsString.length() > exprAsString.length() + 1) {
+					String suffix = invocationAsString.substring(exprAsString.length() + 1);
+					subExpressions.add(0, suffix);
+				} else {
+					subExpressions.add(0, invocationAsString);
+				}
+
+				// Process the expression, but handle field access specially
+				processExpression(expr, subExpressions);
+			} else {
+				subExpressions.add(0, LangVisitor.stringify(methodInvocation));
+			}
+		}
+		else if (node instanceof LangFieldAccess fieldAccess) {
+			// For "self.add", add just "self" as a variable, not "self.add"
+			LangASTNode expression = fieldAccess.getExpression();
+			if (expression != null) {
+				processExpression(expression, subExpressions);
+			}
+			// Don't add the field access itself - we already handled the method call above
+		}
+		else if (node instanceof LangSimpleName simpleName) {
+			// Add simple names as variables (like "self", "x", "y")
+			subExpressions.add(simpleName.getIdentifier());
+		}
+		else if (node instanceof LangAssignment assignment) {
+			processExpression(assignment.getLeftSide(), subExpressions);
+			processExpression(assignment.getRightSide(), subExpressions);
+		}
+		else if (node instanceof LangInfixExpression infixExpr) {
+			processExpression(infixExpr.getLeft(), subExpressions);
+			processExpression(infixExpr.getRight(), subExpressions);
+		}
+		// TODO: Add other node types as needed...
+	}
+
 	private void processExpression(Expression expression, List<String> subExpressions) {
 		if(expression instanceof MethodInvocation) {
 			MethodInvocation invocation = (MethodInvocation)expression;

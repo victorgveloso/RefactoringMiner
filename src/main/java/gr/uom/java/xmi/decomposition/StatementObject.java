@@ -16,6 +16,9 @@ import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
+import extension.ast.node.LangASTNode;
+import extension.ast.node.unit.LangCompilationUnit;
+import extension.ast.visitor.LangVisitor;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.VariableDeclarationContainer;
@@ -53,7 +56,50 @@ public class StatementObject extends AbstractStatement {
 	private List<LeafExpression> patternInstanceofExpressions;
 	private List<TernaryOperatorExpression> ternaryOperatorExpressions;
 	private List<LambdaExpressionObject> lambdas;
-	
+
+	public StatementObject(LangCompilationUnit cu, String sourceFolder, String filePath,
+			LangASTNode statement, int depth, CodeElementType codeElementType,
+			VariableDeclarationContainer container) {
+		super();
+		LangVisitor visitor = new LangVisitor(cu, sourceFolder, filePath, container);
+		statement.accept(visitor);
+
+		// Set location info
+		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType);
+
+		// Initialize collections
+		this.variables = visitor.getVariables();
+		this.types = visitor.getTypes();
+		this.variableDeclarations = visitor.getVariableDeclarations();
+		this.methodInvocations = visitor.getMethodInvocations();
+		this.anonymousClassDeclarations = visitor.getAnonymousClassDeclarations();
+		this.textBlocks = visitor.getTextBlocks();
+		this.stringLiterals = visitor.getStringLiterals();
+		this.charLiterals = visitor.getCharLiterals();
+		this.numberLiterals = visitor.getNumberLiterals();
+		this.nullLiterals = visitor.getNullLiterals();
+		this.booleanLiterals = visitor.getBooleanLiterals();
+		this.typeLiterals = visitor.getTypeLiterals();
+		this.creations = visitor.getCreations();
+		this.infixExpressions = visitor.getInfixExpressions();
+		this.assignments = visitor.getAssignments();
+		this.infixOperators = visitor.getInfixOperators();
+		this.arrayAccesses = visitor.getArrayAccesses();
+		this.prefixExpressions = visitor.getPrefixExpressions();
+		this.postfixExpressions = visitor.getPostfixExpressions();
+		this.thisExpressions = visitor.getThisExpressions();
+		this.arguments = visitor.getArguments();
+		this.parenthesizedExpressions = visitor.getParenthesizedExpressions();
+		this.castExpressions = visitor.getCastExpressions();
+		this.instanceofExpressions = visitor.getInstanceofExpressions();
+		this.patternInstanceofExpressions = visitor.getPatternInstanceofExpressions();
+		this.ternaryOperatorExpressions = visitor.getTernaryOperatorExpressions();
+		this.lambdas = visitor.getLambdas();
+		this.statement = LangVisitor.stringify(statement);
+		this.actualSignature = LangVisitor.stringify(statement);
+		setDepth(depth);
+	}
+
 	public StatementObject(CompilationUnit cu, String sourceFolder, String filePath, Statement statement, int depth, CodeElementType codeElementType, VariableDeclarationContainer container, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String javaFileContent) {
 		super();
 		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType);
