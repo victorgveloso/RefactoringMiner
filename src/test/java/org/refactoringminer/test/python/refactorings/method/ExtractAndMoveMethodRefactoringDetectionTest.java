@@ -8,6 +8,7 @@ import gr.uom.java.xmi.diff.UMLModelDiff;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
 
 import java.util.List;
 import java.util.Map;
@@ -144,7 +145,7 @@ public class ExtractAndMoveMethodRefactoringDetectionTest {
 
         // Look for Extract Method refactoring
         boolean extractFound = refactorings.stream()
-                .filter(r -> r instanceof ExtractOperationRefactoring)
+                .filter(r -> r.getRefactoringType().equals(RefactoringType.EXTRACT_AND_MOVE_OPERATION))
                 .map(r -> (ExtractOperationRefactoring) r)
                 .anyMatch(refactoring -> {
                     String extractedName = refactoring.getExtractedOperation().getName();
@@ -153,22 +154,7 @@ public class ExtractAndMoveMethodRefactoringDetectionTest {
                             extractedClass.equals(targetClassName);
                 });
 
-        // Look for Move Method refactoring
-        boolean moveFound = refactorings.stream()
-                .filter(r -> r instanceof MoveOperationRefactoring)
-                .map(r -> (MoveOperationRefactoring) r)
-                .anyMatch(refactoring -> {
-                    String originalName = refactoring.getOriginalOperation().getName();
-                    String originalClass = refactoring.getOriginalOperation().getClassName();
-                    String movedName = refactoring.getMovedOperation().getName();
-                    String movedClass = refactoring.getMovedOperation().getClassName();
-                    return originalName.equals(originalMethodName) &&
-                            originalClass.equals(sourceClassName) &&
-                            movedName.equals(extractedMethodName) &&
-                            movedClass.equals(targetClassName);
-                });
-
-        boolean refactoringDetected = extractFound && moveFound;
+        boolean refactoringDetected = extractFound;
         System.out.println("Refactorings detected: " + refactorings.size());
 
         if (!refactoringDetected) {
