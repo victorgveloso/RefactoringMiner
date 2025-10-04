@@ -1,5 +1,6 @@
 package gr.uom.java.xmi.decomposition;
 
+import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLClass;
@@ -264,7 +265,7 @@ public class OperationInvocation extends AbstractCall {
 
 	public OperationInvocation(CompilationUnit cu, String sourceFolder, String filePath, ConstructorInvocation invocation, VariableDeclarationContainer container) {
 		super(cu, sourceFolder, filePath, invocation, CodeElementType.CONSTRUCTOR_INVOCATION, container);
-		this.methodName = JAVA.THIS;
+		this.methodName = LANG.THIS;
 		this.numberOfArguments = invocation.arguments().size();
 		this.arguments = new ArrayList<String>();
 		List<Expression> args = invocation.arguments();
@@ -273,14 +274,13 @@ public class OperationInvocation extends AbstractCall {
 		}
 	}
 
-	private OperationInvocation() {
-		super();
+	private OperationInvocation(LocationInfo locationInfo) {
+		super(locationInfo);
 	}
 
 	public OperationInvocation update(String oldExpression, String newExpression) {
-		OperationInvocation newOperationInvocation = new OperationInvocation();
+		OperationInvocation newOperationInvocation = new OperationInvocation(this.locationInfo);
 		newOperationInvocation.methodName = this.methodName;
-		newOperationInvocation.locationInfo = this.locationInfo;
 		update(newOperationInvocation, oldExpression, newExpression);
 		newOperationInvocation.subExpressions = new ArrayList<String>();
 		for(String argument : this.subExpressions) {
@@ -309,7 +309,7 @@ public class OperationInvocation extends AbstractCall {
     public boolean matchesOperation(VariableDeclarationContainer operation, VariableDeclarationContainer callerOperation,
     		UMLAbstractClassDiff classDiff, UMLModelDiff modelDiff) {
     	boolean constructorCall = false;
-    	if(this.methodName.equals(JAVA.THIS) && operation.getClassName().equals(callerOperation.getClassName()) && operation.getName().equals(callerOperation.getName())) {
+    	if(this.methodName.equals(LANG.THIS) && operation.getClassName().equals(callerOperation.getClassName()) && operation.getName().equals(callerOperation.getName())) {
     		constructorCall = true;
     	}
     	if(!this.methodName.equals(operation.getName()) && !constructorCall) {
@@ -408,7 +408,7 @@ public class OperationInvocation extends AbstractCall {
     			}
     			inferredArgumentTypes.add(UMLType.extractTypeObject(type));
     		}
-    		else if(indexOfOpeningParenthesis == 0 && arg.contains(")") && !arg.contains(JAVA.LAMBDA_ARROW) && !arg.contains(JAVA.METHOD_REFERENCE) && arg.indexOf(")") < arg.length()) {
+    		else if(indexOfOpeningParenthesis == 0 && arg.contains(")") && !arg.contains(LANG.LAMBDA_ARROW) && !arg.contains(LANG.METHOD_REFERENCE) && arg.indexOf(")") < arg.length()) {
     			String cast = arg.substring(indexOfOpeningParenthesis + 1, arg.indexOf(")"));
     			if(cast.charAt(0) != '(') {
     				inferredArgumentTypes.add(UMLType.extractTypeObject(cast));
@@ -420,7 +420,7 @@ public class OperationInvocation extends AbstractCall {
     		else if(arg.endsWith(".getClassLoader()")) {
     			inferredArgumentTypes.add(UMLType.extractTypeObject("ClassLoader"));
     		}
-    		else if(arg.contains(JAVA.STRING_CONCATENATION) && !containsMethodSignatureOfAnonymousClass(arg)) {
+    		else if(arg.contains(LANG.STRING_CONCATENATION) && !containsMethodSignatureOfAnonymousClass(arg)) {
     			String[] tokens = SPLIT_CONCAT_STRING_PATTERN.split(arg);
     			if(tokens[0].startsWith("\"") && tokens[0].endsWith("\"")) {
     				inferredArgumentTypes.add(UMLType.extractTypeObject("String"));
@@ -806,13 +806,13 @@ public class OperationInvocation extends AbstractCall {
     	return intersection;
     }
 
-	private static boolean differInThisDot(String subExpression1, String subExpression2) {
+	private boolean differInThisDot(String subExpression1, String subExpression2) {
 		if(subExpression1.length() < subExpression2.length()) {
 			String modified = subExpression1;
 			String previousCommonPrefix = "";
 			String commonPrefix = null;
 			while((commonPrefix = PrefixSuffixUtils.longestCommonPrefix(modified, subExpression2)).length() > previousCommonPrefix.length()) {
-				modified = commonPrefix + JAVA.THIS_DOT + modified.substring(commonPrefix.length(), modified.length());
+				modified = commonPrefix + LANG.THIS_DOT + modified.substring(commonPrefix.length(), modified.length());
 				if(modified.equals(subExpression2)) {
 					return true;
 				}
@@ -824,7 +824,7 @@ public class OperationInvocation extends AbstractCall {
 			String previousCommonPrefix = "";
 			String commonPrefix = null;
 			while((commonPrefix = PrefixSuffixUtils.longestCommonPrefix(modified, subExpression1)).length() > previousCommonPrefix.length()) {
-				modified = commonPrefix + JAVA.THIS_DOT + modified.substring(commonPrefix.length(), modified.length());
+				modified = commonPrefix + LANG.THIS_DOT + modified.substring(commonPrefix.length(), modified.length());
 				if(modified.equals(subExpression1)) {
 					return true;
 				}

@@ -1,6 +1,5 @@
 package gr.uom.java.xmi.decomposition;
 
-import static gr.uom.java.xmi.Constants.JAVA;
 import static gr.uom.java.xmi.decomposition.Visitor.stringify;
 import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.SPLIT_COMMA_PATTERN;
 
@@ -14,6 +13,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.Type;
 
+import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.UMLType;
 import gr.uom.java.xmi.VariableDeclarationContainer;
@@ -77,14 +77,13 @@ public class ObjectCreation extends AbstractCall {
 		return anonymousClassDeclaration;
 	}
 
-	private ObjectCreation() {
-		super();
+	private ObjectCreation(LocationInfo locationInfo) {
+		super(locationInfo);
 	}
 
 	public ObjectCreation update(String oldExpression, String newExpression) {
-		ObjectCreation newObjectCreation = new ObjectCreation();
+		ObjectCreation newObjectCreation = new ObjectCreation(this.locationInfo);
 		newObjectCreation.type = this.type;
-		newObjectCreation.locationInfo = this.locationInfo;
 		update(newObjectCreation, oldExpression, newExpression);
 		return newObjectCreation;
 	}
@@ -132,8 +131,8 @@ public class ObjectCreation extends AbstractCall {
     			if(this.anonymousClassDeclaration.equals(other.anonymousClassDeclaration)) {
     				return true;
     			}
-    			if(this.anonymousClassDeclaration.startsWith(JAVA.OPEN_ARRAY_INITIALIZER) && this.anonymousClassDeclaration.endsWith(JAVA.CLOSE_ARRAY_INITIALIZER) &&
-    					other.anonymousClassDeclaration.startsWith(JAVA.OPEN_ARRAY_INITIALIZER) && other.anonymousClassDeclaration.endsWith(JAVA.CLOSE_ARRAY_INITIALIZER)) {
+    			if(this.anonymousClassDeclaration.startsWith(LANG.OPEN_ARRAY_INITIALIZER) && this.anonymousClassDeclaration.endsWith(LANG.CLOSE_ARRAY_INITIALIZER) &&
+    					other.anonymousClassDeclaration.startsWith(LANG.OPEN_ARRAY_INITIALIZER) && other.anonymousClassDeclaration.endsWith(LANG.CLOSE_ARRAY_INITIALIZER)) {
     				String s1 = this.anonymousClassDeclaration.substring(1, this.anonymousClassDeclaration.length()-1);
     				String s2 = other.anonymousClassDeclaration.substring(1, other.anonymousClassDeclaration.length()-1);
     				List<String> tokens1 = Arrays.asList(SPLIT_COMMA_PATTERN.split(s1));

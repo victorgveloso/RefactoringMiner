@@ -1,7 +1,5 @@
 package gr.uom.java.xmi.decomposition;
 
-import static gr.uom.java.xmi.Constants.JAVA;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,6 +15,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import extension.ast.node.LangASTNode;
 import extension.ast.node.unit.LangCompilationUnit;
 import gr.uom.java.xmi.LeafType;
+import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLType;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.VariableDeclarationContainer;
@@ -48,8 +47,8 @@ public abstract class AbstractCall extends LeafExpression {
 		super(cu, sourceFolder, filePath, expression, codeElementType, container);
 	}
 
-	protected AbstractCall() {
-		
+	protected AbstractCall(LocationInfo locationInfo) {
+		super(locationInfo);
 	}
 
 	public LeafExpression asLeafExpression() {
@@ -186,7 +185,7 @@ public abstract class AbstractCall extends LeafExpression {
 		if(expression == null) {
 			return true;
 		}
-		else if(expression.equals(JAVA.THIS)) {
+		else if(expression.equals(LANG.THIS)) {
 			return true;
 		}
 		return false;
@@ -408,7 +407,7 @@ public abstract class AbstractCall extends LeafExpression {
 				}
 			}
 			boolean lambdaReplacement = false;
-			if(argument1.contains(JAVA.LAMBDA_ARROW) && argument2.contains(JAVA.LAMBDA_ARROW)) {
+			if(argument1.contains(LANG.LAMBDA_ARROW) && argument2.contains(LANG.LAMBDA_ARROW)) {
 				for(UMLOperationBodyMapper lambdaMapper : lambdaMappers) {
 					if(lambdaMapper.nonMappedElementsT1() == 0 && lambdaMapper.nonMappedElementsT2() == 0) {
 						lambdaReplacement = true;
@@ -431,7 +430,7 @@ public abstract class AbstractCall extends LeafExpression {
 			String argument1 = arguments1.get(i);
 			String argument2 = arguments2.get(i);
 			boolean argumentConcatenated = false;
-			if(argument1.contains(JAVA.STRING_CONCATENATION) || argument2.contains(JAVA.STRING_CONCATENATION)) {
+			if(argument1.contains(LANG.STRING_CONCATENATION) || argument2.contains(LANG.STRING_CONCATENATION)) {
 				Set<String> tokens1 = new LinkedHashSet<String>(Arrays.asList(SPLIT_CONCAT_STRING_PATTERN.split(argument1)));
 				Set<String> tokens2 = new LinkedHashSet<String>(Arrays.asList(SPLIT_CONCAT_STRING_PATTERN.split(argument2)));
 				Set<String> intersection = new LinkedHashSet<String>(tokens1);
@@ -451,15 +450,15 @@ public abstract class AbstractCall extends LeafExpression {
 		return true;
 	}
 
-	private static boolean concatenatedArgument(String s1, String s2, Map<String, String> parameterToArgumentMap) {
-		if(s1.contains(JAVA.STRING_CONCATENATION) && s2.contains(JAVA.STRING_CONCATENATION)) {
+	private boolean concatenatedArgument(String s1, String s2, Map<String, String> parameterToArgumentMap) {
+		if(s1.contains(LANG.STRING_CONCATENATION) && s2.contains(LANG.STRING_CONCATENATION)) {
 			Set<String> tokens1 = new LinkedHashSet<String>(Arrays.asList(StringBasedHeuristics.SPLIT_CONCAT_STRING_PATTERN.split(s1)));
 			Set<String> tokens2 = new LinkedHashSet<String>(Arrays.asList(StringBasedHeuristics.SPLIT_CONCAT_STRING_PATTERN.split(s2)));
 			Set<String> intersection = new LinkedHashSet<String>(tokens1);
 			intersection.retainAll(tokens2);
 			return intersection.size() == Math.min(tokens1.size(), tokens2.size());
 		}
-		else if(s1.contains(JAVA.STRING_CONCATENATION) && !s2.contains(JAVA.STRING_CONCATENATION)) {
+		else if(s1.contains(LANG.STRING_CONCATENATION) && !s2.contains(LANG.STRING_CONCATENATION)) {
 			List<String> tokens1 = Arrays.asList(StringBasedHeuristics.SPLIT_CONCAT_STRING_PATTERN.split(s1));
 			StringBuilder concatenated = new StringBuilder();
 			for(int i=0; i<tokens1.size(); i++) {
@@ -481,7 +480,7 @@ public abstract class AbstractCall extends LeafExpression {
 				return true;
 			}
 		}
-		else if(!s1.contains(JAVA.STRING_CONCATENATION) && s2.contains(JAVA.STRING_CONCATENATION)) {
+		else if(!s1.contains(LANG.STRING_CONCATENATION) && s2.contains(LANG.STRING_CONCATENATION)) {
 			List<String> tokens2 = Arrays.asList(StringBasedHeuristics.SPLIT_CONCAT_STRING_PATTERN.split(s2));
 			StringBuilder concatenated = new StringBuilder();
 			for(int i=0; i<tokens2.size(); i++) {
@@ -793,7 +792,7 @@ public abstract class AbstractCall extends LeafExpression {
 
 	private boolean argumentContainsLambda() {
 		for(String argument : arguments) {
-			if(argument.contains(JAVA.LAMBDA_ARROW)) {
+			if(argument.contains(LANG.LAMBDA_ARROW)) {
 				return true;
 			}
 		}
@@ -934,7 +933,7 @@ public abstract class AbstractCall extends LeafExpression {
 						if(statement.getVariableDeclarations().size() > 0) {
 							VariableDeclaration variableDeclaration = statement.getVariableDeclarations().get(0);
 							if(variableDeclaration.getInitializer() != null) {
-								if(arg.equals(variableDeclaration.getInitializer().getExpression()) || arg.endsWith(JAVA.LAMBDA_ARROW + variableDeclaration.getInitializer().getExpression()) ||
+								if(arg.equals(variableDeclaration.getInitializer().getExpression()) || arg.endsWith(LANG.LAMBDA_ARROW + variableDeclaration.getInitializer().getExpression()) ||
 										classInstanceCreationToCreationReference(variableDeclaration.getInitializer(), arg)) {
 									matchedArguments++;
 									additionallyMatchedStatements1.add(statement);
@@ -966,7 +965,7 @@ public abstract class AbstractCall extends LeafExpression {
 		AbstractCall creation = initializer.creationCoveringEntireFragment();
 		if(creation instanceof ObjectCreation) {
 			UMLType type = ((ObjectCreation)creation).getType();
-			if(replacedExpression.startsWith(type + JAVA.METHOD_REFERENCE + "new")) {
+			if(replacedExpression.startsWith(type + LANG.METHOD_REFERENCE + "new")) {
 				return true;
 			}
 		}
@@ -1094,7 +1093,7 @@ public abstract class AbstractCall extends LeafExpression {
 				for(int i=0; i<arguments1.size(); i++) {
 					String argument1 = arguments1.get(i);
 					String argument2 = arguments2.get(i);
-					if(argument1.contains(JAVA.LAMBDA_ARROW) && argument2.contains(JAVA.LAMBDA_ARROW)) {
+					if(argument1.contains(LANG.LAMBDA_ARROW) && argument2.contains(LANG.LAMBDA_ARROW)) {
 						for(UMLOperationBodyMapper lambdaMapper : lambdaMappers) {
 							if(lambdaMapper.nonMappedElementsT1() > 0 && lambdaMapper.nonMappedElementsT2() > 0 &&
 									!lambdaMapper.containsCallToExtractedMethod() && !lambdaMapper.containsCallToInlinedMethod()) {
@@ -1167,13 +1166,13 @@ public abstract class AbstractCall extends LeafExpression {
 	}
 
 	private int argumentIsStatement(String statement) {
-		if(statement.endsWith(JAVA.STATEMENT_TERMINATION)) {
+		if(statement.endsWith(LANG.STATEMENT_TERMINATION)) {
 			int index = 0;
 			for(String argument : arguments()) {
 				if(argument.equals("true") || argument.equals("false") || argument.equals("null")) {
 					return -1;
 				}
-				if(equalsIgnoringExtraParenthesis(argument, statement.substring(0, statement.length()-JAVA.STATEMENT_TERMINATION.length()))) {
+				if(equalsIgnoringExtraParenthesis(argument, statement.substring(0, statement.length()-LANG.STATEMENT_TERMINATION.length()))) {
 					return index;
 				}
 				index++;
@@ -1183,7 +1182,7 @@ public abstract class AbstractCall extends LeafExpression {
 	}
 
 	private int argumentIsExpression(String expression) {
-		if(!expression.endsWith(JAVA.STATEMENT_TERMINATION)) {
+		if(!expression.endsWith(LANG.STATEMENT_TERMINATION)) {
 			//statement is actually an expression
 			int index = 0;
 			for(String argument : arguments()) {
@@ -1200,13 +1199,13 @@ public abstract class AbstractCall extends LeafExpression {
 	}
 
 	private int argumentIsReturned(String statement) {
-		if(statement.startsWith(JAVA.RETURN_SPACE)) {
+		if(statement.startsWith(LANG.RETURN_SPACE)) {
 			int index = 0;
 			for(String argument : arguments()) {
 				if(argument.equals("true") || argument.equals("false") || argument.equals("null")) {
 					return -1;
 				}
-				if(equalsIgnoringExtraParenthesis(argument, statement.substring(JAVA.RETURN_SPACE.length(), statement.length()-JAVA.STATEMENT_TERMINATION.length()))) {
+				if(equalsIgnoringExtraParenthesis(argument, statement.substring(LANG.RETURN_SPACE.length(), statement.length()-LANG.STATEMENT_TERMINATION.length()))) {
 					return index;
 				}
 				index++;
@@ -1216,13 +1215,13 @@ public abstract class AbstractCall extends LeafExpression {
 	}
 
 	private int argumentIsThrown(String statement) {
-		if(statement.startsWith(JAVA.THROW_SPACE)) {
+		if(statement.startsWith(LANG.THROW_SPACE)) {
 			int index = 0;
 			for(String argument : arguments()) {
 				if(argument.equals("true") || argument.equals("false") || argument.equals("null")) {
 					return -1;
 				}
-				if(equalsIgnoringExtraParenthesis(argument, statement.substring(JAVA.THROW_SPACE.length(), statement.length()-JAVA.STATEMENT_TERMINATION.length()))) {
+				if(equalsIgnoringExtraParenthesis(argument, statement.substring(LANG.THROW_SPACE.length(), statement.length()-LANG.STATEMENT_TERMINATION.length()))) {
 					return index;
 				}
 				index++;
@@ -1232,15 +1231,15 @@ public abstract class AbstractCall extends LeafExpression {
 	}
 
 	private int argumentIsWrappedInExceptionAndThrown(String statement) {
-		if(statement.startsWith(JAVA.THROW_SPACE)) {
-			String removeThrowFromStatement = statement.substring(JAVA.THROW_SPACE.length(), statement.length()-JAVA.STATEMENT_TERMINATION.length());
+		if(statement.startsWith(LANG.THROW_SPACE)) {
+			String removeThrowFromStatement = statement.substring(LANG.THROW_SPACE.length(), statement.length()-LANG.STATEMENT_TERMINATION.length());
 			int index = 0;
 			for(String argument : arguments()) {
 				if(argument.equals("true") || argument.equals("false") || argument.equals("null")) {
 					return -1;
 				}
-				if(argument.startsWith("()" + JAVA.LAMBDA_ARROW))
-					argument = argument.substring(("()" + JAVA.LAMBDA_ARROW).length());
+				if(argument.startsWith("()" + LANG.LAMBDA_ARROW))
+					argument = argument.substring(("()" + LANG.LAMBDA_ARROW).length());
 				if(removeThrowFromStatement.contains("(" + argument + ")")) {
 					removeThrowFromStatement = removeThrowFromStatement.replace("(" + argument + ")", "");
 					if(removeThrowFromStatement.startsWith("new ") && removeThrowFromStatement.endsWith("Exception")) {
@@ -1254,32 +1253,32 @@ public abstract class AbstractCall extends LeafExpression {
 	}
 
 	private boolean indexCondition(String statement, int index) {
-		return (arguments().size() <= 2 && (index == 0 || this.getName().equals("assertThrows") || "Assert".equals(this.getExpression()))) || (statement.contains(JAVA.TERNARY_CONDITION) && statement.contains(JAVA.TERNARY_ELSE));
+		return (arguments().size() <= 2 && (index == 0 || this.getName().equals("assertThrows") || "Assert".equals(this.getExpression()))) || (statement.contains(LANG.TERNARY_CONDITION) && statement.contains(LANG.TERNARY_ELSE));
 	}
 
 	public Replacement makeReplacementForReturnedArgument(String statement) {
 		int index = -1;
 		if((index = argumentIsReturned(statement)) != -1 && indexCondition(statement, index)) {
-			String arg = statement.substring(JAVA.RETURN_SPACE.length(), statement.length()-JAVA.STATEMENT_TERMINATION.length());
+			String arg = statement.substring(LANG.RETURN_SPACE.length(), statement.length()-LANG.STATEMENT_TERMINATION.length());
 			return new Replacement(arguments().get(index), arg,
 					ReplacementType.ARGUMENT_REPLACED_WITH_RETURN_EXPRESSION);
 		}
 		else if((index = argumentIsThrown(statement)) != -1 && indexCondition(statement, index)) {
-			String arg = statement.substring(JAVA.THROW_SPACE.length(), statement.length()-JAVA.STATEMENT_TERMINATION.length());
+			String arg = statement.substring(LANG.THROW_SPACE.length(), statement.length()-LANG.STATEMENT_TERMINATION.length());
 			return new Replacement(arguments().get(index), arg,
 					ReplacementType.ARGUMENT_REPLACED_WITH_THROW_EXPRESSION);
 		}
 		else if((index = argumentIsWrappedInExceptionAndThrown(statement)) != -1 && indexCondition(statement, index)) {
-			String arg = statement.substring(JAVA.THROW_SPACE.length(), statement.length()-JAVA.STATEMENT_TERMINATION.length());
+			String arg = statement.substring(LANG.THROW_SPACE.length(), statement.length()-LANG.STATEMENT_TERMINATION.length());
 			return new Replacement(arguments().get(index), arg,
 					ReplacementType.ARGUMENT_REPLACED_WITH_THROW_EXPRESSION);
 		}
 		else if((index = argumentIsStatement(statement)) != -1 && indexCondition(statement, index)) {
-			String arg = statement.substring(0, statement.length()-JAVA.STATEMENT_TERMINATION.length());
+			String arg = statement.substring(0, statement.length()-LANG.STATEMENT_TERMINATION.length());
 			return new Replacement(arguments().get(index), arg,
 					ReplacementType.ARGUMENT_REPLACED_WITH_STATEMENT);
 		}
-		else if((index = argumentIsExpression(statement)) != -1 && indexCondition(statement, index) && !statement.contains(JAVA.METHOD_REFERENCE)) {
+		else if((index = argumentIsExpression(statement)) != -1 && indexCondition(statement, index) && !statement.contains(LANG.METHOD_REFERENCE)) {
 			return new Replacement(arguments().get(index), statement,
 					ReplacementType.ARGUMENT_REPLACED_WITH_EXPRESSION);
 		}
@@ -1289,17 +1288,17 @@ public abstract class AbstractCall extends LeafExpression {
 	public Replacement makeReplacementForWrappedCall(String statement) {
 		int index = -1;
 		if((index = argumentIsReturned(statement)) != -1 && indexCondition(statement, index)) {
-			String arg = statement.substring(JAVA.RETURN_SPACE.length(), statement.length()-JAVA.STATEMENT_TERMINATION.length());
+			String arg = statement.substring(LANG.RETURN_SPACE.length(), statement.length()-LANG.STATEMENT_TERMINATION.length());
 			return new Replacement(arg, arguments().get(index),
 					ReplacementType.ARGUMENT_REPLACED_WITH_RETURN_EXPRESSION);
 		}
 		else if((index = argumentIsThrown(statement)) != -1 && indexCondition(statement, index)) {
-			String arg = statement.substring(JAVA.THROW_SPACE.length(), statement.length()-JAVA.STATEMENT_TERMINATION.length());
+			String arg = statement.substring(LANG.THROW_SPACE.length(), statement.length()-LANG.STATEMENT_TERMINATION.length());
 			return new Replacement(arg, arguments().get(index),
 					ReplacementType.ARGUMENT_REPLACED_WITH_THROW_EXPRESSION);
 		}
 		else if((index = argumentIsStatement(statement)) != -1 && indexCondition(statement, index)) {
-			String arg = statement.substring(0, statement.length()-JAVA.STATEMENT_TERMINATION.length());
+			String arg = statement.substring(0, statement.length()-LANG.STATEMENT_TERMINATION.length());
 			return new Replacement(arg, arguments().get(index),
 					ReplacementType.ARGUMENT_REPLACED_WITH_STATEMENT);
 		}
@@ -1311,17 +1310,17 @@ public abstract class AbstractCall extends LeafExpression {
 	}
 
 	public Replacement makeReplacementForWrappedLambda(String statement) {
-		if(argumentIsLambdaStatement(statement) && (arguments().size() == 1 || (statement.contains(JAVA.TERNARY_CONDITION) && statement.contains(JAVA.TERNARY_ELSE)))) {
-			return new Replacement(statement.substring(0, statement.length()-JAVA.STATEMENT_TERMINATION.length()), arguments().get(0),
+		if(argumentIsLambdaStatement(statement) && (arguments().size() == 1 || (statement.contains(LANG.TERNARY_CONDITION) && statement.contains(LANG.TERNARY_ELSE)))) {
+			return new Replacement(statement.substring(0, statement.length()-LANG.STATEMENT_TERMINATION.length()), arguments().get(0),
 					ReplacementType.ARGUMENT_REPLACED_WITH_EXPRESSION);
 		}
 		return null;
 	}
 
 	private boolean argumentIsLambdaStatement(String statement) {
-		if(statement.endsWith(JAVA.STATEMENT_TERMINATION)) {
+		if(statement.endsWith(LANG.STATEMENT_TERMINATION)) {
 			for(String argument : arguments()) {
-				if(equalsIgnoringLambdaArrow(argument, statement.substring(0, statement.length()-JAVA.STATEMENT_TERMINATION.length()))) {
+				if(equalsIgnoringLambdaArrow(argument, statement.substring(0, statement.length()-LANG.STATEMENT_TERMINATION.length()))) {
 					return true;
 				}
 			}
@@ -1330,10 +1329,10 @@ public abstract class AbstractCall extends LeafExpression {
 	}
 
 	private int argumentIsAssigned(String statement) {
-		if(statement.contains(JAVA.ASSIGNMENT) && statement.endsWith(JAVA.STATEMENT_TERMINATION)) {
+		if(statement.contains(LANG.ASSIGNMENT) && statement.endsWith(LANG.STATEMENT_TERMINATION)) {
 			int index = 0;
 			for(String argument : arguments()) {
-				if(equalsIgnoringExtraParenthesis(argument, statement.substring(statement.indexOf(JAVA.ASSIGNMENT)+1, statement.length()-JAVA.STATEMENT_TERMINATION.length()))) {
+				if(equalsIgnoringExtraParenthesis(argument, statement.substring(statement.indexOf(LANG.ASSIGNMENT)+1, statement.length()-LANG.STATEMENT_TERMINATION.length()))) {
 					return index;
 				}
 				index++;
@@ -1343,8 +1342,8 @@ public abstract class AbstractCall extends LeafExpression {
 	}
 
 	private boolean expressionIsAssigned(String statement) {
-		if(statement.contains(JAVA.ASSIGNMENT) && statement.endsWith(JAVA.STATEMENT_TERMINATION) && expression != null) {
-			if(equalsIgnoringExtraParenthesis(expression, statement.substring(statement.indexOf(JAVA.ASSIGNMENT)+1, statement.length()-JAVA.STATEMENT_TERMINATION.length()))) {
+		if(statement.contains(LANG.ASSIGNMENT) && statement.endsWith(LANG.STATEMENT_TERMINATION) && expression != null) {
+			if(equalsIgnoringExtraParenthesis(expression, statement.substring(statement.indexOf(LANG.ASSIGNMENT)+1, statement.length()-LANG.STATEMENT_TERMINATION.length()))) {
 				return true;
 			}
 		}
@@ -1353,8 +1352,8 @@ public abstract class AbstractCall extends LeafExpression {
 
 	public Replacement makeReplacementForAssignedArgument(String statement) {
 		int index = argumentIsAssigned(statement);
-		if(index >= 0 && (arguments().size() == 1 || (statement.contains(JAVA.TERNARY_CONDITION) && statement.contains(JAVA.TERNARY_ELSE)))) {
-			return new Replacement(statement.substring(statement.indexOf(JAVA.ASSIGNMENT)+1, statement.length()-JAVA.STATEMENT_TERMINATION.length()),
+		if(index >= 0 && (arguments().size() == 1 || (statement.contains(LANG.TERNARY_CONDITION) && statement.contains(LANG.TERNARY_ELSE)))) {
+			return new Replacement(statement.substring(statement.indexOf(LANG.ASSIGNMENT)+1, statement.length()-LANG.STATEMENT_TERMINATION.length()),
 					arguments().get(index), ReplacementType.ARGUMENT_REPLACED_WITH_RIGHT_HAND_SIDE_OF_ASSIGNMENT_EXPRESSION);
 		}
 		return null;
@@ -1362,13 +1361,13 @@ public abstract class AbstractCall extends LeafExpression {
 
 	public Replacement makeReplacementForAssignedExpression(String statement) {
 		if(expressionIsAssigned(statement)) {
-			return new Replacement(statement.substring(statement.indexOf(JAVA.ASSIGNMENT)+1, statement.length()-JAVA.STATEMENT_TERMINATION.length()),
+			return new Replacement(statement.substring(statement.indexOf(LANG.ASSIGNMENT)+1, statement.length()-LANG.STATEMENT_TERMINATION.length()),
 					expression, ReplacementType.EXPRESSION_REPLACED_WITH_RIGHT_HAND_SIDE_OF_ASSIGNMENT_EXPRESSION);
 		}
 		return null;
 	}
 
-	private static boolean equalsIgnoringExtraParenthesis(String s1, String s2) {
+	private boolean equalsIgnoringExtraParenthesis(String s1, String s2) {
 		if(s1.equals(s2))
 			return true;
 		String parenthesizedS1 = "("+s1+")";
@@ -1387,25 +1386,25 @@ public abstract class AbstractCall extends LeafExpression {
 			if(s2WithoutGenerics.equals(s1))
 				return true;
 		}
-		if(s1.contains(JAVA.METHOD_REFERENCE) && !s2.contains(JAVA.METHOD_REFERENCE)) {
-			String methodReferenceName = s1.substring(s1.indexOf(JAVA.METHOD_REFERENCE) + 2, s1.length());
+		if(s1.contains(LANG.METHOD_REFERENCE) && !s2.contains(LANG.METHOD_REFERENCE)) {
+			String methodReferenceName = s1.substring(s1.indexOf(LANG.METHOD_REFERENCE) + 2, s1.length());
 			if(s2.endsWith(methodReferenceName + "()")) {
 				return true;
 			}
 			if(methodReferenceName.equals("new")) {
-				String type = s1.substring(0, s1.indexOf(JAVA.METHOD_REFERENCE));
+				String type = s1.substring(0, s1.indexOf(LANG.METHOD_REFERENCE));
 				if(s2.startsWith("new " + type)) {
 					return true;
 				}
 			}
 		}
-		if(s2.contains(JAVA.METHOD_REFERENCE) && !s1.contains(JAVA.METHOD_REFERENCE)) {
-			String methodReferenceName = s2.substring(s2.indexOf(JAVA.METHOD_REFERENCE) + 2, s2.length());
+		if(s2.contains(LANG.METHOD_REFERENCE) && !s1.contains(LANG.METHOD_REFERENCE)) {
+			String methodReferenceName = s2.substring(s2.indexOf(LANG.METHOD_REFERENCE) + 2, s2.length());
 			if(s1.endsWith(methodReferenceName + "()")) {
 				return true;
 			}
 			if(methodReferenceName.equals("new")) {
-				String type = s2.substring(0, s2.indexOf(JAVA.METHOD_REFERENCE));
+				String type = s2.substring(0, s2.indexOf(LANG.METHOD_REFERENCE));
 				if(s1.startsWith("new " + type)) {
 					return true;
 				}
