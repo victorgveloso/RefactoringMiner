@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.UnionType;
 import org.eclipse.jdt.core.dom.WildcardType;
+import org.refactoringminer.util.PathFileUtils;
 
 import gr.uom.java.xmi.ListCompositeType.Kind;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
@@ -59,20 +60,23 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 	}
 
 	public String typeArgumentsToString() {
+		boolean isPython = locationInfo != null && PathFileUtils.isPythonFile(locationInfo.getFilePath());
+		String openingTag = isPython ? "[" : "<";
+		String closingTag = isPython ? "]" : ">";
 		StringBuilder sb = new StringBuilder();
 		if(typeArguments.isEmpty()) {
 			if(parameterized) {
-				sb.append("<>");
+				sb.append(openingTag + closingTag);
 			}
 		}
 		else {
-			sb.append("<");
+			sb.append(openingTag);
 			for(int i = 0; i < typeArguments.size(); i++) {
 				sb.append(typeArguments.get(i).toQualifiedString());
 				if(i < typeArguments.size() - 1)
 					sb.append(",");
 			}
-			sb.append(">");
+			sb.append(closingTag);
 		}
 		return sb.toString();
 	}
@@ -199,10 +203,10 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 	public static LeafType extractTypeObject(String qualifiedName) {
 		String openingTag = "<";
 		String closingTag = ">";
-		return extractTypeObject(qualifiedName, openingTag, closingTag);
+		return extractTypeObject(qualifiedName, openingTag, closingTag, null);
 	}
 
-	public static LeafType extractTypeObject(String qualifiedName, String openingTag, String closingTag) {
+	public static LeafType extractTypeObject(String qualifiedName, String openingTag, String closingTag, LocationInfo location) {
 		int arrayDimension = 0;
 		boolean parameterized = false;
 		List<UMLType> typeArgumentDecomposition = new ArrayList<UMLType>();
@@ -224,7 +228,7 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 				}
 				else {
 					if(sb.length() > 0 && equalOpeningClosingTags(sb.toString(), openingTag, closingTag)) {
-						typeArgumentDecomposition.add(extractTypeObject(sb.toString(), openingTag, closingTag));
+						typeArgumentDecomposition.add(extractTypeObject(sb.toString(), openingTag, closingTag, location));
 						sb = new StringBuilder();
 					}
 					else {
@@ -233,7 +237,7 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 				}
 			}
 			if(sb.length() > 0) {
-				typeArgumentDecomposition.add(extractTypeObject(sb.toString(), openingTag, closingTag));
+				typeArgumentDecomposition.add(extractTypeObject(sb.toString(), openingTag, closingTag, location));
 			}
 			qualifiedName = qualifiedName.substring(0, qualifiedName.indexOf(openingTag));
 		}
@@ -241,6 +245,7 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 		typeObject.arrayDimension = arrayDimension;
 		typeObject.typeArguments = typeArgumentDecomposition;
 		typeObject.parameterized = parameterized;
+		typeObject.locationInfo = location;
 		return (LeafType)typeObject;
 	}
 
@@ -406,9 +411,5 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 			}
 		}
 		return false;
-	}
-
-	public void setLocationInfo(LocationInfo locationInfo) {
-		this.locationInfo = locationInfo;
 	}
 }

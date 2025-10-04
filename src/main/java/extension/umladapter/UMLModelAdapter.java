@@ -246,18 +246,17 @@ public class UMLModelAdapter {
         for (int i = paramOffset; i < params.size(); i++) {
             LangSingleVariableDeclaration param = params.get(i);
             UMLType typeObject = UMLType.extractTypeObject("Object");
-            if (LangSupportedEnum.PYTHON.name().equals(language)) {
+            LocationInfo paramLocationInfo = new LocationInfo(sourceFolder, filePath, param, LocationInfo.CodeElementType.TYPE);
+			if (LangSupportedEnum.PYTHON.name().equals(language)) {
                 if (param.getTypeAnnotation() != null) {
-                    typeObject = UMLType.extractTypeObject(param.getTypeAnnotation().getName(), "[", "]");
+                    typeObject = UMLType.extractTypeObject(param.getTypeAnnotation().getName(), "[", "]", paramLocationInfo);
                 }
-                typeObject.setLocationInfo(new LocationInfo(sourceFolder, filePath, param, LocationInfo.CodeElementType.TYPE));
             } else {
                 if (param.getTypeAnnotation() != null) {
                     String typeName = param.getTypeAnnotation().getName();
                     if (typeName != null && !typeName.isEmpty()) {
-                        typeObject = UMLType.extractTypeObject(typeName);
+                        typeObject = UMLType.extractTypeObject(typeName, "[", "]", paramLocationInfo);
                     }
-                    typeObject.setLocationInfo(new LocationInfo(sourceFolder, filePath, param, LocationInfo.CodeElementType.TYPE));
                 }
             }
 
@@ -279,16 +278,15 @@ public class UMLModelAdapter {
         processComments(methodDecl, sourceFolder, filePath, umlOperation);
 
         UMLType returnType;
-        if (LangSupportedEnum.PYTHON.name().equals(language)){
-            returnType = UMLType.extractTypeObject(methodDecl.getReturnTypeAnnotation(), "[", "]");
-            returnType.setLocationInfo(new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.TYPE));
+        LocationInfo returnTypeLocationInfo = new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.TYPE);
+		if (LangSupportedEnum.PYTHON.name().equals(language)){
+            returnType = UMLType.extractTypeObject(methodDecl.getReturnTypeAnnotation(), "[", "]", returnTypeLocationInfo);
         } else {
             String resolvedReturnType = methodDecl.getReturnTypeAnnotation();
             if (resolvedReturnType == null || resolvedReturnType.isEmpty()) {
                 resolvedReturnType = TypeObjectEnum.VOID.name();
             }
-            returnType = UMLType.extractTypeObject(resolvedReturnType);
-            returnType.setLocationInfo(new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.TYPE));
+            returnType = UMLType.extractTypeObject(resolvedReturnType, "[", "]", returnTypeLocationInfo);
             if (methodDecl.getReturnTypeAnnotation() == null) {
                 methodDecl.setReturnTypeAnnotation(resolvedReturnType);
             }
@@ -372,16 +370,17 @@ public class UMLModelAdapter {
 
 
                     // Create UMLAttribute
-                    UMLAttribute attribute = new UMLAttribute(
+                    LocationInfo attributeLocationInfo = new LocationInfo(
+					        assignment.getRootCompilationUnit(),
+					        sourceFolder,
+					        filePath,
+					        langFieldAccess,
+					        LocationInfo.CodeElementType.FIELD_DECLARATION
+					);
+					UMLAttribute attribute = new UMLAttribute(
                             attributeName,
                             UMLType.extractTypeObject("Object"),
-                            new LocationInfo(
-                                    assignment.getRootCompilationUnit(),
-                                    sourceFolder,
-                                    filePath,
-                                    langFieldAccess,
-                                    LocationInfo.CodeElementType.FIELD_DECLARATION
-                            )
+                            attributeLocationInfo
                     );
 
                     // Set the variable declaration on the attribute
@@ -428,16 +427,17 @@ public class UMLModelAdapter {
 
 
                     // Create UMLAttribute
-                    UMLAttribute attribute = new UMLAttribute(
+                    LocationInfo attributeLocationInfo = new LocationInfo(
+					        assignment.getRootCompilationUnit(),
+					        sourceFolder,
+					        filePath,
+					        langFieldAccess,
+					        LocationInfo.CodeElementType.FIELD_DECLARATION
+					);
+					UMLAttribute attribute = new UMLAttribute(
                             attributeName,
                             UMLType.extractTypeObject("Object"),
-                            new LocationInfo(
-                                    assignment.getRootCompilationUnit(),
-                                    sourceFolder,
-                                    filePath,
-                                    langFieldAccess,
-                                    LocationInfo.CodeElementType.FIELD_DECLARATION
-                            )
+                            attributeLocationInfo
                     );
 
                     // Set the variable declaration on the attribute
