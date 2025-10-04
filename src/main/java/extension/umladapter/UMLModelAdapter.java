@@ -28,6 +28,8 @@ import java.io.StringReader;
 import java.util.*;
 import java.util.logging.Logger;
 
+import org.refactoringminer.util.PathFileUtils;
+
 import static extension.umladapter.UMLAdapterUtil.extractUMLImports;
 import static extension.umladapter.processor.UMLAdapterStatementProcessor.processStatement;
 import static extension.umladapter.processor.UMLAdapterVariableProcessor.processVariableDeclarations;
@@ -223,7 +225,7 @@ public class UMLModelAdapter {
 
         LocationInfo locationInfo = new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.METHOD_DECLARATION);
 
-        String operationName = methodDecl.getCleanName();
+        String operationName = PathFileUtils.isPythonFile(filePath) ? methodDecl.getCleanName() : methodDecl.getName();
         UMLOperation umlOperation = new UMLOperation(operationName, locationInfo);
         umlOperation.setClassName(className);
 
