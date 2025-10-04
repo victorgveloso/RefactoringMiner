@@ -98,7 +98,7 @@ public class RenameParameterRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("user.py", afterPythonCode);
 
         assertRenameParameterRefactoringDetected(beforeFiles, afterFiles,
-                "name", "username", "__init__", "User");
+                "name", "username", "init", "User");
     }
 
     @Test

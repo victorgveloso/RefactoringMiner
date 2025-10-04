@@ -223,7 +223,7 @@ public class UMLModelAdapter {
 
         LocationInfo locationInfo = new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.METHOD_DECLARATION);
 
-        String operationName = methodDecl.getName();
+        String operationName = methodDecl.getCleanName();
         UMLOperation umlOperation = new UMLOperation(operationName, locationInfo);
         umlOperation.setClassName(className);
 
