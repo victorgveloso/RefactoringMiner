@@ -190,27 +190,31 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 		return normalized;
 	}
 
+	/**
+	 * This method should be used only to generate fake types that do not correspond to an actual program element in the source code.
+	 * In contrast to {@link #extractTypeObject(CompilationUnit, String, String, Type, int, String)}, this method does not create a LocationInfo.
+	 * @param qualifiedName
+	 * @return
+	 */
 	public static LeafType extractTypeObject(String qualifiedName) {
+		String openingTag = "<";
+		String closingTag = ">";
+		return extractTypeObject(qualifiedName, openingTag, closingTag);
+	}
+
+	public static LeafType extractTypeObject(String qualifiedName, String openingTag, String closingTag) {
 		int arrayDimension = 0;
 		boolean parameterized = false;
 		List<UMLType> typeArgumentDecomposition = new ArrayList<UMLType>();
-		// Null or empty qualified name that can happen for C#
-		if (qualifiedName == null || qualifiedName.isEmpty()) {
-			UMLType typeObject = new LeafType("Object");
-			typeObject.arrayDimension = arrayDimension;
-			typeObject.typeArguments = typeArgumentDecomposition;
-			typeObject.parameterized = parameterized;
-			return (LeafType) typeObject;
-		}
 		if(qualifiedName.endsWith("[]")) {
 			while(qualifiedName.endsWith("[]")) {
 				qualifiedName = qualifiedName.substring(0, qualifiedName.lastIndexOf("[]"));
 				arrayDimension++;
 			}
 		}
-		if(qualifiedName.contains("<") && qualifiedName.contains(">") &&
-				!closingTagBeforeOpeningTag(qualifiedName.substring(qualifiedName.indexOf("<")+1, qualifiedName.lastIndexOf(">")))) {
-			String typeArguments = qualifiedName.substring(qualifiedName.indexOf("<")+1, qualifiedName.lastIndexOf(">"));
+		if(qualifiedName.contains(openingTag) && qualifiedName.contains(closingTag) &&
+				!closingTagBeforeOpeningTag(qualifiedName.substring(qualifiedName.indexOf(openingTag)+1, qualifiedName.lastIndexOf(closingTag)), openingTag, closingTag)) {
+			String typeArguments = qualifiedName.substring(qualifiedName.indexOf(openingTag)+1, qualifiedName.lastIndexOf(closingTag));
 			parameterized = true;
 			StringBuilder sb = new StringBuilder();
 			for(int i=0; i<typeArguments.length(); i++) {
@@ -219,8 +223,8 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 					sb.append(charAt);
 				}
 				else {
-					if(sb.length() > 0 && equalOpeningClosingTags(sb.toString())) {
-						typeArgumentDecomposition.add(extractTypeObject(sb.toString()));
+					if(sb.length() > 0 && equalOpeningClosingTags(sb.toString(), openingTag, closingTag)) {
+						typeArgumentDecomposition.add(extractTypeObject(sb.toString(), openingTag, closingTag));
 						sb = new StringBuilder();
 					}
 					else {
@@ -229,9 +233,9 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 				}
 			}
 			if(sb.length() > 0) {
-				typeArgumentDecomposition.add(extractTypeObject(sb.toString()));
+				typeArgumentDecomposition.add(extractTypeObject(sb.toString(), openingTag, closingTag));
 			}
-			qualifiedName = qualifiedName.substring(0, qualifiedName.indexOf("<"));
+			qualifiedName = qualifiedName.substring(0, qualifiedName.indexOf(openingTag));
 		}
 		UMLType typeObject = new LeafType(qualifiedName);
 		typeObject.arrayDimension = arrayDimension;
@@ -240,100 +244,36 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 		return (LeafType)typeObject;
 	}
 
-	public static LeafType extractPythonTypeObject(String qualifiedName) {
-
-		int arrayDimension = 0;
-		boolean parameterized = false;
-		List<UMLType> typeArgumentDecomposition = new ArrayList<UMLType>();
-
-		// Python does not use [][] for arrays like Java, so skip this part
-
-		// Handle Python generic types with square brackets: List[str], Dict[str, Any]
-		if (qualifiedName.contains("[") && qualifiedName.contains("]") &&
-				!closingBracketBeforeOpeningBracket(qualifiedName.substring(qualifiedName.indexOf("[") + 1, qualifiedName.lastIndexOf("]")))) {
-
-			String typeArguments = qualifiedName.substring(qualifiedName.indexOf("[") + 1, qualifiedName.lastIndexOf("]"));
-			parameterized = true;
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < typeArguments.length(); i++) {
-				char charAt = typeArguments.charAt(i);
-				if (charAt != ',') {
-					sb.append(charAt);
-				} else {
-					if (!sb.isEmpty() && equalOpeningClosingBrackets(sb.toString())) {
-						typeArgumentDecomposition.add(extractPythonTypeObject(sb.toString().trim()));
-						sb = new StringBuilder();
-					} else {
-						sb.append(charAt);
-					}
-				}
-			}
-
-			if (!sb.isEmpty()) {
-				typeArgumentDecomposition.add(extractPythonTypeObject(sb.toString().trim()));
-			}
-
-			qualifiedName = qualifiedName.substring(0, qualifiedName.indexOf("["));
-		}
-
-		UMLType typeObject = new LeafType(qualifiedName);
-		typeObject.arrayDimension = arrayDimension;
-		typeObject.typeArguments = typeArgumentDecomposition;
-		typeObject.parameterized = parameterized;
-		//typeObject.setPythonType(true);
-
-		return (LeafType) typeObject;
-	}
-
-	// Helper methods for Python brackets
-	private static boolean closingBracketBeforeOpeningBracket(String typeArguments) {
-		int openingBrackets = 0;
-		for (char c : typeArguments.toCharArray()) {
-			if (c == '[') {
-				openingBrackets++;
-			} else if (c == ']') {
-				openingBrackets--;
-				if (openingBrackets < 0) {
-					return true; // Closing bracket before opening
-				}
-			}
-		}
-		return false;
-	}
-
-	private static boolean equalOpeningClosingBrackets(String typeArguments) {
-		int openingBrackets = 0;
-		for (char c : typeArguments.toCharArray()) {
-			if (c == '[') {
-				openingBrackets++;
-			} else if (c == ']') {
-				openingBrackets--;
-			}
-		}
-		return openingBrackets == 0;
-	}
-
-	private static boolean closingTagBeforeOpeningTag(String typeArguments) {
-		int indexOfOpeningTag = typeArguments.indexOf("<");
-		int indexOfClosingTag = typeArguments.lastIndexOf(">");
+	private static boolean closingTagBeforeOpeningTag(String typeArguments, String openingTag, String closingTag) {
+		int indexOfOpeningTag = typeArguments.indexOf(openingTag);
+		int indexOfClosingTag = typeArguments.lastIndexOf(closingTag);
 		return indexOfClosingTag < indexOfOpeningTag;
 	}
 
-	private static boolean equalOpeningClosingTags(String typeArguments) {
+	private static boolean equalOpeningClosingTags(String typeArguments, String openingTag, String closingTag) {
 		int openingTags = 0;
 		int closingTags = 0;
 		for(int i=0; i<typeArguments.length(); i++) {
-			if(typeArguments.charAt(i) == '>') {
+			if(String.valueOf(typeArguments.charAt(i)).equals(openingTag)) {
 				openingTags++;
 			}
-			else if(typeArguments.charAt(i) == '<') {
+			else if(String.valueOf(typeArguments.charAt(i)).equals(closingTag)) {
 				closingTags++;
 			}
 		}
 		return openingTags == closingTags;
 	}
 
+	/**
+	 * Use this method to generate a type for a Java program element present in the source code.
+	 * @param cu
+	 * @param sourceFolder
+	 * @param filePath
+	 * @param type
+	 * @param extraDimensions
+	 * @param javaFileContent
+	 * @return
+	 */
 	public static UMLType extractTypeObject(CompilationUnit cu, String sourceFolder, String filePath, Type type, int extraDimensions, String javaFileContent) {
 		UMLType umlType = extractTypeObject(cu, sourceFolder, filePath, type, javaFileContent);
 		umlType.locationInfo = new LocationInfo(cu, sourceFolder, filePath, type, CodeElementType.TYPE);

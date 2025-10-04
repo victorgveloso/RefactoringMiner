@@ -248,7 +248,7 @@ public class UMLModelAdapter {
             UMLType typeObject = UMLType.extractTypeObject("Object");
             if (LangSupportedEnum.PYTHON.name().equals(language)) {
                 if (param.getTypeAnnotation() != null) {
-                    typeObject = UMLType.extractPythonTypeObject(param.getTypeAnnotation().getName());
+                    typeObject = UMLType.extractTypeObject(param.getTypeAnnotation().getName(), "[", "]");
                 }
                 typeObject.setLocationInfo(new LocationInfo(sourceFolder, filePath, param, LocationInfo.CodeElementType.TYPE));
             } else {
@@ -280,7 +280,7 @@ public class UMLModelAdapter {
 
         UMLType returnType;
         if (LangSupportedEnum.PYTHON.name().equals(language)){
-            returnType = UMLType.extractPythonTypeObject(methodDecl.getReturnTypeAnnotation());
+            returnType = UMLType.extractTypeObject(methodDecl.getReturnTypeAnnotation(), "[", "]");
             returnType.setLocationInfo(new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.TYPE));
         } else {
             String resolvedReturnType = methodDecl.getReturnTypeAnnotation();
