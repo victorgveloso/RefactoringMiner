@@ -59,9 +59,9 @@ public class StatementObject extends AbstractStatement {
 
 	public StatementObject(LangCompilationUnit cu, String sourceFolder, String filePath,
 			LangASTNode statement, int depth, CodeElementType codeElementType,
-			VariableDeclarationContainer container) {
+			VariableDeclarationContainer container, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String fileContent) {
 		super();
-		LangVisitor visitor = new LangVisitor(cu, sourceFolder, filePath, container);
+		LangVisitor visitor = new LangVisitor(cu, sourceFolder, filePath, container, activeVariableDeclarations, fileContent);
 		statement.accept(visitor);
 
 		// Set location info

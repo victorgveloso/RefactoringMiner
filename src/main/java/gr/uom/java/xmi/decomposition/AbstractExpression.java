@@ -53,9 +53,9 @@ public class AbstractExpression extends AbstractCodeFragment {
 	private List<TernaryOperatorExpression> ternaryOperatorExpressions;
 	private List<LambdaExpressionObject> lambdas;
 
-	public AbstractExpression(LangCompilationUnit cu, String sourceFolder, String filePath, LangASTNode langASTNode, CodeElementType codeElementType, VariableDeclarationContainer container) {
+	public AbstractExpression(LangCompilationUnit cu, String sourceFolder, String filePath, LangASTNode langASTNode, CodeElementType codeElementType, VariableDeclarationContainer container, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String fileContent) {
 		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, langASTNode, codeElementType);
-		LangVisitor visitor = new LangVisitor(cu, sourceFolder, filePath, container);
+		LangVisitor visitor = new LangVisitor(cu, sourceFolder, filePath, container, activeVariableDeclarations, fileContent);
 		langASTNode.accept(visitor);
 		this.variables = visitor.getVariables();
 		this.types = visitor.getTypes();

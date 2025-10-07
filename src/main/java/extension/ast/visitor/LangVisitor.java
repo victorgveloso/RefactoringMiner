@@ -23,6 +23,8 @@ import gr.uom.java.xmi.decomposition.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class LangVisitor implements LangASTVisitor {
 
@@ -59,12 +61,17 @@ public class LangVisitor implements LangASTVisitor {
     private List<LambdaExpressionObject> lambdas = new ArrayList<LambdaExpressionObject>();
     private DefaultMutableTreeNode root = new DefaultMutableTreeNode();
     private DefaultMutableTreeNode current = root;
+    private Map<String, Set<VariableDeclaration>> activeVariableDeclarations; 
+	private final String fileContent;
 
-    public LangVisitor(LangCompilationUnit cu, String sourceFolder, String filePath, VariableDeclarationContainer container) {
+    public LangVisitor(LangCompilationUnit cu, String sourceFolder, String filePath, VariableDeclarationContainer container,
+    		Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String fileContent) {
         this.cu = cu;
         this.sourceFolder = sourceFolder;
         this.filePath = filePath;
         this.container = container;
+        this.activeVariableDeclarations = activeVariableDeclarations;
+		this.fileContent = fileContent;
     }
 
     @Override
@@ -109,7 +116,7 @@ public class LangVisitor implements LangASTVisitor {
     public void visit(LangSingleVariableDeclaration langSingleVariableDeclaration) {
         // Create variable declaration for parameters
         VariableDeclaration varDecl = new VariableDeclaration(
-                cu, sourceFolder, filePath, langSingleVariableDeclaration);
+                cu, sourceFolder, filePath, langSingleVariableDeclaration, fileContent);
 
         variableDeclarations.add(varDecl);
 
@@ -309,7 +316,7 @@ public class LangVisitor implements LangASTVisitor {
         if (langAssignment.getLeftSide() instanceof LangSimpleName) {
             String varName = ((LangSimpleName) langAssignment.getLeftSide()).getIdentifier();
             VariableDeclaration varDecl = new VariableDeclaration(cu, sourceFolder, filePath,
-                    langAssignment, container, varName);
+                    langAssignment, container, varName, activeVariableDeclarations, fileContent);
 
             //System.out.println("Added local variable declaration: " + varDecl);
             variableDeclarations.add(varDecl);

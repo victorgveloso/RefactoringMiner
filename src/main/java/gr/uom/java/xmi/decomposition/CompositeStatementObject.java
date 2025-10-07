@@ -33,7 +33,7 @@ public class CompositeStatementObject extends AbstractStatement {
 	private Optional<VariableDeclarationContainer> owner = Optional.empty();
 
 	public CompositeStatementObject(LangCompilationUnit cu, String sourceFolder, String filePath,
-			LangASTNode statement, int depth, CodeElementType codeElementType) {
+			LangASTNode statement, int depth, CodeElementType codeElementType, String fileContent) {
 		super();
 		this.setDepth(depth);
 		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType);

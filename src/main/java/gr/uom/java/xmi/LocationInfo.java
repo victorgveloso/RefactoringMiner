@@ -300,6 +300,7 @@ public class LocationInfo {
 		EMPTY_STATEMENT,
 		BLOCK("{"),
 		FINALLY_BLOCK("finally"),
+		WITH_STATEMENT("with"),
 		TYPE,
 		LIST_OF_STATEMENTS,
 		ANNOTATION,

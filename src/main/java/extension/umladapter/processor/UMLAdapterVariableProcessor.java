@@ -1,5 +1,7 @@
 package extension.umladapter.processor;
 
+import java.util.Collections;
+
 import extension.ast.node.declaration.LangMethodDeclaration;
 import extension.ast.node.declaration.LangSingleVariableDeclaration;
 import extension.ast.node.expression.LangAssignment;
@@ -11,7 +13,7 @@ import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
 public class UMLAdapterVariableProcessor {
 
-    public static void processVariableDeclarations(LangSingleVariableDeclaration param, UMLParameter umlParam, UMLType typeObject, String sourceFolder, String filePath, LangMethodDeclaration methodDecl){
+    public static void processVariableDeclarations(LangSingleVariableDeclaration param, UMLParameter umlParam, UMLType typeObject, String sourceFolder, String filePath, LangMethodDeclaration methodDecl, String fileContent){
 
         String name = param.getLangSimpleName().getIdentifier();
         LocationInfo location = new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.SINGLE_VARIABLE_DECLARATION);
@@ -20,7 +22,8 @@ public class UMLAdapterVariableProcessor {
                 param.getRootCompilationUnit(),
                 sourceFolder,
                 filePath,
-                param
+                param,
+                fileContent
         );
 
         vd.setAttribute(param.isAttribute());
@@ -34,7 +37,7 @@ public class UMLAdapterVariableProcessor {
      */
     public static VariableDeclaration processAttributeAssignment(LangAssignment assignment, String sourceFolder,
                                                                  String filePath, String attributeName,
-                                                                 VariableDeclarationContainer container) {
+                                                                 VariableDeclarationContainer container, String fileContent) {
 
         VariableDeclaration variableDeclaration = new VariableDeclaration(
                 assignment.getRootCompilationUnit(),
@@ -42,7 +45,9 @@ public class UMLAdapterVariableProcessor {
                 filePath,
                 assignment,
                 container,
-                attributeName
+                attributeName,
+                Collections.emptyMap(),
+                fileContent
         );
 
         // Mark as attribute (this should already be set by the constructor)

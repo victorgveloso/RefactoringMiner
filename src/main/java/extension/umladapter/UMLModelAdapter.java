@@ -31,7 +31,6 @@ import java.util.logging.Logger;
 import org.refactoringminer.util.PathFileUtils;
 
 import static extension.umladapter.UMLAdapterUtil.extractUMLImports;
-import static extension.umladapter.processor.UMLAdapterStatementProcessor.processStatement;
 import static extension.umladapter.processor.UMLAdapterVariableProcessor.processVariableDeclarations;
 
 public class UMLModelAdapter {
@@ -47,7 +46,7 @@ public class UMLModelAdapter {
         Map<String, LangASTNode> langASTMap = parseLangSupportedFiles(langSupportedFiles);
 
         // Create UML model directly from custom AST
-        umlModel = createUMLModel(langASTMap);
+        umlModel = createUMLModel(langASTMap, langSupportedFiles);
     }
 
     private Map<String, LangASTNode> parseLangSupportedFiles(Map<String, String> langSupportedFiles) throws IOException {
@@ -66,7 +65,7 @@ public class UMLModelAdapter {
     }
 
 
-    private UMLModel createUMLModel(Map<String, LangASTNode> astMap) {
+    private UMLModel createUMLModel(Map<String, LangASTNode> astMap, Map<String, String> langSupportedFiles) {
         UMLModel model = new UMLModel(Collections.emptySet());
 
         // Process each AST and populate the UML model
@@ -75,30 +74,30 @@ public class UMLModelAdapter {
             LangASTNode ast = entry.getValue();
 
             // Extract UML entities from AST
-            extractUMLEntities(ast, model, filename);
+            extractUMLEntities(ast, model, filename, langSupportedFiles.get(filename));
         }
 
         return model;
     }
 
-    private void extractUMLEntities(LangASTNode ast, UMLModel model, String filename) {
+    private void extractUMLEntities(LangASTNode ast, UMLModel model, String filename, String fileContent) {
         if (ast instanceof LangCompilationUnit compilationUnit) {
             // Process imports
             List<UMLImport> imports = extractUMLImports(compilationUnit, filename);
 
             for (LangTypeDeclaration typeDecl : compilationUnit.getTypes()) {
-                UMLClass umlClass = createUMLClass(model, typeDecl, filename, imports);
+                UMLClass umlClass = createUMLClass(model, typeDecl, filename, imports, fileContent);
                 model.addClass(umlClass);
             }
 
             // Handle top level methods
             if (compilationUnit.getMethods() != null && !compilationUnit.getMethods().isEmpty()){
-                handleTopLevelMethods(model, filename, compilationUnit, imports);
+                handleTopLevelMethods(model, filename, compilationUnit, imports, fileContent);
             }
         }
     }
 
-    private void handleTopLevelMethods(UMLModel model, String filename, LangCompilationUnit compilationUnit, List<UMLImport> imports) {
+    private void handleTopLevelMethods(UMLModel model, String filename, LangCompilationUnit compilationUnit, List<UMLImport> imports, String fileContent) {
         List<LangMethodDeclaration> topLevelMethods = compilationUnit.getMethods();
         UMLClass moduleClass = createModuleClass(compilationUnit, filename, imports);
 
@@ -117,13 +116,14 @@ public class UMLModelAdapter {
             String filepath = UMLAdapterUtil.extractFilePath(filename);
             for (LangMethodDeclaration method : topLevelMethods) {
                 UMLOperation operation = createUMLOperation(method, moduleClass.getName(),
-                        sourceFolder, filepath);
+                        sourceFolder, filepath, fileContent);
                 for (LangAnnotation langAnnotation : method.getAnnotations()) {
                     operation.addAnnotation(new UMLAnnotation(
                             method.getRootCompilationUnit(),
                             sourceFolder,
                             filepath,
-                            langAnnotation));
+                            langAnnotation,
+                            fileContent));
                 }
                 moduleClass.addOperation(operation);
             }
@@ -148,7 +148,7 @@ public class UMLModelAdapter {
         return moduleClass;
     }
 
-    private UMLClass createUMLClass(UMLModel model, LangTypeDeclaration typeDecl, String filename, List<UMLImport> imports) {
+    private UMLClass createUMLClass(UMLModel model, LangTypeDeclaration typeDecl, String filename, List<UMLImport> imports, String fileContent) {
 
         String className = typeDecl.getName();
 
@@ -168,7 +168,8 @@ public class UMLModelAdapter {
                     typeDecl.getRootCompilationUnit(),
                     sourceFolder,
                     filepath,
-                    langAnnotation));
+                    langAnnotation,
+                    fileContent));
         }
 
         if (!typeDecl.getSuperClassNames().isEmpty()) {
@@ -193,7 +194,7 @@ public class UMLModelAdapter {
         // Handle class-scope assignments as attributes
         List<UMLAttribute> classLevelAttributes = new ArrayList<>();
         for (LangAssignment classLevelAssignment: typeDecl.getClassLevelAssignments()){
-            processClassLevelAssignmentForAttribute(typeDecl, classLevelAssignment, classLevelAttributes, sourceFolder, filepath, null);
+            processClassLevelAssignmentForAttribute(typeDecl, classLevelAssignment, classLevelAttributes, sourceFolder, filepath, null, fileContent);
         }
 
         // Setters
@@ -208,10 +209,10 @@ public class UMLModelAdapter {
         umlClass.setRecord(typeDecl.isRecord());
 
         for (LangMethodDeclaration methodDecl : typeDecl.getMethods()) {
-            UMLOperation umlOperation = createUMLOperation(methodDecl, className, sourceFolder, filepath);
+            UMLOperation umlOperation = createUMLOperation(methodDecl, className, sourceFolder, filepath, fileContent);
             umlClass.addOperation(umlOperation);
             if ("__init__".equals(methodDecl.getName())) {
-                List<UMLAttribute> attributes = getAttributes(methodDecl, sourceFolder, filepath, umlOperation);
+                List<UMLAttribute> attributes = getAttributes(methodDecl, sourceFolder, filepath, umlOperation, fileContent);
                 for (UMLAttribute attribute : attributes) {
                     attribute.setClassName(className);
                     umlClass.addAttribute(attribute);
@@ -221,7 +222,7 @@ public class UMLModelAdapter {
         return umlClass;
     }
 
-    private UMLOperation createUMLOperation(LangMethodDeclaration methodDecl, String className, String sourceFolder, String filePath) {
+    private UMLOperation createUMLOperation(LangMethodDeclaration methodDecl, String className, String sourceFolder, String filePath, String fileContent) {
 
         LocationInfo locationInfo = new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.METHOD_DECLARATION);
 
@@ -235,7 +236,8 @@ public class UMLModelAdapter {
                     methodDecl.getRootCompilationUnit(),
                     sourceFolder,
                     filePath,
-                    langAnnotation));
+                    langAnnotation,
+                    fileContent));
         }
 
         List<LangSingleVariableDeclaration> params = methodDecl.getParameters();
@@ -261,7 +263,7 @@ public class UMLModelAdapter {
             }
 
             UMLParameter umlParam = new UMLParameter(param.getLangSimpleName().getIdentifier(), typeObject, "parameter", param.isVarArgs());
-            processVariableDeclarations(param, umlParam, typeObject, sourceFolder, filePath, methodDecl);
+            processVariableDeclarations(param, umlParam, typeObject, sourceFolder, filePath, methodDecl, fileContent);
             umlOperation.addParameter(umlParam);
             parameterNames.add(param.getLangSimpleName().getIdentifier());
         }
@@ -304,11 +306,9 @@ public class UMLModelAdapter {
                 filePath,
                 methodDecl.getBody(),
                 umlOperation,
-                getAttributes(methodDecl, sourceFolder, filePath, umlOperation)
+                getAttributes(methodDecl, sourceFolder, filePath, umlOperation, fileContent),
+                fileContent
         );
-
-        // Process the method body statements to populate the CompositeStatementObject
-        processMethodBody(methodDecl.getBody(), opBody.getCompositeStatement(), sourceFolder, filePath, umlOperation);
 
         umlOperation.setBody(opBody);
         //logUMLOperation(umlOperation, methodDecl);
@@ -316,7 +316,7 @@ public class UMLModelAdapter {
         return umlOperation;
     }
 
-    private List<UMLAttribute> getAttributes(LangMethodDeclaration methodDecl, String sourceFolder, String filePath, UMLOperation umlOperation) {
+    private List<UMLAttribute> getAttributes(LangMethodDeclaration methodDecl, String sourceFolder, String filePath, UMLOperation umlOperation, String fileContent) {
         List<UMLAttribute> attributes = new ArrayList<>();
 
         // Only process __init__ method for attribute extraction
@@ -333,12 +333,12 @@ public class UMLModelAdapter {
             for (LangASTNode statement : methodBody.getStatements()) {
                 // Handle direct assignments
                 if (statement instanceof LangAssignment assignment) {
-                    processAssignmentForAttribute(methodDecl, assignment, attributes, sourceFolder, filePath, umlOperation);
+                    processAssignmentForAttribute(methodDecl, assignment, attributes, sourceFolder, filePath, umlOperation, fileContent);
                 }
                 // Handle expression statements that contain assignments
                 else if (statement instanceof LangExpressionStatement exprStmt) {
                     if (exprStmt.getExpression() instanceof LangAssignment assignment) {
-                        processAssignmentForAttribute(methodDecl, assignment, attributes, sourceFolder, filePath, umlOperation);
+                        processAssignmentForAttribute(methodDecl, assignment, attributes, sourceFolder, filePath, umlOperation, fileContent);
                     }
                 }
             }
@@ -348,7 +348,7 @@ public class UMLModelAdapter {
     }
 
     private void processAssignmentForAttribute(LangMethodDeclaration methodDeclaration, LangAssignment assignment, List<UMLAttribute> attributes,
-                                               String sourceFolder, String filePath, UMLOperation umlOperation) {
+                                               String sourceFolder, String filePath, UMLOperation umlOperation, String fileContent) {
         LangASTNode leftSide = assignment.getLeftSide();
 
         if (leftSide instanceof LangFieldAccess langFieldAccess) {
@@ -365,7 +365,8 @@ public class UMLModelAdapter {
                             sourceFolder,
                             filePath,
                             attributeName,
-                            umlOperation
+                            umlOperation,
+                            fileContent
                     );
 
 
@@ -405,7 +406,7 @@ public class UMLModelAdapter {
     }
 
     private void processClassLevelAssignmentForAttribute(LangTypeDeclaration typeDeclaration, LangAssignment assignment, List<UMLAttribute> attributes,
-                                               String sourceFolder, String filePath, UMLOperation umlOperation) {
+                                               String sourceFolder, String filePath, UMLOperation umlOperation, String fileContent) {
         LangASTNode leftSide = assignment.getLeftSide();
 
         if (leftSide instanceof LangFieldAccess langFieldAccess) {
@@ -422,7 +423,8 @@ public class UMLModelAdapter {
                             sourceFolder,
                             filePath,
                             attributeName,
-                            umlOperation
+                            umlOperation,
+                            fileContent
                     );
 
 
@@ -455,30 +457,6 @@ public class UMLModelAdapter {
             }
         }
     }
-
-
-    private void processMethodBody(LangBlock methodBody, CompositeStatementObject composite,
-                                   String sourceFolder, String filePath, UMLOperation container) {
-        if (methodBody == null || methodBody.getStatements() == null) {
-            System.out.println("WARNING: Method body is null or empty");
-            return;
-        }
-
-        for (LangASTNode statement : methodBody.getStatements()) {
-            processStatement(statement, composite, sourceFolder, filePath, container);
-        }
-
-        List<VariableDeclaration> allMethodVarDecls = new ArrayList<>();
-        for (AbstractStatement stmt : composite.getStatements()) {
-            allMethodVarDecls.addAll(stmt.getVariableDeclarations());
-        }
-
-        composite.getVariableDeclarations().addAll(allMethodVarDecls);
-      //  logMethodDetails(composite, container, allMethodVarDecls);
-
-    }
-
-
 
     private void processComments(LangMethodDeclaration methodDecl, String sourceFolder, String filePath, UMLOperation umlOperation){
         List<UMLComment> comments = new ArrayList<>();

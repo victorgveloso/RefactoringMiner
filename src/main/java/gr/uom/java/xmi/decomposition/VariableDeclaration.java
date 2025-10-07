@@ -64,7 +64,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 	private String actualSignature;
 
 	public VariableDeclaration(LangCompilationUnit cu, String sourceFolder, String filePath,
-							   LangSingleVariableDeclaration param) {
+							   LangSingleVariableDeclaration param, String fileContent) {
 		this.variableName = param.getLangSimpleName().getIdentifier();
 
 		// Extract type from parameter
@@ -87,7 +87,8 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 					langAnnotation.getRootCompilationUnit(),
 					sourceFolder,
 					filePath,
-					langAnnotation);
+					langAnnotation,
+					fileContent);
 			annotations.add(umlAnnotation);
 		}
 
@@ -146,7 +147,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 
 	public VariableDeclaration(LangCompilationUnit cu, String sourceFolder, String filePath,
 							   LangAssignment assignment, VariableDeclarationContainer container,
-							   String variableName) {
+							   String variableName, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String fileContent) {
 		this.variableName = variableName;
 		this.type = UMLType.extractTypeObject("Object"); // Default type for Python attributes
 		this.varargsParameter = false;
@@ -172,7 +173,9 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 				filePath,
 				assignment.getRightSide(),
 				LocationInfo.CodeElementType.EXPRESSION,
-				container
+				container,
+				activeVariableDeclarations,
+				fileContent
 		);
 
 		this.isAttribute = false;
