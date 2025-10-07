@@ -96,7 +96,12 @@ public class StatementObject extends AbstractStatement {
 		this.ternaryOperatorExpressions = visitor.getTernaryOperatorExpressions();
 		this.lambdas = visitor.getLambdas();
 		this.statement = LangVisitor.stringify(statement);
-		this.actualSignature = LangVisitor.stringify(statement);
+		int start = statement.getStartChar();
+		int end = start + statement.getLength();
+		if(end > fileContent.length()) {
+			end = fileContent.length();
+		}
+		this.actualSignature = fileContent.substring(start, end);
 		setDepth(depth);
 	}
 

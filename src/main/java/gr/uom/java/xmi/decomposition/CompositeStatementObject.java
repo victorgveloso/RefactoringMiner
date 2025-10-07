@@ -42,7 +42,12 @@ public class CompositeStatementObject extends AbstractStatement {
 		this.variableDeclarations = new ArrayList<VariableDeclaration>();
 		this.tryContainer = Optional.empty();
 
-		String whole = LangVisitor.stringify(statement);
+		int start = statement.getStartChar();
+		int end = start + statement.getLength();
+		if(end > fileContent.length()) {
+			end = fileContent.length();
+		}
+		String whole = fileContent.substring(start, end);
 		if (whole.contains(":")) {
 			// For Python statements like "if condition:", "for item in list:", etc.
 			this.actualSignature = whole.substring(0, whole.indexOf(":") + 1);
