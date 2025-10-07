@@ -223,7 +223,7 @@ public class UMLModelAdapter {
     }
 
     private UMLOperation createUMLOperation(LangMethodDeclaration methodDecl, String className, String sourceFolder, String filePath, String fileContent) {
-    	int startSignatureOffset = methodDecl.getStartChar();
+        int startSignatureOffset = methodDecl.getStartChar();
         LocationInfo locationInfo = new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.METHOD_DECLARATION);
 
         String operationName = PathFileUtils.isPythonFile(filePath) ? methodDecl.getCleanName() : methodDecl.getName();
@@ -249,7 +249,7 @@ public class UMLModelAdapter {
             LangSingleVariableDeclaration param = params.get(i);
             UMLType typeObject = UMLType.extractTypeObject("Object");
             LocationInfo paramLocationInfo = new LocationInfo(sourceFolder, filePath, param, LocationInfo.CodeElementType.TYPE);
-			if (LangSupportedEnum.PYTHON.name().equals(language)) {
+            if (LangSupportedEnum.PYTHON.name().equals(language)) {
                 if (param.getTypeAnnotation() != null) {
                     typeObject = UMLType.extractTypeObject(param.getTypeAnnotation().getName(), "[", "]", paramLocationInfo);
                 }
@@ -280,7 +280,7 @@ public class UMLModelAdapter {
 
         UMLType returnType;
         LocationInfo returnTypeLocationInfo = new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.TYPE);
-		if (LangSupportedEnum.PYTHON.name().equals(language)){
+        if (LangSupportedEnum.PYTHON.name().equals(language)){
             returnType = UMLType.extractTypeObject(methodDecl.getReturnTypeAnnotation(), "[", "]", returnTypeLocationInfo);
         } else {
             String resolvedReturnType = methodDecl.getReturnTypeAnnotation();
@@ -312,10 +312,10 @@ public class UMLModelAdapter {
         umlOperation.setBody(opBody);
         //logUMLOperation(umlOperation, methodDecl);
         int endSignatureOffset = methodDecl.getBody() != null ?
-				methodDecl.getBody().getStartChar() + 1 :
-				methodDecl.getStartChar() + methodDecl.getLength();
-		String text = fileContent.substring(startSignatureOffset, endSignatureOffset);
-		umlOperation.setActualSignature(text);
+                methodDecl.getBody().getStartChar() + 1 :
+                methodDecl.getStartChar() + methodDecl.getLength();
+        String text = fileContent.substring(startSignatureOffset, endSignatureOffset);
+        umlOperation.setActualSignature(text);
         return umlOperation;
     }
 
@@ -375,13 +375,13 @@ public class UMLModelAdapter {
 
                     // Create UMLAttribute
                     LocationInfo attributeLocationInfo = new LocationInfo(
-					        assignment.getRootCompilationUnit(),
-					        sourceFolder,
-					        filePath,
-					        langFieldAccess,
-					        LocationInfo.CodeElementType.FIELD_DECLARATION
-					);
-					UMLAttribute attribute = new UMLAttribute(
+                            assignment.getRootCompilationUnit(),
+                            sourceFolder,
+                            filePath,
+                            langFieldAccess,
+                            LocationInfo.CodeElementType.FIELD_DECLARATION
+                    );
+                    UMLAttribute attribute = new UMLAttribute(
                             attributeName,
                             UMLType.extractTypeObject("Object"),
                             attributeLocationInfo
@@ -433,13 +433,13 @@ public class UMLModelAdapter {
 
                     // Create UMLAttribute
                     LocationInfo attributeLocationInfo = new LocationInfo(
-					        assignment.getRootCompilationUnit(),
-					        sourceFolder,
-					        filePath,
-					        langFieldAccess,
-					        LocationInfo.CodeElementType.FIELD_DECLARATION
-					);
-					UMLAttribute attribute = new UMLAttribute(
+                            assignment.getRootCompilationUnit(),
+                            sourceFolder,
+                            filePath,
+                            langFieldAccess,
+                            LocationInfo.CodeElementType.FIELD_DECLARATION
+                    );
+                    UMLAttribute attribute = new UMLAttribute(
                             attributeName,
                             UMLType.extractTypeObject("Object"),
                             attributeLocationInfo

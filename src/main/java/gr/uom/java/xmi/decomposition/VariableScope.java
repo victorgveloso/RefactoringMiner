@@ -21,11 +21,12 @@ public class VariableScope {
 
 	public VariableScope(
 			LangCompilationUnit cu,
-			String filePath
+			String filePath, int startOffset, int endOffset
 	) {
 		this.filePath = filePath;
-		this.startOffset = cu.getStartChar();
-		this.endOffset = cu.getEndChar();
+		this.startOffset = startOffset;
+		this.endOffset = endOffset;
+		/*
 		this.startLine = cu.getStartLine();
 		this.endLine = cu.getEndLine();
 		this.startColumn = cu.getStartColumn();
@@ -38,6 +39,7 @@ public class VariableScope {
 		if(this.endColumn > 0) {
 			this.endColumn += 1;
 		}
+		*/
 	}
 
 	public VariableScope(CompilationUnit cu, String filePath, int startOffset, int endOffset) {

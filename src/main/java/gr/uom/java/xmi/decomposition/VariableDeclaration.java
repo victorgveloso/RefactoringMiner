@@ -33,10 +33,12 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 
 import extension.ast.node.LangASTNode;
 import extension.ast.node.declaration.LangSingleVariableDeclaration;
+import extension.ast.node.declaration.LangTypeDeclaration;
 import extension.ast.node.expression.LangAssignment;
 import extension.ast.node.expression.LangFieldAccess;
 import extension.ast.node.expression.LangSimpleName;
 import extension.ast.node.metadata.LangAnnotation;
+import extension.ast.node.statement.LangBlock;
 import extension.ast.node.unit.LangCompilationUnit;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
@@ -126,7 +128,13 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 		this.isEnumConstant = param.isEnumConstant();
 		this.isFinal = param.isFinal();
 
-		this.scope = new VariableScope(cu, filePath);
+		int startOffset = param.getStartChar();
+		LangASTNode scopeNode = param.getParent();
+		int endOffset = scopeNode.getStartChar() + scopeNode.getLength();
+		if(endOffset > fileContent.length()) {
+			endOffset = fileContent.length();
+		}
+		this.scope = new VariableScope(cu, filePath, startOffset, endOffset);
 		StringBuilder signature = new StringBuilder();
 		if (varargsParameter) {
 			if (variableName.startsWith("**")) {
@@ -157,8 +165,36 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 		LangASTNode leftSide = assignment.getLeftSide();
 		if (leftSide instanceof LangFieldAccess) {
 			elementType = LocationInfo.CodeElementType.FIELD_DECLARATION; // self.attr = value
+			LangASTNode parent = assignment;
+			while(parent != null && !(parent instanceof LangTypeDeclaration)) {
+				parent = parent.getParent();
+			}
+			if(parent != null) {
+				LangASTNode scopeNode = parent;
+				// the scope starts from the start of the parent type declaration, until the end of the parent type declaration
+				int startOffset = scopeNode.getStartChar();
+				int endOffset = scopeNode.getStartChar() + scopeNode.getLength();
+				if(endOffset > fileContent.length()) {
+					endOffset = fileContent.length();
+				}
+				this.scope = new VariableScope(cu, filePath, startOffset, endOffset);
+			}
 		} else {
 			elementType = LocationInfo.CodeElementType.VARIABLE_DECLARATION_STATEMENT; // var = value
+			LangASTNode parent = assignment;
+			while(parent != null && !(parent instanceof LangBlock)) {
+				parent = parent.getParent();
+			}
+			if(parent != null) {
+				LangASTNode scopeNode = parent;
+				// the scope starts from the declaration of the variable, until the end of the parent block
+				int startOffset = assignment.getStartChar();
+				int endOffset = scopeNode.getStartChar() + scopeNode.getLength();
+				if(endOffset > fileContent.length()) {
+					endOffset = fileContent.length();
+				}
+				this.scope = new VariableScope(cu, filePath, startOffset, endOffset);
+			}
 		}
 		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, assignment, elementType);
 
@@ -196,49 +232,9 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 			this.isFinal = singleVariableDeclaration.isFinal();
 		}
 
-		this.scope = new VariableScope(cu, filePath);
 		StringBuilder signature = new StringBuilder();
         signature.append(variableName);
         if (!type.toString().equals("Object")) {
-			signature.append(": ").append(type.toString());
-		}
-		this.actualSignature = signature.toString();
-	}
-
-	public VariableDeclaration(LangCompilationUnit cu, String variableName, UMLType type, boolean varargsParameter,
-							   LocationInfo locationInfo, List<UMLAnnotation> annotations, List<UMLModifier> modifiers) {
-		this.variableName = variableName;
-		this.type = type;
-		this.varargsParameter = varargsParameter;
-		this.locationInfo = locationInfo;
-		this.annotations = annotations != null ? annotations : java.util.Collections.emptyList();
-		this.modifiers = modifiers != null ? modifiers : java.util.Collections.emptyList();
-		this.initializer = null;
-
-		if (LocationInfo.CodeElementType.FIELD_DECLARATION.equals(locationInfo.getCodeElementType())) {
-			this.isAttribute = true;
-		}
-		if (LocationInfo.CodeElementType.SINGLE_VARIABLE_DECLARATION.equals(locationInfo.getCodeElementType())) {
-			this.isParameter = true;
-		}
-
-		this.scope = new VariableScope(cu, locationInfo.getFilePath());
-		this.isFinal = false;
-
-		// Generate proper signature for parameters
-		StringBuilder signature = new StringBuilder();
-		if (varargsParameter) {
-			if (variableName.startsWith("**")) {
-				signature.append(variableName); // **kwargs
-			} else if (variableName.startsWith("*")) {
-				signature.append(variableName); // *args
-			} else {
-				signature.append("*").append(variableName); // *param
-			}
-		} else {
-			signature.append(variableName);
-		}
-		if (type != null && !type.toString().equals("Object")) {
 			signature.append(": ").append(type.toString());
 		}
 		this.actualSignature = signature.toString();

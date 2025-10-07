@@ -315,11 +315,11 @@ public class LangVisitor implements LangASTVisitor {
 
         if (langAssignment.getLeftSide() instanceof LangSimpleName) {
             String varName = ((LangSimpleName) langAssignment.getLeftSide()).getIdentifier();
-            VariableDeclaration varDecl = new VariableDeclaration(cu, sourceFolder, filePath,
-                    langAssignment, container, varName, activeVariableDeclarations, fileContent);
-
-            //System.out.println("Added local variable declaration: " + varDecl);
-            variableDeclarations.add(varDecl);
+            if (!activeVariableDeclarations.containsKey(varName)) {
+                VariableDeclaration varDecl = new VariableDeclaration(cu, sourceFolder, filePath,
+                        langAssignment, container, varName, activeVariableDeclarations, fileContent);
+                variableDeclarations.add(varDecl);
+            }
 
         } // TODO
         else if (langAssignment.getLeftSide() instanceof LangFieldAccess fieldAccess) {
