@@ -541,11 +541,19 @@ public class OperationBody {
 			LangWithStatement withStatement = (LangWithStatement)statement;
 			CompositeStatementObject child = new CompositeStatementObject(cu, sourceFolder, filePath, withStatement, parent.getDepth()+1, CodeElementType.WITH_STATEMENT, fileContent);
 			parent.addStatement(child);
+			CompositeStatementObject parentX = parent;
+			while(parentX != null && parentX.getLocationInfo().getCodeElementType().equals(CodeElementType.BLOCK)) { 
+				parentX = parentX.getParent(); 
+			}
 			List<LangASTNode> contextItems = withStatement.getContextItems();
 			for (LangASTNode contextItem : contextItems) {
 				// Create expressions for context managers
 				AbstractExpression contextExpr = new AbstractExpression(cu, sourceFolder, filePath, contextItem, CodeElementType.VARIABLE_DECLARATION_EXPRESSION, container, activeVariableDeclarations, fileContent);
 				child.addExpression(contextExpr);
+				// if parentX is try statement, then add as resource
+				if(parentX != null && parentX.getLocationInfo().getCodeElementType().equals(CodeElementType.TRY_STATEMENT)) {
+					parentX.addExpression(contextExpr);
+				}
 			}
 			addStatementInVariableScopes(child);
 			List<VariableDeclaration> variableDeclarations = child.getVariableDeclarations();

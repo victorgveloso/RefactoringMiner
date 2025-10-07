@@ -48,7 +48,10 @@ public class CompositeStatementObject extends AbstractStatement {
 			end = fileContent.length();
 		}
 		String whole = fileContent.substring(start, end);
-		if (whole.contains(":")) {
+		if (codeElementType.equals(CodeElementType.BLOCK)) {
+			this.actualSignature = CodeElementType.BLOCK.getName();
+		}
+		else if (whole.contains(":")) {
 			// For Python statements like "if condition:", "for item in list:", etc.
 			this.actualSignature = whole.substring(0, whole.indexOf(":") + 1);
 		} else {

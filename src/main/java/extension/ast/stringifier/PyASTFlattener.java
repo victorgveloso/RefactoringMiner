@@ -265,12 +265,18 @@ public class PyASTFlattener implements LangASTFlattener {
 
     @Override
     public void visit(LangTupleLiteral langTupleLiteral) {
-        builder.append("(");
-        for (LangASTNode expr : langTupleLiteral.getElements()) {
+        //builder.append("(");
+        List<LangASTNode> elements = langTupleLiteral.getElements();
+        int i = 0;
+        for (LangASTNode expr : elements) {
             expr.accept(this);
-            builder.append(", ");
+            // Append a comma for all entries except the last one
+            if (i < elements.size() - 1) {
+                builder.append(", ");
+            }
+            i++;
         }
-        builder.append(")");
+        //builder.append(")");
     }
 
     @Override
