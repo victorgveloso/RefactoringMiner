@@ -5023,6 +5023,11 @@ public class UMLModelDiff {
 					return true;
 				}
 			}
+			else if(replacement instanceof IntersectionReplacement) {
+				if(replacement.getAfter().contains(addedOperation.getName() + "(")) {
+					return true;
+				}
+			}
 			else if(replacement.getAfter().equals(addedOperation.getNonQualifiedClassName()) ||
 					replacement.getAfter().startsWith(addedOperation.getNonQualifiedClassName() + ".")) {
 				return true;
