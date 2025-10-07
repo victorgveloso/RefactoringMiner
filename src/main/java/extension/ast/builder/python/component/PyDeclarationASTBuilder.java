@@ -154,7 +154,6 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
         // Create the MethodDeclaration node using the factory
         LangMethodDeclaration methodDeclaration = LangASTNodeFactory.createMethodDeclaration(ctx.name().getText(), ctx, langSingleVariableDeclarations, body);
 
-        methodDeclaration.setActualSignature(getMethodSignature(methodDeclaration));
         methodDeclaration.setConstructor(isMethodAConstructor(methodDeclaration));
         // Following python naming conventions for visibility
         methodDeclaration.setVisibility(getMethodVisibility(methodDeclaration));
@@ -209,7 +208,6 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
             }
             annotations.add(asyncAnnotation);
             methodDeclaration.setLangAnnotations(annotations);
-            methodDeclaration.setActualSignature("async " + methodDeclaration.getActualSignature());
             methodDeclaration.setAsync(true);
         }
 
@@ -262,27 +260,6 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
 
     private boolean isMethodAConstructor(LangMethodDeclaration methodDecl) {
         return "__init__".equals(methodDecl.getName());
-    }
-
-    private String getMethodSignature(LangMethodDeclaration methodDecl) {
-        StringBuilder formalSignature = new StringBuilder();
-        formalSignature.append(methodDecl.getName()).append("(");
-
-        List<LangSingleVariableDeclaration> params = methodDecl.getParameters();
-
-        // Determine if we should skip the first parameter (if it's 'self')
-        int startIdx = UMLAdapterUtil.getParamOffset(methodDecl, params, LangSupportedEnum.PYTHON.getLangName());
-
-        for (int i = startIdx; i < params.size(); i++) {
-            // Use "Object" as the type for all parameters, following Java-style signature
-            formalSignature.append("Object");
-            if (i < params.size() - 1) {
-                formalSignature.append(", ");
-            }
-        }
-        formalSignature.append(")");
-
-        return formalSignature.toString();
     }
 
     public LangASTNode visitDecorated(Python3Parser.DecoratedContext ctx) {

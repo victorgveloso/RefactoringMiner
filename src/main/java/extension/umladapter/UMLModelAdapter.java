@@ -223,7 +223,7 @@ public class UMLModelAdapter {
     }
 
     private UMLOperation createUMLOperation(LangMethodDeclaration methodDecl, String className, String sourceFolder, String filePath, String fileContent) {
-
+    	int startSignatureOffset = methodDecl.getStartChar();
         LocationInfo locationInfo = new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.METHOD_DECLARATION);
 
         String operationName = PathFileUtils.isPythonFile(filePath) ? methodDecl.getCleanName() : methodDecl.getName();
@@ -275,7 +275,6 @@ public class UMLModelAdapter {
         umlOperation.setAbstract(methodDecl.isAbstract());
         umlOperation.setNative(methodDecl.isNative());
         umlOperation.setSynchronized(methodDecl.isSynchronized());
-        umlOperation.setActualSignature(methodDecl.getActualSignature());
 
         processComments(methodDecl, sourceFolder, filePath, umlOperation);
 
@@ -312,7 +311,11 @@ public class UMLModelAdapter {
 
         umlOperation.setBody(opBody);
         //logUMLOperation(umlOperation, methodDecl);
-
+        int endSignatureOffset = methodDecl.getBody() != null ?
+				methodDecl.getBody().getStartChar() + 1 :
+				methodDecl.getStartChar() + methodDecl.getLength();
+		String text = fileContent.substring(startSignatureOffset, endSignatureOffset);
+		umlOperation.setActualSignature(text);
         return umlOperation;
     }
 

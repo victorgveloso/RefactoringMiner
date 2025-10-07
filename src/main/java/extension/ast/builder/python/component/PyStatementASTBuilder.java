@@ -430,10 +430,6 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
                 methodDeclaration.setLangAnnotations(annotations);
                 methodDeclaration.setAsync(true);
 
-                String currentSignature = methodDeclaration.getActualSignature();
-                if (currentSignature != null && !currentSignature.startsWith("async ")) {
-                    methodDeclaration.setActualSignature("async " + currentSignature);
-                }
                 return methodDeclaration;
             }
         } else if (ctx.with_stmt() != null) {

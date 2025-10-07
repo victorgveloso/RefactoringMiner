@@ -25,7 +25,6 @@ public class LangMethodDeclaration extends LangDeclaration {
     private boolean isNative;
     private boolean isSynchronized;
     private boolean isAsync;
-    private String actualSignature;
     private String returnTypeAnnotation;
     private List<LangAnnotation> langAnnotations = new ArrayList<>();
     private List<LangComment> comments = new ArrayList<>();
@@ -135,14 +134,6 @@ public class LangMethodDeclaration extends LangDeclaration {
 
     public void setSynchronized(boolean aSynchronized) {
         isSynchronized = aSynchronized;
-    }
-
-    public String getActualSignature() {
-        return actualSignature;
-    }
-
-    public void setActualSignature(String actualSignature) {
-        this.actualSignature = actualSignature;
     }
 
     public String getReturnTypeAnnotation() {
