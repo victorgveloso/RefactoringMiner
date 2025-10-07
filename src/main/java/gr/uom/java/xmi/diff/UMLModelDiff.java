@@ -36,6 +36,7 @@ import gr.uom.java.xmi.decomposition.UMLOperationBodyMapperComparator;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 import gr.uom.java.xmi.decomposition.VariableReferenceExtractor;
 import gr.uom.java.xmi.decomposition.replacement.ClassInstanceCreationWithMethodInvocationReplacement;
+import gr.uom.java.xmi.decomposition.replacement.IntersectionReplacement;
 import gr.uom.java.xmi.decomposition.replacement.MergeVariableReplacement;
 import gr.uom.java.xmi.decomposition.replacement.MethodInvocationReplacement;
 import gr.uom.java.xmi.decomposition.replacement.MethodInvocationWithClassInstanceCreationReplacement;
@@ -4889,6 +4890,11 @@ public class UMLModelDiff {
 			else if(replacement instanceof VariableReplacementWithMethodInvocation) {
 				VariableReplacementWithMethodInvocation r = (VariableReplacementWithMethodInvocation)replacement;
 				if(r.getDirection().equals(Direction.INVOCATION_TO_VARIABLE) && r.getInvokedOperation().matchesOperation(removedOperation, caller, classDiff, this)) {
+					return true;
+				}
+			}
+			else if(replacement instanceof IntersectionReplacement) {
+				if(replacement.getBefore().contains(removedOperation.getName() + "(")) {
 					return true;
 				}
 			}
