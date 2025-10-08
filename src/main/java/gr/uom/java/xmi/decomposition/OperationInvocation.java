@@ -118,7 +118,7 @@ public class OperationInvocation extends AbstractCall {
 		}
 	}
 
-	public OperationInvocation(LangCompilationUnit cu, String sourceFolder, String filePath, LangMethodInvocation methodInvocation, VariableDeclarationContainer container) {
+	public OperationInvocation(LangCompilationUnit cu, String sourceFolder, String filePath, LangMethodInvocation methodInvocation, VariableDeclarationContainer container, String fileContent) {
 		super(cu, sourceFolder, filePath, methodInvocation, CodeElementType.METHOD_INVOCATION, container);
 		if (methodInvocation.getExpression() instanceof LangSimpleName simpleName) {
 			this.methodName = simpleName.getIdentifier();
@@ -131,10 +131,6 @@ public class OperationInvocation extends AbstractCall {
 				this.expression = simpleName.getIdentifier(); // "self"
 				// The method name is already set via this.methodName = methodInvocation.extractMethodName()
 			}
-
-		} else {
-			this.methodName = "unknownMethod";
-			this.expression = "unknown";
 		}
 		// FIX: Handle null arguments list
 		if (methodInvocation.getArguments() != null) {

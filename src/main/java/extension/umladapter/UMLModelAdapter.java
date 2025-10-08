@@ -383,7 +383,7 @@ public class UMLModelAdapter {
                     );
                     UMLAttribute attribute = new UMLAttribute(
                             attributeName,
-                            UMLType.extractTypeObject("Object"),
+                            variableDeclaration.getType(),
                             attributeLocationInfo
                     );
 

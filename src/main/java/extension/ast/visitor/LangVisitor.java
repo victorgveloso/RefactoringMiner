@@ -186,15 +186,16 @@ public class LangVisitor implements LangASTVisitor {
 
     @Override
     public void visit(LangMethodInvocation langMethodInvocation) {
-        OperationInvocation invocation = new OperationInvocation(cu, sourceFolder, filePath, langMethodInvocation, container);
-        methodInvocations.add(invocation);
-
-        if(current.getUserObject() != null) {
-            AnonymousClassDeclarationObject anonymous = (AnonymousClassDeclarationObject)current.getUserObject();
-            anonymous.getMethodInvocations().add(invocation);
+        LangASTNode expression = langMethodInvocation.getExpression();
+        if(expression != null && expression instanceof LangSimpleName simpleName && Character.isUpperCase(simpleName.getIdentifier().charAt(0))) {
+            ObjectCreation creation = new ObjectCreation(cu, sourceFolder, filePath, langMethodInvocation, container, fileContent);
+            creations.add(creation);
+        }
+        else {
+            OperationInvocation invocation = new OperationInvocation(cu, sourceFolder, filePath, langMethodInvocation, container, fileContent);
+            methodInvocations.add(invocation);
         }
 
-        LangASTNode expression = langMethodInvocation.getExpression();
         if (expression instanceof LangSimpleName) {
             LangSimpleName simpleName = (LangSimpleName) expression;
             if ("self".equals(simpleName.getIdentifier()) || "cls".equals(simpleName.getIdentifier())) {

@@ -13,6 +13,11 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.Type;
 
+import extension.ast.node.LangASTNode;
+import extension.ast.node.expression.LangMethodInvocation;
+import extension.ast.node.expression.LangSimpleName;
+import extension.ast.node.unit.LangCompilationUnit;
+import extension.ast.visitor.LangVisitor;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.UMLType;
@@ -24,7 +29,19 @@ public class ObjectCreation extends AbstractCall {
 	private String anonymousClassDeclaration;
 	private boolean isArray = false;
 	private volatile int hashCode = 0;
-	
+
+	public ObjectCreation(LangCompilationUnit cu, String sourceFolder, String filePath, LangMethodInvocation creation, VariableDeclarationContainer container, String fileContent) {
+		super(cu, sourceFolder, filePath, creation, CodeElementType.CLASS_INSTANCE_CREATION, container);
+		LangSimpleName simpleName = (LangSimpleName) creation.getExpression();
+		this.type = UMLType.extractTypeObject(simpleName.getIdentifier(), "[", "]", this.locationInfo);
+		this.numberOfArguments = creation.getArguments().size();
+		this.arguments = new ArrayList<String>();
+		List<LangASTNode> args = creation.getArguments();
+		for(LangASTNode argument : args) {
+			this.arguments.add(LangVisitor.stringify(argument));
+		}
+	}
+
 	public ObjectCreation(CompilationUnit cu, String sourceFolder, String filePath, ClassInstanceCreation creation, VariableDeclarationContainer container, String javaFileContent) {
 		super(cu, sourceFolder, filePath, creation, CodeElementType.CLASS_INSTANCE_CREATION, container);
 		this.type = UMLType.extractTypeObject(cu, sourceFolder, filePath, creation.getType(), 0, javaFileContent);

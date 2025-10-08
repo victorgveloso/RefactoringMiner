@@ -2571,7 +2571,8 @@ public class UMLModelDiff {
 			for(AbstractCodeFragment fragment : mapper.getNonMappedLeavesT2()) {
 				if(fragment.getVariableDeclarations().size() > 0) {
 					VariableDeclaration variable = fragment.getVariableDeclarations().get(0);
-					if(umlClass.getName().endsWith("." + variable.getType().getClassType())) {
+					if(umlClass.getName().endsWith("." + variable.getType().getClassType()) ||
+							umlClass.getName().equals(variable.getType().getClassType())) {
 						set.add(variable);
 					}
 				}
@@ -2583,7 +2584,8 @@ public class UMLModelDiff {
 	private UMLAttribute attributeOfExtractedClassType(UMLClass umlClass, UMLClassBaseDiff classDiff) {
 		List<UMLAttribute> addedAttributes = classDiff.getAddedAttributes();
 		for(UMLAttribute addedAttribute : addedAttributes) {
-			if(umlClass.getName().endsWith("." + addedAttribute.getType().getClassType())) {
+			if(umlClass.getName().endsWith("." + addedAttribute.getType().getClassType()) ||
+					umlClass.getName().equals(addedAttribute.getType().getClassType())) {
 				return addedAttribute;
 			}
 		}

@@ -213,6 +213,10 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 				activeVariableDeclarations,
 				fileContent
 		);
+		AbstractCall creationCoveringEntireFragment = initializer.creationCoveringEntireFragment();
+		if(creationCoveringEntireFragment != null ) {
+			this.type = ((ObjectCreation)creationCoveringEntireFragment).getType();
+		}
 
 		this.isAttribute = false;
 		this.isParameter = false;
