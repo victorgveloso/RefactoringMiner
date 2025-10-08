@@ -22,13 +22,11 @@ import extension.ast.visitor.LangVisitor;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.VariableDeclarationContainer;
-import gr.uom.java.xmi.diff.CodeRange;
 import static gr.uom.java.xmi.decomposition.Visitor.stringify;
 
 public class StatementObject extends AbstractStatement {
 	
 	private String statement;
-	private LocationInfo locationInfo;
 	private List<LeafExpression> variables;
 	private List<String> types;
 	private List<VariableDeclaration> variableDeclarations;
@@ -60,12 +58,9 @@ public class StatementObject extends AbstractStatement {
 	public StatementObject(LangCompilationUnit cu, String sourceFolder, String filePath,
 			LangASTNode statement, int depth, CodeElementType codeElementType,
 			VariableDeclarationContainer container, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String fileContent) {
-		super();
+		super(new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType));
 		LangVisitor visitor = new LangVisitor(cu, sourceFolder, filePath, container, activeVariableDeclarations, fileContent);
 		statement.accept(visitor);
-
-		// Set location info
-		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType);
 
 		// Initialize collections
 		this.variables = visitor.getVariables();
@@ -106,8 +101,7 @@ public class StatementObject extends AbstractStatement {
 	}
 
 	public StatementObject(CompilationUnit cu, String sourceFolder, String filePath, Statement statement, int depth, CodeElementType codeElementType, VariableDeclarationContainer container, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String javaFileContent) {
-		super();
-		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType);
+		super(new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType));
 		Visitor visitor = new Visitor(cu, sourceFolder, filePath, container, activeVariableDeclarations, javaFileContent);
 		statement.accept(visitor);
 		this.variables = visitor.getVariables();
@@ -367,14 +361,6 @@ public class StatementObject extends AbstractStatement {
 	@Override
 	public int statementCountIncludingBlocks() {
 		return 1;
-	}
-
-	public LocationInfo getLocationInfo() {
-		return locationInfo;
-	}
-
-	public CodeRange codeRange() {
-		return locationInfo.codeRange();
 	}
 
 	public VariableDeclaration getVariableDeclaration(String variableName) {

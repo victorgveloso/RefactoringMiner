@@ -1,7 +1,5 @@
 package gr.uom.java.xmi.decomposition;
 
-import static gr.uom.java.xmi.Constants.JAVA;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -11,16 +9,37 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.refactoringminer.util.PathFileUtils;
+
+import gr.uom.java.xmi.Constants;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.LocationInfoProvider;
 import gr.uom.java.xmi.decomposition.AbstractCall.StatementCoverageType;
+import gr.uom.java.xmi.diff.CodeRange;
 import gr.uom.java.xmi.diff.UMLAbstractClassDiff;
 
 public abstract class AbstractCodeFragment implements LocationInfoProvider {
 	private int depth;
 	private int index;
 	private String codeFragmentAfterReplacingParametersWithArguments;
+	protected LocationInfo locationInfo;
+	protected final Constants LANG;
+
+	public AbstractCodeFragment(LocationInfo location) {
+		this.LANG = PathFileUtils.getLang(location.getFilePath());
+		this.locationInfo = location;
+	}
+
+	@Override
+	public LocationInfo getLocationInfo() {
+		return locationInfo;
+	}
+
+	@Override
+	public CodeRange codeRange() {
+		return locationInfo.codeRange();
+	}
 
 	public String getArgumentizedString() {
 		return codeFragmentAfterReplacingParametersWithArguments != null ? codeFragmentAfterReplacingParametersWithArguments : getString();
@@ -244,9 +263,9 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 
 	public boolean isKeyword() {
 		String statement = getString();
-		return statement.equals(JAVA.RETURN_STATEMENT) ||
-				statement.equals(JAVA.BREAK_STATEMENT) ||
-				statement.equals(JAVA.CONTINUE_STATEMENT);
+		return statement.equals(LANG.RETURN_STATEMENT) ||
+				statement.equals(LANG.BREAK_STATEMENT) ||
+				statement.equals(LANG.CONTINUE_STATEMENT);
 	}
 
 	public boolean isLogCall() {
@@ -291,7 +310,7 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 					boolean isInsideStringLiteral = false;
 					if(start >= 1) {
 						String previousChar = afterReplacements.substring(start-1, start);
-						if(previousChar.equals("(") || previousChar.equals(",") || previousChar.equals(" ") || previousChar.equals(JAVA.ASSIGNMENT)) {
+						if(previousChar.equals("(") || previousChar.equals(",") || previousChar.equals(" ") || previousChar.equals(LANG.ASSIGNMENT)) {
 							int indexOfNextChar = start + parameter.length();
 							if(afterReplacements.length() > indexOfNextChar) {
 								char nextChar = afterReplacements.charAt(indexOfNextChar);
@@ -309,7 +328,7 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 							isInsideStringLiteral = true;
 						}
 					}
-					else if(start == 0 && !afterReplacements.startsWith(JAVA.RETURN_SPACE)) {
+					else if(start == 0 && !afterReplacements.startsWith(LANG.RETURN_SPACE)) {
 						int indexOfNextChar = start + parameter.length();
 						if(afterReplacements.length() > indexOfNextChar) {
 							char nextChar = afterReplacements.charAt(indexOfNextChar);
@@ -405,10 +424,10 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 		String statement = getString();
 		for(LeafExpression infixExpression : getInfixExpressions()) {
 			String infix = infixExpression.getString();
-			if((infix + JAVA.STATEMENT_TERMINATION).equals(statement) || infix.equals(statement)) {
+			if((infix + LANG.STATEMENT_TERMINATION).equals(statement) || infix.equals(statement)) {
 				return infix;
 			}
-			else if((JAVA.RETURN_SPACE + infix + JAVA.STATEMENT_TERMINATION).equals(statement)) {
+			else if((LANG.RETURN_SPACE + infix + LANG.STATEMENT_TERMINATION).equals(statement)) {
 				return infix;
 			}
 			else if(expressionIsTheInitializerOfVariableDeclaration(infix)) {
@@ -428,15 +447,15 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 		String statement = getString();
 		for(AbstractCall creation : getCreations()) {
 			String objectCreation = creation.getString();
-			if((objectCreation + JAVA.STATEMENT_TERMINATION).equals(statement) || objectCreation.equals(statement)) {
+			if((objectCreation + LANG.STATEMENT_TERMINATION).equals(statement) || objectCreation.equals(statement)) {
 				creation.coverage = StatementCoverageType.ONLY_CALL;
 				return creation;
 			}
-			else if((JAVA.RETURN_SPACE + objectCreation + JAVA.STATEMENT_TERMINATION).equals(statement)) {
+			else if((LANG.RETURN_SPACE + objectCreation + LANG.STATEMENT_TERMINATION).equals(statement)) {
 				creation.coverage = StatementCoverageType.RETURN_CALL;
 				return creation;
 			}
-			else if((JAVA.THROW_SPACE + objectCreation + JAVA.STATEMENT_TERMINATION).equals(statement)) {
+			else if((LANG.THROW_SPACE + objectCreation + LANG.STATEMENT_TERMINATION).equals(statement)) {
 				creation.coverage = StatementCoverageType.THROW_CALL;
 				return creation;
 			}
@@ -452,11 +471,11 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 		String statement = getString();
 		for(AbstractCall invocation : getMethodInvocations()) {
 			String methodInvocation = invocation.getString();
-			if((methodInvocation + JAVA.STATEMENT_TERMINATION).equals(statement) || methodInvocation.equals(statement) || ("!" + methodInvocation).equals(statement)) {
+			if((methodInvocation + LANG.STATEMENT_TERMINATION).equals(statement) || methodInvocation.equals(statement) || ("!" + methodInvocation).equals(statement)) {
 				invocation.coverage = StatementCoverageType.ONLY_CALL;
 				return invocation;
 			}
-			else if((JAVA.RETURN_SPACE + methodInvocation + JAVA.STATEMENT_TERMINATION).equals(statement)) {
+			else if((LANG.RETURN_SPACE + methodInvocation + LANG.STATEMENT_TERMINATION).equals(statement)) {
 				invocation.coverage = StatementCoverageType.RETURN_CALL;
 				return invocation;
 			}
@@ -499,10 +518,10 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 		String statement = getString();
 		for(TernaryOperatorExpression ternary : getTernaryOperatorExpressions()) {
 			String methodInvocation = ternary.getString();
-			if((methodInvocation + JAVA.STATEMENT_TERMINATION).equals(statement) || methodInvocation.equals(statement) || ("!" + methodInvocation).equals(statement)) {
+			if((methodInvocation + LANG.STATEMENT_TERMINATION).equals(statement) || methodInvocation.equals(statement) || ("!" + methodInvocation).equals(statement)) {
 				return ternary;
 			}
-			else if((JAVA.RETURN_SPACE + methodInvocation + JAVA.STATEMENT_TERMINATION).equals(statement)) {
+			else if((LANG.RETURN_SPACE + methodInvocation + LANG.STATEMENT_TERMINATION).equals(statement)) {
 				return ternary;
 			}
 			else if(isCastExpressionCoveringEntireFragment(methodInvocation)) {
@@ -547,8 +566,8 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 	private boolean isCastExpressionCoveringEntireFragment(String expression) {
 		String statement = getString();
 		int index = -1;
-		if(statement.endsWith(JAVA.STATEMENT_TERMINATION)) {
-			index = statement.indexOf(expression + JAVA.STATEMENT_TERMINATION);
+		if(statement.endsWith(LANG.STATEMENT_TERMINATION)) {
+			index = statement.indexOf(expression + LANG.STATEMENT_TERMINATION);
 		}
 		else {
 			index = statement.indexOf(expression);
@@ -566,10 +585,10 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 						!openingParenthesisInsideSingleQuotes && !closingParenthesisInsideSingleQuotes &&
 						!openingParenthesisInsideDoubleQuotes && !closingParenthesisIndideDoubleQuotes) {
 					String casting = prefix.substring(indexOfOpeningParenthesis, indexOfClosingParenthesis+1);
-					if(statement.endsWith(JAVA.STATEMENT_TERMINATION) && (JAVA.RETURN_SPACE + casting + expression + JAVA.STATEMENT_TERMINATION).equals(statement)) {
+					if(statement.endsWith(LANG.STATEMENT_TERMINATION) && (LANG.RETURN_SPACE + casting + expression + LANG.STATEMENT_TERMINATION).equals(statement)) {
 						return true;
 					}
-					if(!statement.endsWith(JAVA.STATEMENT_TERMINATION) && (casting + expression).equals(statement)) {
+					if(!statement.endsWith(LANG.STATEMENT_TERMINATION) && (casting + expression).equals(statement)) {
 						return true;
 					}
 				}
@@ -612,7 +631,7 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 			if(initializer.startsWith("new ")) {
 				return false;
 			}
-			if(initializer.contains(JAVA.TERNARY_CONDITION) && initializer.contains(JAVA.TERNARY_ELSE)) {
+			if(initializer.contains(LANG.TERNARY_CONDITION) && initializer.contains(LANG.TERNARY_ELSE)) {
 				return false;
 			}
 			if(initializer.contains("(" + expression + ")") ||
@@ -627,17 +646,17 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 
 	private boolean expressionIsTheRightHandSideOfAssignment(String expression) {
 		String statement = getString();
-		if(statement.contains(JAVA.ASSIGNMENT)) {
+		if(statement.contains(LANG.ASSIGNMENT)) {
 			List<LeafExpression> variables = getVariables();
 			if(variables.size() > 0) {
-				String s = variables.get(0).getString() + JAVA.ASSIGNMENT + expression + JAVA.STATEMENT_TERMINATION;
+				String s = variables.get(0).getString() + LANG.ASSIGNMENT + expression + LANG.STATEMENT_TERMINATION;
 				if(statement.equals(s)) {
 					return true;
 				}
-				if(statement.startsWith(variables.get(0).getString() + JAVA.ASSIGNMENT)) {
-					String suffix = statement.substring(statement.indexOf(JAVA.ASSIGNMENT) + 1);
-					if(suffix.endsWith(expression + JAVA.STATEMENT_TERMINATION)) {
-						int index = suffix.indexOf(expression + JAVA.STATEMENT_TERMINATION);
+				if(statement.startsWith(variables.get(0).getString() + LANG.ASSIGNMENT)) {
+					String suffix = statement.substring(statement.indexOf(LANG.ASSIGNMENT) + 1);
+					if(suffix.endsWith(expression + LANG.STATEMENT_TERMINATION)) {
+						int index = suffix.indexOf(expression + LANG.STATEMENT_TERMINATION);
 						String prefix = suffix.substring(0, index);
 						if(prefix.startsWith("(") && prefix.endsWith(")")) {
 							return true;
@@ -651,16 +670,16 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 
 	private boolean expressionIsTheRightHandSideOfAssignmentAndLeftHandSideIsField(String expression, UMLAbstractClassDiff classDiff) {
 		String statement = getString();
-		if(statement.contains(JAVA.ASSIGNMENT)) {
+		if(statement.contains(LANG.ASSIGNMENT)) {
 			List<LeafExpression> variables = getVariables();
 			if(variables.size() > 0) {
 				String variable = variables.get(0).getString();
-				String s = variable + JAVA.ASSIGNMENT + expression + JAVA.STATEMENT_TERMINATION;
-				if(statement.equals(s) && (variable.startsWith(JAVA.THIS_DOT) || classDiff.getOriginalClass().getFieldDeclarationMap().containsKey(variable) ||
+				String s = variable + LANG.ASSIGNMENT + expression + LANG.STATEMENT_TERMINATION;
+				if(statement.equals(s) && (variable.startsWith(LANG.THIS_DOT) || classDiff.getOriginalClass().getFieldDeclarationMap().containsKey(variable) ||
 						classDiff.getNextClass().getFieldDeclarationMap().containsKey(variable))) {
 					return true;
 				}
-				String beforeAssignment = statement.substring(0, statement.indexOf(JAVA.ASSIGNMENT));
+				String beforeAssignment = statement.substring(0, statement.indexOf(LANG.ASSIGNMENT));
 				if(variables.size() >= 2) {
 					if(beforeAssignment.equals(variable + "." + variables.get(1).getString())) {
 						return true;
@@ -672,19 +691,19 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 	}
 
 	public boolean throwsNewException() {
-		return getString().startsWith(JAVA.THROW_SPACE + "new ");
+		return getString().startsWith(LANG.THROW_SPACE + "new ");
 	}
 
 	public boolean isLastStatementWithReturn() {
 		if(isLastStatement()) {
-			return getString().startsWith(JAVA.RETURN_SPACE);
+			return getString().startsWith(LANG.RETURN_SPACE);
 		}
 		return false;
 	}
 
 	public boolean isLastStatementWithBooleanReturn() {
 		if(isLastStatement()) {
-			return getString().equals(JAVA.RETURN_TRUE) || getString().equals(JAVA.RETURN_FALSE);
+			return getString().equals(LANG.RETURN_TRUE) || getString().equals(LANG.RETURN_FALSE);
 		}
 		return false;
 	}
@@ -720,10 +739,10 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 	}
 
 	public boolean commonReturnStatement() {
-		return getString().equals(JAVA.RETURN_STATEMENT) ||
-				getString().equals(JAVA.RETURN_TRUE) ||
-				getString().equals(JAVA.RETURN_FALSE) ||
-				getString().equals(JAVA.RETURN_NULL);
+		return getString().equals(LANG.RETURN_STATEMENT) ||
+				getString().equals(LANG.RETURN_TRUE) ||
+				getString().equals(LANG.RETURN_FALSE) ||
+				getString().equals(LANG.RETURN_NULL);
 	}
 
 	public boolean countableStatement() {
@@ -737,8 +756,8 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 				((AbstractStatement)this).getParent().statementCount() == 1 && ((AbstractStatement)this).getParent().getParent() == null) {
 			return true;
 		}
-		return !statement.equals(JAVA.OPEN_BLOCK) && !statement.startsWith("catch(") && !statement.startsWith(JAVA.CASE_SPACE) &&
-				!statement.equals(JAVA.RETURN_TRUE) && !statement.equals(JAVA.RETURN_FALSE) && !statement.equals(JAVA.RETURN_THIS) && !statement.equals(JAVA.RETURN_NULL) && !statement.equals(JAVA.RETURN_STATEMENT);
+		return !statement.equals(LANG.OPEN_BLOCK) && !statement.startsWith("catch(") && !statement.startsWith(LANG.CASE_SPACE) &&
+				!statement.equals(LANG.RETURN_TRUE) && !statement.equals(LANG.RETURN_FALSE) && !statement.equals(LANG.RETURN_THIS) && !statement.equals(LANG.RETURN_NULL) && !statement.equals(LANG.RETURN_STATEMENT);
 	}
 
 	public boolean ownedByLambda() {

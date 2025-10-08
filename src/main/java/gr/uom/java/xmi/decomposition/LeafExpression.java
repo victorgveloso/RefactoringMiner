@@ -8,60 +8,41 @@ import java.util.Objects;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.refactoringminer.util.PathFileUtils;
 
 import extension.ast.node.LangASTNode;
 import extension.ast.node.unit.LangCompilationUnit;
 import extension.ast.visitor.LangVisitor;
-import gr.uom.java.xmi.Constants;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.diff.CodeRange;
 
 public class LeafExpression extends AbstractCodeFragment {
 	private String string;
-	protected LocationInfo locationInfo;
 	protected VariableDeclarationContainer container;
-	protected final Constants LANG;
 
 	public LeafExpression(LangCompilationUnit cu, String sourceFolder, String filePath, LangASTNode expression, CodeElementType codeElementType, VariableDeclarationContainer container) {
-		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, expression, codeElementType);
+		super(new LocationInfo(cu, sourceFolder, filePath, expression, codeElementType));
 		this.string = LangVisitor.stringify(expression);
 		this.container = container;
-		this.LANG = PathFileUtils.getLang(filePath);
 	}
 
 	public LeafExpression(CompilationUnit cu, String sourceFolder, String filePath, ASTNode expression, CodeElementType codeElementType, VariableDeclarationContainer container) {
-    	this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, expression, codeElementType);
+    	super(new LocationInfo(cu, sourceFolder, filePath, expression, codeElementType));
     	this.string = stringify(expression);
     	this.container = container;
-    	this.LANG = PathFileUtils.getLang(filePath);
 	}
 
 	public LeafExpression(String string, LocationInfo locationInfo) {
+		super(locationInfo);
 		this.string = string;
-		this.locationInfo = locationInfo;
-		this.LANG = PathFileUtils.getLang(locationInfo.getFilePath());
 	}
 
 	protected LeafExpression(LocationInfo locationInfo) {
-		this.locationInfo = locationInfo;
-		this.LANG = PathFileUtils.getLang(locationInfo.getFilePath());
+		super(locationInfo);
 	}
 
 	public VariableDeclarationContainer getContainer() {
 		return container;
-	}
-
-	@Override
-	public LocationInfo getLocationInfo() {
-		return locationInfo;
-	}
-
-	@Override
-	public CodeRange codeRange() {
-		return locationInfo.codeRange();
 	}
 
 	@Override

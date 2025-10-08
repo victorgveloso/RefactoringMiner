@@ -1,7 +1,5 @@
 package gr.uom.java.xmi.decomposition;
 
-import static gr.uom.java.xmi.Constants.JAVA;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -16,11 +14,9 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import extension.ast.node.LangASTNode;
 import extension.ast.node.unit.LangCompilationUnit;
-import extension.ast.visitor.LangVisitor;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.VariableDeclarationContainer;
-import gr.uom.java.xmi.diff.CodeRange;
 
 public class CompositeStatementObject extends AbstractStatement {
 
@@ -28,15 +24,13 @@ public class CompositeStatementObject extends AbstractStatement {
 	private List<AbstractExpression> expressionList;
 	private List<VariableDeclaration> variableDeclarations;
 	private Optional<TryStatementObject> tryContainer;
-	private LocationInfo locationInfo;
 	//for composites which are roots, owner is the VariableDeclarationContainer
 	private Optional<VariableDeclarationContainer> owner = Optional.empty();
 
 	public CompositeStatementObject(LangCompilationUnit cu, String sourceFolder, String filePath,
 			LangASTNode statement, int depth, CodeElementType codeElementType, String fileContent) {
-		super();
+		super(new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType));
 		this.setDepth(depth);
-		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType);
 		this.statementList = new ArrayList<AbstractStatement>();
 		this.expressionList = new ArrayList<AbstractExpression>();
 		this.variableDeclarations = new ArrayList<VariableDeclaration>();
@@ -73,9 +67,8 @@ public class CompositeStatementObject extends AbstractStatement {
 	}
 
 	public CompositeStatementObject(CompilationUnit cu, String sourceFolder, String filePath, ASTNode statement, int depth, CodeElementType codeElementType, String javaFileContent) {
-		super();
+		super(new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType));
 		this.setDepth(depth);
-		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType);
 		this.statementList = new ArrayList<AbstractStatement>();
 		this.expressionList = new ArrayList<AbstractExpression>();
 		this.variableDeclarations = new ArrayList<VariableDeclaration>();
@@ -563,7 +556,7 @@ public class CompositeStatementObject extends AbstractStatement {
 				StatementObject statementObject = (StatementObject)statement;
 				list.addAll(statementObject.getMethodInvocations());
 				for(LambdaExpressionObject lambda : statementObject.getLambdas()) {
-					if(lambda.getString().contains(JAVA.LAMBDA_ARROW)) {
+					if(lambda.getString().contains(LANG.LAMBDA_ARROW)) {
 						list.addAll(lambda.getAllOperationInvocations());
 					}
 				}
@@ -662,7 +655,7 @@ public class CompositeStatementObject extends AbstractStatement {
 	@Override
 	public int statementCount() {
 		int count = 0;
-		if(!this.getString().equals(JAVA.OPEN_BLOCK))
+		if(!this.getString().equals(LANG.OPEN_BLOCK))
 			count++;
 		for(AbstractStatement statement : statementList) {
 			count += statement.statementCount();
@@ -677,10 +670,6 @@ public class CompositeStatementObject extends AbstractStatement {
 			count += statement.statementCountIncludingBlocks();
 		}
 		return count;
-	}
-
-	public LocationInfo getLocationInfo() {
-		return locationInfo;
 	}
 
 	public VariableDeclaration getVariableDeclaration(String variableName) {
@@ -701,11 +690,11 @@ public class CompositeStatementObject extends AbstractStatement {
 		Map<String, Set<String>> map = new LinkedHashMap<String, Set<String>>();
 		for(AbstractCodeFragment statement : getLeaves()) {
 			String s = statement.getString();
-			if(!s.startsWith(JAVA.THIS_DOT) && s.endsWith(JAVA.STATEMENT_TERMINATION)) {
+			if(!s.startsWith(LANG.THIS_DOT) && s.endsWith(LANG.STATEMENT_TERMINATION)) {
 				String firstLine = s.substring(0, s.indexOf("\n"));
-				if(firstLine.contains(JAVA.ASSIGNMENT)) {
-					String variable = s.substring(0, s.indexOf(JAVA.ASSIGNMENT));
-					String value = s.substring(s.indexOf(JAVA.ASSIGNMENT)+1, s.indexOf(JAVA.STATEMENT_TERMINATION));
+				if(firstLine.contains(LANG.ASSIGNMENT)) {
+					String variable = s.substring(0, s.indexOf(LANG.ASSIGNMENT));
+					String value = s.substring(s.indexOf(LANG.ASSIGNMENT)+1, s.indexOf(LANG.STATEMENT_TERMINATION));
 					if(map.containsKey(value)) {
 						map.get(value).add(variable);
 					}
@@ -724,11 +713,11 @@ public class CompositeStatementObject extends AbstractStatement {
 		Map<String, Set<String>> map = new LinkedHashMap<String, Set<String>>();
 		for(AbstractCodeFragment statement : getLeaves()) {
 			String s = statement.getString();
-			if(s.startsWith(JAVA.THIS_DOT) && s.endsWith(JAVA.STATEMENT_TERMINATION)) {
+			if(s.startsWith(LANG.THIS_DOT) && s.endsWith(LANG.STATEMENT_TERMINATION)) {
 				String firstLine = s.substring(0, s.indexOf("\n"));
-				if(firstLine.contains(JAVA.ASSIGNMENT)) {
-					String attribute = s.substring(5, s.indexOf(JAVA.ASSIGNMENT));
-					String value = s.substring(s.indexOf(JAVA.ASSIGNMENT)+1, s.indexOf(JAVA.STATEMENT_TERMINATION));
+				if(firstLine.contains(LANG.ASSIGNMENT)) {
+					String attribute = s.substring(5, s.indexOf(LANG.ASSIGNMENT));
+					String value = s.substring(s.indexOf(LANG.ASSIGNMENT)+1, s.indexOf(LANG.STATEMENT_TERMINATION));
 					if(map.containsKey(value)) {
 						map.get(value).add(attribute);
 					}
@@ -750,10 +739,6 @@ public class CompositeStatementObject extends AbstractStatement {
 			map.remove(key);
 		}
 		return map;
-	}
-
-	public CodeRange codeRange() {
-		return locationInfo.codeRange();
 	}
 
 	public boolean isBlock() {
@@ -827,8 +812,8 @@ public class CompositeStatementObject extends AbstractStatement {
 		if(locationInfo.getCodeElementType().equals(CodeElementType.BLOCK) && statementList.size() == 1) {
 			AbstractStatement statement = statementList.get(0);
 			String string = statement.getString();
-			if(string.equals(JAVA.RETURN_STATEMENT) || string.equals(JAVA.RETURN_NULL) || string.equals(JAVA.RETURN_TRUE) ||
-					string.equals(JAVA.RETURN_FALSE) || string.equals(JAVA.RETURN_THIS)) {
+			if(string.equals(LANG.RETURN_STATEMENT) || string.equals(LANG.RETURN_NULL) || string.equals(LANG.RETURN_TRUE) ||
+					string.equals(LANG.RETURN_FALSE) || string.equals(LANG.RETURN_THIS)) {
 				return true;
 			}
 		}
@@ -843,7 +828,7 @@ public class CompositeStatementObject extends AbstractStatement {
 			stringRepresentation.addAll(statement.stringRepresentation());
 		}
 		if(getLocationInfo().getCodeElementType().equals(CodeElementType.BLOCK)) {
-			stringRepresentation.add(JAVA.CLOSE_BLOCK);
+			stringRepresentation.add(LANG.CLOSE_BLOCK);
 		}
 		return stringRepresentation;
 	}
@@ -854,7 +839,7 @@ public class CompositeStatementObject extends AbstractStatement {
 			stringRepresentation.addAll(statement.stringRepresentation());
 		}
 		if(getLocationInfo().getCodeElementType().equals(CodeElementType.BLOCK)) {
-			stringRepresentation.add(JAVA.CLOSE_BLOCK);
+			stringRepresentation.add(LANG.CLOSE_BLOCK);
 		}
 		return stringRepresentation;
 	}

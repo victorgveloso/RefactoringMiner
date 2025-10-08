@@ -108,6 +108,7 @@ public class PyASTFlattener implements LangASTFlattener {
             builder.append(" ");
             stmt.getExpression().accept(this);
         }
+        builder.append("\n");
     }
 
     @Override
@@ -194,6 +195,7 @@ public class PyASTFlattener implements LangASTFlattener {
     @Override
     public void visit(LangExpressionStatement langExpressionStatement) {
         langExpressionStatement.getExpression().accept(this);
+        builder.append("\n");
     }
 
     @Override
@@ -398,11 +400,13 @@ public class PyASTFlattener implements LangASTFlattener {
     @Override
     public void visit(LangBreakStatement langBreakStatement) {
         builder.append("break");
+        builder.append("\n");
     }
 
     @Override
     public void visit(LangContinueStatement langContinueStatement) {
         builder.append("continue");
+        builder.append("\n");
     }
 
     @Override
@@ -411,17 +415,20 @@ public class PyASTFlattener implements LangASTFlattener {
         for (LangASTNode expr : langDelStatement.getTargets()){
             expr.accept(this);
         }
+        builder.append("\n");
     }
 
     @Override
     public void visit(LangGlobalStatement langGlobalStatement) {
         builder.append("global ");
         langGlobalStatement.getVariableNames().forEach(name -> builder.append(name).append(", "));
+        builder.append("\n");
     }
 
     @Override
     public void visit(LangPassStatement langPassStatement) {
         builder.append("pass");
+        builder.append("\n");
     }
 
 
@@ -433,6 +440,7 @@ public class PyASTFlattener implements LangASTFlattener {
             builder.append(" ");
             stmt.getExpression().accept(this);
         }
+        builder.append("\n");
     }
 
     @Override
@@ -466,12 +474,14 @@ public class PyASTFlattener implements LangASTFlattener {
             builder.append(", ");
             langAssertStatement.getMessage().accept(this);
         }
+        builder.append("\n");
     }
 
     @Override
     public void visit(LangThrowStatement langThrowStatement) {
         builder.append("throw ");
         langThrowStatement.getExpressions().forEach(expr -> expr.accept(this));
+        builder.append("\n");
     }
 
     @Override
@@ -488,7 +498,13 @@ public class PyASTFlattener implements LangASTFlattener {
     @Override
     public void visit(LangWithStatement langWithStatement) {
         builder.append("with ");
-        langWithStatement.getBody().accept(this);
+        List<LangASTNode> contextItems = langWithStatement.getContextItems();
+        for (int i = 0; i < contextItems.size(); i++) {
+            contextItems.get(i).accept(this);
+            if (i < contextItems.size() - 1) {
+                builder.append(", ");
+            }
+        }
         builder.append(":");
         langWithStatement.getBody().accept(this);
     }
@@ -503,6 +519,7 @@ public class PyASTFlattener implements LangASTFlattener {
                 builder.append(", ");
             }
         }
+        builder.append("\n");
     }
 
 

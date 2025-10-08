@@ -29,13 +29,6 @@ public class LangBlock extends LangStatement {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-        if (statements != null) {
-            for (LangASTNode stmt : statements) {
-                if (stmt != null) {
-                    stmt.accept(visitor);
-                }
-            }
-        }
     }
 
     public List<LangASTNode> getStatements() {

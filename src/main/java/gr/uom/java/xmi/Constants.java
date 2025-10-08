@@ -4,7 +4,7 @@ public enum Constants {
 	JAVA(";\n", "return ", "return;\n", "return true;\n", "return false;\n", "return null;\n", "return this;\n", "=", "break;\n", "continue;\n",
 			" -> ", "::", " + ", "throw ", "case ", "try", "{", "}", "{", "}", "this", "this.", " ? ", " : "),
 	
-	PYTHON("", "return ", "return", "return true", "return false", "return None", "return self", "=", "break", "continue",
+	PYTHON(";\n", "return ", "return\n", "return true\n", "return false\n", "return None\n", "return self\n", "=", "break\n", "continue\n",
 			" -> ", "::", " + ", "raise ", "case ", "try", "{", "}", "[", "]", "self", "self.", " if ", " else ");
 	
 	public final String STATEMENT_TERMINATION;

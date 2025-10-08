@@ -1,6 +1,5 @@
 package gr.uom.java.xmi.decomposition;
 
-import static gr.uom.java.xmi.Constants.JAVA;
 import static gr.uom.java.xmi.decomposition.Visitor.stringify;
 
 import java.util.ArrayList;
@@ -17,12 +16,10 @@ import extension.ast.visitor.LangVisitor;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.diff.CodeRange;
 
 public class AbstractExpression extends AbstractCodeFragment {
 	
 	private String expression;
-	private LocationInfo locationInfo;
 	private CompositeStatementObject owner;
 	private LambdaExpressionObject lambdaOwner;
 	private List<LeafExpression> variables;
@@ -54,7 +51,7 @@ public class AbstractExpression extends AbstractCodeFragment {
 	private List<LambdaExpressionObject> lambdas;
 
 	public AbstractExpression(LangCompilationUnit cu, String sourceFolder, String filePath, LangASTNode langASTNode, CodeElementType codeElementType, VariableDeclarationContainer container, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String fileContent) {
-		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, langASTNode, codeElementType);
+		super(new LocationInfo(cu, sourceFolder, filePath, langASTNode, codeElementType));
 		LangVisitor visitor = new LangVisitor(cu, sourceFolder, filePath, container, activeVariableDeclarations, fileContent);
 		langASTNode.accept(visitor);
 		this.variables = visitor.getVariables();
@@ -90,7 +87,7 @@ public class AbstractExpression extends AbstractCodeFragment {
 	}
 
     public AbstractExpression(CompilationUnit cu, String sourceFolder, String filePath, Expression expression, CodeElementType codeElementType, VariableDeclarationContainer container, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String javaFileContent) {
-    	this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, expression, codeElementType);
+    	super(new LocationInfo(cu, sourceFolder, filePath, expression, codeElementType));
     	Visitor visitor = new Visitor(cu, sourceFolder, filePath, container, activeVariableDeclarations, javaFileContent);
     	expression.accept(visitor);
 		this.variables = visitor.getVariables();
@@ -177,7 +174,7 @@ public class AbstractExpression extends AbstractCodeFragment {
 		List<AbstractCall> list = new ArrayList<>();
 		list.addAll(getMethodInvocations());
 		for(LambdaExpressionObject lambda : this.getLambdas()) {
-			if(lambda.getString().contains(JAVA.LAMBDA_ARROW)) {
+			if(lambda.getString().contains(LANG.LAMBDA_ARROW)) {
 				list.addAll(lambda.getAllOperationInvocations());
 			}
 		}
@@ -307,10 +304,6 @@ public class AbstractExpression extends AbstractCodeFragment {
 		return lambdas;
 	}
 
-	public LocationInfo getLocationInfo() {
-		return locationInfo;
-	}
-
 	public VariableDeclaration searchVariableDeclaration(String variableName) {
 		VariableDeclaration variableDeclaration = this.getVariableDeclaration(variableName);
 		if(variableDeclaration != null) {
@@ -337,9 +330,5 @@ public class AbstractExpression extends AbstractCodeFragment {
 			}
 		}
 		return null;
-	}
-
-	public CodeRange codeRange() {
-		return locationInfo.codeRange();
 	}
 }
