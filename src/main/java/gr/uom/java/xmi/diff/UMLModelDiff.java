@@ -2051,6 +2051,9 @@ public class UMLModelDiff {
 		if(package1.equals(package2)) {
 			return true;
 		}
+		if(childModel.getClassList().size() == 2 && parentModel.getClassList().size() == 2 && !childModel.isPartial() && !parentModel.isPartial()) {
+			return true;
+		}
 		UMLClassBaseDiff sourceClassDiff = getUMLClassDiff(removedAttribute.getClassName());
 		UMLClassBaseDiff targetClassDiff = getUMLClassDiff(addedAttribute.getClassName());
 		if(sourceClassDiff != null) {
