@@ -372,15 +372,13 @@ public class LangVisitor implements LangASTVisitor {
     @Override
     public void visit(LangFieldAccess langFieldAccess) {
         // Handle field access like self.add, self.value, etc.
-
         // Check if this is a 'self' reference (Python's equivalent of 'this')
         LangASTNode expression = langFieldAccess.getExpression();
         if (expression instanceof LangSimpleName simpleName) {
             if ("self".equals(simpleName.getIdentifier()) || "cls".equals(simpleName.getIdentifier())) {
                 // This is a 'this' expression in Python (self.something)
-                LeafExpression thisExpr = new LeafExpression(cu, sourceFolder, filePath,
-                        langFieldAccess, LocationInfo.CodeElementType.THIS_EXPRESSION, container);
-                thisExpressions.add(thisExpr);
+                LeafExpression fieldAccessExpression = new LeafExpression(cu, sourceFolder, filePath, langFieldAccess, LocationInfo.CodeElementType.FIELD_ACCESS, container);
+                variables.add(fieldAccessExpression);
             }
         }
 
@@ -392,10 +390,6 @@ public class LangVisitor implements LangASTVisitor {
         if (langFieldAccess.getName() != null) {
             langFieldAccess.getName().accept(this);
         }
-
-//        if (langFieldAccess.getName() != null) {
-//            langFieldAccess.getName().accept(this);
-//        }
     }
 
 
