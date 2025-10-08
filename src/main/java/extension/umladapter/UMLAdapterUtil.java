@@ -50,11 +50,11 @@ public class UMLAdapterUtil {
         return name;
     }
 
-    public static int getParamOffset(LangMethodDeclaration methodDecl, List<LangSingleVariableDeclaration> params, String language) {
+    public static int getParamOffset(LangMethodDeclaration methodDecl, List<LangSingleVariableDeclaration> params, LangSupportedEnum language) {
         int paramOffset = 0;
         if (!params.isEmpty()) {
             String firstParamName = params.get(0).getLangSimpleName().getIdentifier();
-            boolean isPython = LangSupportedEnum.PYTHON.name().equals(language);
+            boolean isPython = LangSupportedEnum.PYTHON.equals(language);
 
             if (isPython) {
                 // Skip 'self' for instance methods

@@ -40,6 +40,7 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.dom.YieldStatement;
 
 import extension.ast.node.LangASTNode;
+import extension.ast.node.declaration.LangMethodDeclaration;
 import extension.ast.node.declaration.LangSingleVariableDeclaration;
 import extension.ast.node.expression.LangSimpleName;
 import extension.ast.node.statement.LangAssertStatement;
@@ -66,6 +67,8 @@ import extension.ast.node.statement.LangWithStatement;
 import extension.ast.node.statement.LangYieldStatement;
 import extension.ast.node.unit.LangCompilationUnit;
 import extension.ast.visitor.LangVisitor;
+import extension.base.LangSupportedEnum;
+import static extension.umladapter.UMLModelAdapter.createUMLOperation;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.UMLAnonymousClass;
@@ -618,6 +621,14 @@ public class OperationBody {
 		else if(statement instanceof LangAsyncStatement) {
 			// In Python, the async statement (keyword) is used to define asynchronous functions, also known as coroutines. 
 			// These functions are designed to work with Python's asyncio library for concurrent programming, allowing for efficient handling of I/O-bound operations like network requests or file operations without blocking the main program execution.
+		}
+		else if(statement instanceof LangMethodDeclaration) {
+			LangMethodDeclaration methodDecl = (LangMethodDeclaration)statement;
+			String className = container.getClassName() + "." + container.getName();
+			UMLOperation nested = createUMLOperation(methodDecl, className, sourceFolder, filePath, fileContent, LangSupportedEnum.fromFileName(filePath));
+			if(container instanceof UMLOperation) {
+				((UMLOperation)container).addNestedOperation(nested);
+			}
 		}
 	}
 

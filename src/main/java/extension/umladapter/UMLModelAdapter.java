@@ -36,7 +36,7 @@ import static extension.umladapter.processor.UMLAdapterVariableProcessor.process
 public class UMLModelAdapter {
 
     private final UMLModel umlModel;
-    private String language;
+    private LangSupportedEnum language;
 
     private static final Logger LOGGER = Logger.getLogger(UMLModelAdapter.class.getName());
 
@@ -53,7 +53,7 @@ public class UMLModelAdapter {
         Map<String, LangASTNode> result = new HashMap<>();
 
         for (Map.Entry<String, String> entry : langSupportedFiles.entrySet()) {
-            this.language = LangSupportedEnum.fromFileName(entry.getKey()).name();
+            this.language = LangSupportedEnum.fromFileName(entry.getKey());
             LangASTNode ast = LangASTUtil.getLangAST(
                     entry.getKey(), // fileName for language detection
                     new StringReader(entry.getValue())); // code content
@@ -63,7 +63,6 @@ public class UMLModelAdapter {
 
         return result;
     }
-
 
     private UMLModel createUMLModel(Map<String, LangASTNode> astMap, Map<String, String> langSupportedFiles) {
         UMLModel model = new UMLModel(Collections.emptySet());
@@ -116,7 +115,7 @@ public class UMLModelAdapter {
             String filepath = UMLAdapterUtil.extractFilePath(filename);
             for (LangMethodDeclaration method : topLevelMethods) {
                 UMLOperation operation = createUMLOperation(method, moduleClass.getName(),
-                        sourceFolder, filepath, fileContent);
+                        sourceFolder, filepath, fileContent, language);
                 for (LangAnnotation langAnnotation : method.getAnnotations()) {
                     operation.addAnnotation(new UMLAnnotation(
                             method.getRootCompilationUnit(),
@@ -209,7 +208,7 @@ public class UMLModelAdapter {
         umlClass.setRecord(typeDecl.isRecord());
 
         for (LangMethodDeclaration methodDecl : typeDecl.getMethods()) {
-            UMLOperation umlOperation = createUMLOperation(methodDecl, className, sourceFolder, filepath, fileContent);
+            UMLOperation umlOperation = createUMLOperation(methodDecl, className, sourceFolder, filepath, fileContent, language);
             umlClass.addOperation(umlOperation);
             if ("__init__".equals(methodDecl.getName())) {
                 List<UMLAttribute> attributes = getAttributes(methodDecl, sourceFolder, filepath, umlOperation, fileContent);
@@ -222,7 +221,7 @@ public class UMLModelAdapter {
         return umlClass;
     }
 
-    private UMLOperation createUMLOperation(LangMethodDeclaration methodDecl, String className, String sourceFolder, String filePath, String fileContent) {
+    public static UMLOperation createUMLOperation(LangMethodDeclaration methodDecl, String className, String sourceFolder, String filePath, String fileContent, LangSupportedEnum language) {
         int startSignatureOffset = methodDecl.getStartChar();
         LocationInfo locationInfo = new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.METHOD_DECLARATION);
 
@@ -249,7 +248,7 @@ public class UMLModelAdapter {
             LangSingleVariableDeclaration param = params.get(i);
             UMLType typeObject = UMLType.extractTypeObject("Object");
             LocationInfo paramLocationInfo = new LocationInfo(sourceFolder, filePath, param, LocationInfo.CodeElementType.TYPE);
-            if (LangSupportedEnum.PYTHON.name().equals(language)) {
+            if (LangSupportedEnum.PYTHON.equals(language)) {
                 if (param.getTypeAnnotation() != null) {
                     typeObject = UMLType.extractTypeObject(param.getTypeAnnotation().getName(), "[", "]", paramLocationInfo);
                 }
@@ -280,7 +279,7 @@ public class UMLModelAdapter {
 
         UMLType returnType;
         LocationInfo returnTypeLocationInfo = new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.TYPE);
-        if (LangSupportedEnum.PYTHON.name().equals(language)){
+        if (LangSupportedEnum.PYTHON.equals(language)){
             returnType = UMLType.extractTypeObject(methodDecl.getReturnTypeAnnotation(), "[", "]", returnTypeLocationInfo);
         } else {
             String resolvedReturnType = methodDecl.getReturnTypeAnnotation();
@@ -319,7 +318,7 @@ public class UMLModelAdapter {
         return umlOperation;
     }
 
-    private List<UMLAttribute> getAttributes(LangMethodDeclaration methodDecl, String sourceFolder, String filePath, UMLOperation umlOperation, String fileContent) {
+    private static List<UMLAttribute> getAttributes(LangMethodDeclaration methodDecl, String sourceFolder, String filePath, UMLOperation umlOperation, String fileContent) {
         List<UMLAttribute> attributes = new ArrayList<>();
 
         // Only process __init__ method for attribute extraction
@@ -350,7 +349,7 @@ public class UMLModelAdapter {
         return attributes;
     }
 
-    private void processAssignmentForAttribute(LangMethodDeclaration methodDeclaration, LangAssignment assignment, List<UMLAttribute> attributes,
+    private static void processAssignmentForAttribute(LangMethodDeclaration methodDeclaration, LangAssignment assignment, List<UMLAttribute> attributes,
                                                String sourceFolder, String filePath, UMLOperation umlOperation, String fileContent) {
         LangASTNode leftSide = assignment.getLeftSide();
 
@@ -461,7 +460,7 @@ public class UMLModelAdapter {
         }
     }
 
-    private void processComments(LangMethodDeclaration methodDecl, String sourceFolder, String filePath, UMLOperation umlOperation){
+    private static void processComments(LangMethodDeclaration methodDecl, String sourceFolder, String filePath, UMLOperation umlOperation){
         List<UMLComment> comments = new ArrayList<>();
         for (LangComment langComment: methodDecl.getComments()) {
             if (langComment.isBlockComment() || langComment.isDocComment()){
