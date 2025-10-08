@@ -15,9 +15,7 @@ import extension.ast.node.metadata.LangAnnotation;
 import extension.ast.node.metadata.comment.LangComment;
 import extension.ast.node.statement.LangBlock;
 import extension.ast.node.statement.LangExpressionStatement;
-import extension.base.LangSupportedEnum;
 import extension.base.lang.python.Python3Parser;
-import extension.umladapter.UMLAdapterUtil;
 import gr.uom.java.xmi.Visibility;
 
 import java.util.ArrayList;
@@ -301,19 +299,12 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
                         method.setAbstract(false);
                         method.setStatic(false);
                     }
-
-                    // Add annotation to the node
-                    decoratedNode.addChild(annotation);
                 }
             }
         } else if (ctx.classdef() != null) {
             decoratedNode = mainBuilder.visitClassdef(ctx.classdef());
             if (decoratedNode instanceof LangTypeDeclaration classDecl) {
                 classDecl.setLangAnnotations(annotations);
-
-                for (LangAnnotation annotation : annotations) {
-                    decoratedNode.addChild(annotation);
-                }
             }
         } else if (ctx.async_funcdef() != null) {
             decoratedNode = mainBuilder.visitAsync_funcdef(ctx.async_funcdef());
