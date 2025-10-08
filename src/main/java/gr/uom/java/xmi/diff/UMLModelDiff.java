@@ -2696,6 +2696,9 @@ public class UMLModelDiff {
 				if(entry.getKey().singleReturnStatement() != null ^ entry.getValue().singleReturnStatement() != null) {
 					skip = true;
 				}
+				if(childModel.getClassList().size() == 2 && parentModel.getClassList().size() == 1 && !childModel.isPartial() && !parentModel.isPartial()) {
+					skip = false;
+				}
 			}
 			if(!skip) {
 				subclassExtraction = true;
