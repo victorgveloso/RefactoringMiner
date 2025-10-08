@@ -105,9 +105,46 @@ public class OperationBody {
 				}
 			}
 		}
-		for (LangASTNode statement : methodBody.getStatements()) {
+		for(LangASTNode statement : methodBody.getStatements()) {
 			processStatement(cu, sourceFolder, filePath, compositeStatement, statement, fileContent);
 		}
+		for(AbstractCall invocation : getAllOperationInvocations()) {
+			if(invocation.isAssertion()) {
+				containsAssertion = true;
+				break;
+			}
+		}
+		this.activeVariableDeclarations = null;
+	}
+
+	public OperationBody(LangCompilationUnit cu, String sourceFolder, String filePath, LangBlock methodBody, VariableDeclarationContainer container, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String fileContent) {
+		this.compositeStatement = new CompositeStatementObject(cu, sourceFolder, filePath, methodBody, 0, CodeElementType.BLOCK, fileContent);
+		this.compositeStatement.setOwner(container);
+		this.comments = container.getComments();
+		this.container = container;
+		this.bodyHashCode = LangVisitor.stringify(methodBody).hashCode();
+		this.activeVariableDeclarations = new HashMap<>(activeVariableDeclarations);
+		addAllInActiveVariableDeclarations(container != null ? container.getParameterDeclarationList() : Collections.emptyList());
+		if(container.isDeclaredInAnonymousClass()) {
+			UMLAnonymousClass anonymousClassContainer = container.getAnonymousClassContainer().get();
+			for(VariableDeclarationContainer parentContainer : anonymousClassContainer.getParentContainers()) {
+				for(VariableDeclaration parameterDeclaration : parentContainer.getParameterDeclarationList()) {
+					if(parameterDeclaration.isFinal()) {
+						addInActiveVariableDeclarations(parameterDeclaration);
+					}
+				}
+			}
+		}
+		for(LangASTNode statement : methodBody.getStatements()) {
+			processStatement(cu, sourceFolder, filePath, compositeStatement, statement, fileContent);
+		}
+		for(AbstractCall invocation : getAllOperationInvocations()) {
+			if(invocation.isAssertion()) {
+				containsAssertion = true;
+				break;
+			}
+		}
+		this.activeVariableDeclarations = null;
 	}
 
 	public OperationBody(CompilationUnit cu, String sourceFolder, String filePath, Block methodBody, VariableDeclarationContainer container, List<UMLAttribute> attributes, String javaFileContent) {

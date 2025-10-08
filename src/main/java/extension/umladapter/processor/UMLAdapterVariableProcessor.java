@@ -5,7 +5,6 @@ import java.util.Collections;
 import extension.ast.node.declaration.LangMethodDeclaration;
 import extension.ast.node.declaration.LangSingleVariableDeclaration;
 import extension.ast.node.expression.LangAssignment;
-import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLParameter;
 import gr.uom.java.xmi.UMLType;
 import gr.uom.java.xmi.VariableDeclarationContainer;
@@ -13,16 +12,13 @@ import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
 public class UMLAdapterVariableProcessor {
 
-    public static void processVariableDeclarations(LangSingleVariableDeclaration param, UMLParameter umlParam, UMLType typeObject, String sourceFolder, String filePath, LangMethodDeclaration methodDecl, String fileContent){
-
-        String name = param.getLangSimpleName().getIdentifier();
-        LocationInfo location = new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.SINGLE_VARIABLE_DECLARATION);
-
+    public static void processVariableDeclarations(LangSingleVariableDeclaration param, UMLParameter umlParam, UMLType typeObject, String sourceFolder, String filePath, LangMethodDeclaration methodDecl, VariableDeclarationContainer container, String fileContent){
         VariableDeclaration vd = new VariableDeclaration(
                 param.getRootCompilationUnit(),
                 sourceFolder,
                 filePath,
                 param,
+                container,
                 fileContent
         );
 

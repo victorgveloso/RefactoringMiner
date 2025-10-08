@@ -116,7 +116,7 @@ public class LangVisitor implements LangASTVisitor {
     public void visit(LangSingleVariableDeclaration langSingleVariableDeclaration) {
         // Create variable declaration for parameters
         VariableDeclaration varDecl = new VariableDeclaration(
-                cu, sourceFolder, filePath, langSingleVariableDeclaration, fileContent);
+                cu, sourceFolder, filePath, langSingleVariableDeclaration, container, fileContent);
 
         variableDeclarations.add(varDecl);
 
@@ -606,21 +606,20 @@ public class LangVisitor implements LangASTVisitor {
 
     @Override
     public void visit(LangLambdaExpression langLambdaExpression) {
-        //TODO
-//        // Create lambda expression object
-//        LambdaExpressionObject lambdaObj = new LambdaExpressionObject(
-//                cu, sourceFolder, filePath, langLambdaExpression, container);
-//        lambdas.add(lambdaObj);
-//
-//        // Visit lambda parameters
-//        for (LangASTNode param : langLambdaExpression.getParameters()) {
-//            param.accept(this);
-//        }
-//
-//        // Visit lambda body
-//        if (langLambdaExpression.getBody() != null) {
-//            langLambdaExpression.getBody().accept(this);
-//        }
+        // Create lambda expression object
+        LambdaExpressionObject lambdaObj = new LambdaExpressionObject(
+                cu, sourceFolder, filePath, langLambdaExpression, container, activeVariableDeclarations, fileContent);
+        lambdas.add(lambdaObj);
+
+        // Visit lambda parameters
+        for (LangASTNode param : langLambdaExpression.getParameters()) {
+            param.accept(this);
+        }
+
+        // Visit lambda body
+        if (langLambdaExpression.getBody() != null) {
+            langLambdaExpression.getBody().accept(this);
+        }
     }
 
     @Override

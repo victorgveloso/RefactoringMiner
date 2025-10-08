@@ -66,7 +66,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 	private String actualSignature;
 
 	public VariableDeclaration(LangCompilationUnit cu, String sourceFolder, String filePath,
-							   LangSingleVariableDeclaration param, String fileContent) {
+							   LangSingleVariableDeclaration param, VariableDeclarationContainer container, String fileContent) {
 		this.variableName = param.getLangSimpleName().getIdentifier();
 
 		// Extract type from parameter

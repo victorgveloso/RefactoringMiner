@@ -263,7 +263,7 @@ public class UMLModelAdapter {
             }
 
             UMLParameter umlParam = new UMLParameter(param.getLangSimpleName().getIdentifier(), typeObject, "parameter", param.isVarArgs());
-            processVariableDeclarations(param, umlParam, typeObject, sourceFolder, filePath, methodDecl, fileContent);
+            processVariableDeclarations(param, umlParam, typeObject, sourceFolder, filePath, methodDecl, umlOperation, fileContent);
             umlOperation.addParameter(umlParam);
             parameterNames.add(param.getLangSimpleName().getIdentifier());
         }

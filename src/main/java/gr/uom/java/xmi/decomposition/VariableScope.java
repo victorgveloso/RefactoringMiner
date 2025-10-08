@@ -111,9 +111,14 @@ public class VariableScope {
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(startLine).append(":").append(startColumn);
-		sb.append("-");
-		sb.append(endLine).append(":").append(endColumn);
+		if(startLine != 0 && endLine != 0) {
+			sb.append(startLine).append(":").append(startColumn);
+			sb.append("-");
+			sb.append(endLine).append(":").append(endColumn);
+		}
+		else {
+			sb.append(startOffset).append("-").append(endOffset);
+		}
 		return sb.toString();
 	}
 
