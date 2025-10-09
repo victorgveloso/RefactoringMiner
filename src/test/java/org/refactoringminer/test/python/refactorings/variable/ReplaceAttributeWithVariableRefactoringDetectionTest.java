@@ -4,7 +4,6 @@ import extension.umladapter.UMLModelAdapter;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.diff.UMLModelDiff;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.refactoringminer.api.Refactoring;
@@ -16,7 +15,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@Disabled
+@Isolated
 public class ReplaceAttributeWithVariableRefactoringDetectionTest {
 
     @Test
