@@ -1,6 +1,5 @@
 package gr.uom.java.xmi.diff;
 
-import gr.uom.java.xmi.Constants;
 import gr.uom.java.xmi.LeafType;
 import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLAnnotation;
@@ -3586,12 +3585,6 @@ public class UMLModelDiff {
 				before = before.substring(before.lastIndexOf(".") + 1, before.length());
 				after = after.substring(after.lastIndexOf(".") + 1, after.length());
 			}
-			else if(after.contains(".") && (after.startsWith(Constants.PYTHON.THIS_DOT) || after.startsWith(Constants.JAVA.THIS_DOT))) {
-				after = after.substring(after.lastIndexOf(".") + 1, after.length());
-			}
-			else if(before.contains(".") && (before.startsWith(Constants.PYTHON.THIS_DOT) || before.startsWith(Constants.JAVA.THIS_DOT))) {
-				before = before.substring(before.lastIndexOf(".") + 1, before.length());
-			}
 			for(CandidateAttributeRefactoring candidate : set) {
 				if(candidate.getOriginalVariableDeclaration() == null && candidate.getRenamedVariableDeclaration() == null) {
 					if(diff != null) {
@@ -3792,19 +3785,6 @@ public class UMLModelDiff {
 									refactorings.add(ref);
 									break;//it's not necessary to repeat the same process for all candidates in the set
 								}
-							}
-						}
-					}
-				}
-				else if(candidate.getRenamedVariableDeclaration() != null) {
-					UMLClassBaseDiff originalClassDiff = getUMLClassDiff(candidate.getOperationBefore().getClassName());
-					if(originalClassDiff != null) {
-						UMLAttribute a1 = originalClassDiff.findAttributeInOriginalClass(before);
-						if(a1 != null) {
-							RenameVariableRefactoring ref = new RenameVariableRefactoring(a1.getVariableDeclaration(), candidate.getRenamedVariableDeclaration(), candidate.getOperationBefore(), candidate.getOperationAfter(), candidate.getReferences(), false);
-							if(!refactorings.contains(ref)) {
-								refactorings.add(ref);
-								break;//it's not necessary to repeat the same process for all candidates in the set
 							}
 						}
 					}

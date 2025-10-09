@@ -19,6 +19,7 @@ import org.refactoringminer.api.RefactoringMinerTimedOutException;
 import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.util.PrefixSuffixUtils;
 
+import gr.uom.java.xmi.Constants;
 import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLAnonymousClass;
@@ -1038,14 +1039,22 @@ public abstract class UMLAbstractClassDiff {
 				aliasedAttributesInOriginalClass, aliasedAttributesInNextClass, renameMap);
 		allConsistentRenames.removeAll(allInconsistentRenames);
 		for(Replacement pattern : allConsistentRenames) {
-			UMLAttribute a1 = findAttributeInOriginalClass(pattern.getBefore());
-			UMLAttribute a2 = findAttributeInNextClass(pattern.getAfter());
+			String before = pattern.getBefore();
+			String after = pattern.getAfter();
+			if(after.contains(".") && (after.startsWith(Constants.PYTHON.THIS_DOT) || after.startsWith(Constants.JAVA.THIS_DOT))) {
+				after = after.substring(after.lastIndexOf(".") + 1, after.length());
+			}
+			if(before.contains(".") && (before.startsWith(Constants.PYTHON.THIS_DOT) || before.startsWith(Constants.JAVA.THIS_DOT))) {
+				before = before.substring(before.lastIndexOf(".") + 1, before.length());
+			}
+			UMLAttribute a1 = findAttributeInOriginalClass(before);
+			UMLAttribute a2 = findAttributeInNextClass(after);
 			Set<CandidateAttributeRefactoring> set = renameMap.get(pattern);
 			for(CandidateAttributeRefactoring candidate : set) {
 				if(candidate.getOriginalVariableDeclaration() == null && candidate.getRenamedVariableDeclaration() == null) {
 					if(a1 != null && a2 != null) {
-						if((!originalClass.containsAttributeWithName(pattern.getAfter()) || cyclicRename(renameMap, pattern)) &&
-								(!nextClass.containsAttributeWithName(pattern.getBefore()) || cyclicRename(renameMap, pattern)) &&
+						if((!originalClass.containsAttributeWithName(after) || cyclicRename(renameMap, pattern)) &&
+								(!nextClass.containsAttributeWithName(before) || cyclicRename(renameMap, pattern)) &&
 								!inconsistentAttributeRename(pattern, aliasedAttributesInOriginalClass, aliasedAttributesInNextClass) &&
 								!attributeMerged(a1, a2, refactorings) && !attributeSplit(a1, a2, refactorings) && !attributeWithConflictingRename(a1, a2, originalRefactorings)) {
 							if(a1 instanceof UMLEnumConstant && a2 instanceof UMLEnumConstant) {
