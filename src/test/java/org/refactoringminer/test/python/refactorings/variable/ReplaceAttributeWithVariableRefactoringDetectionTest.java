@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Isolated
-public class ReplaceVariableWithAttributeRefactoringDetectionTest {
+public class ReplaceAttributeWithVariableRefactoringDetectionTest {
 
     @Test
     void detectsReplaceVariableWithAttribute_SimpleCalculation() throws Exception {
-        String beforePythonCode = """
+        String afterPythonCode = """
             class Calculator:
                 def __init__(self):
                     pass
@@ -29,7 +29,7 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
                     return total
             """;
 
-        String afterPythonCode = """
+        String beforePythonCode = """
             class Calculator:
                 def __init__(self):
                     self.total = 0
@@ -42,13 +42,13 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
         Map<String, String> beforeFiles = Map.of("calculator.py", beforePythonCode);
         Map<String, String> afterFiles = Map.of("calculator.py", afterPythonCode);
 
-        assertReplaceVariableWithAttributeRefactoringDetected(beforeFiles, afterFiles,
+        assertReplaceAttributeWithVariableRefactoringDetected(beforeFiles, afterFiles,
                 "total", "calculate_total", "Calculator");
     }
 
     @Test
     void detectsReplaceVariableWithAttribute_CounterPattern() throws Exception {
-        String beforePythonCode = """
+        String afterPythonCode = """
             class DataProcessor:
                 def __init__(self):
                     pass
@@ -61,7 +61,7 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
                     return count
             """;
 
-        String afterPythonCode = """
+        String beforePythonCode = """
             class DataProcessor:
                 def __init__(self):
                     self.count = 0
@@ -77,13 +77,13 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
         Map<String, String> beforeFiles = Map.of("processor.py", beforePythonCode);
         Map<String, String> afterFiles = Map.of("processor.py", afterPythonCode);
 
-        assertReplaceVariableWithAttributeRefactoringDetected(beforeFiles, afterFiles,
+        assertReplaceAttributeWithVariableRefactoringDetected(beforeFiles, afterFiles,
                 "count", "process_items", "DataProcessor");
     }
 
     @Test
     void detectsReplaceVariableWithAttribute_StateTracking() throws Exception {
-        String beforePythonCode = """
+        String afterPythonCode = """
             class GameState:
                 def __init__(self):
                     pass
@@ -94,7 +94,7 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
                     return current_score
             """;
 
-        String afterPythonCode = """
+        String beforePythonCode = """
             class GameState:
                 def __init__(self):
                     self.current_score = 0
@@ -108,13 +108,13 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
         Map<String, String> beforeFiles = Map.of("game.py", beforePythonCode);
         Map<String, String> afterFiles = Map.of("game.py", afterPythonCode);
 
-        assertReplaceVariableWithAttributeRefactoringDetected(beforeFiles, afterFiles,
+        assertReplaceAttributeWithVariableRefactoringDetected(beforeFiles, afterFiles,
                 "current_score", "update_score", "GameState");
     }
 
     @Test
     void detectsReplaceVariableWithAttribute_CachedResult() throws Exception {
-        String beforePythonCode = """
+        String afterPythonCode = """
             class Calculator:
                 def __init__(self):
                     pass
@@ -124,7 +124,7 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
                     return result
             """;
 
-        String afterPythonCode = """
+        String beforePythonCode = """
             class Calculator:
                 def __init__(self):
                     self.result = None
@@ -137,13 +137,13 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
         Map<String, String> beforeFiles = Map.of("calculator.py", beforePythonCode);
         Map<String, String> afterFiles = Map.of("calculator.py", afterPythonCode);
 
-        assertReplaceVariableWithAttributeRefactoringDetected(beforeFiles, afterFiles,
+        assertReplaceAttributeWithVariableRefactoringDetected(beforeFiles, afterFiles,
                 "result", "expensive_calculation", "Calculator");
     }
 
     @Test
     void detectsReplaceVariableWithAttribute_ConfigurationValue() throws Exception {
-        String beforePythonCode = """
+        String afterPythonCode = """
             class DatabaseConnection:
                 def __init__(self):
                     pass
@@ -153,7 +153,7 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
                     return self.establish_connection(connection_string)
             """;
 
-        String afterPythonCode = """
+        String beforePythonCode = """
             class DatabaseConnection:
                 def __init__(self):
                     self.connection_string = ""
@@ -166,13 +166,13 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
         Map<String, String> beforeFiles = Map.of("database.py", beforePythonCode);
         Map<String, String> afterFiles = Map.of("database.py", afterPythonCode);
 
-        assertReplaceVariableWithAttributeRefactoringDetected(beforeFiles, afterFiles,
+        assertReplaceAttributeWithVariableRefactoringDetected(beforeFiles, afterFiles,
                 "connection_string", "connect", "DatabaseConnection");
     }
 
     @Test
     void detectsReplaceVariableWithAttribute_TemporaryToState() throws Exception {
-        String beforePythonCode = """
+        String afterPythonCode = """
             class FileProcessor:
                 def __init__(self):
                     pass
@@ -185,7 +185,7 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
                     return buffer
             """;
 
-        String afterPythonCode = """
+        String beforePythonCode = """
             class FileProcessor:
                 def __init__(self):
                     self.buffer = []
@@ -201,13 +201,13 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
         Map<String, String> beforeFiles = Map.of("processor.py", beforePythonCode);
         Map<String, String> afterFiles = Map.of("processor.py", afterPythonCode);
 
-        assertReplaceVariableWithAttributeRefactoringDetected(beforeFiles, afterFiles,
+        assertReplaceAttributeWithVariableRefactoringDetected(beforeFiles, afterFiles,
                 "buffer", "process_file", "FileProcessor");
     }
 
     @Test
     void detectsExtractAttribute_SimpleConstant() throws Exception {
-        String beforePythonCode = """
+        String afterPythonCode = """
         class Calculator:
         
             def __init__(self):
@@ -222,7 +222,7 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
                 return price * tax_rate
         """;
 
-        String afterPythonCode = """
+        String beforePythonCode = """
         class Calculator:
             def __init__(self):
                 self.tax_rate = 0.10
@@ -237,13 +237,13 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
         Map<String, String> beforeFiles = Map.of("calculator.py", beforePythonCode);
         Map<String, String> afterFiles = Map.of("calculator.py", afterPythonCode);
 
-        assertReplaceVariableWithAttributeRefactoringDetected(beforeFiles, afterFiles,
+        assertReplaceAttributeWithVariableRefactoringDetected(beforeFiles, afterFiles,
                 "tax_rate", "calculate_tax", "Calculator");
     }
 
     @Test
     void detectsExtractAttribute_ConstantToClassAttribute() throws Exception {
-        String beforePythonCode = """
+        String afterPythonCode = """
             class Circle:
                 def __init__(self, radius):
                     self.radius = radius
@@ -257,7 +257,7 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
                     return 2 * pi * self.radius
             """;
 
-        String afterPythonCode = """
+        String beforePythonCode = """
             class Circle:
                 def __init__(self, radius):
                     self.radius = radius
@@ -273,13 +273,13 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
         Map<String, String> beforeFiles = Map.of("circle.py", beforePythonCode);
         Map<String, String> afterFiles = Map.of("circle.py", afterPythonCode);
 
-        assertReplaceVariableWithAttributeRefactoringDetected(beforeFiles, afterFiles,
+        assertReplaceAttributeWithVariableRefactoringDetected(beforeFiles, afterFiles,
                 "pi", "calculate_circumference", "Circle");
     }
 
     @Test
     void detectsExtractAttribute_ConfigurationValue() throws Exception {
-        String beforePythonCode = """
+        String afterPythonCode = """
             class DatabaseConnection:
                 def __init__(self, host):
                     self.host = host
@@ -293,7 +293,7 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
                     return self.establish_connection(timeout)
             """;
 
-        String afterPythonCode = """
+        String beforePythonCode = """
             class DatabaseConnection:
                 def __init__(self, host):
                     self.host = host
@@ -309,11 +309,11 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
         Map<String, String> beforeFiles = Map.of("database.py", beforePythonCode);
         Map<String, String> afterFiles = Map.of("database.py", afterPythonCode);
 
-        assertReplaceVariableWithAttributeRefactoringDetected(beforeFiles, afterFiles,
+        assertReplaceAttributeWithVariableRefactoringDetected(beforeFiles, afterFiles,
                 "timeout", "reconnect", "DatabaseConnection");
     }
 
-    public static void assertReplaceVariableWithAttributeRefactoringDetected(
+    public static void assertReplaceAttributeWithVariableRefactoringDetected(
             Map<String, String> beforeFiles,
             Map<String, String> afterFiles,
             String variableName,
@@ -334,13 +334,13 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
         System.out.println("Method: " + methodName + " in class " + className);
         System.out.println("Total refactorings detected: " + refactorings.size());
 
-        // Look for ReplaceVariableWithAttributeRefactoring
-        boolean replaceVariableWithAttributeFound = refactorings.stream()
-                .filter(r -> RefactoringType.REPLACE_VARIABLE_WITH_ATTRIBUTE.equals(r.getRefactoringType()))
-                .anyMatch(refactoring -> refactoring.getRefactoringType() == RefactoringType.REPLACE_VARIABLE_WITH_ATTRIBUTE);
+        // Look for ReplaceAttributeWithVariableRefactoring
+        boolean replaceAttributeWithVariableFound = refactorings.stream()
+                .filter(r -> RefactoringType.REPLACE_ATTRIBUTE_WITH_VARIABLE.equals(r.getRefactoringType()))
+                .anyMatch(refactoring -> refactoring.getRefactoringType() == RefactoringType.REPLACE_ATTRIBUTE_WITH_VARIABLE);
 
         // Fallback: Look for any refactoring mentioning our variable and attribute
-        if (!replaceVariableWithAttributeFound) {
+        if (!replaceAttributeWithVariableFound) {
             boolean mentionsVariableAndAttribute = refactorings.stream()
                     .anyMatch(r -> r.toString().contains(variableName) &&
                             (r.toString().contains("self." + variableName) ||
@@ -349,19 +349,19 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
 
             if (mentionsVariableAndAttribute) {
                 System.out.println("Found refactoring mentioning the variable and attribute conversion");
-                replaceVariableWithAttributeFound = true; // Accept for debugging
+                replaceAttributeWithVariableFound = true; // Accept for debugging
             }
         }
 
 
-        if (!replaceVariableWithAttributeFound) {
+        if (!replaceAttributeWithVariableFound) {
             System.out.println("Available refactorings:");
             refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
-            fail("Expected replace variable with attribute refactoring for '" + variableName +
+            fail("Expected replace attribute with variable refactoring for '" + variableName +
                     "' in method '" + methodName + "' was not detected");
         }
 
-        assertTrue(replaceVariableWithAttributeFound, "Expected Replace Variable with Attribute refactoring to be detected");
+        assertTrue(replaceAttributeWithVariableFound, "Expected Replace Attribute with Variable refactoring to be detected");
     }
 }
