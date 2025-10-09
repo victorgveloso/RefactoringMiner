@@ -205,6 +205,114 @@ public class ReplaceVariableWithAttributeRefactoringDetectionTest {
                 "buffer", "process_file", "FileProcessor");
     }
 
+    @Test
+    void detectsExtractAttribute_SimpleConstant() throws Exception {
+        String beforePythonCode = """
+        class Calculator:
+        
+            def __init__(self):
+                pass
+        
+            def add_tax(self, amount):
+                tax_rate = 0.10
+                return amount * tax_rate
+            
+            def calculate_tax(self, price):
+                tax_rate = 0.10
+                return price * tax_rate
+        """;
+
+        String afterPythonCode = """
+        class Calculator:
+            def __init__(self):
+                self.tax_rate = 0.10
+            
+            def add_tax(self, amount):
+                return amount * self.tax_rate
+            
+            def calculate_tax(self, price):
+                return price * self.tax_rate
+        """;
+
+        Map<String, String> beforeFiles = Map.of("calculator.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("calculator.py", afterPythonCode);
+
+        assertReplaceVariableWithAttributeRefactoringDetected(beforeFiles, afterFiles,
+                "tax_rate", "tax_rate", "Calculator");
+    }
+
+    @Test
+    void detectsExtractAttribute_ConstantToClassAttribute() throws Exception {
+        String beforePythonCode = """
+            class Circle:
+                def __init__(self, radius):
+                    self.radius = radius
+                
+                def calculate_area(self):
+                    pi = 3.14159
+                    return pi * self.radius * self.radius
+                
+                def calculate_circumference(self):
+                    pi = 3.14159
+                    return 2 * pi * self.radius
+            """;
+
+        String afterPythonCode = """
+            class Circle:
+                def __init__(self, radius):
+                    self.radius = radius
+                    self.pi = 3.14159
+                
+                def calculate_area(self):
+                    return self.pi * self.radius * self.radius
+                
+                def calculate_circumference(self):
+                    return 2 * self.pi * self.radius
+            """;
+
+        Map<String, String> beforeFiles = Map.of("circle.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("circle.py", afterPythonCode);
+
+        assertReplaceVariableWithAttributeRefactoringDetected(beforeFiles, afterFiles,
+                "pi", "pi", "Circle");
+    }
+
+    @Test
+    void detectsExtractAttribute_ConfigurationValue() throws Exception {
+        String beforePythonCode = """
+            class DatabaseConnection:
+                def __init__(self, host):
+                    self.host = host
+                
+                def connect(self):
+                    timeout = 30
+                    return self.establish_connection(timeout)
+                
+                def reconnect(self):
+                    timeout = 30
+                    return self.establish_connection(timeout)
+            """;
+
+        String afterPythonCode = """
+            class DatabaseConnection:
+                def __init__(self, host):
+                    self.host = host
+                    self.timeout = 30
+                
+                def connect(self):
+                    return self.establish_connection(self.timeout)
+                
+                def reconnect(self):
+                    return self.establish_connection(self.timeout)
+            """;
+
+        Map<String, String> beforeFiles = Map.of("database.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("database.py", afterPythonCode);
+
+        assertReplaceVariableWithAttributeRefactoringDetected(beforeFiles, afterFiles,
+                "timeout", "timeout", "DatabaseConnection");
+    }
+
     public static void assertReplaceVariableWithAttributeRefactoringDetected(
             Map<String, String> beforeFiles,
             Map<String, String> afterFiles,
