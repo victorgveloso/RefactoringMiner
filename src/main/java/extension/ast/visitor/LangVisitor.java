@@ -322,15 +322,7 @@ public class LangVisitor implements LangASTVisitor {
                 variableDeclarations.add(varDecl);
             }
 
-        } // TODO
-        else if (langAssignment.getLeftSide() instanceof LangFieldAccess fieldAccess) {
-            // Handle field access like self.add, self.value etc
-            if (fieldAccess.getExpression() != null) {
-                fieldAccess.getExpression().accept(this);
-            }
-
         }
-
     }
 
     @Override
@@ -380,15 +372,6 @@ public class LangVisitor implements LangASTVisitor {
                 LeafExpression fieldAccessExpression = new LeafExpression(cu, sourceFolder, filePath, langFieldAccess, LocationInfo.CodeElementType.FIELD_ACCESS, container);
                 variables.add(fieldAccessExpression);
             }
-        }
-
-        // Continue visiting child nodes
-        if (langFieldAccess.getExpression() != null) {
-            langFieldAccess.getExpression().accept(this);
-        }
-        // CRITICAL: Also visit the field name to capture attribute references
-        if (langFieldAccess.getName() != null) {
-            langFieldAccess.getName().accept(this);
         }
     }
 
