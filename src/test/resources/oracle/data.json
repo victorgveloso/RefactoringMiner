@@ -60143,6 +60143,13 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
+    }, {
+        "type": "Parameterize Attribute",
+        "description": "Parameterize Attribute context : OCommandContext to context : OCommandContext in method public execute(request OSQLAsynchQuery<ODocument>, context OCommandContext) : Object from class com.orientechnologies.orient.core.sql.parser.OMatchStatement",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 2618
 }, {
@@ -65643,29 +65650,29 @@
         "detectionTools": "RefactoringMiner, RMiner-1x",
         "validators": null
     }, {
-        "type": "Move And Rename Attribute",
-        "description": "Move And Rename Attribute private mCachedAlbumArtists : Set<Artist> renamed to protected mAlbumArtists : Set<Artist> and moved from class org.tomahawk.libtomahawk.collection.ScriptResolverCollection to class org.tomahawk.libtomahawk.collection.Collection",
+        "type": "Pull Up Attribute",
+        "description": "Pull Up Attribute private mCachedAlbumArtists : Set<Artist> from class org.tomahawk.libtomahawk.collection.ScriptResolverCollection to protected mAlbumArtists : Set<Artist> from class org.tomahawk.libtomahawk.collection.Collection",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
     }, {
-        "type": "Move And Rename Attribute",
-        "description": "Move And Rename Attribute private mCachedQueries : Set<Query> renamed to protected mQueries : Set<Query> and moved from class org.tomahawk.libtomahawk.collection.ScriptResolverCollection to class org.tomahawk.libtomahawk.collection.Collection",
+        "type": "Pull Up Attribute",
+        "description": "Pull Up Attribute private mCachedQueries : Set<Query> from class org.tomahawk.libtomahawk.collection.ScriptResolverCollection to protected mQueries : Set<Query> from class org.tomahawk.libtomahawk.collection.Collection",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
     }, {
-        "type": "Move And Rename Attribute",
-        "description": "Move And Rename Attribute private mCachedArtists : Set<Artist> renamed to protected mArtists : Set<Artist> and moved from class org.tomahawk.libtomahawk.collection.ScriptResolverCollection to class org.tomahawk.libtomahawk.collection.Collection",
+        "type": "Pull Up Attribute",
+        "description": "Pull Up Attribute private mCachedArtists : Set<Artist> from class org.tomahawk.libtomahawk.collection.ScriptResolverCollection to protected mArtists : Set<Artist> from class org.tomahawk.libtomahawk.collection.Collection",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
     }, {
-        "type": "Move And Rename Attribute",
-        "description": "Move And Rename Attribute private mCachedAlbums : Set<Album> renamed to protected mAlbums : Set<Album> and moved from class org.tomahawk.libtomahawk.collection.ScriptResolverCollection to class org.tomahawk.libtomahawk.collection.Collection",
+        "type": "Pull Up Attribute",
+        "description": "Pull Up Attribute private mCachedAlbums : Set<Album> from class org.tomahawk.libtomahawk.collection.ScriptResolverCollection to protected mAlbums : Set<Album> from class org.tomahawk.libtomahawk.collection.Collection",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
@@ -66278,6 +66285,13 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
+    }, {
+        "type": "Parameterize Attribute",
+        "description": "Parameterize Attribute cacheSeconds : int to cacheSeconds : int in method protected addHttp10CacheHeaders(cacheSeconds int, response HttpServletResponse) : void from class org.springframework.web.servlet.support.WebContentGenerator",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 2657
 }, {
@@ -100100,6 +100114,13 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
+    }, {
+        "type": "Replace Variable With Attribute",
+        "description": "Replace Variable With Attribute containerName : String to containerName : String in method public build(target ServiceTarget) : ServiceBuilder<T> from class org.wildfly.clustering.server.singleton.CacheSingletonServiceBuilder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 8243
 }, {
@@ -101284,8 +101305,8 @@
         "detectionTools": "RefactoringMiner, RMiner-1x",
         "validators": "Davood, Nikos"
     }, {
-        "type": "Move And Rename Attribute",
-        "description": "Move And Rename Attribute private allTasksAreFinished : boolean renamed to protected allChildrenFinished : boolean and moved from class cascading.stats.tez.TezNodeStats to class cascading.stats.hadoop.BaseHadoopNodeStats",
+        "type": "Pull Up Attribute",
+        "description": "Pull Up Attribute private allTasksAreFinished : boolean from class cascading.stats.tez.TezNodeStats to protected allChildrenFinished : boolean from class cascading.stats.hadoop.BaseHadoopNodeStats",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
@@ -101836,8 +101857,8 @@
         "detectionTools": "RefactoringMiner",
         "validators": null
     }, {
-        "type": "Move And Rename Attribute",
-        "description": "Move And Rename Attribute private NO_VALIDATE_NAME_CONVERTER : HttpHeadersNameConverter renamed to public NO_NAME_VALIDATOR : NameValidator<CharSequence> and moved from class io.netty.handler.codec.http.DefaultHttpHeaders to class io.netty.handler.codec.DefaultTextHeaders",
+        "type": "Pull Up Attribute",
+        "description": "Pull Up Attribute private NO_VALIDATE_NAME_CONVERTER : HttpHeadersNameConverter from class io.netty.handler.codec.http.DefaultHttpHeaders to public NO_NAME_VALIDATOR : NameValidator<CharSequence> from class io.netty.handler.codec.DefaultTextHeaders",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
