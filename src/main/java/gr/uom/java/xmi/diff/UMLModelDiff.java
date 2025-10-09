@@ -1,5 +1,6 @@
 package gr.uom.java.xmi.diff;
 
+import gr.uom.java.xmi.Constants;
 import gr.uom.java.xmi.LeafType;
 import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLAnnotation;
@@ -3583,6 +3584,9 @@ public class UMLModelDiff {
 			String after = new String(pattern.getAfter());
 			if(before.contains(".") && after.contains(".")) {
 				before = before.substring(before.lastIndexOf(".") + 1, before.length());
+				after = after.substring(after.lastIndexOf(".") + 1, after.length());
+			}
+			else if(after.contains(".") && (after.startsWith(Constants.PYTHON.THIS_DOT) || after.startsWith(Constants.JAVA.THIS_DOT))) {
 				after = after.substring(after.lastIndexOf(".") + 1, after.length());
 			}
 			for(CandidateAttributeRefactoring candidate : set) {
