@@ -253,6 +253,30 @@ public class ExtractVariableRefactoringDetectionTest {
                 "is_adult", "person['age'] >= 18", "is_eligible", "AgeValidator");
     }
 
+    @Test
+    void detectExtractVariable_LambdaExpression() throws Exception {
+        String beforePythonCode = """
+        def process_numbers(numbers):
+            # Lambda used inline
+            filtered_list = list(filter(lambda x: x > 10, numbers))
+            return filtered_list		
+        """;
+
+        String afterPythonCode = """
+        def process_numbers(numbers):
+            # Refactoring: Extract the lambda expression to a local variable
+            is_greater_than_ten = lambda x: x > 10
+            # Use the named variable instead of the inline lambda
+            filtered_list = list(filter(is_greater_than_ten, numbers))
+            return filtered_list
+        """;
+        
+        Map<String, String> beforeFiles = Map.of("number_processor.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("number_processor.py", afterPythonCode);
+
+        assertExtractVariableRefactoringDetected(beforeFiles, afterFiles,
+                "is_greater_than_ten", "lambda x: x > 10", "process_numbers", "number_processor_module.__module__");
+    }
 
     public static void assertExtractVariableRefactoringDetected(
             Map<String, String> beforeFiles,
