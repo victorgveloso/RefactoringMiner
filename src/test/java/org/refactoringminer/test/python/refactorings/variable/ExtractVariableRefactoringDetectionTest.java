@@ -304,6 +304,35 @@ public class ExtractVariableRefactoringDetectionTest {
                 "is_greater_than_ten", "lambda x: x > 10", "process_numbers", "number_processor_module.__module__");
     }
 
+    @Test
+    void detectExtractVariable_TernaryExpression() throws Exception {
+        String beforePythonCode = """
+        def get_user_status(post_count):
+            # Original code with conditional expression directly in the return
+            return "User has posted: {} - Status: {}".format(
+                post_count,
+                "Experienced Contributor" if post_count > 50 else "Newcomer"
+            )
+        """;
+
+        String afterPythonCode = """
+        def get_user_status(post_count):
+            # Refactored code: Extract conditional expression to a local variable
+            user_status = "Experienced Contributor" if post_count > 50 else "Newcomer"
+            # Use the local variable in the return statement
+            return "User has posted: {} - Status: {}".format(
+                post_count,
+                user_status
+            )
+        """;
+        
+        Map<String, String> beforeFiles = Map.of("user.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("user.py", afterPythonCode);
+
+        assertExtractVariableRefactoringDetected(beforeFiles, afterFiles,
+                "user_status", "\"Experienced Contributor\" if post_count > 50 else \"Newcomer\"", "get_user_status", "user_module.__module__");
+    }
+
     public static void assertExtractVariableRefactoringDetected(
             Map<String, String> beforeFiles,
             Map<String, String> afterFiles,
