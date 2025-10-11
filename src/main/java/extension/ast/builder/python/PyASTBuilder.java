@@ -54,6 +54,10 @@ public class PyASTBuilder extends Python3ParserBaseVisitor<LangASTNode> implemen
     @Override public LangASTNode visitStmt(Python3Parser.StmtContext ctx) { return statementBuilder.visitStmt(ctx); }
     @Override public LangASTNode visitSimple_stmt(Python3Parser.Simple_stmtContext ctx) { return statementBuilder.visitSimple_stmt(ctx); }
     @Override public LangASTNode visitIf_stmt(Python3Parser.If_stmtContext ctx) { return statementBuilder.visitIf_stmt(ctx); }
+    @Override public LangASTNode visitTest(Python3Parser.TestContext ctx) { return statementBuilder.visitTest(ctx); }
+    @Override public LangASTNode visitOr_test(Python3Parser.Or_testContext ctx) { return statementBuilder.visitOr_test(ctx); }
+    @Override public LangASTNode visitAnd_test(Python3Parser.And_testContext ctx) { return statementBuilder.visitAnd_test(ctx); }
+    @Override public LangASTNode visitNot_test(Python3Parser.Not_testContext ctx) { return statementBuilder.visitNot_test(ctx); }
     @Override public LangASTNode visitReturn_stmt(Python3Parser.Return_stmtContext ctx) { return statementBuilder.visitReturn_stmt(ctx); }
     @Override public LangASTNode visitFor_stmt(Python3Parser.For_stmtContext ctx) { return statementBuilder.visitFor_stmt(ctx); }
     @Override public LangASTNode visitWhile_stmt(Python3Parser.While_stmtContext ctx) { return statementBuilder.visitWhile_stmt(ctx); }

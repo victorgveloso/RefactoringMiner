@@ -140,9 +140,64 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
     }
 
     public LangASTNode visitTest(Python3Parser.TestContext ctx) {
-        if (ctx.or_test() != null) {
+        // Test captures various expression contexts including boolean, e.g., x > 5 and y < 10
+
+        if (!ctx.or_test().isEmpty()) {
             return mainBuilder.visit(ctx.or_test(0));
         }
+        return mainBuilder.visitChildren(ctx);
+    }
+
+    public LangASTNode visitOr_test(Python3Parser.Or_testContext ctx) {
+        // or_test: one or more and_tests joined by 'or'
+
+        if (ctx.and_test().size() == 1) {
+            // Only one and_test means no 'or' operator
+            return mainBuilder.visit(ctx.and_test().get(0));
+        }
+
+        // Multiple and_tests connected with 'or'
+        LangASTNode node = mainBuilder.visit(ctx.and_test().get(0));
+        for (int i = 1; i < ctx.and_test().size(); i++) {
+            LangASTNode right = mainBuilder.visit(ctx.and_test().get(i));
+            node = LangASTNodeFactory.createInfixExpression(node, right, "or", ctx);
+        }
+
+        return node;
+    }
+
+    public LangASTNode visitAnd_test(Python3Parser.And_testContext ctx) {
+        // and_test: one or more not_tests joined by 'and'
+
+        if (ctx.not_test().size() == 1) {
+            // Only one not_test, no 'and' operator
+            return mainBuilder.visit(ctx.not_test().get(0));
+        }
+
+        // Multiple not_tests connected with 'and'
+        LangASTNode node = mainBuilder.visit(ctx.not_test().get(0));
+        for (int i = 1; i < ctx.not_test().size(); i++) {
+            LangASTNode right = mainBuilder.visit(ctx.not_test().get(i));
+            node = LangASTNodeFactory.createInfixExpression(node, right, "and", ctx);
+        }
+
+        return node;
+    }
+
+    public LangASTNode visitNot_test(Python3Parser.Not_testContext ctx) {
+        // not_test: 'not' operator or comparison
+        // creates prefix not node, if 'not' exists
+        // Otherwise it visits the comparison node
+
+        if (ctx.NOT() != null) {
+            LangASTNode operand = mainBuilder.visit(ctx.not_test());
+            return LangASTNodeFactory.createPrefixExpression(operand, "not", ctx);
+        }
+
+        if (ctx.comparison() != null) {
+            return mainBuilder.visit(ctx.comparison());
+        }
+
         return mainBuilder.visitChildren(ctx);
     }
 
