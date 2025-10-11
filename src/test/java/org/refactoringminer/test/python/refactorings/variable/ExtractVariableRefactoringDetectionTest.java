@@ -254,6 +254,32 @@ public class ExtractVariableRefactoringDetectionTest {
     }
 
     @Test
+    void detectsExtractVariable_ConditionalWithXOR() throws Exception {
+        String beforePythonCode = """
+        class AgeValidator:
+            def is_eligible(self, person):
+                if person['age'] >= 18 ^ person['country'] == 'US':
+                    return True
+                return False
+        """;
+
+        String afterPythonCode = """
+        class AgeValidator:
+            def is_eligible(self, person):
+                is_adult = person['age'] >= 18
+                if is_adult ^ person['country'] == 'US':
+                    return True
+                return False
+        """;
+
+        Map<String, String> beforeFiles = Map.of("age_validator.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("age_validator.py", afterPythonCode);
+
+        assertExtractVariableRefactoringDetected(beforeFiles, afterFiles,
+                "is_adult", "person['age'] >= 18", "is_eligible", "AgeValidator");
+    }
+
+    @Test
     void detectExtractVariable_LambdaExpression() throws Exception {
         String beforePythonCode = """
         def process_numbers(numbers):
