@@ -642,6 +642,25 @@ public class LangVisitor implements LangASTVisitor {
 
     }
 
+    @Override
+    public void visit(LangTernaryExpression langTernaryExpression) {
+
+        TernaryOperatorExpression ternaryOperatorExpression = new TernaryOperatorExpression(cu, sourceFolder, filePath,
+                langTernaryExpression, container, activeVariableDeclarations, fileContent);
+
+        if (langTernaryExpression.getThenExpression() != null) {
+            langTernaryExpression.getThenExpression().accept(this);
+        }
+        if (langTernaryExpression.getCondition() != null) {
+            langTernaryExpression.getCondition().accept(this);
+        }
+        if (langTernaryExpression.getElseExpression() != null) {
+            langTernaryExpression.getElseExpression().accept(this);
+        }
+        ternaryOperatorExpressions.add(ternaryOperatorExpression);
+    }
+
+
     public LangCompilationUnit getCu() {
         return cu;
     }

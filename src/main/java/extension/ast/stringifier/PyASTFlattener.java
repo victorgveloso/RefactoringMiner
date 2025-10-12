@@ -579,4 +579,13 @@ public class PyASTFlattener implements LangASTFlattener {
         builder.append(langComment.getContent());
     }
 
+    @Override
+    public void visit(LangTernaryExpression langTernaryExpression) {
+        langTernaryExpression.getCondition().accept(this);
+        builder.append(" if ");
+        langTernaryExpression.getThenExpression().accept(this);
+        builder.append(" else ");
+        langTernaryExpression.getElseExpression().accept(this);
+    }
+
 }

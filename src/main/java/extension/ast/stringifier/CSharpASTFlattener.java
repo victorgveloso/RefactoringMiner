@@ -553,4 +553,9 @@ public class CSharpASTFlattener implements LangASTFlattener {
     public void visit(LangComment c) {
         builder.append(c.getContent());
     }
+
+    @Override
+    public void visit(LangTernaryExpression langTernaryExpression) {
+
+    }
 }

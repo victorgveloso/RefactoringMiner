@@ -61,4 +61,5 @@ public interface LangASTVisitor {
     void visit(LangVariablePattern langVariablePattern);
     void visit(LangLiteralPattern langLiteralPattern);
     void visit(LangComment langComment);
+    void visit(LangTernaryExpression langTernaryExpression);
 }

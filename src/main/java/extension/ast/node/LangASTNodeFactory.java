@@ -175,6 +175,10 @@ public class LangASTNodeFactory {
         return new LangLambdaExpression(PositionUtils.getPositionInfo(ctx), parameters, body);
     }
 
+    public static LangTernaryExpression createTernaryExpression(ParserRuleContext ctx, LangASTNode condition, LangASTNode thenExpression, LangASTNode elseExpression) {
+        return new LangTernaryExpression(PositionUtils.getPositionInfo(ctx), condition, thenExpression, elseExpression);
+    }
+
     /** Try-Catch-Finally */
     public static LangASTNode createTryStatement(PositionInfo positionInfo, LangBlock tryBlock, List<LangCatchClause> catchClauses, LangBlock elseBlock, LangBlock finallyBlock) {
         return new LangTryStatement(positionInfo, tryBlock, catchClauses, elseBlock, finallyBlock);

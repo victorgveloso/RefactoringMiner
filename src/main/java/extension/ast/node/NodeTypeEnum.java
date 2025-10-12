@@ -19,6 +19,7 @@ public enum NodeTypeEnum {
     POSTFIX_EXPRESSION("LangPostfixExpression"),
     AWAIT_EXPRESSION("LangAwaitExpression"),
     LAMBDA_EXPRESSION("LangLambdaExpression"),
+    TERNARY_EXPRESSION("LangTernaryExpression"),
 
     /** STATEMENTS */
     BLOCK("LangBlock"),

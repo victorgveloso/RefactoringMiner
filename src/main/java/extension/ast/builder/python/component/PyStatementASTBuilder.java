@@ -142,6 +142,13 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
     public LangASTNode visitTest(Python3Parser.TestContext ctx) {
         // Test captures various expression contexts including boolean, e.g., x > 5 and y < 10
 
+        if (ctx.IF() != null && ctx.ELSE() != null) {
+            LangASTNode condition = mainBuilder.visit(ctx.or_test(1)); // Condition after 'if'
+            LangASTNode thenExpr =  mainBuilder.visit(ctx.or_test(0)); // Expression before 'if'
+            LangASTNode elseExpr =  mainBuilder.visit(ctx.test()); // Expression after 'else'
+            return LangASTNodeFactory.createTernaryExpression(ctx, condition, thenExpr, elseExpr);
+        }
+
         if (!ctx.or_test().isEmpty()) {
             return mainBuilder.visit(ctx.or_test(0));
         }
