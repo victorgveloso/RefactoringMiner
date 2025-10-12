@@ -14480,8 +14480,8 @@
         "detectionTools": "RefactoringMiner",
         "validators": null
     }, {
-        "type": "Split Variable",
-        "description": "Split Variable parameters : LinkedHashMap<String,TypeDeclarationNode> to [optionalParams : LinkedHashMap<String,TypeDeclarationNode>, requiredParams : LinkedHashMap<String,TypeDeclarationNode>] in method public convertTypeNodeAST(n Node) : TypeDeclarationNode from class com.google.javascript.jscomp.parsing.TypeDeclarationsIRFactory",
+        "type": "Rename Variable",
+        "description": "Rename Variable parameters : LinkedHashMap<String,TypeDeclarationNode> to requiredParams : LinkedHashMap<String,TypeDeclarationNode> in method public convertTypeNodeAST(n Node) : TypeDeclarationNode from class com.google.javascript.jscomp.parsing.TypeDeclarationsIRFactory",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
