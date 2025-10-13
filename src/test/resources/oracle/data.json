@@ -52733,6 +52733,41 @@
         "validation": "CTP",
         "detectionTools": "RefactoringMiner",
         "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable localFieldMetadata : FieldMetadataOverride in method public overrideViaXml(overrideViaXmlRequest OverrideViaXmlRequest, metadata Map<String,FieldMetadata>) : MetadataProviderResponse from class org.broadleafcommerce.openadmin.server.dao.provider.metadata.BasicFieldMetadataProvider",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable localFieldMetadata : FieldMetadataOverride in method public overrideViaXml(overrideViaXmlRequest OverrideViaXmlRequest, metadata Map<String,FieldMetadata>) : MetadataProviderResponse from class org.broadleafcommerce.openadmin.server.dao.provider.metadata.CollectionFieldMetadataProvider",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable localFieldMetadata : FieldMetadataOverride in method public overrideViaXml(overrideViaXmlRequest OverrideViaXmlRequest, metadata Map<String,FieldMetadata>) : MetadataProviderResponse from class org.broadleafcommerce.openadmin.server.dao.provider.metadata.MapFieldMetadataProvider",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable localFieldMetadata : FieldMetadataOverride in method public overrideExclusionsFromXml(overrideViaXmlRequest OverrideViaXmlRequest, metadata Map<String,FieldMetadata>) : void from class org.broadleafcommerce.openadmin.server.dao.provider.metadata.DefaultFieldMetadataProvider",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable localFieldMetadata : FieldMetadataOverride in method public overrideViaXml(overrideViaXmlRequest OverrideViaXmlRequest, metadata Map<String,FieldMetadata>) : MetadataProviderResponse from class org.broadleafcommerce.openadmin.server.dao.provider.metadata.AdornedTargetCollectionFieldMetadataProvider",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 0
 }, {
