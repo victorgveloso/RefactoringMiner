@@ -8639,8 +8639,12 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 								break;
 							}
 						}
-						boolean equalName = declaration1.getVariableName().equals(declaration2.getVariableName()) && mapping.getFragment2().getString().startsWith(declaration1.getVariableName() + LANG.ASSIGNMENT);
-						if((equalName || variableRenamed) && declaration1.getType() != null && (declaration1.getType().equals(declaration2.getType()) || declaration1.getType().getClassType().equals("var"))) {
+						boolean equalName = declaration1.getVariableName().equals(declaration2.getVariableName()) &&
+								(mapping.getFragment2().getString().startsWith(declaration1.getVariableName() + LANG.ASSIGNMENT) ||
+										mapping.getFragment2().getString().startsWith(declaration1.getVariableName() + ".addAll("));
+						if((equalName || variableRenamed) && declaration1.getType() != null &&
+								(declaration1.getType().equals(declaration2.getType()) || declaration1.getType().getClassType().equals("var") ||
+										OperationInvocation.compatibleTypes(declaration1.getType(), declaration2.getType(), classDiff, modelDiff, false))) {
 							matchingVariableDeclarations2.add(leaf2);
 						}
 					}
