@@ -500,7 +500,11 @@ public class OperationBody {
 			addStatementInVariableScopes(child);
 			List<VariableDeclaration> variableDeclarations = child.getVariableDeclarations();
 			addAllInActiveVariableDeclarations(variableDeclarations);
-			processStatement(cu, sourceFolder, filePath, child, tryStatement.getBody(), fileContent);
+			if(tryStatement.getBody() instanceof LangBlock tryBody) {
+				for(LangASTNode blockStatement : tryBody.getStatements()) {
+					processStatement(cu, sourceFolder, filePath, child, blockStatement, fileContent);
+				}
+			}
 			removeAllFromActiveVariableDeclarations(variableDeclarations);
 			List<LangCatchClause> catchClauses = tryStatement.getCatchClauses();
 			for(LangCatchClause catchClause : catchClauses) {
@@ -524,7 +528,11 @@ public class OperationBody {
 				addStatementInVariableScopes(catchClauseStatementObject);
 				List<VariableDeclaration> catchClauseVariableDeclarations = catchClauseStatementObject.getVariableDeclarations();
 				addAllInActiveVariableDeclarations(catchClauseVariableDeclarations);
-				processStatement(cu, sourceFolder, filePath, catchClauseStatementObject, catchClauseBody, fileContent);
+				if(catchClauseBody instanceof LangBlock catchBody) {
+					for(LangASTNode blockStatement : catchBody.getStatements()) {
+						processStatement(cu, sourceFolder, filePath, catchClauseStatementObject, blockStatement, fileContent);
+					}
+				}
 				removeAllFromActiveVariableDeclarations(catchClauseVariableDeclarations);
 			}
 			LangASTNode finallyBlock = tryStatement.getFinallyBlock();
@@ -534,10 +542,11 @@ public class OperationBody {
 				parent.addStatement(finallyClauseStatementObject);
 				finallyClauseStatementObject.setTryContainer(child);
 				addStatementInVariableScopes(finallyClauseStatementObject);
-				//List<Statement> blockStatements = finallyBlock.statements();
-				//for(Statement blockStatement : blockStatements) {
-				//	processStatement(cu, sourceFolder, filePath, finallyClauseStatementObject, blockStatement, fileContent);
-				//}
+				if(finallyBlock instanceof LangBlock finallyBody) {
+					for(LangASTNode blockStatement : finallyBody.getStatements()) {
+						processStatement(cu, sourceFolder, filePath, finallyClauseStatementObject, blockStatement, fileContent);
+					}
+				}
 			}
 		}
 		/*else if(statement instanceof VariableDeclarationStatement) {
@@ -581,18 +590,14 @@ public class OperationBody {
 			LangWithStatement withStatement = (LangWithStatement)statement;
 			CompositeStatementObject child = new CompositeStatementObject(cu, sourceFolder, filePath, withStatement, parent.getDepth()+1, CodeElementType.WITH_STATEMENT, fileContent);
 			parent.addStatement(child);
-			CompositeStatementObject parentX = parent;
-			while(parentX != null && parentX.getLocationInfo().getCodeElementType().equals(CodeElementType.BLOCK)) { 
-				parentX = parentX.getParent(); 
-			}
 			List<LangASTNode> contextItems = withStatement.getContextItems();
 			for (LangASTNode contextItem : contextItems) {
 				// Create expressions for context managers
 				AbstractExpression contextExpr = new AbstractExpression(cu, sourceFolder, filePath, contextItem, CodeElementType.VARIABLE_DECLARATION_EXPRESSION, container, activeVariableDeclarations, fileContent);
 				child.addExpression(contextExpr);
-				// if parentX is try statement, then add as resource
-				if(parentX != null && parentX.getLocationInfo().getCodeElementType().equals(CodeElementType.TRY_STATEMENT)) {
-					parentX.addExpression(contextExpr);
+				// if parent is try statement, then add as resource
+				if(parent.getLocationInfo().getCodeElementType().equals(CodeElementType.TRY_STATEMENT)) {
+					parent.addExpression(contextExpr);
 				}
 			}
 			addStatementInVariableScopes(child);

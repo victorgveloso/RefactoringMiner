@@ -1937,26 +1937,14 @@ public class ReplacementAlgorithm {
 			TryStatementObject try2 = (TryStatementObject)statement2;
 			if(!try1.isTryWithResources() && try2.isTryWithResources()) {
 				List<AbstractStatement> tryStatements1 = try1.getStatements();
-				List<AbstractStatement> tryStatements2 = try2.getStatements();
-				//python handling
-				if(try1.getStatements().size() > 0 && try1.getStatements().get(0).getLocationInfo().getCodeElementType().equals(CodeElementType.BLOCK)) {
-					CompositeStatementObject block =(CompositeStatementObject)try1.getStatements().get(0);
-					tryStatements1.remove(block);
-					tryStatements1.addAll(block.getStatements());
-				}
-				if(try2.getStatements().size() > 0 && try2.getStatements().get(0).getLocationInfo().getCodeElementType().equals(CodeElementType.BLOCK)) {
-					CompositeStatementObject block =(CompositeStatementObject)try2.getStatements().get(0);
-					tryStatements2.remove(block);
-					for(AbstractStatement statement : block.getStatements()) {
-						if(statement.getLocationInfo().getCodeElementType().equals(CodeElementType.WITH_STATEMENT)) {
-							CompositeStatementObject withStatement = (CompositeStatementObject)statement;
-							if(withStatement.getStatements().size() > 0 && withStatement.getStatements().get(0).getLocationInfo().getCodeElementType().equals(CodeElementType.BLOCK)) {
-								CompositeStatementObject withBlock = (CompositeStatementObject) withStatement.getStatements().get(0);
-								tryStatements2.addAll(withBlock.getStatements());
-							}
-						}
-						else {
-							tryStatements2.add(statement);
+				List<AbstractStatement> tryStatements2 = new ArrayList<>(try2.getStatements());
+				//python handling for nested with statement
+				for(AbstractStatement statement : try2.getStatements()) {
+					if(statement.getLocationInfo().getCodeElementType().equals(CodeElementType.WITH_STATEMENT)) {
+						CompositeStatementObject withStatement = (CompositeStatementObject)statement;
+						if(withStatement.getStatements().size() > 0 && withStatement.getStatements().get(0).getLocationInfo().getCodeElementType().equals(CodeElementType.BLOCK)) {
+							CompositeStatementObject withBlock = (CompositeStatementObject) withStatement.getStatements().get(0);
+							tryStatements2.addAll(withBlock.getAllStatements());
 						}
 					}
 				}
