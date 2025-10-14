@@ -1,18 +1,18 @@
 package extension.base.treesitter.python;
 
 import extension.ast.node.LangASTNode;
-import org.treesitter.TSNode;
+import io.github.treesitter.jtreesitter.Node;
 
 public class PyTSBuilder {
-    private final TSNode rootNode;
+    private final Node rootNode;
 
-    public PyTSBuilder(TSNode rootNode) {
+    public PyTSBuilder(Node rootNode) {
         this.rootNode = rootNode;
         HackyVisitor hackyVisitor = new HackyVisitor();
         hackyVisitor.visit(rootNode, new HackyPrinter());
     }
 
-    public PyTSBuilder(TSNode rootNode, Printer printer) {
+    public PyTSBuilder(Node rootNode, Printer printer) {
         this.rootNode = rootNode;
         HackyVisitor.visit(rootNode, printer);
     }

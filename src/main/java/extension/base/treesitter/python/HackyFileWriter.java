@@ -1,10 +1,11 @@
 package extension.base.treesitter.python;
 
-import org.treesitter.TSNode;
+import io.github.treesitter.jtreesitter.Node;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class HackyFileWriter implements Printer {
@@ -25,7 +26,7 @@ public class HackyFileWriter implements Printer {
         this.code = code;
     }
 
-    public void parentBegin(TSNode parent) {
+    public void parentBegin(Node parent) {
         indent++;
         if (parent.isNamed()) {
             printf("%s", parent.getType());
@@ -44,7 +45,7 @@ public class HackyFileWriter implements Printer {
         }
     }
 
-    public void parentEnd(TSNode parent) {
+    public void parentEnd(Node parent) {
         indent--;
         if (parent.getNamedChildCount() > 0) {
             for (int i = 0; i < indent; i++) {
@@ -57,18 +58,18 @@ public class HackyFileWriter implements Printer {
         }
     }
 
-    public void childBegin(TSNode child, String field) {
+    public void childBegin(Node child, String field) {
         if (Objects.nonNull(field)) {
             printf("\"%s\": ", field);
         }
     }
 
-    public void childEnd(TSNode child, String field) {
-        if (!child.getNextSibling().isNull()) {
+    public void childEnd(Node child, String field) {
+        child.getNextSibling().ifPresentOrElse(s->{},()-> {
             printf(",\n");
             for (int i = 0; i < indent; i++) {
                 printf("\t");
             }
-        }
+        });
     }
 }

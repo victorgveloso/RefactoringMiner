@@ -1,13 +1,13 @@
 package extension.base.treesitter.python;
 
-import org.treesitter.TSNode;
+import io.github.treesitter.jtreesitter.Node;
 
 public interface Printer {
-    void parentBegin(TSNode node);
+    void parentBegin(Node node);
 
-    void childBegin(TSNode node, String name);
+    void childBegin(Node node, String name);
 
-    void childEnd(TSNode node, String name);
+    void childEnd(Node node, String name);
 
-    void parentEnd(TSNode node);
+    void parentEnd(Node node);
 }

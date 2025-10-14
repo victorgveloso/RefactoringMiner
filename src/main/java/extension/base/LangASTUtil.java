@@ -8,15 +8,22 @@ import extension.base.lang.python.Python3Lexer;
 import extension.base.lang.python.Python3Parser;
 import extension.base.treesitter.python.Printer;
 import extension.base.treesitter.python.PyTSBuilder;
+import io.github.treesitter.jtreesitter.Language;
+import io.github.treesitter.jtreesitter.Logger;
+import io.github.treesitter.jtreesitter.Node;
+import io.github.treesitter.jtreesitter.Parser;
+import io.github.treesitter.jtreesitter.Tree;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.treesitter.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.SymbolLookup;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.nio.file.Paths;
 
 /**
  * Utility class to create Language AST parsers
@@ -44,34 +51,31 @@ public class LangASTUtil {
     }
 
     public static PyTSBuilder getTreeSitterPythonAST(String r,  Printer printer) throws IOException {
-        TSNode rootNode = prepareTSNodeForTreeSitterPythonAST(r);
+        Node rootNode = prepareTSNodeForTreeSitterPythonAST(r);
         // Build custom AST
         PyTSBuilder astBuilder = new PyTSBuilder(rootNode, printer);
 
         return astBuilder;
     }
 
-    public static TSNode prepareTSNodeForTreeSitterPythonAST(String r) throws IOException {
-        TSParser parser = new TSParser();
+    public static Node prepareTSNodeForTreeSitterPythonAST(String r) throws IOException {
+        Parser parser = new Parser();
         // 0.set language parser
-        parser.setLanguage(new TreeSitterPython());
+        parser.setLanguage(Language.load(SymbolLookup.libraryLookup(Paths.get(System.getenv("JAVA_LIBRARY_PATH"),"libtree-sitter-python.dylib"), Arena.global()), "tree_sitter_python"));
         // 1.parser with string input
-        TSTree tree = parser.parseString(null, r);
+        Tree tree = parser.parse(r).orElseThrow();
         // 2.traverse the AST tree with DOM like APIs
-        TSNode rootNode = tree.getRootNode();
+        Node rootNode = tree.getRootNode();
         // debug the parser with a logger
-        TSLogger logger = (type, message) -> {
+        Logger logger = (type, message) -> {
             System.out.println(message);
         };
         parser.setLogger(logger);
-        // or output the AST tree as DOT graph
-        File dotFile = File.createTempFile("python", ".dot");
-        parser.printDotGraphs(dotFile);
         return rootNode;
     }
 
     public static PyTSBuilder getTreeSitterPythonAST(String r) throws IOException {
-        TSNode rootNode = prepareTSNodeForTreeSitterPythonAST(r);
+        Node rootNode = prepareTSNodeForTreeSitterPythonAST(r);
         // Build custom AST
         PyTSBuilder astBuilder = new PyTSBuilder(rootNode);
 

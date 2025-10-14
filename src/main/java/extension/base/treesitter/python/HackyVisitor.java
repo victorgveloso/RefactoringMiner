@@ -2,7 +2,7 @@ package extension.base.treesitter.python;
 
 import extension.base.LangASTUtil;
 import org.apache.commons.io.IOUtils;
-import org.treesitter.TSNode;
+import io.github.treesitter.jtreesitter.Node;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,10 +10,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class HackyVisitor {
-    public static void visit(TSNode node, Printer printer) {
+    public static void visit(Node node, Printer printer) {
         printer.parentBegin(node);
         for (int i = 0; i < node.getChildCount(); i++) {
-            TSNode child = node.getChild(i);
+            Node child = node.getChild(i).orElseThrow();
             printer.childBegin(child, node.getFieldNameForChild(i));
             visit(child, printer);
             printer.childEnd(child, node.getFieldNameForChild(i));
