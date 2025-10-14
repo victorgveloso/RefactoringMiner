@@ -8,6 +8,7 @@ import extension.base.lang.python.Python3Lexer;
 import extension.base.lang.python.Python3Parser;
 import extension.base.treesitter.python.Printer;
 import extension.base.treesitter.python.PyTSBuilder;
+import extension.base.treesitter.util.TreeSitterLanguageModuleLibraryLookup;
 import io.github.treesitter.jtreesitter.Language;
 import io.github.treesitter.jtreesitter.Logger;
 import io.github.treesitter.jtreesitter.Node;
@@ -19,11 +20,9 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import java.lang.foreign.Arena;
 import java.lang.foreign.SymbolLookup;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.nio.file.Paths;
 
 /**
  * Utility class to create Language AST parsers
@@ -61,7 +60,8 @@ public class LangASTUtil {
     public static Node prepareTSNodeForTreeSitterPythonAST(String r) throws IOException {
         Parser parser = new Parser();
         // 0.set language parser
-        parser.setLanguage(Language.load(SymbolLookup.libraryLookup(Paths.get(System.getenv("JAVA_LIBRARY_PATH"),"libtree-sitter-python.dylib"), Arena.global()), "tree_sitter_python"));
+        SymbolLookup symbolLookup = TreeSitterLanguageModuleLibraryLookup.INSTANCE.findLibrary(Arena.ofAuto(), "tree-sitter-python");
+        parser.setLanguage(Language.load(symbolLookup, "tree_sitter_python"));
         // 1.parser with string input
         Tree tree = parser.parse(r).orElseThrow();
         // 2.traverse the AST tree with DOM like APIs

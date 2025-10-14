@@ -200,6 +200,8 @@ tasks.withType(Sign) {
 
 def jarName = project.hasProperty('jarName') ? project.jarName : 'RM-fat.jar'
 shadowJar {
+    mergeServiceFiles()
+    include '**/*.so', '**/*.dylib', '**/*.dll'
     manifest {
         attributes 'Main-Class': 'org.refactoringminer.RefactoringMiner'
     }
