@@ -227,7 +227,7 @@ public class LangVisitor implements LangASTVisitor {
         if(langSimpleName.getParent() instanceof LangMethodInvocation parent) {
         	// Avoid adding function name as a variable
             String parentAsString = LangVisitor.stringify(parent);
-            if(parentAsString.contains(langSimpleName.getIdentifier() + ".") && !parentAsString.contains(langSimpleName.getIdentifier() + "(")) {
+            if(!parentAsString.contains(langSimpleName.getIdentifier() + "(")) {
                 variables.add(variable);
             }
         }
@@ -378,8 +378,19 @@ public class LangVisitor implements LangASTVisitor {
         if (expression instanceof LangSimpleName simpleName) {
             if ("self".equals(simpleName.getIdentifier()) || "cls".equals(simpleName.getIdentifier())) {
                 // This is a 'this' expression in Python (self.something)
-                LeafExpression fieldAccessExpression = new LeafExpression(cu, sourceFolder, filePath, langFieldAccess, LocationInfo.CodeElementType.FIELD_ACCESS, container);
-                variables.add(fieldAccessExpression);
+                // Avoid adding self.functionName as a variable
+                if(langFieldAccess.getParent() != null) {
+                    String parentAsString = LangVisitor.stringify(langFieldAccess.getParent());
+                    String fieldAccessAsString = LangVisitor.stringify(langFieldAccess);
+                    if(!parentAsString.contains(fieldAccessAsString + "(")) {
+                        LeafExpression fieldAccessExpression = new LeafExpression(cu, sourceFolder, filePath, langFieldAccess, LocationInfo.CodeElementType.FIELD_ACCESS, container);
+                        variables.add(fieldAccessExpression);
+                    }
+                 }
+                 else {
+                    LeafExpression fieldAccessExpression = new LeafExpression(cu, sourceFolder, filePath, langFieldAccess, LocationInfo.CodeElementType.FIELD_ACCESS, container);
+                    variables.add(fieldAccessExpression);
+            	}
             }
         }
         expression.accept(this);
