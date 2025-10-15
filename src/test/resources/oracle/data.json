@@ -25625,6 +25625,13 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
+    }, {
+        "type": "Inline Variable",
+        "description": "Inline Variable availabilityMode : AvailabilityMode in method public getCacheAvailability(cacheName String) : AvailabilityMode from class org.infinispan.topology.LocalTopologyManagerImpl",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 7011
 }, {
@@ -61525,6 +61532,13 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
+    }, {
+        "type": "Inline Variable",
+        "description": "Inline Variable logSequenceNumber : OLogSequenceNumber in method public log(record OWALRecord) : OLogSequenceNumber from class com.orientechnologies.orient.core.storage.impl.local.paginated.wal.OMemoryWriteAheadLog",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 5282
 }, {
@@ -72831,6 +72845,13 @@
     }, {
         "type": "Change Method Access Modifier",
         "description": "Change Method Access Modifier public to protected in method protected parseAndValidateMetadata(targetType Class<?>, method Method) : MethodMetadata from class feign.jaxrs.JAXRSContract",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Inline Variable",
+        "description": "Inline Variable metadata : List<MethodMetadata> in method public parseAndValidatateMetadata(declaring Class<?>) : List<MethodMetadata> from class feign.Contract.BaseContract",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
