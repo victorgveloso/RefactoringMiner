@@ -207,7 +207,7 @@ public class LangVisitor implements LangASTVisitor {
         }
 
         // Visit child nodes for further processing
-        if (langMethodInvocation.getExpression() != null && !(langMethodInvocation.getExpression() instanceof LangFieldAccess) && !(langMethodInvocation.getExpression() instanceof LangSimpleName)) {
+        if (langMethodInvocation.getExpression() != null) {
             langMethodInvocation.getExpression().accept(this);
         }
 
@@ -224,7 +224,16 @@ public class LangVisitor implements LangASTVisitor {
         // Add variable references to the variables list
         LeafExpression variable = new LeafExpression(cu, sourceFolder, filePath,
                 langSimpleName, LocationInfo.CodeElementType.SIMPLE_NAME, container);
-        variables.add(variable);
+        if(langSimpleName.getParent() instanceof LangMethodInvocation parent) {
+        	// Avoid adding function name as a variable
+            String parentAsString = LangVisitor.stringify(parent);
+            if(parentAsString.contains(langSimpleName.getIdentifier() + ".") && !parentAsString.contains(langSimpleName.getIdentifier() + "(")) {
+                variables.add(variable);
+            }
+        }
+        else if(!"self".equals(langSimpleName.getIdentifier()) && !"cls".equals(langSimpleName.getIdentifier())) {
+            variables.add(variable);
+        }
     }
 
     @Override
@@ -373,6 +382,7 @@ public class LangVisitor implements LangASTVisitor {
                 variables.add(fieldAccessExpression);
             }
         }
+        expression.accept(this);
     }
 
 
