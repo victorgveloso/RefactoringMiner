@@ -207,7 +207,7 @@ public class LangVisitor implements LangASTVisitor {
         }
 
         // Visit child nodes for further processing
-        if (langMethodInvocation.getExpression() != null && !(langMethodInvocation.getExpression() instanceof LangFieldAccess)) {
+        if (langMethodInvocation.getExpression() != null && !(langMethodInvocation.getExpression() instanceof LangFieldAccess) && !(langMethodInvocation.getExpression() instanceof LangSimpleName)) {
             langMethodInvocation.getExpression().accept(this);
         }
 

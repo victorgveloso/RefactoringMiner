@@ -154,7 +154,13 @@ public class OperationInvocation extends AbstractCall {
 		if (node instanceof LangMethodInvocation methodInvocation) {
 			LangASTNode expr = methodInvocation.getExpression();
 			if (expr != null) {
-				String exprAsString = LangVisitor.stringify(expr);
+				String exprAsString = null;
+				if(expr instanceof LangFieldAccess fieldAccess) {
+					exprAsString = LangVisitor.stringify(fieldAccess.getExpression());
+				}
+				else {
+					exprAsString = LangVisitor.stringify(expr);
+				}
 				String invocationAsString = LangVisitor.stringify(methodInvocation);
 
 				// The suffix is the part after the receiver, including the operator (like ".add(x,y)")
@@ -181,7 +187,7 @@ public class OperationInvocation extends AbstractCall {
 		}
 		else if (node instanceof LangSimpleName simpleName) {
 			// Add simple names as variables (like "self", "x", "y")
-			subExpressions.add(simpleName.getIdentifier());
+			subExpressions.add(0, simpleName.getIdentifier());
 		}
 		else if (node instanceof LangAssignment assignment) {
 			processExpression(assignment.getLeftSide(), subExpressions);
