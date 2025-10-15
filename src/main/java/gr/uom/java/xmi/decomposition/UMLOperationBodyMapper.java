@@ -482,20 +482,20 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 			int assertThrows1 = 0;
 			int assertThatThrownBy1 = 0;
 			for(AbstractCall call : container1.getAllOperationInvocations()) {
-				if(call.getName().equals("assertThrows")) {
+				if(call.getName().equals(LANG.ASSERT_THROWS)) {
 					assertThrows1++;
 				}
-				else if(call.getName().equals("assertThatThrownBy")) {
+				else if(call.getName().equals(LANG.ASSERT_THAT_THROWN_BY)) {
 					assertThatThrownBy1++;
 				}
 			}
 			int assertThrows2 = 0;
 			int assertThatThrownBy2 = 0;
 			for(AbstractCall call : container2.getAllOperationInvocations()) {
-				if(call.getName().equals("assertThrows")) {
+				if(call.getName().equals(LANG.ASSERT_THROWS)) {
 					assertThrows2++;
 				}
-				else if(call.getName().equals("assertThatThrownBy")) {
+				else if(call.getName().equals(LANG.ASSERT_THAT_THROWN_BY)) {
 					assertThatThrownBy2++;
 				}
 			}
@@ -4107,10 +4107,10 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 		int assertThatThrownBy1 = 0;
 		int assertTimeout1 = 0;
 		for(AbstractCall call : container1.getAllOperationInvocations()) {
-			if(call.getName().equals("assertThrows")) {
+			if(call.getName().equals(LANG.ASSERT_THROWS)) {
 				assertThrows1++;
 			}
-			if(call.getName().equals("assertThatThrownBy")) {
+			if(call.getName().equals(LANG.ASSERT_THAT_THROWN_BY)) {
 				assertThatThrownBy1++;
 			}
 			else if(call.getName().equals("assertTimeout")) {
@@ -4124,7 +4124,7 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 		List<AbstractCall> assertTimeoutCalls = new ArrayList<AbstractCall>();
 		List<AbstractCall> assertThatThrownByCalls = new ArrayList<AbstractCall>();
 		for(AbstractCall call : container2.getAllOperationInvocations()) {
-			if(call.getName().equals("assertThrows")) {
+			if(call.getName().equals(LANG.ASSERT_THROWS)) {
 				assertThrowsCalls.add(call);
 				for(AbstractCodeMapping mapping : this.mappings) {
 					if(call.getLocationInfo().subsumes(mapping.getFragment2().getLocationInfo()) || mapping.getFragment2().getLocationInfo().subsumes(call.getLocationInfo())) {
@@ -4160,7 +4160,7 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 					}
 				}
 			}
-			else if(call.getName().equals("assertThatThrownBy")) {
+			else if(call.getName().equals(LANG.ASSERT_THAT_THROWN_BY)) {
 				assertThatThrownByCalls.add(call);
 				for(AbstractCodeMapping mapping : this.mappings) {
 					if(call.getLocationInfo().subsumes(mapping.getFragment2().getLocationInfo()) || mapping.getFragment2().getLocationInfo().subsumes(call.getLocationInfo())) {
