@@ -1404,6 +1404,7 @@ public class VariableReplacementAnalysis {
 				}
 			}
 		}
+		Map<String, Set<VariableDeclaration>> arrayAccessMap = new LinkedHashMap<>();
 		for(AbstractCodeFragment statement : nonMappedLeavesT1) {
 			for(String parameterName : operation2.getParameterNameList()) {
 				VariableDeclaration variableDeclaration = statement.getVariableDeclaration(parameterName);
@@ -1416,6 +1417,19 @@ public class VariableReplacementAnalysis {
 							if(expression != null) {
 								VariableReplacementWithMethodInvocation variableReplacement = new VariableReplacementWithMethodInvocation(initializer.getString(), parameterName, invocation, Direction.INVOCATION_TO_VARIABLE);
 								processVariableReplacementWithMethodInvocation(variableReplacement, null, variableInvocationExpressionMap, Direction.INVOCATION_TO_VARIABLE);
+							}
+						}
+						LeafExpression arrayAccess = initializer.arrayAccessCoveringEntireFragment();
+						if(arrayAccess != null && initializer.getStringLiterals().size() > 0 && initializer.getVariables().size() > 0 &&
+								arrayAccess.getString().startsWith(initializer.getVariables().get(0).getString() + "[")) {
+							String arrayName = initializer.getVariables().get(0).getString();
+							if(arrayAccessMap.containsKey(arrayName)) {
+								arrayAccessMap.get(arrayName).add(variableDeclaration);
+							}
+							else {
+								Set<VariableDeclaration> set = new LinkedHashSet<>();
+								set.add(variableDeclaration);
+								arrayAccessMap.put(arrayName, set);
 							}
 						}
 					}
@@ -1435,6 +1449,19 @@ public class VariableReplacementAnalysis {
 			if(splitVariables.size() > 0) {
 				SplitVariableReplacement split = new SplitVariableReplacement(key, splitVariables);
 				splitMap.put(split, mappings);
+			}
+		}
+		for(String key : arrayAccessMap.keySet()) {
+			Set<VariableDeclaration> variableDeclarations = arrayAccessMap.get(key);
+			Set<String> splitVariables = new LinkedHashSet<String>();
+			for(VariableDeclaration vd : variableDeclarations) {
+				if(!PrefixSuffixUtils.normalize(key).equals(PrefixSuffixUtils.normalize(vd.getVariableName()))) {
+					splitVariables.add(vd.getVariableName());
+				}
+			}
+			if(splitVariables.size() > 0) {
+				SplitVariableReplacement split = new SplitVariableReplacement(key, splitVariables);
+				splitMap.put(split, Collections.emptySet());
 			}
 		}
 		for(SplitVariableReplacement split : splitMap.keySet()) {

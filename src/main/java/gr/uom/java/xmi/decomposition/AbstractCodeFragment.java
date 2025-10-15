@@ -514,6 +514,17 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 		return null;
 	}
 
+	public LeafExpression arrayAccessCoveringEntireFragment() {
+		String statement = getString();
+		for(LeafExpression arrayAccess : getArrayAccesses()) {
+			String arrayAccessString = arrayAccess.getString();
+			if((arrayAccessString + LANG.STATEMENT_TERMINATION).equals(statement) || arrayAccessString.equals(statement)) {
+				return arrayAccess;
+			}
+		}
+		return null;
+	}
+
 	public TernaryOperatorExpression ternaryOperatorCoveringEntireFragment() {
 		String statement = getString();
 		for(TernaryOperatorExpression ternary : getTernaryOperatorExpressions()) {
