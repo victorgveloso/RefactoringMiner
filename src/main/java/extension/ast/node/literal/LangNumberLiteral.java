@@ -33,7 +33,7 @@ public class LangNumberLiteral extends LangLiteral {
     }
 
     public String toString() {
-        return "LangIntegerLiteral{" +
+        return "LangNumberLiteral{" +
                 "value=" + value +
                 '}';
     }

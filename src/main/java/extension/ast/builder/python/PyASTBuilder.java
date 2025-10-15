@@ -48,6 +48,9 @@ public class PyASTBuilder extends Python3ParserBaseVisitor<LangASTNode> implemen
     @Override public LangASTNode visitPattern(Python3Parser.PatternContext ctx){ return expressionBuilder.visitPattern(ctx); }
     @Override public LangASTNode visitStar_expr(Python3Parser.Star_exprContext ctx) { return expressionBuilder.visitStar_expr(ctx); }
     @Override public LangASTNode visitTestlist_star_expr(Python3Parser.Testlist_star_exprContext ctx) { return expressionBuilder.visitTestlist_star_expr(ctx); }
+    @Override public LangASTNode visitTrailer(Python3Parser.TrailerContext ctx) { return expressionBuilder.visitTrailer(ctx); }
+    @Override public LangASTNode visitSubscriptlist(Python3Parser.SubscriptlistContext ctx) { return expressionBuilder.visitSubscriptlist(ctx); }
+    @Override public LangASTNode visitSubscript_(Python3Parser.Subscript_Context ctx) { return expressionBuilder.visitSubscript_(ctx); }
 
     /** Statement-related methods **/
     @Override public LangASTNode visitBlock(Python3Parser.BlockContext ctx) { return statementBuilder.visitBlock(ctx); }

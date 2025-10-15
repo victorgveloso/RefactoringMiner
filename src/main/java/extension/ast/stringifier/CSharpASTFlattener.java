@@ -558,4 +558,14 @@ public class CSharpASTFlattener implements LangASTFlattener {
     public void visit(LangTernaryExpression langTernaryExpression) {
 
     }
+
+    @Override
+    public void visit(LangIndexAccess langIndexAccess) {
+
+    }
+
+    @Override
+    public void visit(LangSliceExpression langSliceExpression) {
+
+    }
 }

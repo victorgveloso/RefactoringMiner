@@ -20,6 +20,8 @@ public enum NodeTypeEnum {
     AWAIT_EXPRESSION("LangAwaitExpression"),
     LAMBDA_EXPRESSION("LangLambdaExpression"),
     TERNARY_EXPRESSION("LangTernaryExpression"),
+    INDEX_ACCESS("LangIndexAccess"),
+    SLICE_EXPRESSION("LangSliceExpression"),
 
     /** STATEMENTS */
     BLOCK("LangBlock"),

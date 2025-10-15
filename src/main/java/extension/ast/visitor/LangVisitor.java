@@ -681,6 +681,33 @@ public class LangVisitor implements LangASTVisitor {
         ternaryOperatorExpressions.add(ternaryOperatorExpression);
     }
 
+    @Override
+    public void visit(LangIndexAccess langIndexAccess) {
+        // Create LeafExpression for the array/index access
+        LeafExpression indexAccess = new LeafExpression(
+                cu,
+                sourceFolder,
+                filePath,
+                langIndexAccess,
+                LocationInfo.CodeElementType.ARRAY_ACCESS,
+                container
+        );
+
+        arrayAccesses.add(indexAccess);
+
+        if (langIndexAccess.getTarget() != null) {
+            langIndexAccess.getTarget().accept(this);
+        }
+
+        if (langIndexAccess.getIndex() != null) {
+            langIndexAccess.getIndex().accept(this);
+        }
+    }
+
+    @Override
+    public void visit(LangSliceExpression langSliceExpression) {
+
+    }
 
     public LangCompilationUnit getCu() {
         return cu;

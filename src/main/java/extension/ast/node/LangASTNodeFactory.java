@@ -179,6 +179,14 @@ public class LangASTNodeFactory {
         return new LangTernaryExpression(PositionUtils.getPositionInfo(ctx), condition, thenExpression, elseExpression);
     }
 
+    public static LangIndexAccess createIndexAccess(ParserRuleContext ctx, LangASTNode target, LangASTNode index) {
+        return new LangIndexAccess(PositionUtils.getPositionInfo(ctx), target, index);
+    }
+
+    public static LangSliceExpression createSliceExpression(ParserRuleContext ctx, LangASTNode lower, LangASTNode upper, LangASTNode step) {
+        return new LangSliceExpression(PositionUtils.getPositionInfo(ctx), lower, upper, step);
+    }
+
     /** Try-Catch-Finally */
     public static LangASTNode createTryStatement(PositionInfo positionInfo, LangBlock tryBlock, List<LangCatchClause> catchClauses, LangBlock elseBlock, LangBlock finallyBlock) {
         return new LangTryStatement(positionInfo, tryBlock, catchClauses, elseBlock, finallyBlock);

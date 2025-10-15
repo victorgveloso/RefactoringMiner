@@ -588,4 +588,29 @@ public class PyASTFlattener implements LangASTFlattener {
         langTernaryExpression.getElseExpression().accept(this);
     }
 
+    @Override
+    public void visit(LangIndexAccess langIndexAccess) {
+        langIndexAccess.getTarget().accept(this);
+        builder.append("[");
+        langIndexAccess.getIndex().accept(this);
+        builder.append("]");
+    }
+
+    @Override
+    public void visit(LangSliceExpression slice) {
+        if (slice.getLower() != null) slice.getLower().accept(this);
+        builder.append(":");
+        if (slice.getUpper() != null) slice.getUpper().accept(this);
+        if (slice.getStep() != null) {
+            builder.append(":");
+            if (slice.getUpper() == null && slice.getStep() == null){
+                builder.append(":");
+            }
+            slice.getStep().accept(this);
+        }
+        if (slice.getLower() == null && slice.getUpper() == null && slice.getStep() == null) {
+            builder.append(":");
+        }
+    }
+
 }

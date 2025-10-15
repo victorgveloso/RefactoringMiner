@@ -5,8 +5,7 @@ import extension.ast.builder.python.PyASTBuilderUtil;
 import extension.ast.node.LangASTNode;
 import extension.ast.node.LangASTNodeFactory;
 import extension.ast.node.OperatorEnum;
-import extension.ast.node.expression.LangAssignment;
-import extension.ast.node.expression.LangMethodInvocation;
+import extension.ast.node.expression.*;
 import extension.ast.node.literal.LangDictionaryLiteral;
 import extension.ast.node.literal.LangStringLiteral;
 import extension.base.lang.python.Python3Parser;
@@ -31,11 +30,8 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         if (ctx.name() != null && "None".equals(ctx.name().getText())) {
             return LangASTNodeFactory.createNullLiteral(ctx);
         }
-        if ("None".equals(ctx.getText())) {
-            return LangASTNodeFactory.createNullLiteral(ctx);
-        }
 
-        // Handle ALL string literals
+        // Handle string literals
         if (ctx.getText() != null && PyASTBuilderUtil.isStringLiteral(ctx)) {
             return LangASTNodeFactory.createStringLiteral(ctx, ctx.getText());
         }
@@ -45,7 +41,7 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
             return LangASTNodeFactory.createBooleanLiteral(ctx, Boolean.parseBoolean(ctx.getText()));
         }
 
-        // Handle empty dictionary {} - FIXED
+        // Handle empty dictionary
         if (ctx.OPEN_BRACE() != null && ctx.CLOSE_BRACE() != null) {
             if (ctx.dictorsetmaker() == null) {
                 // Empty dictionary
@@ -161,6 +157,25 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
 
                 // Create a field access node that combines the object and the field name
                 result = LangASTNodeFactory.createFieldAccess(result, attrName, trailerCtx);
+            } else if (trailerCtx.OPEN_BRACK() != null && trailerCtx.CLOSE_BRACK() != null) {
+                // This is index access: obj[index] or dict["key"]
+                // Use the existing visitTrailer logic but update the target
+                LangASTNode trailerResult = mainBuilder.visit(trailerCtx);
+
+                // The visitTrailer method returns LangIndexAccess with null target
+                if (trailerResult instanceof LangIndexAccess indexAccess) {
+                    // set the correct target
+                    indexAccess.setTarget(result);
+                    result = indexAccess;
+                }
+            } else {
+                LangASTNode trailerResult = mainBuilder.visit(trailerCtx);
+                if (trailerResult instanceof LangFieldAccess fieldAccess && fieldAccess.getExpression() == null) {
+                    fieldAccess.setExpression(result);
+                    result = fieldAccess;
+                } else {
+                    result = trailerResult;
+                }
             }
         }
         return result;
@@ -374,5 +389,89 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         // Should not occur, but as fallback
         return super.mainBuilder.visitPattern(ctx);
     }
+
+    public LangASTNode visitTrailer(Python3Parser.TrailerContext ctx) {
+        // Handle index access: [...]
+        if (ctx.OPEN_BRACK() != null && ctx.CLOSE_BRACK() != null && ctx.subscriptlist() != null) {
+                LangASTNode index = mainBuilder.visit(ctx.subscriptlist());
+                return LangASTNodeFactory.createIndexAccess(ctx, null, index);
+        }
+
+        // Handle method calls: (...)
+        if (ctx.OPEN_PAREN() != null && ctx.CLOSE_PAREN() != null) {
+            LangMethodInvocation methodInvocation = LangASTNodeFactory.createMethodInvocation(ctx);
+
+            // Process arguments if they exist
+            if (ctx.arglist() != null) {
+                for (Python3Parser.ArgumentContext argCtx : ctx.arglist().argument()) {
+                    LangASTNode argNode = mainBuilder.visit(argCtx);
+                    if (argNode != null) {
+                        methodInvocation.addArgument(argNode);
+                    }
+                }
+            }
+
+            return methodInvocation;
+        }
+
+        if (ctx.DOT() != null && ctx.name() != null) {
+            String attrName = ctx.name().getText();
+            return LangASTNodeFactory.createFieldAccess(null, attrName, ctx);
+        }
+
+        return LangASTNodeFactory.createSimpleName(ctx.getText(), ctx);
+    }
+
+    public LangASTNode visitSubscriptlist(Python3Parser.SubscriptlistContext ctx) {
+        if (ctx.subscript_().size() == 1) {
+            return mainBuilder.visit(ctx.subscript_(0));
+        }
+
+        // If there are multiple subscripts, create a tuple literal
+        List<LangASTNode> subscripts = new ArrayList<>();
+        for (Python3Parser.Subscript_Context subscriptCtx : ctx.subscript_()) {
+            LangASTNode subscript = mainBuilder.visit(subscriptCtx);
+            if (subscript != null) {
+                subscripts.add(subscript);
+            }
+        }
+
+        return LangASTNodeFactory.createTupleLiteral(ctx, subscripts);
+    }
+
+    public LangASTNode visitSubscript_(Python3Parser.Subscript_Context ctx) {
+        if (ctx.test().size() == 1 && ctx.COLON() == null) {
+            return mainBuilder.visit(ctx.test(0));
+        }
+
+        LangASTNode lower = null;
+        LangASTNode upper = null;
+        LangASTNode step = null;
+
+        List<Python3Parser.TestContext> tests = ctx.test();
+
+        // Check if the first child is a test expression, then use it as lower bound
+        // First child might be a colon, in which case we use null as lower bound
+        if (!tests.isEmpty() && ctx.getChild(0) == tests.get(0)) {
+            lower = mainBuilder.visit(tests.get(0));
+        }
+
+        if (tests.size() > 1) {
+            upper = mainBuilder.visit(tests.get(1));
+        } else if (tests.size() == 1 && ctx.getChild(0).getText().equals(":")) {
+            upper = mainBuilder.visit(tests.get(0));
+            lower = null;
+        }
+
+        if (ctx.sliceop() != null) {
+            Python3Parser.SliceopContext sliceopCtx = ctx.sliceop();
+            if (sliceopCtx.test() != null) {
+                step = mainBuilder.visit(sliceopCtx.test());
+            }
+        }
+
+        return LangASTNodeFactory.createSliceExpression(ctx, lower, upper, step);
+    }
+
 
 }
