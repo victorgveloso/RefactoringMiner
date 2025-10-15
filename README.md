@@ -387,7 +387,7 @@ As of **October 15, 2025** the precision and recall of RefactoringMiner on this 
 |Move And Rename Attribute|11  |  0  |  0  | 1.000  | 1.000|
 |Replace Attribute| 1  |  0  |  0  | 1.000  | 1.000|
 |Rename Method|395  |  2  | 20  | 0.995  | 0.952|
-|Inline Method|118  |  0  |  1  | 1.000  | 0.992|
+|Inline Method|119  |  0  |  1  | 1.000  | 0.992|
 |Move Method|388  |  3  |  5  | 0.992  | 0.987|
 |Move And Rename Method|132  |  0  |  4  | 1.000  | 0.971|
 |Pull Up Method|285  |  0  |  5  | 1.000  | 0.983|
@@ -511,8 +511,8 @@ As of **October 15, 2025** the precision and recall of RefactoringMiner on this 
 |Rename Class|232  |  1  |  2  | 0.996  | 0.991|
 |Move Attribute|72  |  0  |  7  | 1.000  | 0.911|
 |Move And Rename Attribute| 7  |  0  |  1  | 1.000  | 0.875|
-|Rename Method|296  | 11  |  8  | 0.964  | 0.974|
-|Inline Method|67  |  4  |  2  | 0.944  | 0.971|
+|Rename Method|297  | 10  |  8  | 0.967  | 0.974|
+|Inline Method|68  |  3  |  2  | 0.958  | 0.971|
 |Move Method|263  |  4  |  2  | 0.985  | 0.992|
 |Move And Rename Method|25  |  4  |  4  | 0.862  | 0.862|
 |Pull Up Method|45  |  0  |  3  | 1.000  | 0.938|
@@ -532,11 +532,11 @@ As of **October 15, 2025** the precision and recall of RefactoringMiner on this 
 |Extract Attribute| 3  |  0  |  0  | 1.000  | 1.000|
 |Inline Variable|113  |  4  | 17  | 0.966  | 0.869|
 |Rename Variable|303  |  7  | 11  | 0.977  | 0.965|
-|Rename Attribute|107  |  4  | 11  | 0.964  | 0.907|
+|Rename Attribute|107  |  4  | 10  | 0.964  | 0.915|
 |Replace Variable With Attribute|10  |  0  |  0  | 1.000  | 1.000|
 |Replace Attribute With Variable|30  |  0  |  0  | 1.000  | 1.000|
 |Change Return Type|165  |  2  | 13  | 0.988  | 0.927|
-|Change Variable Type|376  |  8  |  7  | 0.979  | 0.982|
+|Change Variable Type|376  |  8  |  6  | 0.979  | 0.984|
 |Change Attribute Type|164  |  2  |  4  | 0.988  | 0.976|
 |Change Type Declaration Kind| 4  |  0  |  0  | 1.000  | 1.000|
 |Replace Pipeline With Loop| 2  |  0  |  0  | 1.000  | 1.000|
