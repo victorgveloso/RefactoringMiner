@@ -159,7 +159,7 @@ public class OperationInvocation extends AbstractCall {
 					exprAsString = LangVisitor.stringify(fieldAccess.getExpression());
 				}
 				else {
-					exprAsString = LangVisitor.stringify(expr);
+					exprAsString = LangVisitor.stringify(methodInvocation);
 				}
 				String invocationAsString = LangVisitor.stringify(methodInvocation);
 
@@ -187,7 +187,11 @@ public class OperationInvocation extends AbstractCall {
 		}
 		else if (node instanceof LangSimpleName simpleName) {
 			// Add simple names as variables (like "self", "x", "y")
-			subExpressions.add(0, simpleName.getIdentifier());
+			// add only if next character is "." and not if next character is "("
+			String parentAsString = LangVisitor.stringify(node.getParent());
+			if(parentAsString.contains(simpleName.getIdentifier() + ".") && !parentAsString.contains(simpleName.getIdentifier() + "(")) {
+				subExpressions.add(0, simpleName.getIdentifier());
+			}
 		}
 		else if (node instanceof LangAssignment assignment) {
 			processExpression(assignment.getLeftSide(), subExpressions);
