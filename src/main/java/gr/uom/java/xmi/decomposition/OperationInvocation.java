@@ -123,7 +123,6 @@ public class OperationInvocation extends AbstractCall {
 		this.methodName = "closure";
 		if (methodInvocation.getExpression() instanceof LangSimpleName simpleName) {
 			this.methodName = simpleName.getIdentifier();
-			this.expression = simpleName.getIdentifier();
 		} else if (methodInvocation.getExpression() instanceof LangFieldAccess fieldAccess) {
 			this.methodName = fieldAccess.getName().getIdentifier();
 			this.expression = LangVisitor.stringify(fieldAccess.getExpression()); // "self"

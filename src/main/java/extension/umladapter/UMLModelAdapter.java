@@ -225,7 +225,7 @@ public class UMLModelAdapter {
         int startSignatureOffset = methodDecl.getStartChar();
         LocationInfo locationInfo = new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.METHOD_DECLARATION);
 
-        String operationName = PathFileUtils.isPythonFile(filePath) ? methodDecl.getCleanName() : methodDecl.getName();
+        String operationName = methodDecl.getName();
         UMLOperation umlOperation = new UMLOperation(operationName, locationInfo);
         umlOperation.setClassName(className);
 

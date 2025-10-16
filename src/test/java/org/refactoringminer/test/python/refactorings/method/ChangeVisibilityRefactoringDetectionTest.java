@@ -36,7 +36,7 @@ public class ChangeVisibilityRefactoringDetectionTest {
 
         assertVisibilityChangeDetected(beforeFiles, afterFiles,
                 "public_method", Visibility.PUBLIC,
-                "public_method", Visibility.PRIVATE);
+                "__public_method", Visibility.PRIVATE);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class ChangeVisibilityRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("tests/example.py", afterPythonCode);
 
         assertVisibilityChangeDetected(beforeFiles, afterFiles,
-                "protected_method", Visibility.PROTECTED,
+                "_protected_method", Visibility.PROTECTED,
                 "protected_method", Visibility.PUBLIC);
     }
 
@@ -79,8 +79,8 @@ public class ChangeVisibilityRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("tests/visibility/example.py", afterPythonCode);
 
         assertVisibilityChangeDetected(beforeFiles, afterFiles,
-                "private_method", Visibility.PRIVATE,
-                "private_method", Visibility.PROTECTED);
+                "__private_method", Visibility.PRIVATE,
+                "_private_method", Visibility.PROTECTED);
     }
 
     @Test
@@ -131,7 +131,7 @@ public class ChangeVisibilityRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("analyzer.py", afterPythonCode);
         assertVisibilityChangeDetected(beforeFiles, afterFiles,
                 "analyze_matrix", Visibility.PUBLIC,
-                "analyze_matrix", Visibility.PROTECTED);
+                "_analyze_matrix", Visibility.PROTECTED);
     }
 
     @Test
@@ -201,8 +201,8 @@ public class ChangeVisibilityRefactoringDetectionTest {
         Map<String, String> beforeFiles = Map.of("processor.py", beforePythonCode);
         Map<String, String> afterFiles = Map.of("processor.py", afterPythonCode);
         assertVisibilityChangeDetected(beforeFiles, afterFiles,
-                "process_files", Visibility.PROTECTED,
-                "process_files", Visibility.PRIVATE);
+                "_process_files", Visibility.PROTECTED,
+                "__process_files", Visibility.PRIVATE);
     }
 
     @Test
@@ -276,7 +276,7 @@ public class ChangeVisibilityRefactoringDetectionTest {
         Map<String, String> beforeFiles = Map.of("transformer.py", beforePythonCode);
         Map<String, String> afterFiles = Map.of("transformer.py", afterPythonCode);
         assertVisibilityChangeDetected(beforeFiles, afterFiles,
-                "transform_data", Visibility.PRIVATE,
+                "__transform_data", Visibility.PRIVATE,
                 "transform_data", Visibility.PUBLIC);
     }
 
@@ -384,7 +384,7 @@ public class ChangeVisibilityRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("manager.py", afterPythonCode);
         assertVisibilityChangeDetected(beforeFiles, afterFiles,
                 "execute_workflow", Visibility.PUBLIC,
-                "execute_workflow", Visibility.PROTECTED);
+                "_execute_workflow", Visibility.PROTECTED);
     }
 
     @Test
@@ -492,7 +492,7 @@ public class ChangeVisibilityRefactoringDetectionTest {
         Map<String, String> beforeFiles = Map.of("algorithm.py", beforePythonCode);
         Map<String, String> afterFiles = Map.of("algorithm.py", afterPythonCode);
         assertVisibilityChangeDetected(beforeFiles, afterFiles,
-                "process_algorithm", Visibility.PROTECTED,
+                "_process_algorithm", Visibility.PROTECTED,
                 "process_algorithm", Visibility.PUBLIC);
     }
 
@@ -650,7 +650,7 @@ public class ChangeVisibilityRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("calculator.py", afterPythonCode);
         assertVisibilityChangeDetected(beforeFiles, afterFiles,
                 "calculate_grades", Visibility.PUBLIC,
-                "calculate_grades", Visibility.PRIVATE);
+                "__calculate_grades", Visibility.PRIVATE);
     }
 
     @Test
@@ -860,8 +860,8 @@ public class ChangeVisibilityRefactoringDetectionTest {
         Map<String, String> beforeFiles = Map.of("async_processor.py", beforePythonCode);
         Map<String, String> afterFiles = Map.of("async_processor.py", afterPythonCode);
         assertVisibilityChangeDetected(beforeFiles, afterFiles,
-                "process_async_data", Visibility.PRIVATE,
-                "process_async_data", Visibility.PROTECTED);
+                "__process_async_data", Visibility.PRIVATE,
+                "_process_async_data", Visibility.PROTECTED);
     }
 
     private void assertVisibilityChangeDetected(
