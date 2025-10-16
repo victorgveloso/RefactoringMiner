@@ -338,6 +338,10 @@ public class LangASTNodeFactory {
         return new LangNullLiteral(PositionUtils.getPositionInfo(ctx));
     }
 
+    public static LangEllipsisLiteral createEllipsisLiteral(ParserRuleContext ctx) {
+        return new LangEllipsisLiteral(PositionUtils.getPositionInfo(ctx));
+    }
+
     /** Metadata */
     public static LangAnnotation createAnnotation(ParserRuleContext ctx, LangSimpleName name) {
         return new LangAnnotation(name, PositionUtils.getPositionInfo(ctx));

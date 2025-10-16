@@ -56,6 +56,7 @@ public enum NodeTypeEnum {
     INTEGER_LITERAL("LangIntegerLiteral"),
     STRING_LITERAL("LangStringLiteral"),
     NULL_LITERAL("LangNullLiteral"),
+    ELLIPSIS_LITERAL("LangEllipsisLiteral"),
 
     /** METADATA */
     ANNOTATION("LangAnnotation"),

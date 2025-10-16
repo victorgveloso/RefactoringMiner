@@ -36,6 +36,10 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
             return LangASTNodeFactory.createStringLiteral(ctx, ctx.getText());
         }
 
+        if (ctx.ELLIPSIS() != null) {
+            return LangASTNodeFactory.createEllipsisLiteral(ctx);
+        }
+
         // Handle boolean literals
         if (ctx.TRUE() != null || ctx.FALSE() != null) {
             return LangASTNodeFactory.createBooleanLiteral(ctx, Boolean.parseBoolean(ctx.getText()));

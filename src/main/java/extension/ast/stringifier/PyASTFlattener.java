@@ -613,4 +613,9 @@ public class PyASTFlattener implements LangASTFlattener {
         }
     }
 
+    @Override
+    public void visit(LangEllipsisLiteral langEllipsisLiteral) {
+        builder.append("...");
+    }
+
 }

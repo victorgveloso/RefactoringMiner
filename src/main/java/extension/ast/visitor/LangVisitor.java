@@ -708,6 +708,11 @@ public class LangVisitor implements LangASTVisitor {
     public void visit(LangSliceExpression langSliceExpression) {
 
     }
+    @Override
+    public void visit(LangEllipsisLiteral langEllipsisLiteral) {
+
+    }
+
 
     public LangCompilationUnit getCu() {
         return cu;

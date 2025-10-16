@@ -568,4 +568,9 @@ public class CSharpASTFlattener implements LangASTFlattener {
     public void visit(LangSliceExpression langSliceExpression) {
 
     }
+
+    @Override
+    public void visit(LangEllipsisLiteral langEllipsisLiteral) {
+
+    }
 }
