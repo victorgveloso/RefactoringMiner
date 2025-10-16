@@ -1,17 +1,45 @@
 [{
-    "id": 1,
+    "id": 1159848,
     "repository": "https://github.com/dit/dit.git",
     "sha1": "5b8629a6899fe014895367c35d85cfca785e3b88",
     "url": "https://github.com/dit/dit/commit/5b8629a6899fe014895367c35d85cfca785e3b88",
     "author": "chebee7i",
-    "time": "Jun 3, 2013 4:05 PM",
+    "time": "6/3/13 4:05 PM",
     "refactorings": [{
         "type": "Extract Method",
         "description": "Extract Method protected _construct_alphabets() : Object extracted from public construct_alphabets() : Object in class helpers_module.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
-        "validators": null
+        "validators": "Nikos"
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public random_distribution() : Object renamed to public random_scalar_distribution() : Object in class distconst_module.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public random_joint_distribution() : Object renamed to public random_distribution() : Object in class distconst_module.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public uniform_joint_distribution() : Object renamed to public uniform_distribution() : Object in class distconst_module.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public uniform_distribution() : Object renamed to public uniform_scalar_distribution() : Object in class distconst_module.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
     }],
-    "refDiffExecutionTime": 1250
+    "refDiffExecutionTime": 0
 }]

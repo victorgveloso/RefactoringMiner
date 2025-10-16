@@ -13,9 +13,10 @@ public class TestPythonDatasetRefactorings {
 	public void testAllRefactorings() throws Exception {
 		GitHistoryRefactoringMinerImpl detector = new GitHistoryRefactoringMinerImpl();
 		BigInteger types = 
-					Refactorings.ExtractMethod.getValue();
+					Refactorings.ExtractMethod.getValue()
+					.or(Refactorings.RenameMethod.getValue());
 		TestBuilder test = new TestBuilder(detector, REPOS, types);
 		RefactoringPopulator.preparePythonRefactorings(test, types);
-		test.assertExpectationsWithGitHubAPI(1, 0, 0);
+		test.assertExpectationsWithGitHubAPI(5, 0, 0);
 	}
 }
