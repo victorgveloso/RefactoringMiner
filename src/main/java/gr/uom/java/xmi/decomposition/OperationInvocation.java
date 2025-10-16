@@ -120,6 +120,7 @@ public class OperationInvocation extends AbstractCall {
 
 	public OperationInvocation(LangCompilationUnit cu, String sourceFolder, String filePath, LangMethodInvocation methodInvocation, VariableDeclarationContainer container, String fileContent) {
 		super(cu, sourceFolder, filePath, methodInvocation, CodeElementType.METHOD_INVOCATION, container);
+		this.methodName = "closure";
 		if (methodInvocation.getExpression() instanceof LangSimpleName simpleName) {
 			this.methodName = simpleName.getIdentifier();
 			this.expression = simpleName.getIdentifier();
