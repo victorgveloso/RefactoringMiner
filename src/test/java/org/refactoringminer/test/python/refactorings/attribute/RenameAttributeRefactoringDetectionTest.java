@@ -433,6 +433,33 @@ public class RenameAttributeRefactoringDetectionTest {
                 "processed_cnt", "processed_count", "DataProcessor");
     }
 
+    @Test
+    void detectsReplaceAttribute_SimpleRename() throws Exception {
+        String beforePythonCode = """
+            class Person:
+                def __init__(self, name):
+                    self.full_name = name
+                
+                def get_info(self):
+                    return f"Person: {self.full_name}"
+            """;
+
+        String afterPythonCode = """
+            class Person:
+                def __init__(self, name):
+                    self.name = name
+                
+                def get_info(self):
+                    return f"Person: {self.name}"
+            """;
+
+        Map<String, String> beforeFiles = Map.of("person.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("person.py", afterPythonCode);
+
+        assertRenameAttributeRefactoringDetected(beforeFiles, afterFiles,
+                "full_name", "name", "Person");
+    }
+
     public static void assertRenameAttributeRefactoringDetected(
             Map<String, String> beforeFiles,
             Map<String, String> afterFiles,

@@ -18,33 +18,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class ReplaceAttributeRefactoringDetectionTest {
 
     @Test
-    void detectsReplaceAttribute_SimpleRename() throws Exception {
-        String beforePythonCode = """
-            class Person:
-                def __init__(self, name):
-                    self.full_name = name
-                
-                def get_info(self):
-                    return f"Person: {self.full_name}"
-            """;
-
-        String afterPythonCode = """
-            class Person:
-                def __init__(self, name):
-                    self.name = name
-                
-                def get_info(self):
-                    return f"Person: {self.name}"
-            """;
-
-        Map<String, String> beforeFiles = Map.of("person.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("person.py", afterPythonCode);
-
-        assertReplaceAttributeRefactoringDetected(beforeFiles, afterFiles,
-                "full_name", "name", "Person");
-    }
-
-    @Test
     void detectsReplaceAttribute_DirectToProperty() throws Exception {
         String beforePythonCode = """
             class Circle:
