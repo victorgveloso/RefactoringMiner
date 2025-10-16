@@ -1151,7 +1151,7 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 					VariableDeclaration declaration = statement.getVariableDeclarations().get(0);
 					AbstractExpression initializer = declaration.getInitializer();
 					if(initializer != null && (initializer.getMethodInvocations().size() > 0 || initializer.getCreations().size() > 0 || initializer.getTypeLiterals().size() > 0 ||
-							initializer.getStringLiterals().size() > 0 || initializer.getCastExpressions().size() > 0 || initializer.getLambdas().size() > 0 || (initializer.getNumberLiterals().size() > 0 && !isDefaultValue(initializer.getString())))) {
+							initializer.getStringLiterals().size() > 0 || initializer.getCastExpressions().size() > 0 || initializer.getLambdas().size() > 0 || initializer.getInstanceofExpressions().size() > 0 || (initializer.getNumberLiterals().size() > 0 && !isDefaultValue(initializer.getString())))) {
 						for(AbstractCodeFragment nonMappedLeaf1 : nonMappedLeavesT1) {
 							boolean matchingVariableDeclaration = false;
 							List<VariableDeclaration> declarations1 = nonMappedLeaf1.getVariableDeclarations();
@@ -1196,6 +1196,9 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 									List<LeafExpression> subExpressions = nonMappedLeaf1.findExpression(initializer.getString());
 									if(subExpressions.isEmpty() && matchingString != null) {
 										subExpressions = nonMappedLeaf1.findExpression(matchingString);
+										if(subExpressions.isEmpty()) {
+											subExpressions = nonMappedLeaf1.findExpression(matchingString + ".class");
+										}
 									}
 									for(LeafExpression subExpression : subExpressions) {
 										LeafMapping leafMapping = new LeafMapping(subExpression, initializer, operation1, operation2);
@@ -1228,7 +1231,7 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 					VariableDeclaration declaration = statement.getVariableDeclarations().get(0);
 					AbstractExpression initializer = declaration.getInitializer();
 					if(initializer != null && (initializer.getMethodInvocations().size() > 0 || initializer.getCreations().size() > 0 || initializer.getTypeLiterals().size() > 0 ||
-							initializer.getStringLiterals().size() > 0 || initializer.getCastExpressions().size() > 0 || initializer.getLambdas().size() > 0 || (initializer.getNumberLiterals().size() > 0 && !isDefaultValue(initializer.getString())))) {
+							initializer.getStringLiterals().size() > 0 || initializer.getCastExpressions().size() > 0 || initializer.getLambdas().size() > 0 || initializer.getInstanceofExpressions().size() > 0 || (initializer.getNumberLiterals().size() > 0 && !isDefaultValue(initializer.getString())))) {
 						for(AbstractCodeFragment nonMappedLeaf2 : nonMappedLeavesT2) {
 							boolean matchingVariableDeclaration = false;
 							List<VariableDeclaration> declarations2 = nonMappedLeaf2.getVariableDeclarations();
@@ -1275,6 +1278,9 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 									List<LeafExpression> subExpressions = nonMappedLeaf2.findExpression(initializerAfterRename != null ? initializerAfterRename : initializer.getString());
 									if(subExpressions.isEmpty() && matchingString != null) {
 										subExpressions = nonMappedLeaf2.findExpression(matchingString);
+										if(subExpressions.isEmpty()) {
+											subExpressions = nonMappedLeaf2.findExpression(matchingString + ".class");
+										}
 									}
 									for(LeafExpression subExpression : subExpressions) {
 										LeafMapping leafMapping = new LeafMapping(initializer, subExpression, operation1, operation2);
@@ -1325,6 +1331,9 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 											List<LeafExpression> subExpressions = nonMappedLeaf2.findExpression(initializerAfterRename != null ? initializerAfterRename : initializer.getString());
 											if(subExpressions.isEmpty() && matchingString != null) {
 												subExpressions = nonMappedLeaf2.findExpression(matchingString);
+												if(subExpressions.isEmpty()) {
+													subExpressions = nonMappedLeaf2.findExpression(matchingString + ".class");
+												}
 											}
 											for(LeafExpression subExpression : subExpressions) {
 												LeafMapping leafMapping = new LeafMapping(initializer, subExpression, operation1, operation2);
@@ -1415,6 +1424,12 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 						}
 					}
 				}
+			}
+		}
+		else if(string.contains(" instanceof ")) {
+			String afterInstanceOf = string.substring(string.indexOf(" instanceof ") + " instanceof ".length(), string.length());
+			if(nonMappedLeaf.getString().contains(afterInstanceOf)) {
+				return afterInstanceOf;
 			}
 		}
 		return null;
