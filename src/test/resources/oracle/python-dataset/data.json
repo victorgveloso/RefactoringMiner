@@ -1,0 +1,17 @@
+[{
+    "id": 1,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "5b8629a6899fe014895367c35d85cfca785e3b88",
+    "url": "https://github.com/dit/dit/commit/5b8629a6899fe014895367c35d85cfca785e3b88",
+    "author": "chebee7i",
+    "time": "Jun 3, 2013 4:05 PM",
+    "refactorings": [{
+        "type": "Extract Method",
+        "description": "Extract Method protected _construct_alphabets() : Object extracted from public construct_alphabets() : Object in class helpers_module.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 1250
+}]
