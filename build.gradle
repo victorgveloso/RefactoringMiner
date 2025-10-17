@@ -40,6 +40,14 @@ repositories {
 test {
     dependsOn generateGrammarSource
     useJUnitPlatform()
+    // Make test more verbose to appease TravisCI's 10-minute "no output" watchdog
+    testLogging {
+        events "started", "passed", "skipped", "failed"
+        exceptionFormat "short"
+        showStandardStreams = true
+    }
+    // Reduce buffering of stdout/stderr
+    outputs.upToDateWhen { false }
     afterTest { descriptor, result ->
         if (result.resultType == TestResult.ResultType.FAILURE) {
             println "\n$descriptor.className [$descriptor.classDisplayName] > $descriptor.name [$descriptor.displayName]: $result.resultType"

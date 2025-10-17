@@ -40,10 +40,10 @@ script:
 
     if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
       echo "PR build detected. Running './gradlew build -x javadoc -Pnotoken'";
-      ./gradlew build -x javadoc -Pnotoken --no-daemon
+      travis_wait 50 ./gradlew build -x javadoc -Pnotoken --no-daemon
     else
       echo "Push build detected. Running './gradlew build -x javadoc'";
-      ./gradlew build -x javadoc --no-daemon
+      travis_wait 50 ./gradlew build -x javadoc --no-daemon
     fi
 
 after_script:
