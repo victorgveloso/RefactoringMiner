@@ -1,0 +1,64 @@
+language: java
+os: linux
+dist: noble
+
+jdk:
+  - openjdk17
+
+cache:
+  directories:
+    - $HOME/.gradle
+    - .gradle
+    - build
+
+env:
+  global:
+    - GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx1g"
+    # OAuthToken should be added in Travis repo settings (not committed).
+    # Optional variables for artifact uploads:
+    # - AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION, S3_BUCKET
+    # - GIST_TOKEN (if you prefer gist uploads)
+    # - OAUTHTOKEN (GitHub token used for repository_dispatch if needed)
+
+before_install:
+  - chmod +x ./gradlew
+
+install:
+  - ./gradlew assemble --no-daemon -x javadoc
+
+script:
+  # Mirror GitHub Actions behavior:
+  # - Run on push to any branch
+  # - Run for pull_request events ONLY when the target branch is langAST
+  - |
+    # TRAVIS_PULL_REQUEST: "false" for non-PR builds, or PR number for PR builds
+    # TRAVIS_BRANCH: for PR builds this is the target branch; for pushes it's the branch name
+    if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_BRANCH" != "langAST" ]; then
+      echo "This is a pull request targeting '$TRAVIS_BRANCH' — skipping build because only PRs targeting 'langAST' are built per workflow.";
+      exit 0;
+    fi
+
+    if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+      echo "PR build detected. Running './gradlew build -x javadoc -Pnotoken'";
+      ./gradlew build -x javadoc -Pnotoken --no-daemon
+    else
+      echo "Push build detected. Running './gradlew build -x javadoc'";
+      ./gradlew build -x javadoc --no-daemon
+    fi
+
+after_script:
+  # Archive test reports: Travis cannot push to GitHub Actions artifacts store.
+  # If you set S3 credentials (AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY) and S3_BUCKET,
+  # this will upload the test report directory to S3 so you have persistent access.
+  - |
+    if [ -n "$AWS_ACCESS_KEY_ID" ] && [ -n "$AWS_SECRET_ACCESS_KEY" ] && [ -n "$S3_BUCKET" ]; then
+      echo "Uploading test reports to s3://$S3_BUCKET/$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/"
+      pip install --user awscli >/dev/null
+      export PATH="$HOME/.local/bin:$PATH"
+      aws s3 cp --recursive build/reports/tests/test "s3://$S3_BUCKET/$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/" || echo "S3 upload failed"
+    else
+      echo "S3 credentials not set — skipping test report upload."
+    fi
+
+notifications:
+  email: false
