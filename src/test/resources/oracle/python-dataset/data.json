@@ -7,60 +7,67 @@
     "time": "6/3/13 4:05 PM",
     "refactorings": [{
         "type": "Extract Method",
-        "description": "Extract Method protected _construct_alphabets() : Object extracted from public construct_alphabets() : Object in class helpers.__module__",
+        "description": "Extract Method protected _construct_alphabets(outcomes Object) : Object extracted from public construct_alphabets(outcomes Object) : Object in class helpers.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
     }, {
         "type": "Rename Method",
-        "description": "Rename Method public random_distribution() : Object renamed to public random_scalar_distribution() : Object in class distconst.__module__",
+        "description": "Rename Method public random_distribution(n Object, prng Object) : Object renamed to public random_scalar_distribution(n Object, prng Object) : Object in class distconst.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
     }, {
         "type": "Rename Method",
-        "description": "Rename Method public random_joint_distribution() : Object renamed to public random_distribution() : Object in class distconst.__module__",
+        "description": "Rename Method public random_joint_distribution(word_length Object, alphabet_size Object, prng Object) : Object renamed to public random_distribution(outcome_length Object, alphabet_size Object, prng Object) : Object in class distconst.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
     }, {
         "type": "Rename Method",
-        "description": "Rename Method public uniform_joint_distribution() : Object renamed to public uniform_distribution() : Object in class distconst.__module__",
+        "description": "Rename Method public uniform_joint_distribution(word_length Object, alphabet_size Object) : Object renamed to public uniform_distribution(outcome_length Object, alphabet_size Object) : Object in class distconst.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
     }, {
         "type": "Rename Method",
-        "description": "Rename Method public uniform_distribution() : Object renamed to public uniform_scalar_distribution() : Object in class distconst.__module__",
+        "description": "Rename Method public uniform_distribution(n Object) : Object renamed to public uniform_scalar_distribution(n Object) : Object in class distconst.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
     }, {
         "type": "Rename Parameter",
-        "description": "Rename Parameter word_length : Object to outcome_length : Object in method public uniform_distribution() : Object from class distconst.__module__",
+        "description": "Rename Parameter word_length : Object to outcome_length : Object in method public uniform_distribution(outcome_length Object, alphabet_size Object) : Object from class distconst.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
     }, {
         "type": "Rename Parameter",
-        "description": "Rename Parameter word_length : Object to outcome_length : Object in method public random_distribution() : Object from class distconst.__module__",
+        "description": "Rename Parameter word_length : Object to outcome_length : Object in method public random_distribution(outcome_length Object, alphabet_size Object, prng Object) : Object from class distconst.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
     }, {
         "type": "Reorder Parameter",
-        "description": "Reorder Parameter [pmf : Object, outcomes : Object, alphabet : Object, base : Object, prng : Object, sparse : Object] to [pmf : Object, outcomes : Object, base : Object, alphabet : Object, prng : Object, sparse : Object] in method protected _make_distribution() : Object from class npdist.__module__",
+        "description": "Reorder Parameter [pmf : Object, outcomes : Object, alphabet : Object, base : Object, prng : Object, sparse : Object] to [pmf : Object, outcomes : Object, base : Object, alphabet : Object, prng : Object, sparse : Object] in method protected _make_distribution(pmf Object, outcomes Object, base Object, alphabet Object, prng Object, sparse Object) : Object from class npdist.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter base : Object in method public copy(base Object) : Object from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 0
 }, {
@@ -72,7 +79,7 @@
     "time": "10/25/14 8:26 PM",
     "refactorings": [{
         "type": "Inline Method",
-        "description": "Inline Method protected _closure() : Object inlined to public closure() : Object in class math.aitchison.__module__",
+        "description": "Inline Method protected _closure(x Object) : Object inlined to public closure(x Object) : Object in class math.aitchison.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
@@ -88,21 +95,21 @@
     "time": "2/25/13 8:25 PM",
     "refactorings": [{
         "type": "Rename Method",
-        "description": "Rename Method public partitions() : None renamed to public partitions1() : None in class utils.misc.__module__",
+        "description": "Rename Method public partitions(set_ Object) : None renamed to public partitions1(set_ Object) : None in class utils.misc.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
     }, {
         "type": "Rename Method",
-        "description": "Rename Method protected _partitions() : None renamed to public partitions2() : None in class utils.misc.__module__",
+        "description": "Rename Method protected _partitions(n Object) : None renamed to public partitions2(n Object) : None in class utils.misc.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
     }, {
         "type": "Rename Parameter",
-        "description": "Rename Parameter set_ : Object to seq : Object in method public ordered_partitions() : None from class utils.misc.__module__",
+        "description": "Rename Parameter set_ : Object to seq : Object in method public ordered_partitions(seq Object, tuples Object) : None from class utils.misc.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
