@@ -30,6 +30,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
+import org.refactoringminer.util.PathFileUtils;
 
 import extension.ast.node.LangASTNode;
 import extension.ast.node.declaration.LangSingleVariableDeclaration;
@@ -502,7 +503,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
         sb.append(variableName).append(" : ");
-        if(varargsParameter) {
+        if(varargsParameter && PathFileUtils.isJavaFile(locationInfo.getFilePath())) {
         	sb.append(type.toString().substring(0, type.toString().lastIndexOf("[]")));
         	sb.append("...");
         }
@@ -515,7 +516,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 	public String toQualifiedString() {
 		StringBuilder sb = new StringBuilder();
         sb.append(variableName).append(" : ");
-        if(varargsParameter) {
+        if(varargsParameter && PathFileUtils.isJavaFile(locationInfo.getFilePath())) {
         	sb.append(type.toQualifiedString().substring(0, type.toQualifiedString().lastIndexOf("[]")));
         	sb.append("...");
         }
