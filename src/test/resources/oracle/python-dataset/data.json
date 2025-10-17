@@ -42,4 +42,20 @@
         "validators": "Nikos"
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159849,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "55f6f1ab292abe7a10a93982fa6df48f8d4c4854",
+    "url": "https://github.com/dit/dit/commit/55f6f1ab292abe7a10a93982fa6df48f8d4c4854",
+    "author": "chebee7i",
+    "time": "10/25/14 8:26 PM",
+    "refactorings": [{
+        "type": "Inline Method",
+        "description": "Inline Method protected _closure() : Object inlined to public closure() : Object in class math.math.aitchison_module.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }],
+    "refDiffExecutionTime": 0
 }]
