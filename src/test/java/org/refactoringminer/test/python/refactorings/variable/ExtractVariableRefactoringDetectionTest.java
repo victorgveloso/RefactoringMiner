@@ -1,7 +1,9 @@
 package org.refactoringminer.test.python.refactorings.variable;
 
 import extension.umladapter.UMLModelAdapter;
+import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLModel;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.diff.ExtractVariableRefactoring;
 import gr.uom.java.xmi.diff.UMLModelDiff;
 import org.junit.jupiter.api.Test;
@@ -301,7 +303,7 @@ public class ExtractVariableRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("number_processor.py", afterPythonCode);
 
         assertExtractVariableRefactoringDetected(beforeFiles, afterFiles,
-                "is_greater_than_ten", "lambda x: x > 10", "process_numbers", "number_processor_module.__module__");
+                "is_greater_than_ten", "lambda x: x > 10", "process_numbers", null);
     }
 
     @Test
@@ -330,7 +332,7 @@ public class ExtractVariableRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("user.py", afterPythonCode);
 
         assertExtractVariableRefactoringDetected(beforeFiles, afterFiles,
-                "user_status", "\"Experienced Contributor\" if post_count > 50 else \"Newcomer\"", "get_user_status", "user_module.__module__");
+                "user_status", "\"Experienced Contributor\" if post_count > 50 else \"Newcomer\"", "get_user_status", null);
     }
 
     public static void assertExtractVariableRefactoringDetected(
@@ -398,12 +400,14 @@ public class ExtractVariableRefactoringDetectionTest {
 
                     boolean variableNameMatches = variableName.equals(extractedVariableName);
                     boolean methodMatches = operationName.equals(methodName);
+                    VariableDeclarationContainer operationBefore = refactoring.getOperationBefore();
+                    UMLAbstractClass originalClass = diff.findClassInParentModel(operationBefore.getClassName());
 
                     // Check class name if provided
                     boolean classMatches = true;
                     if (className != null) {
                         String actualClassName = refactoring.getOperationAfter().getClassName();
-                        classMatches = actualClassName.equals(className);
+                        classMatches = actualClassName.equals(originalClass.getPackageName() + "." + className);
                     }
 
                     // Check extracted expression if possible

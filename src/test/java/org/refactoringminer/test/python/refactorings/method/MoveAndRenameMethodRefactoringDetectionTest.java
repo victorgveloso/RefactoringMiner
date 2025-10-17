@@ -1,7 +1,9 @@
 package org.refactoringminer.test.python.refactorings.method;
 
 import extension.umladapter.UMLModelAdapter;
+import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLModel;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.diff.MoveOperationRefactoring;
 import gr.uom.java.xmi.diff.RenameOperationRefactoring;
 import gr.uom.java.xmi.diff.UMLModelDiff;
@@ -494,12 +496,18 @@ public class MoveAndRenameMethodRefactoringDetectionTest {
         boolean moveAndRenameDetected = refactorings.stream()
                 .filter(r -> r instanceof MoveOperationRefactoring)
                 .map(r -> (MoveOperationRefactoring) r)
-                .anyMatch(ref ->
-                        ref.getRefactoringType() == RefactoringType.MOVE_AND_RENAME_OPERATION &&
-                                ref.getOriginalOperation().getClassName().equals(sourceClassName) &&
-                                ref.getMovedOperation().getClassName().equals(targetClassName) &&
-                                ref.getOriginalOperation().getName().equals(originalMethodName) &&
-                                ref.getMovedOperation().getName().equals(renamedMethodName)
+                .anyMatch(ref -> {
+                    VariableDeclarationContainer originalOperation = ref.getOriginalOperation();
+                    VariableDeclarationContainer movedOperation = ref.getMovedOperation();
+                    UMLAbstractClass originalClass = diff.findClassInParentModel(originalOperation.getClassName());
+                    UMLAbstractClass nextClass = diff.findClassInChildModel(movedOperation.getClassName());
+                    
+                    return ref.getRefactoringType() == RefactoringType.MOVE_AND_RENAME_OPERATION &&
+                            originalOperation.getClassName().equals(originalClass.getPackageName() + "." + sourceClassName) &&
+                            movedOperation.getClassName().equals(nextClass.getPackageName() + "." + targetClassName) &&
+                            originalOperation.getName().equals(originalMethodName) &&
+                            movedOperation.getName().equals(renamedMethodName);
+                }
                 );
 
 

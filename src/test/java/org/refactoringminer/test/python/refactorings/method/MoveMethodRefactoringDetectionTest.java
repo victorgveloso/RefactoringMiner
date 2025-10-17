@@ -1,6 +1,7 @@
 package org.refactoringminer.test.python.refactorings.method;
 
 import extension.umladapter.UMLModelAdapter;
+import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.VariableDeclarationContainer;
@@ -655,11 +656,13 @@ class MoveMethodRefactoringDetectionTest {
                     if (ref instanceof MoveOperationRefactoring moveRef) {
                         VariableDeclarationContainer originalOperation = moveRef.getOriginalOperation();
                         VariableDeclarationContainer movedOperation = moveRef.getMovedOperation();
+                        UMLAbstractClass originalClass = diff.findClassInParentModel(originalOperation.getClassName());
+                        UMLAbstractClass nextClass = diff.findClassInChildModel(movedOperation.getClassName());
 
                         return originalOperation.getName().equals(methodName) &&
-                                originalOperation.getClassName().equals(sourceClassName) &&
+                                originalOperation.getClassName().equals(originalClass.getPackageName() + "." + sourceClassName) &&
                                 movedOperation.getName().equals(methodName) &&
-                                movedOperation.getClassName().equals(targetClassName);
+                                movedOperation.getClassName().equals(nextClass.getPackageName() + "." + targetClassName);
                     }
                     return false;
                 });

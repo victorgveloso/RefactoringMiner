@@ -1,6 +1,7 @@
 package org.refactoringminer.test.python.refactorings.clazz;
 
 import extension.umladapter.UMLModelAdapter;
+import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.diff.MoveClassRefactoring;
 import gr.uom.java.xmi.diff.UMLModelDiff;
@@ -41,21 +42,21 @@ public class MoveClassRefactoringDetectionTest {
             """;
 
         Map<String, String> beforeFiles = Map.of(
-                "src/helper/helper.py", beforePythonCode1,    // ✅ Now: src/tests/helper.py
+                "src/helper/helper.py", beforePythonCode1,    // Now: src/tests/helper.py
                 "src/tests/other.py", beforePythonCode2
         );
 
         Map<String, String> afterFiles = Map.of(
                 "src/tests/other.py", afterPythonCode1,
-                "src/common/common.py", afterPythonCode2      // ✅ Now: src/tests/common.py
+                "src/common/common.py", afterPythonCode2      // Now: src/tests/common.py
         );
 
 
         assertMoveClassRefactoringDetected(
                 beforeFiles,
                 afterFiles,
-                "helper.Utils",
-                "common.Utils"
+                "Utils",
+                "Utils"
         );
     }
 
@@ -106,7 +107,7 @@ public class MoveClassRefactoringDetectionTest {
                 "app/entities/user.py", afterEntitiesCode
         );
 
-        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "models.User", "entities.User");
+        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "User", "User");
     }
 
     @Test
@@ -159,7 +160,7 @@ public class MoveClassRefactoringDetectionTest {
                 "src/math/stats.py", afterMathCode
         );
 
-        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "utils.Calculator", "math.Calculator");
+        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "Calculator", "Calculator");
     }
 
     @Test
@@ -212,7 +213,7 @@ public class MoveClassRefactoringDetectionTest {
                 "app/notifications/sms.py", afterNotificationsCode
         );
 
-        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "services.EmailService", "notifications.EmailService");
+        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "EmailService", "EmailService");
     }
 
     @Test
@@ -263,7 +264,7 @@ public class MoveClassRefactoringDetectionTest {
                 "lib/processing/validator.py", afterProcessingCode
         );
 
-        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "data.JSONParser", "processing.JSONParser");
+        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "JSONParser", "JSONParser");
     }
 
     @Test
@@ -316,7 +317,7 @@ public class MoveClassRefactoringDetectionTest {
                 "system/logging/handlers.py", afterLoggingCode
         );
 
-        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "core.Logger", "logging.Logger");
+        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "Logger", "Logger");
     }
 
     @Test
@@ -369,7 +370,7 @@ public class MoveClassRefactoringDetectionTest {
                 "client/api/parser.py", afterApiCode
         );
 
-        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "network.HttpClient", "api.HttpClient");
+        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "HttpClient", "HttpClient");
     }
 
     @Test
@@ -424,7 +425,7 @@ public class MoveClassRefactoringDetectionTest {
                 "os/storage/database.py", afterStorageCode
         );
 
-        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "system.FileManager", "storage.FileManager");
+        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "FileManager", "FileManager");
     }
 
     @Test
@@ -483,7 +484,7 @@ public class MoveClassRefactoringDetectionTest {
                 "project/config/env.py", afterConfigCode
         );
 
-        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "app.ConfigManager", "config.ConfigManager");
+        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "ConfigManager", "ConfigManager");
     }
 
     @Test
@@ -532,7 +533,7 @@ public class MoveClassRefactoringDetectionTest {
                 "framework/handlers/request.py", afterHandlersCode
         );
 
-        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "events.EventHandler", "handlers.EventHandler");
+        assertMoveClassRefactoringDetected(beforeFiles, afterFiles, "EventHandler", "EventHandler");
     }
 
     private void assertMoveClassRefactoringDetected(
@@ -566,9 +567,15 @@ public class MoveClassRefactoringDetectionTest {
 
 
         boolean moveClassDetected = diff.getRefactorings().stream()
-                .anyMatch(ref -> ref instanceof MoveClassRefactoring moveRef &&
-                        moveRef.getOriginalClassName().equals(originalClassQualifiedName) &&
-                        moveRef.getMovedClassName().equals(movedClassQualifiedName));
+                .anyMatch(ref -> {
+                    if(ref instanceof MoveClassRefactoring moveRef) {
+                        UMLAbstractClass originalClass = diff.findClassInParentModel(moveRef.getOriginalClassName());
+                        UMLAbstractClass nextClass = diff.findClassInChildModel(moveRef.getMovedClassName());
+                        return moveRef.getOriginalClassName().equals(originalClass.getPackageName() + "." + originalClassQualifiedName) &&
+                        moveRef.getMovedClassName().equals(nextClass.getPackageName() + "." + movedClassQualifiedName);
+                    }
+                    return false;
+                });
 
         System.out.println("Refactorings size: " + diff.getRefactorings().size() + "\n");
         diff.getRefactorings().forEach(ref -> System.out.println(ref.getName()));

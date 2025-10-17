@@ -35,7 +35,7 @@ public class MoveAndRenameClassRefactoringDetectionTest {
 
         assertMoveAndRenameClassRefactoringDetected(
                 beforeFiles, afterFiles,
-                "cache.Cache", "storage.DataCache",
+                "Cache", "DataCache",
                 "src/cache/cache.py", "src/storage/data_cache.py"
         );
     }
@@ -56,7 +56,7 @@ public class MoveAndRenameClassRefactoringDetectionTest {
 
         assertMoveAndRenameClassRefactoringDetected(
                 beforeFiles, afterFiles,
-                "reports.Report", "analytics.UsageReport",
+                "Report", "UsageReport",
                 "src/reports/report.py", "src/analytics/usage_report.py"
         );
     }
@@ -85,7 +85,7 @@ public class MoveAndRenameClassRefactoringDetectionTest {
 
         assertMoveAndRenameClassRefactoringDetected(
                 beforeFiles, afterFiles,
-                "order.Order", "sales.PurchaseOrder",
+                "Order", "PurchaseOrder",
                 "src/order/order.py", "src/sales/purchase_order.py"
         );
     }
@@ -115,7 +115,7 @@ public class MoveAndRenameClassRefactoringDetectionTest {
 
         assertMoveAndRenameClassRefactoringDetected(
                 beforeFiles, afterFiles,
-                "log.Logger", "monitoring.AppLogger",
+                "Logger", "AppLogger",
                 "src/log/logger.py", "src/monitoring/app_logger.py"
         );
     }
@@ -163,7 +163,7 @@ public class MoveAndRenameClassRefactoringDetectionTest {
 
         assertMoveAndRenameClassRefactoringDetected(
                 beforeFiles, afterFiles,
-                "config.Config", "core.Configuration",
+                "Config", "Configuration",
                 "src/config/config.py", "src/core/configuration.py"
         );
     }
@@ -202,7 +202,7 @@ public class MoveAndRenameClassRefactoringDetectionTest {
 
         assertMoveAndRenameClassRefactoringDetected(
                 beforeFiles, afterFiles,
-                "parsers.Parser", "io.JsonParser",
+                "Parser", "JsonParser",
                 "src/parsers/parser.py", "src/io/json_parser.py"
         );
     }
@@ -231,7 +231,7 @@ public class MoveAndRenameClassRefactoringDetectionTest {
 
         assertMoveAndRenameClassRefactoringDetected(
                 beforeFiles, afterFiles,
-                "math.MathUtils", "algorithms.AdvancedMathUtils",
+                "MathUtils", "AdvancedMathUtils",
                 "src/math/math_utils.py", "src/algorithms/advanced_math_utils.py"
         );
     }
@@ -256,7 +256,7 @@ public class MoveAndRenameClassRefactoringDetectionTest {
 
         assertMoveAndRenameClassRefactoringDetected(
                 beforeFiles, afterFiles,
-                "data.DataSet", "analytics.DataSetV2",
+                "DataSet", "DataSetV2",
                 "src/data/data_set.py", "src/analytics/data_set_v2.py"
         );
     }
@@ -293,7 +293,7 @@ public class MoveAndRenameClassRefactoringDetectionTest {
 
         assertMoveAndRenameClassRefactoringDetected(
                 beforeFiles, afterFiles,
-                "web.Controller", "api.UserController",
+                "Controller", "UserController",
                 "src/web/controller.py", "src/api/user_controller.py"
         );
     }
@@ -320,7 +320,7 @@ public class MoveAndRenameClassRefactoringDetectionTest {
 
         assertMoveAndRenameClassRefactoringDetected(
                 beforeFiles, afterFiles,
-                "payments.Payment", "billing.PaymentService",
+                "Payment", "PaymentService",
                 "src/payments/payment.py", "src/billing/payment_service.py"
         );
     }
@@ -352,8 +352,8 @@ public class MoveAndRenameClassRefactoringDetectionTest {
             UMLClass ren = mr.getRenamedClass();
 
             boolean namesMatch =
-                    originalClassName.equals(orig.getName()) &&
-                            renamedClassName.equals(ren.getName());
+                    orig.getName().equals(orig.getPackageName() + "." + originalClassName) &&
+                    ren.getName().equals(ren.getPackageName() + "." + renamedClassName);
 
             boolean filesMatch =
                     orig.getLocationInfo() != null &&

@@ -456,8 +456,8 @@ public class ExtractSubclassRefactoringDetectionTest {
                     String originalName = refactoring.getOriginalClass().getName();
 
                     return isExtractSubclass &&
-                            extractedName.equals(extractedSubclassName) &&
-                            originalName.equals(originalClassName);
+                            extractedName.equals(refactoring.getExtractedClass().getPackageName() + "." + extractedSubclassName) &&
+                            originalName.equals(refactoring.getOriginalClass().getPackageName() + "." + originalClassName);
                 });
 
         assertTrue(extractSubclassFound, "Expected Extract Subclass refactoring to be detected");

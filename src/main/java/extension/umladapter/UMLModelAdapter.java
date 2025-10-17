@@ -132,16 +132,13 @@ public class UMLModelAdapter {
 
     private UMLClass createModuleClass(LangCompilationUnit compilationUnit, String filename, List<UMLImport> imports) {
         String moduleName = UMLAdapterUtil.extractModuleName(filename);
-        String packageName = UMLAdapterUtil.extractPackageName(filename);
         String sourceFolder = UMLAdapterUtil.extractSourceFolder(filename);
         String filepath = UMLAdapterUtil.extractFilePath(filename);
 
         LocationInfo locationInfo = new LocationInfo(sourceFolder, filepath, compilationUnit,
                 LocationInfo.CodeElementType.TYPE_DECLARATION);
 
-        String moduleClassName = moduleName + ".__module__";
-
-        UMLClass moduleClass = new UMLClass(packageName, moduleClassName, locationInfo, true, imports);
+        UMLClass moduleClass = new UMLClass(moduleName, "__module__", locationInfo, true, imports);
         moduleClass.setStatic(true);
 
         return moduleClass;
@@ -151,6 +148,7 @@ public class UMLModelAdapter {
 
         String className = typeDecl.getName();
 
+        String moduleName = UMLAdapterUtil.extractModuleName(filename);
         String packageName = UMLAdapterUtil.extractPackageName(filename);
         String sourceFolder = UMLAdapterUtil.extractSourceFolder(filename);
         String filepath = UMLAdapterUtil.extractFilePath(filename);
@@ -160,7 +158,7 @@ public class UMLModelAdapter {
                 typeDecl,
                 LocationInfo.CodeElementType.TYPE_DECLARATION);
 
-        UMLClass umlClass = new UMLClass(packageName, className, locationInfo, typeDecl.isTopLevel(), imports);
+        UMLClass umlClass = new UMLClass(moduleName, className, locationInfo, typeDecl.isTopLevel(), imports);
 
         for (LangAnnotation langAnnotation : typeDecl.getAnnotations()) {
             umlClass.addAnnotation(new UMLAnnotation(
@@ -208,12 +206,12 @@ public class UMLModelAdapter {
         umlClass.setRecord(typeDecl.isRecord());
 
         for (LangMethodDeclaration methodDecl : typeDecl.getMethods()) {
-            UMLOperation umlOperation = createUMLOperation(methodDecl, className, sourceFolder, filepath, fileContent, language);
+            UMLOperation umlOperation = createUMLOperation(methodDecl, umlClass.getName(), sourceFolder, filepath, fileContent, language);
             umlClass.addOperation(umlOperation);
             if ("__init__".equals(methodDecl.getName())) {
                 List<UMLAttribute> attributes = getAttributes(methodDecl, sourceFolder, filepath, umlOperation, fileContent);
                 for (UMLAttribute attribute : attributes) {
-                    attribute.setClassName(className);
+                    attribute.setClassName(umlClass.getName());
                     umlClass.addAttribute(attribute);
                 }
             }

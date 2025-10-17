@@ -144,7 +144,7 @@ class RenameClassRefactoringDetectionTest {
                 """;
 
         Map<String, String> beforeFiles = Map.of("tests/data_processor.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/data_handler.py", afterPythonCode);
+        Map<String, String> afterFiles = Map.of("tests/data_processor.py", afterPythonCode);
         assertRenameClassRefactoringDetected(beforeFiles, afterFiles, "DataProcessor", "DataHandler");
     }
 

@@ -1,10 +1,12 @@
 package org.refactoringminer.utils;
 
 import extension.umladapter.UMLModelAdapter;
+import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLClass;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.UMLParameter;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.decomposition.AbstractStatement;
 import gr.uom.java.xmi.decomposition.CompositeStatementObject;
 import gr.uom.java.xmi.decomposition.OperationBody;
@@ -26,9 +28,16 @@ public class RefactoringAssertUtils {
 
         UMLModelDiff diff = beforeUML.diff(afterUML);
         boolean classRenameDetected = diff.getRefactorings().stream()
-                .anyMatch(ref -> ref instanceof RenameClassRefactoring &&
-                        ((RenameClassRefactoring)ref).getOriginalClassName().equals(beforeClassName) &&
-                        ((RenameClassRefactoring)ref).getRenamedClassName().equals(afterClassName));
+                .anyMatch(ref -> {
+                    if(ref instanceof RenameClassRefactoring rename) {
+                        UMLAbstractClass originalClass = diff.findClassInParentModel(rename.getOriginalClassName());
+                        UMLAbstractClass nextClass = diff.findClassInChildModel(rename.getRenamedClassName());
+                        return rename.getOriginalClassName().equals(originalClass.getPackageName() + "." + beforeClassName) &&
+                        rename.getRenamedClassName().equals(nextClass.getPackageName() + "." + afterClassName);
+                    }
+                    return false;
+                }
+                );
 
         System.out.println("==== DIFF ====");
         System.out.println("Animal to Mammal");
@@ -244,10 +253,19 @@ public class RefactoringAssertUtils {
         UMLModelDiff diff = beforeUML.diff(afterUML);
 
         boolean pushDownDetected = diff.getRefactorings().stream()
-                .anyMatch(ref -> ref instanceof PushDownOperationRefactoring &&
-                        ((PushDownOperationRefactoring) ref).getOriginalOperation().getClassName().equals(sourceClassName) &&
-                        ((PushDownOperationRefactoring) ref).getMovedOperation().getClassName().equals(targetClassName) &&
-                        ((PushDownOperationRefactoring) ref).getMovedOperation().getName().equals(methodName)
+                .anyMatch(ref -> {
+                    if (ref instanceof PushDownOperationRefactoring moveRef) {
+                        VariableDeclarationContainer originalOperation = moveRef.getOriginalOperation();
+                        VariableDeclarationContainer movedOperation = moveRef.getMovedOperation();
+                        UMLAbstractClass originalClass = diff.findClassInParentModel(originalOperation.getClassName());
+                        UMLAbstractClass nextClass = diff.findClassInChildModel(movedOperation.getClassName());
+
+                        return originalOperation.getClassName().equals(originalClass.getPackageName() + "." + sourceClassName) &&
+                        movedOperation.getClassName().equals(nextClass.getPackageName() + "." + targetClassName) &&
+                        movedOperation.getName().equals(methodName);
+                    }
+                    return false;
+                }
                 );
 
         System.out.println("==== DIFF ====");
@@ -278,10 +296,20 @@ public class RefactoringAssertUtils {
         refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         boolean pullUpDetected = diff.getRefactorings().stream()
-                .anyMatch(ref -> ref instanceof PullUpOperationRefactoring &&
-                        ((PullUpOperationRefactoring) ref).getOriginalOperation().getClassName().equals(sourceClassName) &&
-                        ((PullUpOperationRefactoring) ref).getMovedOperation().getClassName().equals(targetClassName) &&
-                        ((PullUpOperationRefactoring) ref).getMovedOperation().getName().equals(methodName)
+                .anyMatch(ref -> {
+                    if (ref instanceof PullUpOperationRefactoring moveRef) {
+                        VariableDeclarationContainer originalOperation = moveRef.getOriginalOperation();
+                        VariableDeclarationContainer movedOperation = moveRef.getMovedOperation();
+                        UMLAbstractClass originalClass = diff.findClassInParentModel(originalOperation.getClassName());
+                        UMLAbstractClass nextClass = diff.findClassInChildModel(movedOperation.getClassName());
+
+                        return originalOperation.getClassName().equals(originalClass.getPackageName() + "." + sourceClassName) &&
+                                movedOperation.getClassName().equals(nextClass.getPackageName() + "." + targetClassName) &&
+                                originalOperation.getName().equals(methodName) &&
+                                movedOperation.getName().equals(methodName);
+                    }
+                    return false;
+                }
                 );
 
         System.out.println("==== DIFF ====");
@@ -305,9 +333,15 @@ public class RefactoringAssertUtils {
         UMLModelDiff diff = beforeUML.diff(afterUML);
 
         boolean extractDetected = diff.getRefactorings().stream()
-                .anyMatch(ref -> ref instanceof ExtractClassRefactoring &&
-                        ((ExtractClassRefactoring) ref).getOriginalClass().getName().equals(sourceClassName) &&
-                        ((ExtractClassRefactoring) ref).getExtractedClass().getName().equals(targetClassName)
+                .anyMatch(ref -> {
+                    if(ref instanceof ExtractClassRefactoring extractClass) {
+                        UMLAbstractClass originalClass = diff.findClassInParentModel(extractClass.getOriginalClass().getName());
+                        UMLAbstractClass nextClass = diff.findClassInChildModel(extractClass.getExtractedClass().getName());
+                        return extractClass.getOriginalClass().getName().equals(originalClass.getPackageName() + "." + sourceClassName) &&
+                        extractClass.getExtractedClass().getName().equals(nextClass.getPackageName() + "." + targetClassName);
+                    }
+                    return false;
+                }
                 );
 
         System.out.println("==== DIFF ====");
@@ -335,15 +369,18 @@ public class RefactoringAssertUtils {
         boolean reorderDetected = diff.getRefactorings().stream()
                 .filter(ref -> ref instanceof ReorderParameterRefactoring)
                 .map(ref -> (ReorderParameterRefactoring) ref)
-                .anyMatch(ref ->
-                        ref.getOperationBefore().getClassName().equals(className) &&
-                                ref.getOperationBefore().getName().equals(methodName) &&
+                .anyMatch(ref -> {
+                    VariableDeclarationContainer operationBefore = ref.getOperationBefore();
+                    UMLAbstractClass originalClass = diff.findClassInChildModel(operationBefore.getClassName());
+                        return operationBefore.getClassName().equals(originalClass.getPackageName() + "." + className) &&
+                                operationBefore.getName().equals(methodName) &&
                                 java.util.Arrays.equals(
                                         ref.getParametersBefore().stream().map(Object::toString).toArray(String[]::new),
                                         paramsBefore) &&
                                 java.util.Arrays.equals(
                                         ref.getParametersAfter().stream().map(Object::toString).toArray(String[]::new),
-                                        paramsAfter)
+                                        paramsAfter);
+                }
                 );
 
         System.out.println("==== DIFF ====");

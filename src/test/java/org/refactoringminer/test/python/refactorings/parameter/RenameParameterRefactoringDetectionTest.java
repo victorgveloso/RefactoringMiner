@@ -1,7 +1,9 @@
 package org.refactoringminer.test.python.refactorings.parameter;
 
 import extension.umladapter.UMLModelAdapter;
+import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLModel;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.diff.RenameVariableRefactoring;
 import gr.uom.java.xmi.diff.UMLModelDiff;
 import org.junit.jupiter.api.Test;
@@ -407,12 +409,14 @@ public class RenameParameterRefactoringDetectionTest {
                     boolean namesMatch = originalName.equals(originalParameterName) &&
                             renamedName.equals(renamedParameterName);
                     boolean methodMatches = operationName.equals(methodName);
+                    VariableDeclarationContainer operationBefore = refactoring.getOperationBefore();
+                    UMLAbstractClass originalClass = diff.findClassInParentModel(operationBefore.getClassName());
 
                     // Check class name if provided
                     boolean classMatches = true;
                     if (className != null) {
                         String actualClassName = refactoring.getOperationAfter().getClassName();
-                        classMatches = actualClassName.equals(className);
+                        classMatches = actualClassName.equals(originalClass.getPackageName() + "." + className);
                     }
 
 //                    System.out.println("Checking RenameVariableRefactoring:");

@@ -1,7 +1,9 @@
 package org.refactoringminer.test.python.refactorings.method;
 
 import extension.umladapter.UMLModelAdapter;
+import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLModel;
+import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
 import gr.uom.java.xmi.diff.MoveOperationRefactoring;
 import gr.uom.java.xmi.diff.UMLModelDiff;
@@ -148,10 +150,15 @@ public class ExtractAndMoveMethodRefactoringDetectionTest {
                 .filter(r -> r.getRefactoringType().equals(RefactoringType.EXTRACT_AND_MOVE_OPERATION))
                 .map(r -> (ExtractOperationRefactoring) r)
                 .anyMatch(refactoring -> {
+                    //VariableDeclarationContainer originalOperation = refactoring.getSourceOperationBeforeExtraction();
+                    VariableDeclarationContainer extractedOperation = refactoring.getExtractedOperation();
+                    //UMLAbstractClass originalClass = diff.findClassInParentModel(originalOperation.getClassName());
+                    UMLAbstractClass nextClass = diff.findClassInChildModel(extractedOperation.getClassName());
+                    
                     String extractedName = refactoring.getExtractedOperation().getName();
                     String extractedClass = refactoring.getExtractedOperation().getClassName();
                     return extractedName.equals(extractedMethodName) &&
-                            extractedClass.equals(targetClassName);
+                            extractedClass.equals(nextClass.getPackageName() + "." + targetClassName);
                 });
 
         boolean refactoringDetected = extractFound;

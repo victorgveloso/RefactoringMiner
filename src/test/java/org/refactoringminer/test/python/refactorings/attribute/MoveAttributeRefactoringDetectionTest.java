@@ -1,6 +1,7 @@
 package org.refactoringminer.test.python.refactorings.attribute;
 
 import extension.umladapter.UMLModelAdapter;
+import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.diff.MoveAttributeRefactoring;
@@ -440,11 +441,13 @@ public class MoveAttributeRefactoringDetectionTest {
                     if (ref instanceof MoveAttributeRefactoring moveAttribute) {
                         UMLAttribute originalAttribute = moveAttribute.getOriginalAttribute();
                         UMLAttribute movedAttribute = moveAttribute.getMovedAttribute();
+                        UMLAbstractClass originalClass = diff.findClassInParentModel(originalAttribute.getClassName());
+                        UMLAbstractClass nextClass = diff.findClassInChildModel(movedAttribute.getClassName());
 
                         return originalAttribute.getName().equals(attributeName) &&
                                 movedAttribute.getName().equals(attributeName) &&
-                                moveAttribute.getSourceClassName().equals(sourceClassName) &&
-                                moveAttribute.getTargetClassName().equals(targetClassName);
+                                moveAttribute.getSourceClassName().equals(originalClass.getPackageName() + "." + sourceClassName) &&
+                                moveAttribute.getTargetClassName().equals(nextClass.getPackageName() + "." + targetClassName);
                     }
                     return false;
                 });

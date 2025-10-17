@@ -72,7 +72,7 @@
     "time": "10/25/14 8:26 PM",
     "refactorings": [{
         "type": "Inline Method",
-        "description": "Inline Method protected _closure() : Object inlined to public closure() : Object in class math.math.aitchison_module.__module__",
+        "description": "Inline Method protected _closure() : Object inlined to public closure() : Object in class math.aitchison_module.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
@@ -88,21 +88,21 @@
     "time": "2/25/13 8:25 PM",
     "refactorings": [{
         "type": "Rename Method",
-        "description": "Rename Method public partitions() : None renamed to public partitions1() : None in class utils.utils.misc_module.__module__",
+        "description": "Rename Method public partitions() : None renamed to public partitions1() : None in class utils.misc_module.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
     }, {
         "type": "Rename Method",
-        "description": "Rename Method protected _partitions() : None renamed to public partitions2() : None in class utils.utils.misc_module.__module__",
+        "description": "Rename Method protected _partitions() : None renamed to public partitions2() : None in class utils.misc_module.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
     }, {
         "type": "Rename Parameter",
-        "description": "Rename Parameter set_ : Object to seq : Object in method public ordered_partitions() : None from class utils.utils.misc_module.__module__",
+        "description": "Rename Parameter set_ : Object to seq : Object in method public ordered_partitions() : None from class utils.misc_module.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",

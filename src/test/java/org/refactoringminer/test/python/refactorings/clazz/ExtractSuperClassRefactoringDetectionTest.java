@@ -1,6 +1,7 @@
 package org.refactoringminer.test.python.refactorings.clazz;
 
 import extension.umladapter.UMLModelAdapter;
+import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.diff.ExtractSuperclassRefactoring;
 import gr.uom.java.xmi.diff.UMLModelDiff;
@@ -816,11 +817,15 @@ public class ExtractSuperClassRefactoringDetectionTest {
                 .map(r -> (ExtractSuperclassRefactoring) r)
                 .anyMatch(refactoring -> {
                     String actualExtractedName = refactoring.getExtractedClass().getName();
-                    boolean nameMatches = actualExtractedName.equals(extractedSuperclassName);
+                    UMLAbstractClass extractedClass = diff.findClassInChildModel(actualExtractedName);
+                    boolean nameMatches = actualExtractedName.equals(extractedClass.getPackageName() + "." + extractedSuperclassName);
 
                     Set<String> actualSubclassesAfter = refactoring.getSubclassSetAfter();
                     boolean allSubclassesMatch = Arrays.stream(subclassNames)
-                            .allMatch(expectedSubclass -> actualSubclassesAfter.contains(expectedSubclass));
+                            .allMatch(expectedSubclass -> {
+                                UMLAbstractClass subClass = diff.findClassInChildModel(expectedSubclass);
+                                return actualSubclassesAfter.contains(subClass.getName());
+                            });
 
                     boolean countMatches = actualSubclassesAfter.size() == subclassNames.length;
 
