@@ -69,7 +69,7 @@ public class RenameVariableRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("processor.py", afterPythonCode);
 
         assertRenameVariableRefactoringDetected(beforeFiles, afterFiles,
-                "items", "elements", "process_data", null); // Module-level function
+                "items", "elements", "process_data", "__module__"); // Module-level function
     }
 
     @Test
@@ -155,7 +155,7 @@ public class RenameVariableRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("expenses.py", afterPythonCode);
 
         assertRenameVariableRefactoringDetected(beforeFiles, afterFiles,
-                "sum", "total", "calculate_expenses", null);
+                "sum", "total", "calculate_expenses", "__module__");
     }
 
     @Test
@@ -219,7 +219,7 @@ public class RenameVariableRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("config_loader.py", afterPythonCode);
 
         assertRenameVariableRefactoringDetected(beforeFiles, afterFiles,
-                "config", "settings", "load_configuration", null);
+                "config", "settings", "load_configuration", "__module__");
     }
 
     @Test
@@ -277,7 +277,7 @@ public class RenameVariableRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("notification.py", afterPythonCode);
 
         assertRenameVariableRefactoringDetected(beforeFiles, afterFiles,
-                "text", "message", "format_notification", null);
+                "text", "message", "format_notification", "__module__");
     }
 
     @Test

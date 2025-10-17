@@ -303,7 +303,7 @@ public class ExtractVariableRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("number_processor.py", afterPythonCode);
 
         assertExtractVariableRefactoringDetected(beforeFiles, afterFiles,
-                "is_greater_than_ten", "lambda x: x > 10", "process_numbers", null);
+                "is_greater_than_ten", "lambda x: x > 10", "process_numbers", "__module__");
     }
 
     @Test
@@ -332,7 +332,7 @@ public class ExtractVariableRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("user.py", afterPythonCode);
 
         assertExtractVariableRefactoringDetected(beforeFiles, afterFiles,
-                "user_status", "\"Experienced Contributor\" if post_count > 50 else \"Newcomer\"", "get_user_status", null);
+                "user_status", "\"Experienced Contributor\" if post_count > 50 else \"Newcomer\"", "get_user_status", "__module__");
     }
 
     public static void assertExtractVariableRefactoringDetected(

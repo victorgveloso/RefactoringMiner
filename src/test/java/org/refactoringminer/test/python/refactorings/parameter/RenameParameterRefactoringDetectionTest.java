@@ -125,7 +125,7 @@ public class RenameParameterRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("utils.py", afterPythonCode);
 
         assertRenameParameterRefactoringDetected(beforeFiles, afterFiles,
-                "item", "element", "process_list", null); // Module-level function
+                "item", "element", "process_list", "__module__"); // Module-level function
     }
 
     @Test
@@ -231,7 +231,7 @@ public class RenameParameterRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("config_utils.py", afterPythonCode);
 
         assertRenameParameterRefactoringDetected(beforeFiles, afterFiles,
-                "file", "path", "read_config", null);
+                "file", "path", "read_config", "__module__");
     }
 
     @Test
@@ -319,7 +319,7 @@ public class RenameParameterRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("document_processor.py", afterPythonCode);
 
         assertRenameParameterRefactoringDetected(beforeFiles, afterFiles,
-                "text", "content", "process_document", null);
+                "text", "content", "process_document", "__module__");
     }
 
     @Test
