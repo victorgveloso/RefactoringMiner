@@ -71,7 +71,7 @@ public class PythonUMLModelTest {
 
         // Find Calculator class
         UMLClass calculatorClass = model.getClassList().stream()
-                .filter(c -> c.getName().equals("calculator_module.Calculator"))
+                .filter(c -> c.getName().equals("calculator.Calculator"))
                 .findFirst()
                 .orElse(null);
 
@@ -124,12 +124,12 @@ public class PythonUMLModelTest {
 
         // Get Calculator classes
         UMLClass beforeCalculator = beforeModel.getClassList().stream()
-                .filter(c -> c.getName().equals("calculator_module.Calculator"))
+                .filter(c -> c.getName().equals("calculator.Calculator"))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Calculator class not found in before model"));
 
         UMLClass afterCalculator = afterModel.getClassList().stream()
-                .filter(c -> c.getName().equals("calculator_module.AdvancedCalculator"))
+                .filter(c -> c.getName().equals("calculator.AdvancedCalculator"))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Calculator class not found in after model"));
 

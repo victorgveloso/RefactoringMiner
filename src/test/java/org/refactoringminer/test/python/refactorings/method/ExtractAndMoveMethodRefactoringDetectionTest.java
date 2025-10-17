@@ -35,6 +35,7 @@ public class ExtractAndMoveMethodRefactoringDetectionTest {
             """;
 
         String afterCalculatorCode = """
+            import math_utils
             class Calculator:
                 def add(self, x, y):
                     return MathUtils.calculate_sum(x, y)
@@ -71,6 +72,7 @@ public class ExtractAndMoveMethodRefactoringDetectionTest {
             """;
 
         String afterProcessorCode = """
+        	import helper
             class DataProcessor:
                 def process_data(self, data):
                     return Helper.clean_and_format(data)
@@ -104,6 +106,7 @@ public class ExtractAndMoveMethodRefactoringDetectionTest {
             """;
 
         String afterUserCode = """
+        	import validator
             class User:
                 def __init__(self, email):
                     self.email = email
@@ -197,6 +200,7 @@ public class ExtractAndMoveMethodRefactoringDetectionTest {
         """;
 
         String afterProcessorCode = """
+        import filter_utils
         class ListProcessor:
             def filter_positive(self, numbers):
                 return FilterUtils.get_positive_numbers(numbers)
@@ -243,6 +247,7 @@ public class ExtractAndMoveMethodRefactoringDetectionTest {
         """;
 
         String afterHandlerCode = """
+        import text_formatter
         class TextHandler:
             def format_text(self, text, width):
                 return TextFormatter.wrap_text(text, width)
@@ -289,6 +294,7 @@ public class ExtractAndMoveMethodRefactoringDetectionTest {
         """;
 
         String afterAnalyzerCode = """
+        import statistics
         class DataAnalyzer:
             def calculate_average(self, values):
                 return Statistics.compute_mean(values)
@@ -330,6 +336,7 @@ public class ExtractAndMoveMethodRefactoringDetectionTest {
         """;
 
         String afterManagerCode = """
+        import search_engine
         class DocumentManager:
             def search_documents(self, documents, query):
                 return SearchEngine.find_matching_docs(documents, query)
@@ -370,6 +377,7 @@ public class ExtractAndMoveMethodRefactoringDetectionTest {
         """;
 
         String afterProcessorCode = """
+        import item_sorter
         class ItemProcessor:
             def sort_by_score(self, items):
                 return ItemSorter.sort_descending_by_score(items)
@@ -412,6 +420,7 @@ public class ExtractAndMoveMethodRefactoringDetectionTest {
         """;
 
         String afterHandlerCode = """
+        import data_converter
         class DataHandler:
             def transform_data(self, data):
                 return DataConverter.normalize_data(data)
@@ -455,6 +464,7 @@ public class ExtractAndMoveMethodRefactoringDetectionTest {
         """;
 
         String afterAnalyzerCode = """
+        import item_counter
         class ListAnalyzer:
             def count_occurrences(self, items, target):
                 return ItemCounter.count_matches(items, target)

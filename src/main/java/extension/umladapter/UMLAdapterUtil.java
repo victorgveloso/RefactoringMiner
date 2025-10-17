@@ -204,8 +204,8 @@ public class UMLAdapterUtil {
         }
 
         return packageName.isEmpty() ?
-                baseFileName + "_module" :
-                packageName + "." + baseFileName + "_module";
+                baseFileName/* + "_module"*/ :
+                packageName + "." + baseFileName/* + "_module"*/;
     }
 
 }
