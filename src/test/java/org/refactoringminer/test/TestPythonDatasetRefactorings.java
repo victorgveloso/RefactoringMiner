@@ -15,9 +15,10 @@ public class TestPythonDatasetRefactorings {
 		BigInteger types = 
 					Refactorings.ExtractMethod.getValue()
 					.or(Refactorings.InlineMethod.getValue())
-					.or(Refactorings.RenameMethod.getValue());
+					.or(Refactorings.RenameMethod.getValue())
+					.or(Refactorings.RenameParameter.getValue());
 		TestBuilder test = new TestBuilder(detector, REPOS, types);
 		RefactoringPopulator.preparePythonRefactorings(test, types);
-		test.assertExpectationsWithGitHubAPI(6, 0, 0);
+		test.assertExpectationsWithGitHubAPI(11, 0, 0);
 	}
 }

@@ -40,6 +40,20 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter word_length : Object to outcome_length : Object in method public uniform_distribution() : Object from class distconst_module.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter word_length : Object to outcome_length : Object in method public random_distribution() : Object from class distconst_module.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
     }],
     "refDiffExecutionTime": 0
 }, {
@@ -52,6 +66,36 @@
     "refactorings": [{
         "type": "Inline Method",
         "description": "Inline Method protected _closure() : Object inlined to public closure() : Object in class math.math.aitchison_module.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159850,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "608fff2119f21191352ddf5d96eb82fc1ab099b0",
+    "url": "https://github.com/dit/dit/commit/608fff2119f21191352ddf5d96eb82fc1ab099b0",
+    "author": "chebee7i",
+    "time": "2/25/13 8:25 PM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public partitions() : None renamed to public partitions1() : None in class utils.utils.misc_module.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method protected _partitions() : None renamed to public partitions2() : None in class utils.utils.misc_module.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter set_ : Object to seq : Object in method public ordered_partitions() : None from class utils.utils.misc_module.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
