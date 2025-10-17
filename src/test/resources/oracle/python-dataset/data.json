@@ -54,6 +54,13 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
+    }, {
+        "type": "Reorder Parameter",
+        "description": "Reorder Parameter [pmf : Object, outcomes : Object, alphabet : Object, base : Object, prng : Object, sparse : Object] to [pmf : Object, outcomes : Object, base : Object, alphabet : Object, prng : Object, sparse : Object] in method protected _make_distribution() : Object from class npdist_module.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
     }],
     "refDiffExecutionTime": 0
 }, {

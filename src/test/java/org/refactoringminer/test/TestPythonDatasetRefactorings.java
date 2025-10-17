@@ -16,9 +16,10 @@ public class TestPythonDatasetRefactorings {
 					Refactorings.ExtractMethod.getValue()
 					.or(Refactorings.InlineMethod.getValue())
 					.or(Refactorings.RenameMethod.getValue())
-					.or(Refactorings.RenameParameter.getValue());
+					.or(Refactorings.RenameParameter.getValue())
+					.or(Refactorings.ReorderParameter.getValue());
 		TestBuilder test = new TestBuilder(detector, REPOS, types);
 		RefactoringPopulator.preparePythonRefactorings(test, types);
-		test.assertExpectationsWithGitHubAPI(11, 0, 0);
+		test.assertExpectationsWithGitHubAPI(12, 0, 0);
 	}
 }
