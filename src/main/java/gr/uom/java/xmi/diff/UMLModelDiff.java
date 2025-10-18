@@ -7236,6 +7236,21 @@ public class UMLModelDiff {
 						}
 					}
 				}
+				else if(moveRefactoring.getMovedOperation().equals(addedOperation)) {
+					//promote move over move+rename
+					if(refactoring.getRefactoringType().equals(RefactoringType.MOVE_AND_RENAME_OPERATION) &&
+							removedOperation.equalSignature(addedOperation)) {
+						toBeRemoved.add(refactoring);
+						for(Refactoring r : refactorings) {
+							if(r instanceof MethodLevelRefactoring methodRefactoring) {
+								if(methodRefactoring.getOperationBefore().equals(moveRefactoring.getOriginalOperation()) &&
+										methodRefactoring.getOperationAfter().equals(moveRefactoring.getMovedOperation())) {
+									toBeRemoved.add(r);
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 		refactorings.removeAll(toBeRemoved);
