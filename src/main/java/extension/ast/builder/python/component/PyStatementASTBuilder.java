@@ -3,7 +3,6 @@ package extension.ast.builder.python.component;
 import extension.ast.builder.python.PyASTBuilder;
 import extension.ast.node.LangASTNode;
 import extension.ast.node.LangASTNodeFactory;
-import extension.ast.node.PositionUtils;
 import extension.ast.node.declaration.LangMethodDeclaration;
 import extension.ast.node.declaration.LangSingleVariableDeclaration;
 import extension.ast.node.expression.LangSimpleName;
@@ -222,11 +221,11 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
         // Handle initialization variables (Python for loops have loop variables in exprlist)
         List<LangSingleVariableDeclaration> initializers = new ArrayList<>();
         for (Python3Parser.ExprContext varCtx : ctx.exprlist().expr()) {
-                LangSingleVariableDeclaration declaration = LangASTNodeFactory.createSingleVariableDeclaration(
-                        varCtx.getText(),
-                        varCtx
-                );
-                initializers.add(declaration);
+            LangSingleVariableDeclaration declaration = LangASTNodeFactory.createSingleVariableDeclaration(
+                    varCtx.getText(),
+                    varCtx
+            );
+            initializers.add(declaration);
         }
 
         // Python for-loop condition is derived from the iterable expression in `testlist`
@@ -325,69 +324,56 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
     }
 
     public LangASTNode visitTry_stmt(Python3Parser.Try_stmtContext ctx) {
-        // The first block is always the 'try' block
         List<Python3Parser.BlockContext> blockContexts = ctx.block();
-
         if (blockContexts.isEmpty()) {
             throw new IllegalStateException("Try statement must have at least one block (the try block)");
         }
 
+        // try block
         LangBlock tryBlock = (LangBlock) mainBuilder.visit(blockContexts.get(0));
         List<LangCatchClause> catchClauses = new ArrayList<>();
         LangBlock elseBlock = null;
-        LangBlock finallyBlock = null;
 
         List<Python3Parser.Except_clauseContext> exceptClauses = ctx.except_clause();
-        int exceptCount = exceptClauses.size();
+        int currentBlockIndex = 1; // first after try
 
-        if (exceptCount > 0 && blockContexts.size() < 1 + exceptCount) {
-            // WORKAROUND: Since the grammar isn't providing except clause bodies as blocks,
-            // we create empty catch clauses to prevent crashes. The AST will be incomplete
-            // but the application won't crash.
+        for (Python3Parser.Except_clauseContext exceptClause : exceptClauses) {
+            LangCatchClause catchClause = (LangCatchClause) mainBuilder.visit(exceptClause);
 
-            for (int i = 0; i < exceptCount; i++) {
-                LangCatchClause catchClause = (LangCatchClause) mainBuilder.visit(exceptClauses.get(i));
-
-                // Create an empty block with proper position info from the except clause
+            // body of this except
+            if (currentBlockIndex < blockContexts.size()) {
+                LangBlock exceptBody = (LangBlock) mainBuilder.visit(blockContexts.get(currentBlockIndex));
+                catchClause.setBody(exceptBody);
+                currentBlockIndex++;
+            } else {
                 List<LangASTNode> emptyStatements = new ArrayList<>();
                 LangBlock emptyBlock = LangASTNodeFactory.createBlock(
-                        exceptClauses.get(i), // Use the except clause context for position
+                        exceptClause, // Use the except clause context for position
                         emptyStatements
                 );
-
                 catchClause.setBody(emptyBlock);
-                catchClauses.add(catchClause);
             }
+            catchClauses.add(catchClause);
+        }
 
-
-        } else {
-            int currentBlockIndex = 1; // Start after try block
-
-            // Process except clauses
-            for (int i = 0; i < exceptCount; i++) {
-                if (currentBlockIndex < blockContexts.size()) {
-                    LangCatchClause catchClause = (LangCatchClause) mainBuilder.visit(exceptClauses.get(i));
-                    LangBlock exceptBody = (LangBlock) mainBuilder.visit(blockContexts.get(currentBlockIndex));
-                    catchClause.setBody(exceptBody);
-                    catchClauses.add(catchClause);
-                    currentBlockIndex++;
-                }
-            }
-
-            // Process else block
-            if (ctx.ELSE() != null && currentBlockIndex < blockContexts.size()) {
+        // else block
+        if (ctx.ELSE() != null) {
+            if (currentBlockIndex < blockContexts.size()) {
                 elseBlock = (LangBlock) mainBuilder.visit(blockContexts.get(currentBlockIndex));
                 currentBlockIndex++;
             }
+        }
 
-            // Process finally block
-            if (ctx.FINALLY() != null && currentBlockIndex < blockContexts.size()) {
+        // finally block
+        LangBlock finallyBlock = null;
+        if (ctx.FINALLY() != null) {
+            if (currentBlockIndex < blockContexts.size()) {
                 finallyBlock = (LangBlock) mainBuilder.visit(blockContexts.get(currentBlockIndex));
             }
         }
 
         return LangASTNodeFactory.createTryStatement(
-                PositionUtils.getPositionInfo(ctx),
+                ctx,
                 tryBlock,
                 catchClauses,
                 elseBlock,
@@ -395,7 +381,6 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
         );
     }
 
-    // except_clause visitor stays focused - doesn't deal with body
     public LangASTNode visitExcept_clause(Python3Parser.Except_clauseContext ctx) {
         List<LangASTNode> exceptionTypes = new ArrayList<>();
         LangSimpleName exceptionVariable = null;
@@ -411,11 +396,10 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
         if (ctx.name() != null) {
             exceptionVariable = LangASTNodeFactory.createSimpleName(ctx.name().getText(), ctx.name());
         }
-        // Don't pass body here!
+        // Exception clause body is handled in visitTry_stmt()
         return LangASTNodeFactory.createCatchClause(ctx, exceptionTypes, exceptionVariable, null);
     }
 
-    // TODO
     public LangASTNode visitRaise_stmt(Python3Parser.Raise_stmtContext ctx) {
         List<Python3Parser.TestContext> testContexts = ctx.test();
         LangASTNode exception = null;
@@ -425,7 +409,7 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
             exception = mainBuilder.visit(testContexts.get(0));
         }
 
-        if (ctx.FROM() != null && testContexts.size() >= 2) {
+        if (ctx.FROM() != null && testContexts != null && testContexts.size() >= 2) {
             from = mainBuilder.visit(testContexts.get(1));
         }
 
@@ -536,13 +520,13 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
             // No pattern handling for now, set pattern to null
             LangASTNode pattern = null;
 
-            // Collect all statements in the body (as a LangBlock, good!)
+            // Collect the body of the case block and create a block node for it
             LangBlock body = (LangBlock) mainBuilder.visit(caseCtx.block());
 
             // Create the case statement node without pattern
             LangCaseStatement caseStatement = LangASTNodeFactory.createCaseStatement(ctx, pattern, body);
 
-             caseStatements.add(caseStatement);
+            caseStatements.add(caseStatement);
         }
 
         // 4. Create the match/switch node with all case statements

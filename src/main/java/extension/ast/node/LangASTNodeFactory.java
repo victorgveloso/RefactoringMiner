@@ -188,8 +188,8 @@ public class LangASTNodeFactory {
     }
 
     /** Try-Catch-Finally */
-    public static LangASTNode createTryStatement(PositionInfo positionInfo, LangBlock tryBlock, List<LangCatchClause> catchClauses, LangBlock elseBlock, LangBlock finallyBlock) {
-        return new LangTryStatement(positionInfo, tryBlock, catchClauses, elseBlock, finallyBlock);
+    public static LangASTNode createTryStatement(ParserRuleContext ctx, LangBlock tryBlock, List<LangCatchClause> catchClauses, LangBlock elseBlock, LangBlock finallyBlock) {
+        return new LangTryStatement(PositionUtils.getPositionInfo(ctx), tryBlock, catchClauses, elseBlock, finallyBlock);
     }
 
     public static LangTryStatement createTryStatement(LangASTNode body, List<LangCatchClause> catchClauses,

@@ -27,7 +27,7 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         }
 
         // Handle None
-        if (ctx.name() != null && "None".equals(ctx.name().getText())) {
+        if (ctx.getText() != null && "None".equals(ctx.getText())) {
             return LangASTNodeFactory.createNullLiteral(ctx);
         }
 
@@ -71,8 +71,11 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
             if (ctx.testlist_comp() != null) {
                 for (Python3Parser.TestContext testCtx : ctx.testlist_comp().test()) {
                     LangASTNode element = mainBuilder.visit(testCtx);
-                    elements.add(element != null ? element :
-                            LangASTNodeFactory.createSimpleName("PARSE_ERROR", testCtx));
+                    if (element != null) {
+                        elements.add(element);
+                    } else {
+                        System.err.println("Warning: Skipping null list element at: " + testCtx.getText());
+                    }
                 }
             }
             return LangASTNodeFactory.createListLiteral(ctx, elements);
@@ -91,8 +94,11 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
                         List<LangASTNode> elements = new ArrayList<>();
                         for (Python3Parser.TestContext testCtx : tests) {
                             LangASTNode element = mainBuilder.visit(testCtx);
-                            elements.add(element != null ? element :
-                                    LangASTNodeFactory.createSimpleName("PARSE_ERROR", testCtx));
+                            if (element != null) {
+                                elements.add(element);
+                            } else {
+                                System.err.println("Warning: Skipping null tuple element at: " + testCtx.getText());
+                            }
                         }
                         return LangASTNodeFactory.createTupleLiteral(ctx, elements);
                     }
@@ -115,8 +121,7 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
             return LangASTNodeFactory.createSimpleName(atomText, ctx);
         }
 
-        System.err.println("Warning: Empty atom context, creating placeholder");
-        return LangASTNodeFactory.createSimpleName("UNKNOWN_ATOM", ctx);
+        return null;
     }
 
     public LangASTNode visitAtom_expr(Python3Parser.Atom_exprContext ctx) {
@@ -323,6 +328,17 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
     public LangASTNode visitExpr(Python3Parser.ExprContext ctx) {
         if (ctx.atom_expr() != null) {
             return mainBuilder.visitAtom_expr(ctx.atom_expr());
+        }
+
+        // Unary prefix
+        if (ctx.expr().size() == 1 && ctx.getChildCount() > 1) {
+            LangASTNode node = mainBuilder.visit(ctx.expr(0)); // operand is the last child
+            for (int i = ctx.getChildCount() - 2; i >= 0; i--) { // wrap from right to left
+                String symbol = ctx.getChild(i).getText();          // "+", "-", or "~"
+                String op = OperatorEnum.fromSymbol(symbol).getSymbol();
+                node = LangASTNodeFactory.createPrefixExpression(node, op, ctx);
+            }
+            return node;
         }
 
         if (ctx.expr().size() == 2) {
