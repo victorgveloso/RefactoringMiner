@@ -55411,20 +55411,6 @@
         "detectionTools": "RefactoringMiner, RD-2x",
         "validators": "Ameya"
     }, {
-        "type": "Move And Rename Method",
-        "description": "Move And Rename Method public mvcEndpoint() : EnvironmentMvcEndpoint from class org.springframework.boot.actuate.endpoint.mvc.EnvironmentMvcEndpointTests.TestConfiguration to public environmentMvcEndpoint(delegate EnvironmentEndpoint) : EnvironmentMvcEndpoint from class org.springframework.boot.actuate.autoconfigure.EndpointWebMvcConfiguration",
-        "comment": "null",
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": "Ameya"
-    }, {
-        "type": "Move And Rename Method",
-        "description": "Move And Rename Method public mvcEndpoint() : MetricsMvcEndpoint from class org.springframework.boot.actuate.endpoint.mvc.MetricsMvcEndpointTests.TestConfiguration to public metricsMvcEndpoint(delegate MetricsEndpoint) : MetricsMvcEndpoint from class org.springframework.boot.actuate.autoconfigure.EndpointWebMvcConfiguration",
-        "comment": "null",
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": "Ameya"
-    }, {
         "type": "Move Attribute",
         "description": "Move Attribute private managementServerProperties : ManagementServerProperties from class org.springframework.boot.actuate.autoconfigure.EndpointWebMvcAutoConfiguration to private managementServerProperties : ManagementServerProperties from class org.springframework.boot.actuate.autoconfigure.EndpointWebMvcChildContextConfiguration",
         "comment": "<p>The property is moved to <span class='blob-code-inner blob-code-marker' data-code-marker=' '><span class='pl-smi'>org.springframework.boot.actuate.autoconfigure</span></span>.<span class='blob-code-inner blob-code-marker' data-code-marker=' '><span class='pl-en'>EndpointWebMvcConfiguration, which is extracted from org.springframework.boot.actuate.autoconfigure.EndpointWebMvcAutoConfiguration<br /></span></span></p>",
@@ -55438,34 +55424,6 @@
         "validation": "FP",
         "detectionTools": "GumTreeDiff",
         "validators": "Ameya"
-    }, {
-        "type": "Add Method Annotation",
-        "description": "Add Method Annotation @ConditionalOnBean(EnvironmentEndpoint.class) in method public environmentMvcEndpoint(delegate EnvironmentEndpoint) : EnvironmentMvcEndpoint from class org.springframework.boot.actuate.autoconfigure.EndpointWebMvcConfiguration",
-        "comment": "<p>due to&nbsp;Move And Rename Method public mvcEndpoint() : EnvironmentMvcEndpoint from class org.springframework.boot.actuate.endpoint.mvc.EnvironmentMvcEndpointTests.TestConfiguration to public environmentMvcEndpoint(delegate EnvironmentEndpoint) : EnvironmentMvcEndpoint from class org.springframework.boot.actuate.autoconfigure.EndpointWebMvcConfiguration</p>",
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": "Nikos"
-    }, {
-        "type": "Add Method Annotation",
-        "description": "Add Method Annotation @ConditionalOnEnabledEndpoint(\"env\") in method public environmentMvcEndpoint(delegate EnvironmentEndpoint) : EnvironmentMvcEndpoint from class org.springframework.boot.actuate.autoconfigure.EndpointWebMvcConfiguration",
-        "comment": "<p>due to&nbsp;Move And Rename Method public mvcEndpoint() : EnvironmentMvcEndpoint from class org.springframework.boot.actuate.endpoint.mvc.EnvironmentMvcEndpointTests.TestConfiguration to public environmentMvcEndpoint(delegate EnvironmentEndpoint) : EnvironmentMvcEndpoint from class org.springframework.boot.actuate.autoconfigure.EndpointWebMvcConfiguration</p>",
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": "Nikos"
-    }, {
-        "type": "Add Method Annotation",
-        "description": "Add Method Annotation @ConditionalOnBean(MetricsEndpoint.class) in method public metricsMvcEndpoint(delegate MetricsEndpoint) : MetricsMvcEndpoint from class org.springframework.boot.actuate.autoconfigure.EndpointWebMvcConfiguration",
-        "comment": "<p>due to&nbsp;Move And Rename Method public mvcEndpoint() : MetricsMvcEndpoint from class org.springframework.boot.actuate.endpoint.mvc.MetricsMvcEndpointTests.TestConfiguration to public metricsMvcEndpoint(delegate MetricsEndpoint) : MetricsMvcEndpoint from class org.springframework.boot.actuate.autoconfigure.EndpointWebMvcConfiguration</p>",
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": "Nikos"
-    }, {
-        "type": "Add Method Annotation",
-        "description": "Add Method Annotation @ConditionalOnEnabledEndpoint(\"metrics\") in method public metricsMvcEndpoint(delegate MetricsEndpoint) : MetricsMvcEndpoint from class org.springframework.boot.actuate.autoconfigure.EndpointWebMvcConfiguration",
-        "comment": "<p>due to&nbsp;Move And Rename Method public mvcEndpoint() : MetricsMvcEndpoint from class org.springframework.boot.actuate.endpoint.mvc.MetricsMvcEndpointTests.TestConfiguration to public metricsMvcEndpoint(delegate MetricsEndpoint) : MetricsMvcEndpoint from class org.springframework.boot.actuate.autoconfigure.EndpointWebMvcConfiguration</p>",
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": "Nikos"
     }, {
         "type": "Modify Method Annotation",
         "description": "Modify Method Annotation @Bean to @Bean(name = DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_BEAN_NAME) in method public dispatcherServlet() : DispatcherServlet from class org.springframework.boot.actuate.autoconfigure.EndpointWebMvcChildContextConfiguration",
@@ -55486,20 +55444,6 @@
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner, GumTreeDiff",
-        "validators": null
-    }, {
-        "type": "Add Parameter",
-        "description": "Add Parameter delegate : EnvironmentEndpoint in method public environmentMvcEndpoint(delegate EnvironmentEndpoint) : EnvironmentMvcEndpoint from class org.springframework.boot.actuate.autoconfigure.EndpointWebMvcConfiguration",
-        "comment": null,
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": null
-    }, {
-        "type": "Add Parameter",
-        "description": "Add Parameter delegate : MetricsEndpoint in method public metricsMvcEndpoint(delegate MetricsEndpoint) : MetricsMvcEndpoint from class org.springframework.boot.actuate.autoconfigure.EndpointWebMvcConfiguration",
-        "comment": null,
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
         "validators": null
     }, {
         "type": "Add Method Annotation",
@@ -64185,41 +64129,6 @@
     }, {
         "type": "Extract Variable",
         "description": "Extract Variable filename : String in method public decompileDumpedClass(workingDir String, className String) : void from class org.hibernate.test.bytecode.enhancement.DecompileUtils",
-        "comment": null,
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": null
-    }, {
-        "type": "Change Parameter Type",
-        "description": "Change Parameter Type oldValue : Object to oldValue : long in method public writeLong(obj Object, name String, oldValue long, newValue long) : long from class org.hibernate.test.bytecode.enhancement.basic.ObjectAttributeMarkerInterceptor",
-        "comment": null,
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": null
-    }, {
-        "type": "Change Parameter Type",
-        "description": "Change Parameter Type oldValue : Object to oldValue : long in method public readLong(obj Object, name String, oldValue long) : long from class org.hibernate.test.bytecode.enhancement.basic.ObjectAttributeMarkerInterceptor",
-        "comment": null,
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": null
-    }, {
-        "type": "Change Parameter Type",
-        "description": "Change Parameter Type newValue : Object to newValue : long in method public writeLong(obj Object, name String, oldValue long, newValue long) : long from class org.hibernate.test.bytecode.enhancement.basic.ObjectAttributeMarkerInterceptor",
-        "comment": null,
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": null
-    }, {
-        "type": "Change Return Type",
-        "description": "Change Return Type Object to long in method public writeLong(obj Object, name String, oldValue long, newValue long) : long from class org.hibernate.test.bytecode.enhancement.basic.ObjectAttributeMarkerInterceptor",
-        "comment": null,
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": null
-    }, {
-        "type": "Change Return Type",
-        "description": "Change Return Type Object to long in method public readLong(obj Object, name String, oldValue long) : long from class org.hibernate.test.bytecode.enhancement.basic.ObjectAttributeMarkerInterceptor",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
