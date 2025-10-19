@@ -139,6 +139,7 @@ public class UMLModelAdapter {
                 LocationInfo.CodeElementType.TYPE_DECLARATION);
 
         UMLClass moduleClass = new UMLClass(moduleName, "__module__", locationInfo, true, imports);
+        moduleClass.setModule(true);
         moduleClass.setStatic(true);
 
         return moduleClass;
