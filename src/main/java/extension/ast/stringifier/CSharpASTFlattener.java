@@ -573,4 +573,9 @@ public class CSharpASTFlattener implements LangASTFlattener {
     public void visit(LangEllipsisLiteral langEllipsisLiteral) {
 
     }
+
+    @Override
+    public void visit(LangParenthesizedExpression langParenthesizedExpression) {
+
+    }
 }

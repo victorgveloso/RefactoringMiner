@@ -87,8 +87,8 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
                 List<Python3Parser.TestContext> tests = ctx.testlist_comp().test();
                 if (tests != null && !tests.isEmpty()) {
                     if (tests.size() == 1) {
-                        // Single parenthesized expression
-                        return mainBuilder.visit(tests.get(0));
+                        LangASTNode innerExpression = mainBuilder.visit(tests.get(0));
+                        return LangASTNodeFactory.createParenthesizedExpression(ctx, innerExpression);
                     } else {
                         // Tuple literal
                         List<LangASTNode> elements = new ArrayList<>();
@@ -105,7 +105,7 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
                 }
             }
             // Empty parentheses ()
-            return LangASTNodeFactory.createTupleLiteral(ctx, new ArrayList<>());
+            return LangASTNodeFactory.createParenthesizedExpression(ctx, null);
         }
 
         // Handle regular identifiers/names

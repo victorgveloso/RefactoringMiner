@@ -22,6 +22,7 @@ public enum NodeTypeEnum {
     TERNARY_EXPRESSION("LangTernaryExpression"),
     INDEX_ACCESS("LangIndexAccess"),
     SLICE_EXPRESSION("LangSliceExpression"),
+    PARENTHESIZED_EXPRESSION("LangParenthesizedExpression"),
 
     /** STATEMENTS */
     BLOCK("LangBlock"),

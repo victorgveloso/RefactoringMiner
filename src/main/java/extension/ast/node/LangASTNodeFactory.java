@@ -187,6 +187,10 @@ public class LangASTNodeFactory {
         return new LangSliceExpression(PositionUtils.getPositionInfo(ctx), lower, upper, step);
     }
 
+    public static LangParenthesizedExpression createParenthesizedExpression(ParserRuleContext ctx, LangASTNode expression) {
+        return new LangParenthesizedExpression(PositionUtils.getPositionInfo(ctx), expression);
+    }
+
     /** Try-Catch-Finally */
     public static LangASTNode createTryStatement(ParserRuleContext ctx, LangBlock tryBlock, List<LangCatchClause> catchClauses, LangBlock elseBlock, LangBlock finallyBlock) {
         return new LangTryStatement(PositionUtils.getPositionInfo(ctx), tryBlock, catchClauses, elseBlock, finallyBlock);

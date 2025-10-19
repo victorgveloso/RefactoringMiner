@@ -618,4 +618,13 @@ public class PyASTFlattener implements LangASTFlattener {
         builder.append("...");
     }
 
+    @Override
+    public void visit(LangParenthesizedExpression langParenthesizedExpression) {
+        builder.append("(");
+        if (langParenthesizedExpression != null){
+            langParenthesizedExpression.getParenthesizedExpression().accept(this);
+        }
+        builder.append(")");
+    }
+
 }

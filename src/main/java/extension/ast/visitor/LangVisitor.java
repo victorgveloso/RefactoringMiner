@@ -708,9 +708,17 @@ public class LangVisitor implements LangASTVisitor {
     public void visit(LangSliceExpression langSliceExpression) {
 
     }
+
     @Override
     public void visit(LangEllipsisLiteral langEllipsisLiteral) {
 
+    }
+
+    @Override
+    public void visit(LangParenthesizedExpression langParenthesizedExpression) {
+        if (langParenthesizedExpression.getParenthesizedExpression() != null) {
+            langParenthesizedExpression.getParenthesizedExpression().accept(this);
+        }
     }
 
 
