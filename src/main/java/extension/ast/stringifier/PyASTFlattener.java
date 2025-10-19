@@ -621,7 +621,7 @@ public class PyASTFlattener implements LangASTFlattener {
     @Override
     public void visit(LangParenthesizedExpression langParenthesizedExpression) {
         builder.append("(");
-        if (langParenthesizedExpression != null){
+        if (langParenthesizedExpression.getParenthesizedExpression() != null){
             langParenthesizedExpression.getParenthesizedExpression().accept(this);
         }
         builder.append(")");
