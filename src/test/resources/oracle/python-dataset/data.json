@@ -42,28 +42,28 @@
         "validators": "Nikos"
     }, {
         "type": "Rename Parameter",
-        "description": "Rename Parameter word_length : Object to outcome_length : Object in method public uniform_distribution(outcome_length, alphabet_size) from class distconst.__module__",
+        "description": "Rename Parameter word_length to outcome_length in method public uniform_distribution(outcome_length, alphabet_size) from class distconst.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
     }, {
         "type": "Rename Parameter",
-        "description": "Rename Parameter word_length : Object to outcome_length : Object in method public random_distribution(outcome_length, alphabet_size, prng) from class distconst.__module__",
+        "description": "Rename Parameter word_length to outcome_length in method public random_distribution(outcome_length, alphabet_size, prng) from class distconst.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
     }, {
         "type": "Reorder Parameter",
-        "description": "Reorder Parameter [pmf : Object, outcomes : Object, alphabet : Object, base : Object, prng : Object, sparse : Object] to [pmf : Object, outcomes : Object, base : Object, alphabet : Object, prng : Object, sparse : Object] in method protected _make_distribution(pmf, outcomes, base, alphabet, prng, sparse) from class npdist.__module__",
+        "description": "Reorder Parameter [pmf, outcomes, alphabet, base, prng, sparse] to [pmf, outcomes, base, alphabet, prng, sparse] in method protected _make_distribution(pmf, outcomes, base, alphabet, prng, sparse) from class npdist.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
     }, {
         "type": "Add Parameter",
-        "description": "Add Parameter base : Object in method public copy(base) from class npdist.Distribution",
+        "description": "Add Parameter base in method public copy(base) from class npdist.Distribution",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
@@ -109,7 +109,7 @@
         "validators": "Nikos"
     }, {
         "type": "Rename Parameter",
-        "description": "Rename Parameter set_ : Object to seq : Object in method public ordered_partitions(seq, tuples) from class utils.misc.__module__",
+        "description": "Rename Parameter set_ to seq in method public ordered_partitions(seq, tuples) from class utils.misc.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",

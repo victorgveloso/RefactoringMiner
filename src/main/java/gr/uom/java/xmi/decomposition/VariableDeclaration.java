@@ -1,7 +1,5 @@
 package gr.uom.java.xmi.decomposition;
 
-import static gr.uom.java.xmi.Constants.JAVA;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +39,7 @@ import extension.ast.node.expression.LangSimpleName;
 import extension.ast.node.metadata.LangAnnotation;
 import extension.ast.node.statement.LangBlock;
 import extension.ast.node.unit.LangCompilationUnit;
+import gr.uom.java.xmi.Constants;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.LocationInfoProvider;
@@ -65,6 +64,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 	private List<UMLAnnotation> annotations;
 	private List<UMLModifier> modifiers;
 	private String actualSignature;
+	private final Constants LANG;
 
 	public VariableDeclaration(LangCompilationUnit cu, String sourceFolder, String filePath,
 							   LangSingleVariableDeclaration param, VariableDeclarationContainer container, String fileContent) {
@@ -80,6 +80,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 		this.varargsParameter = param.isVarArgs();
 		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, param,
 				LocationInfo.CodeElementType.SINGLE_VARIABLE_DECLARATION);
+		this.LANG = PathFileUtils.getLang(locationInfo.getFilePath());
 
 		// Extract annotations and modifiers using existing processors
 		List<LangAnnotation> langAnnotations = param.getAnnotations();
@@ -198,6 +199,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 			}
 		}
 		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, assignment, elementType);
+		this.LANG = PathFileUtils.getLang(locationInfo.getFilePath());
 
 		// No annotations or modifiers for simple assignments
 		this.annotations = new ArrayList<>();
@@ -290,6 +292,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 			}
 		}
 		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, fragment, extractVariableDeclarationType(fragment));
+		this.LANG = PathFileUtils.getLang(locationInfo.getFilePath());
 		this.variableName = fragment.getName().getIdentifier();
 		this.initializer = fragment.getInitializer() != null ? new AbstractExpression(cu, sourceFolder, filePath, fragment.getInitializer(), CodeElementType.VARIABLE_DECLARATION_INITIALIZER, container, activeVariableDeclarations, javaFileContent) : null;
 		Type astType = extractType(fragment);
@@ -339,6 +342,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 			}
 		}
 		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, fragment, extractVariableDeclarationType(fragment));
+		this.LANG = PathFileUtils.getLang(locationInfo.getFilePath());
 		this.variableName = fragment.getName().getIdentifier();
 		this.initializer = fragment.getInitializer() != null ? new AbstractExpression(cu, sourceFolder, filePath, fragment.getInitializer(), CodeElementType.VARIABLE_DECLARATION_INITIALIZER, container, activeVariableDeclarations, javaFileContent) : null;
 		Type astType = extractType(fragment);
@@ -381,6 +385,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 			}
 		}
 		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, fragment, CodeElementType.ENUM_CONSTANT_DECLARATION);
+		this.LANG = PathFileUtils.getLang(locationInfo.getFilePath());
 		this.variableName = fragment.getName().getIdentifier();
 		this.initializer = null;
 		if(startSignatureOffset == -1) {
@@ -502,8 +507,12 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-        sb.append(variableName).append(" : ");
-        if(varargsParameter && PathFileUtils.isJavaFile(locationInfo.getFilePath())) {
+        sb.append(variableName);
+        if(LANG.equals(Constants.PYTHON) && type.getClassType().equals("Object")) {
+        	return sb.toString();
+        }
+        sb.append(" : ");
+        if(varargsParameter && LANG.equals(Constants.JAVA)) {
         	sb.append(type.toString().substring(0, type.toString().lastIndexOf("[]")));
         	sb.append("...");
         }
@@ -515,8 +524,12 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 
 	public String toQualifiedString() {
 		StringBuilder sb = new StringBuilder();
-        sb.append(variableName).append(" : ");
-        if(varargsParameter && PathFileUtils.isJavaFile(locationInfo.getFilePath())) {
+        sb.append(variableName);
+        if(LANG.equals(Constants.PYTHON) && type.getClassType().equals("Object")) {
+        	return sb.toString();
+        }
+        sb.append(" : ");
+        if(varargsParameter && LANG.equals(Constants.JAVA)) {
         	sb.append(type.toQualifiedString().substring(0, type.toQualifiedString().lastIndexOf("[]")));
         	sb.append("...");
         }
@@ -645,13 +658,13 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 			boolean matchFound = false;
 			for(LeafExpression variable : variables) {
 				if(fieldWithOverwrittenScopeByLocalVariable) {
-					if(variable.getString().equals(JAVA.THIS_DOT + variableName)) {
+					if(variable.getString().equals(LANG.THIS_DOT + variableName)) {
 						scope.addStatementUsingVariable(statement);
 						matchFound = true;
 						break;
 					}
 				}
-				else if(variable.getString().equals(variableName) || (isAttribute && variable.getString().equals(JAVA.THIS_DOT + variableName))) {
+				else if(variable.getString().equals(variableName) || (isAttribute && variable.getString().equals(LANG.THIS_DOT + variableName))) {
 					scope.addStatementUsingVariable(statement);
 					matchFound = true;
 					break;
@@ -660,7 +673,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 			if(!matchFound) {
 				for(LeafExpression variable : variables) {
 					if(fieldWithOverwrittenScopeByLocalVariable) {
-						if(variable.getString().equals(JAVA.THIS_DOT + variableName + ".")) {
+						if(variable.getString().equals(LANG.THIS_DOT + variableName + ".")) {
 							scope.addStatementUsingVariable(statement);
 							break;
 						}

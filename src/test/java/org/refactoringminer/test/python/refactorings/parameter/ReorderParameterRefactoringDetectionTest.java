@@ -31,8 +31,8 @@ public class ReorderParameterRefactoringDetectionTest {
                 afterFiles,
                 "MathOps",
                 "add",
-                new String[]{"x : Object", "y : Object"},
-                new String[]{"y : Object", "x : Object"}
+                new String[]{"x", "y"},
+                new String[]{"y", "x"}
         );
     }
 
@@ -57,8 +57,8 @@ public class ReorderParameterRefactoringDetectionTest {
                 afterFiles,
                 "Calculator",
                 "divide",
-                new String[]{"dividend : Object", "divisor : Object"},
-                new String[]{"divisor : Object", "dividend : Object"}
+                new String[]{"dividend", "divisor"},
+                new String[]{"divisor", "dividend"}
         );
     }
 
@@ -83,8 +83,8 @@ public class ReorderParameterRefactoringDetectionTest {
                 afterFiles,
                 "TextFormatter",
                 "format_text",
-                new String[]{"text : Object", "prefix : Object"},
-                new String[]{"prefix : Object", "text : Object"}
+                new String[]{"text", "prefix"},
+                new String[]{"prefix", "text"}
         );
     }
 
@@ -109,8 +109,8 @@ public class ReorderParameterRefactoringDetectionTest {
                 afterFiles,
                 "ListUtils",
                 "get_element",
-                new String[]{"items : Object", "index : Object"},
-                new String[]{"index : Object", "items : Object"}
+                new String[]{"items", "index"},
+                new String[]{"index", "items"}
         );
     }
 
@@ -139,8 +139,8 @@ public class ReorderParameterRefactoringDetectionTest {
                 afterFiles,
                 "Comparator",
                 "compare",
-                new String[]{"a : Object", "b : Object"},
-                new String[]{"b : Object", "a : Object"}
+                new String[]{"a", "b"},
+                new String[]{"b", "a"}
         );
     }
 
@@ -167,8 +167,8 @@ public class ReorderParameterRefactoringDetectionTest {
                 afterFiles,
                 "DataStore",
                 "store_value",
-                new String[]{"key : Object", "value : Object"},
-                new String[]{"value : Object", "key : Object"}
+                new String[]{"key", "value"},
+                new String[]{"value", "key"}
         );
     }
 
@@ -195,8 +195,8 @@ public class ReorderParameterRefactoringDetectionTest {
                 afterFiles,
                 "LoopProcessor",
                 "repeat_action",
-                new String[]{"count : Object", "action : Object"},
-                new String[]{"action : Object", "count : Object"}
+                new String[]{"count", "action"},
+                new String[]{"action", "count"}
         );
     }
 
@@ -227,8 +227,8 @@ public class ReorderParameterRefactoringDetectionTest {
                 afterFiles,
                 "FileHandler",
                 "copy_file",
-                new String[]{"source : Object", "destination : Object"},
-                new String[]{"destination : Object", "source : Object"}
+                new String[]{"source", "destination"},
+                new String[]{"destination", "source"}
         );
     }
 
@@ -255,8 +255,8 @@ public class ReorderParameterRefactoringDetectionTest {
                 afterFiles,
                 "Rectangle",
                 "set_dimensions",
-                new String[]{"width : Object", "height : Object"},
-                new String[]{"height : Object", "width : Object"}
+                new String[]{"width", "height"},
+                new String[]{"height", "width"}
         );
     }
 
@@ -283,8 +283,8 @@ public class ReorderParameterRefactoringDetectionTest {
                 afterFiles,
                 "MathOperations",
                 "calculate",
-                new String[]{"base : Object", "rate : Object", "time : Object"},
-                new String[]{"rate : Object", "time : Object", "base : Object"}
+                new String[]{"base", "rate", "time"},
+                new String[]{"rate", "time", "base"}
         );
     }
 
