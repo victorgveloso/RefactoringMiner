@@ -17,9 +17,13 @@ public class TestPythonDatasetRefactorings {
 					.or(Refactorings.InlineMethod.getValue())
 					.or(Refactorings.RenameMethod.getValue())
 					.or(Refactorings.RenameParameter.getValue())
-					.or(Refactorings.ReorderParameter.getValue());
+					.or(Refactorings.ReorderParameter.getValue())
+					.or(Refactorings.AddParameter.getValue())
+					.or(Refactorings.RemoveParameter.getValue())
+					.or(Refactorings.MoveAndRenameClass.getValue())
+					.or(Refactorings.ChangeVariableType.getValue());
 		TestBuilder test = new TestBuilder(detector, REPOS, types);
 		RefactoringPopulator.preparePythonRefactorings(test, types);
-		test.assertExpectationsWithGitHubAPI(12, 0, 0);
+		test.assertExpectationsWithGitHubAPI(20, 0, 0);
 	}
 }

@@ -67,7 +67,56 @@
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
-        "validators": null
+        "validators": "Nikos"
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter base in method public copy(base) from class npscalardist.ScalarDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Move And Rename Class",
+        "description": "Move And Rename Class npdist.Distribution moved and renamed to npscalardist.ScalarDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Move And Rename Class",
+        "description": "Move And Rename Class npjdist.JointDistribution moved and renamed to npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Remove Parameter",
+        "description": "Remove Parameter copy in method public set_base(base, copy) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Change Variable Type",
+        "description": "Change Variable Type d : Distribution to d : ScalarDistribution in method public uniform_scalar_distribution(n) from class distconst.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Change Variable Type",
+        "description": "Change Variable Type d : JointDistribution to d : Distribution in method public uniform_distribution(outcome_length, alphabet_size) from class distconst.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Change Variable Type",
+        "description": "Change Variable Type d : JointDistribution to d : Distribution in method public coalesce(rvs, rv_names, extract) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
     }],
     "refDiffExecutionTime": 0
 }, {
