@@ -40,21 +40,18 @@ repositories {
 test {
     dependsOn generateGrammarSource
     useJUnitPlatform()
-    // Make test more verbose to appease TravisCI's 10-minute "no output" watchdog
-    testLogging {
-        events "started", "passed", "skipped", "failed"
-        exceptionFormat "short"
-        showStandardStreams = true
-    }
-    // Reduce buffering of stdout/stderr
-    outputs.upToDateWhen { false }
     afterTest { descriptor, result ->
         if (result.resultType == TestResult.ResultType.FAILURE) {
             println "\n$descriptor.className [$descriptor.classDisplayName] > $descriptor.name [$descriptor.displayName]: $result.resultType"
         }
     }
-    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
-    jvmArgs '-Xmx4096M', '-Xms1024M' /* In case of heap-space error*/
+    if (project.hasProperty('selfhosted')) {
+        maxParallelForks = 1
+    }
+    else {
+        maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+    }
+    jvmArgs '-Xmx8192M', '-Xms1024M' /* In case of heap-space error*/
     if (project.hasProperty('notoken')) {
         exclude '**/GHRepositoryWrapperTest.*'
         exclude '**/TestCommandLine.*'

@@ -33,9 +33,9 @@ jobs:
     - name: Build with Gradle Wrapper
       run: |
         if [ "${{ github.event_name }}" == 'pull_request' ]; then
-          ./gradlew build -x javadoc -Pnotoken
+          ./gradlew build -x javadoc -Pnotoken -Pselfhosted
         else
-          ./gradlew build -x javadoc
+          ./gradlew build -x javadoc -Pselfhosted
         fi
 
     - name: Archive Test Results
