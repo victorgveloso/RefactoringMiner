@@ -165,4 +165,34 @@
         "validators": "Nikos"
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159851,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "658dfc8a0d73deaad1d4288aef0c9f2378130d39",
+    "url": "https://github.com/dit/dit/commit/658dfc8a0d73deaad1d4288aef0c9f2378130d39",
+    "author": "chebee7i",
+    "time": "5/30/13 6:56 PM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter prng in method public __init__(pmf, outcomes, alphabet, base, prng, sort, sparse, validate) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter prng in method public __init__(prng) from class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable es1 to ss1 in method public is_approx_equal(other) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }],
+    "refDiffExecutionTime": 0
 }]
