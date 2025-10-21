@@ -117,6 +117,13 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable alphabets in method public construct_alphabets(outcomes) from class helpers.__module__",
+        "comment": "<p>alphabets hold the return output of the extracted method&nbsp;_construct_alphabets()<br />alphabets = _construct_alphabets(outcomes)</p>",
+        "validation": "FP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
     }],
     "refDiffExecutionTime": 0
 }, {
@@ -762,6 +769,20 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable msg in method public reorder(pmf, outcomes, alphabet, product, index, method) from class npjdist.__module__",
+        "comment": "<p>raise InvalidDistribution('Events and eventspace are not compatible.')<br />becomes<br />msg = 'Outcomes and sample_space are not compatible.'<br /> raise InvalidDistribution(msg)</p>",
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable c_outcome in method public coalesce(rvs, rv_names, extract) from class npjdist.JointDistribution",
+        "comment": "<p>c_event = ctor_o([ctor_i([event[i] for i in rv]) for rv in indexes])<br />becomes<br />c_outcome = [ctor_i([outcome[i] for i in rv]) for rv in indexes]<br /> # Build the outer outcome from the inner outcomes.<br /> c_outcome = ctor_o( c_outcome )</p>",
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
     }],
     "refDiffExecutionTime": 0
 }]

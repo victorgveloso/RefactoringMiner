@@ -22,9 +22,10 @@ public class TestPythonDatasetRefactorings {
 					.or(Refactorings.RemoveParameter.getValue())
 					.or(Refactorings.MoveAndRenameClass.getValue())
 					.or(Refactorings.ChangeVariableType.getValue())
-					.or(Refactorings.RenameVariable.getValue());
+					.or(Refactorings.RenameVariable.getValue())
+					.or(Refactorings.ExtractVariable.getValue());
 		TestBuilder test = new TestBuilder(detector, REPOS, types);
 		RefactoringPopulator.preparePythonRefactorings(test, types);
-		test.assertExpectationsWithGitHubAPI(95, 1, 0);
+		test.assertExpectationsWithGitHubAPI(97, 3, 0);
 	}
 }
