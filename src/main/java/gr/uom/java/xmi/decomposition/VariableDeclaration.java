@@ -188,9 +188,13 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 				parent = parent.getParent();
 			}
 			if(parent != null) {
-				LangASTNode scopeNode = parent;
 				// the scope starts from the declaration of the variable, until the end of the parent block
 				int startOffset = assignment.getStartChar();
+				if(parent instanceof LangTypeDeclaration) {
+					elementType = LocationInfo.CodeElementType.FIELD_DECLARATION; // class-level assignment
+					startOffset = parent.getStartChar(); // the scope starts from the start of the parent type declaration
+				}
+				LangASTNode scopeNode = parent;
 				int endOffset = scopeNode.getStartChar() + scopeNode.getLength();
 				if(endOffset > fileContent.length()) {
 					endOffset = fileContent.length();
