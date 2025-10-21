@@ -24,11 +24,8 @@ import gr.uom.java.xmi.decomposition.OperationBody;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.*;
 import java.util.logging.Logger;
-
-import org.refactoringminer.util.PathFileUtils;
 
 import static extension.umladapter.UMLAdapterUtil.extractUMLImports;
 import static extension.umladapter.processor.UMLAdapterVariableProcessor.processVariableDeclarations;
@@ -190,9 +187,8 @@ public class UMLModelAdapter {
       //  storeClassHierarchyInfo(umlClass, typeDecl, model, packageName, imports);
 
         // Handle class-scope assignments as attributes
-        List<UMLAttribute> classLevelAttributes = new ArrayList<>();
         for (LangAssignment classLevelAssignment: typeDecl.getClassLevelAssignments()){
-            processClassLevelAssignmentForAttribute(typeDecl, classLevelAssignment, classLevelAttributes, sourceFolder, filepath, null, fileContent);
+            processClassLevelAssignmentForAttribute(umlClass, classLevelAssignment, sourceFolder, filepath, fileContent);
         }
 
         // Setters
@@ -212,8 +208,11 @@ public class UMLModelAdapter {
             if ("__init__".equals(methodDecl.getName())) {
                 List<UMLAttribute> attributes = getAttributes(methodDecl, sourceFolder, filepath, umlOperation, fileContent);
                 for (UMLAttribute attribute : attributes) {
-                    attribute.setClassName(umlClass.getName());
-                    umlClass.addAttribute(attribute);
+                    // avoid adding the attribute again, if it has been already created by processing a class-level assignment
+                    if(!umlClass.getAttributes().contains(attribute)) {
+                        attribute.setClassName(umlClass.getName());
+                        umlClass.addAttribute(attribute);
+                    }
                 }
             }
         }
@@ -406,56 +405,46 @@ public class UMLModelAdapter {
         }
     }
 
-    private void processClassLevelAssignmentForAttribute(LangTypeDeclaration typeDeclaration, LangAssignment assignment, List<UMLAttribute> attributes,
-                                               String sourceFolder, String filePath, UMLOperation umlOperation, String fileContent) {
+    private void processClassLevelAssignmentForAttribute(UMLClass typeDeclaration, LangAssignment assignment,
+                                               String sourceFolder, String filePath, String fileContent) {
         LangASTNode leftSide = assignment.getLeftSide();
 
-        if (leftSide instanceof LangFieldAccess langFieldAccess) {
-            LangASTNode expression = langFieldAccess.getExpression();
+        if (leftSide instanceof LangSimpleName simpleName) {
+            String attributeName = simpleName.getIdentifier();
 
-            // Check if it's self.attribute
-            if (expression instanceof LangSimpleName simpleName) {
-                if ("self".equals(simpleName.getIdentifier())) {
-                    String attributeName = langFieldAccess.getName().getIdentifier();
+            // Create UMLAttribute
+            LocationInfo attributeLocationInfo = new LocationInfo(
+                    assignment.getRootCompilationUnit(),
+                    sourceFolder,
+                    filePath,
+                    simpleName,
+                    LocationInfo.CodeElementType.FIELD_DECLARATION
+            );
+            UMLAttribute attribute = new UMLAttribute(
+                    attributeName,
+                    UMLType.extractTypeObject("Object"),
+                    attributeLocationInfo
+            );
+            // Create VariableDeclaration for the attribute using the new constructor
+            VariableDeclaration variableDeclaration = UMLAdapterVariableProcessor.processAttributeAssignment(
+                    assignment,
+                    sourceFolder,
+                    filePath,
+                    attributeName,
+                    attribute,
+                    fileContent
+            );
 
-                    // Create VariableDeclaration for the attribute using the new constructor
-                    VariableDeclaration variableDeclaration = UMLAdapterVariableProcessor.processAttributeAssignment(
-                            assignment,
-                            sourceFolder,
-                            filePath,
-                            attributeName,
-                            umlOperation,
-                            fileContent
-                    );
 
 
-                    // Create UMLAttribute
-                    LocationInfo attributeLocationInfo = new LocationInfo(
-                            assignment.getRootCompilationUnit(),
-                            sourceFolder,
-                            filePath,
-                            langFieldAccess,
-                            LocationInfo.CodeElementType.FIELD_DECLARATION
-                    );
-                    UMLAttribute attribute = new UMLAttribute(
-                            attributeName,
-                            UMLType.extractTypeObject("Object"),
-                            attributeLocationInfo
-                    );
+            // Set the variable declaration on the attribute
+            attribute.setVariableDeclaration(variableDeclaration);
+            attribute.setVisibility(Visibility.PUBLIC);
+            attribute.setFinal(false);
+            attribute.setStatic(false);
 
-                    // Set the variable declaration on the attribute
-                    attribute.setVariableDeclaration(variableDeclaration);
-                    attribute.setVisibility(Visibility.PUBLIC);
-                    attribute.setFinal(false);
-                    attribute.setStatic(false);
-
-                    attribute.setClassName(typeDeclaration.getName());
-                    attributes.add(attribute);
-
-//                    LOGGER.info("Created attribute: " + attributeName + " with initializer: " +
-//                            (variableDeclaration.getInitializer() != null ? "yes" : "no"));
-                }
-            }
+            attribute.setClassName(typeDeclaration.getName());
+            typeDeclaration.addAttribute(attribute);
         }
     }
 

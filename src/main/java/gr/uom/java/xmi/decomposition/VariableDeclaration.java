@@ -184,7 +184,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 		} else {
 			elementType = LocationInfo.CodeElementType.VARIABLE_DECLARATION_STATEMENT; // var = value
 			LangASTNode parent = assignment;
-			while(parent != null && !(parent instanceof LangBlock)) {
+			while(parent != null && !(parent instanceof LangBlock) && !(parent instanceof LangTypeDeclaration)) {
 				parent = parent.getParent();
 			}
 			if(parent != null) {

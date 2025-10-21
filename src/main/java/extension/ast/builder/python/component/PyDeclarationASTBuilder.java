@@ -43,8 +43,9 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
                 LangASTNode statement = mainBuilder.visit(stmtContext);
                 if (statement instanceof LangMethodDeclaration) {
                     langTypeDeclaration.addMethod((LangMethodDeclaration) statement);
-                } else if (statement instanceof LangAssignment){
-                    langTypeDeclaration.addAssignment((LangAssignment) statement);
+                } else if (statement instanceof LangExpressionStatement exprStatement) {
+                    if (exprStatement.getExpression() instanceof LangAssignment assignment)
+                        langTypeDeclaration.addAssignment(assignment);
                 }
             }
         }

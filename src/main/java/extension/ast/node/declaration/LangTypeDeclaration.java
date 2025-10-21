@@ -215,10 +215,6 @@ public class LangTypeDeclaration extends LangDeclaration {
         return classLevelAssignments;
     }
 
-    public void setClassLevelAssignments(List<LangAssignment> classLevelAssignments) {
-        this.classLevelAssignments = classLevelAssignments;
-    }
-
     public String toString() {
         return "LangTypeDeclaration{" +
                 "name='" + name + '\'' +
