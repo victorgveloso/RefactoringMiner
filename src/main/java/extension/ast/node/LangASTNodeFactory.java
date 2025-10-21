@@ -75,7 +75,7 @@ public class LangASTNodeFactory {
         LangSingleVariableDeclaration decl = new LangSingleVariableDeclaration(langSimpleName, PositionUtils.getPositionInfo(ctx));
         // Default sane values for non-annotated languages (e.g., C# minimal support)
         decl.setTypeAnnotation(TypeObjectEnum.OBJECT);
-        decl.setParameter(true);
+        //decl.setParameter(true);
         return decl;
     }
 

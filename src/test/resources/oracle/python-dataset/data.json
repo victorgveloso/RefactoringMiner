@@ -195,4 +195,573 @@
         "validators": "Nikos"
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159852,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "4b99425db6f200c677e5117a8b9dc162d81e6a60",
+    "url": "https://github.com/dit/dit/commit/4b99425db6f200c677e5117a8b9dc162d81e6a60",
+    "author": "chebee7i",
+    "time": "2/18/13 3:22 AM",
+    "refactorings": [{
+        "type": "Rename Class",
+        "description": "Rename Class exceptions.InvalidEvent renamed to exceptions.InvalidOutcome",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method protected _get_event_constructor() renamed to protected _get_outcome_constructor() in class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public event_length(masked) renamed to public outcome_length(masked) in class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public eventspace() renamed to public sample_space() in class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public has_event(event, null) renamed to public has_outcome(outcome, null) in class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public eventspace() renamed to public sample_space() in class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public has_event(event, null) renamed to public has_outcome(outcome, null) in class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method protected _validate_events() renamed to protected _validate_outcomes() in class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public eventprobs() renamed to public zipped() in class distribution.BaseDistribution",
+        "comment": "<p>This function has been reordered, but the body remains the same (except for renamed attribute events -&gt; outcomes)<br />return izip(self.events, self.pmf)<br />return izip(self.outcomes, self.pmf)</p>",
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public eventspace() renamed to public sample_space() in class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public has_event(event, null) renamed to public has_outcome(outcome, null) in class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public sample(size, rand, prng) renamed to public rand(size, rand, prng) in class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public eventwc(event) renamed to public outcome_wc(outcome) in class distribution.__module__.prepare_string",
+        "comment": "<p>This is a renamed nested function within<br />def prepare_string(dist, digits=None, exact=False, tol=1e-9, show_mask=False, str_outcomes=False):</p>",
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Rename Attribute",
+        "description": "Rename Attribute _events_index to _outcomes_index in class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Rename Attribute",
+        "description": "Rename Attribute events to outcomes in class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Attribute",
+        "description": "Rename Attribute _events_index to _outcomes_index in class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Attribute",
+        "description": "Rename Attribute events to outcomes in class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Attribute",
+        "description": "Rename Attribute _event_class to _outcome_class in class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Attribute",
+        "description": "Rename Attribute events to outcomes in class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable e to o in method public prepare_string(dist, digits, exact, tol, show_mask, str_outcomes) from class distribution.__module__",
+        "comment": "<p>This is a lambda parameter rename<br />events = map(lambda e: ''.join(e), events)<br />outcomes = map(lambda o: ''.join(o), outcomes)</p>",
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter event to outcome in method public has_outcome(outcome, null) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter events to outcomes in method protected _init(pmf, outcomes, alphabet, base) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter event to outcome in method public __getitem__(outcome) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter events to outcomes in method public __init__(pmf, outcomes, alphabet, base, sort, sparse, validate) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter event to outcome in method public __getitem__(outcome) from class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter event to outcome in method public __delitem__(outcome) from class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter events to outcomes in method protected _init(pmf, outcomes, alphabet, base) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter events to outcomes in method public reorder(pmf, outcomes, alphabet, product, index, method) from class npjdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter event to outcome in method public has_outcome(outcome, null) from class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter event to outcome in method public __setitem__(outcome, value) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter event to outcome in method public __delitem__(outcome) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter events to outcomes in method protected _make_distribution(pmf, outcomes, alphabet, base, sparse) from class npjdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter events to outcomes in method protected _make_distribution(pmf, outcomes, alphabet, base, sparse) from class npdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter event to outcome in method public __contains__(outcome) from class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter event to outcome in method public __setitem__(outcome, value) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter event to outcome in method public outcome_wc(outcome) from class distribution.__module__.prepare_string",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter events to outcomes in method public __init__(pmf, outcomes, alphabet, base, sort, sparse, validate) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter str_events to str_outcomes in method public to_string(digits, exact, tol, show_mask, str_outcomes) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter events to outcomes in method public get_product_func(outcomes) from class npjdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter event to outcome in method public __contains__(outcome) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter event to outcome in method public has_outcome(outcome, null) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter str_events to str_outcomes in method public prepare_string(dist, digits, exact, tol, show_mask, str_outcomes) from class distribution.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter events to outcomes in method public reorder(pmf, outcomes, alphabet, index) from class npdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter args to kwargs in method public __init__(kwargs) from class exceptions.InvalidProbability",
+        "comment": "<p>This is actually an added parameter<br />def __init__(self, *args):<br />def __init__(self, *args, **kwargs):</p>",
+        "validation": "FP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable event_length to outcome_length in method public construct_alphabet(evts) from class npjdist.JointDistribution._init",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable event to outcome in method public reorder(pmf, outcomes, alphabet, product, index, method) from class npjdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable event to outcome in method public coalesce(rvs, rv_names, extract) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable events to outcomes in method public prepare_string(dist, digits, exact, tol, show_mask, str_outcomes) from class distribution.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable event to outcome in method public is_approx_equal(other) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable e to o in method public to_string(digits, exact, tol, show_mask, str_outcomes) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable event to outcome in method public make_sparse(trim) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable events_index to outcomes_index in method public __delitem__(outcome) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable event to outcome in method public get_product_func(outcomes) from class npjdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable events to outcomes in method public is_approx_equal(other) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable e2 to o2 in method public __add__(other) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable eventspace_size to sample_space_size in method public reorder(pmf, outcomes, alphabet, product, index, method) from class npjdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable e1 to o1 in method public __add__(other) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable events to outcomes in method public coalesce(rvs, rv_names, extract) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable event to outcome in method public construct_alphabet(evts) from class npjdist.JointDistribution._init",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable es2 to ss2 in method public is_approx_equal(other) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable events to outcomes in method public make_dense() from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable events to outcomes in method protected _validate_outcomes() from class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable e to o in method public to_string(digits, exact, tol) from class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable eventspace to sample_space in method protected _validate_outcomes() from class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable eventspace to sample_space in method public reorder(pmf, outcomes, alphabet, index) from class npdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable event_class to outcome_class in method public to_string(digits, exact, tol, show_mask, str_outcomes) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable eventspace to sample_space in method public reorder(pmf, outcomes, alphabet, product, index, method) from class npjdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable new_events to new_outcomes in method public __delitem__(outcome) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable event_length to outcome_length in method public to_string(digits, exact, tol, show_mask, str_outcomes) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable event_length to outcome_length in method protected _make_distribution(pmf, outcomes, alphabet, base, sparse) from class npjdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable events to outcomes in method public make_sparse(trim) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable events to outcomes in method public sample(dist, size, rand, prng) from class math.sampling.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable new_event to new_outcome in method public __setitem__(outcome, value) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable event to outcome in method protected _make_distribution(pmf, outcomes, alphabet, base, sparse) from class npjdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable events_ to outcomes_ in method protected _init(pmf, outcomes, alphabet, base) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable c_event to c_outcome in method public coalesce(rvs, rv_names, extract) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable events to outcomes in method public __delitem__(outcome) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable event to outcome in method public __add__(other) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable new_event to new_outcome in method public __setitem__(outcome, value) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable events_ to outcomes_ in method protected _init(pmf, outcomes, alphabet, base) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]

@@ -504,7 +504,7 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
 
     public LangASTNode visitVfpdef(Python3Parser.VfpdefContext ctx) {
         LangSingleVariableDeclaration singleVariableDeclaration = LangASTNodeFactory.createSingleVariableDeclaration(ctx.getText(), ctx);
-        singleVariableDeclaration.setParameter(true);
+        //singleVariableDeclaration.setParameter(true);
         return singleVariableDeclaration;
     }
 

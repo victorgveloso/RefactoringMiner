@@ -2,7 +2,6 @@ package extension.umladapter.processor;
 
 import java.util.Collections;
 
-import extension.ast.node.declaration.LangMethodDeclaration;
 import extension.ast.node.declaration.LangSingleVariableDeclaration;
 import extension.ast.node.expression.LangAssignment;
 import gr.uom.java.xmi.UMLParameter;
@@ -12,7 +11,7 @@ import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
 public class UMLAdapterVariableProcessor {
 
-    public static void processVariableDeclarations(LangSingleVariableDeclaration param, UMLParameter umlParam, UMLType typeObject, String sourceFolder, String filePath, LangMethodDeclaration methodDecl, VariableDeclarationContainer container, String fileContent){
+    public static void processVariableDeclarations(LangSingleVariableDeclaration param, UMLParameter umlParam, UMLType typeObject, String sourceFolder, String filePath, VariableDeclarationContainer container, String fileContent){
         VariableDeclaration vd = new VariableDeclaration(
                 param.getRootCompilationUnit(),
                 sourceFolder,
