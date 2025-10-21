@@ -76,10 +76,6 @@ public class LangMethodDeclaration extends LangDeclaration {
         return parameters;
     }
 
-    public void setParameters(List<LangSingleVariableDeclaration> parameters) {
-        this.parameters = parameters;
-    }
-
     public boolean isStatic() {
         return isStatic;
     }

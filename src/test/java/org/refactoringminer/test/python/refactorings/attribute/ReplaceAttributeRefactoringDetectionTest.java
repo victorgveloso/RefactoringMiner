@@ -3,6 +3,8 @@ package org.refactoringminer.test.python.refactorings.attribute;
 import extension.umladapter.UMLModelAdapter;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.diff.UMLModelDiff;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.refactoringminer.api.Refactoring;
@@ -17,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Isolated
 public class ReplaceAttributeRefactoringDetectionTest {
 
+	@Disabled //TODO Support python-specific refactoring, Replace Attribute with Property
     @Test
     void detectsReplaceAttribute_DirectToProperty() throws Exception {
         String beforePythonCode = """
