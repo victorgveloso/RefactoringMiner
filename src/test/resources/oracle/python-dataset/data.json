@@ -785,4 +785,43 @@
         "validators": "Nikos"
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159853,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "6844b5bcdad9e8c46314a7747ddc96aab48dbe7c",
+    "url": "https://github.com/dit/dit/commit/6844b5bcdad9e8c46314a7747ddc96aab48dbe7c",
+    "author": "Autoplectic",
+    "time": "10/24/13 1:54 AM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public test_DtoSD() renamed to public test_DtoSD1() in class test_convert.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_SDtoD() renamed to public test_SDtoD1() in class test_convert.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159854,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "756c8e6aa6c39911bbc6ed8f9f325527baa0bf24",
+    "url": "https://github.com/dit/dit/commit/756c8e6aa6c39911bbc6ed8f9f325527baa0bf24",
+    "author": "chebee7i",
+    "time": "2/20/13 2:40 PM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter numerical in method public get_base(numerical) from class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "PyRef",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
