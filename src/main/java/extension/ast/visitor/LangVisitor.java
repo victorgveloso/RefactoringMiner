@@ -330,7 +330,19 @@ public class LangVisitor implements LangASTVisitor {
                         langAssignment, container, varName, activeVariableDeclarations, fileContent);
                 variableDeclarations.add(varDecl);
             }
-
+        }
+        else if(langAssignment.getLeftSide() instanceof LangTupleLiteral tuple) {
+            for(LangASTNode element : tuple.getElements()) {
+                if(element instanceof LangSimpleName simpleName) {
+                    String varName = simpleName.getIdentifier();
+                    if (!activeVariableDeclarations.containsKey(varName)) {
+                        VariableDeclaration varDecl = new VariableDeclaration(cu, sourceFolder, filePath,
+                                langAssignment, container, varName, activeVariableDeclarations, fileContent);
+                        variableDeclarations.add(varDecl);
+                    }
+                }
+                // TODO handle scenarios, where element is not SimpleName
+            }
         }
     }
 
