@@ -783,6 +783,34 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable events to outcomes in method public to_string(digits, exact, tol, show_mask, str_outcomes) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable events to outcomes in method public to_string(digits, exact, tol) from class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable events to outcomes in method public __setitem__(outcome, value) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable events to outcomes in method public __setitem__(outcome, value) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 0
 }, {
@@ -821,6 +849,22 @@
         "comment": null,
         "validation": "TP",
         "detectionTools": "PyRef",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159855,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "7667fe99a1e5b5d706930ab06020367a3c19538f",
+    "url": "https://github.com/dit/dit/commit/7667fe99a1e5b5d706930ab06020367a3c19538f",
+    "author": "chebee7i",
+    "time": "1/27/15 5:39 PM",
+    "refactorings": [{
+        "type": "Extract Method",
+        "description": "Extract Method public to_string(digits) extracted from public __str__() in class algorithms.information_partitions.ShannonPartition",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
         "validators": null
     }],
     "refDiffExecutionTime": 0
