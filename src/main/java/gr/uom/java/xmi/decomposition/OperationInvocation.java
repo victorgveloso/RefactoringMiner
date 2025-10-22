@@ -513,7 +513,7 @@ public class OperationInvocation extends AbstractCall {
     	UMLType lastInferredArgumentType = inferredArgumentTypes.size() > 0 ? inferredArgumentTypes.get(inferredArgumentTypes.size()-1) : null;
 		List<UMLType> parameterTypeList = operation.getParameterTypeList();
 		boolean result = this.numberOfArguments == parameterTypeList.size() ||
-				this.numberOfArguments + parametersWithDefaultValue >= parameterTypeList.size() ||
+				(parametersWithDefaultValue > 0 && this.numberOfArguments + parametersWithDefaultValue >= parameterTypeList.size()) ||
 				varArgsMatch(operation, lastInferredArgumentType, parameterTypeList);
 		if(result && classDiff != null) {
 			for(UMLOperation addedOperation : classDiff.getAddedOperations()) {
