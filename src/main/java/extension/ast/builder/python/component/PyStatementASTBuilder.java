@@ -223,6 +223,7 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
         for (Python3Parser.ExprContext varCtx : ctx.exprlist().expr()) {
             LangSingleVariableDeclaration declaration = LangASTNodeFactory.createSingleVariableDeclaration(
                     varCtx.getText(),
+                    null,
                     varCtx
             );
             initializers.add(declaration);
@@ -503,7 +504,7 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
     }
 
     public LangASTNode visitVfpdef(Python3Parser.VfpdefContext ctx) {
-        LangSingleVariableDeclaration singleVariableDeclaration = LangASTNodeFactory.createSingleVariableDeclaration(ctx.getText(), ctx);
+        LangSingleVariableDeclaration singleVariableDeclaration = LangASTNodeFactory.createSingleVariableDeclaration(ctx.getText(), null, ctx);
         //singleVariableDeclaration.setParameter(true);
         return singleVariableDeclaration;
     }

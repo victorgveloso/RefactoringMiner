@@ -135,7 +135,8 @@ public class CSharpDeclarationASTBuilder extends CSharpParserBaseVisitor<LangAST
                 CSharpParser.Arg_declarationContext arg = fp.arg_declaration();
                 if (arg != null && arg.identifier() != null) {
                     String parameterName = arg.identifier().getText();
-                    LangSingleVariableDeclaration param = LangASTNodeFactory.createSingleVariableDeclaration(parameterName, arg);
+                    // TODO Extract default parameter value in C#
+                    LangSingleVariableDeclaration param = LangASTNodeFactory.createSingleVariableDeclaration(parameterName, null, arg);
                     param.setParameter(true);
                     param.setTypeAnnotation(extractParameterType(fp));
                     params.add(param);

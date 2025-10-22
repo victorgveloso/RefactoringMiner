@@ -16,10 +16,14 @@ import extension.ast.node.metadata.comment.LangComment;
 import extension.ast.node.statement.LangBlock;
 import extension.ast.node.statement.LangExpressionStatement;
 import extension.base.lang.python.Python3Parser;
+import extension.base.lang.python.Python3Parser.TestContext;
+import extension.base.lang.python.Python3Parser.TypedargslistContext;
 import gr.uom.java.xmi.Visibility;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.antlr.v4.runtime.tree.ParseTree;
 
 public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
 
@@ -114,10 +118,28 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
 
         // Collect langSingleVariableDeclarations
         List<LangSingleVariableDeclaration> langSingleVariableDeclarations = new ArrayList<>();
-        if (ctx.parameters().typedargslist() != null) {
-            for (Python3Parser.TfpdefContext paramCtx : ctx.parameters().typedargslist().tfpdef()) {
-                if (ctx.parameters().typedargslist().STAR() == null){
-                    LangSingleVariableDeclaration singleVariableDeclaration = LangASTNodeFactory.createSingleVariableDeclaration(paramCtx.name().getText(), paramCtx);
+        TypedargslistContext typedargslist = ctx.parameters().typedargslist();
+        if (typedargslist != null) {
+            for (Python3Parser.TfpdefContext paramCtx : typedargslist.tfpdef()) {
+                if (typedargslist.STAR() == null){
+                    int index = 0;
+                    for(ParseTree tree : typedargslist.children) {
+                        if(tree.equals(paramCtx)) {
+                            break;
+                        }
+                        index++;
+                    }
+                    LangASTNode defaultValueExpression = null;
+                    if (index + 1 < typedargslist.children.size()) {
+                        ParseTree next = typedargslist.children.get(index + 1);
+                        if(next.getText().equals("=") && index + 2 < typedargslist.children.size()) {
+                            // parameter with default value follows next
+                            ParseTree defaultValue = typedargslist.children.get(index + 2);
+                            defaultValueExpression = mainBuilder.visit(defaultValue);
+                        }
+                    }
+                    LangSingleVariableDeclaration singleVariableDeclaration = 
+                            LangASTNodeFactory.createSingleVariableDeclaration(paramCtx.name().getText(), defaultValueExpression, paramCtx);
                     singleVariableDeclaration.setTypeAnnotation(TypeObjectEnum.OBJECT);
                     singleVariableDeclaration.setParameter(true);
                     langSingleVariableDeclarations.add(singleVariableDeclaration);
@@ -125,11 +147,11 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
             }
 
             // Check for *args parameter
-            if (ctx.parameters().typedargslist().STAR() != null && ctx.parameters().typedargslist().tfpdef(ctx.parameters().typedargslist().tfpdef().size() - 1) != null) {
+            if (typedargslist.STAR() != null && typedargslist.tfpdef(typedargslist.tfpdef().size() - 1) != null) {
                 // Handle *args - the parameter after STAR token
-                Python3Parser.TfpdefContext varargCtx = ctx.parameters().typedargslist().tfpdef(ctx.parameters().typedargslist().tfpdef().size() - 1);
+                Python3Parser.TfpdefContext varargCtx = typedargslist.tfpdef(typedargslist.tfpdef().size() - 1);
                 String varargName = varargCtx.name().getText();
-                LangSingleVariableDeclaration varargDecl = LangASTNodeFactory.createSingleVariableDeclaration(varargName, varargCtx);
+                LangSingleVariableDeclaration varargDecl = LangASTNodeFactory.createSingleVariableDeclaration(varargName, null, varargCtx);
                 varargDecl.setTypeAnnotation(TypeObjectEnum.OBJECT);
                 varargDecl.setParameter(true);
                 varargDecl.setAttribute(false);

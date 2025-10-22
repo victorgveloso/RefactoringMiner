@@ -59,7 +59,7 @@ public class LambdaExpressionObject implements VariableDeclarationContainer, Loc
 		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, lambda, CodeElementType.LAMBDA_EXPRESSION);
 		for (LangASTNode param : lambda.getParameters()) {
 			if(param instanceof LangSingleVariableDeclaration) {
-				VariableDeclaration parameter = new VariableDeclaration(cu, sourceFolder, filePath, (LangSingleVariableDeclaration)param, this, fileContent);
+				VariableDeclaration parameter = new VariableDeclaration(cu, sourceFolder, filePath, (LangSingleVariableDeclaration)param, this, activeVariableDeclarations, fileContent);
 				parameters.add(parameter);
 				UMLParameter umlParameter = new UMLParameter(parameter.getVariableName(), parameter.getType(), "in", ((LangSingleVariableDeclaration)param).isVarArgs());
 				umlParameter.setVariableDeclaration(parameter);

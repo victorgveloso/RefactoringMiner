@@ -67,7 +67,7 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 	private final Constants LANG;
 
 	public VariableDeclaration(LangCompilationUnit cu, String sourceFolder, String filePath,
-							   LangSingleVariableDeclaration param, VariableDeclarationContainer container, String fileContent) {
+							   LangSingleVariableDeclaration param, VariableDeclarationContainer container, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String fileContent) {
 		this.variableName = param.getLangSimpleName().getIdentifier();
 
 		// Extract type from parameter
@@ -121,8 +121,18 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 			modifiers.add(typedModifier);
 		}
 
-		// No initializer for parameters
-		this.initializer = null;
+		if(param.getDefaultValue() != null) {
+			this.initializer = new AbstractExpression(
+					param.getRootCompilationUnit(),
+					sourceFolder,
+					filePath,
+					param.getDefaultValue(),
+					LocationInfo.CodeElementType.EXPRESSION,
+					container,
+					activeVariableDeclarations,
+					fileContent
+			);
+		}
 
 		// Set characteristics directly from parameter
 		this.isAttribute = param.isAttribute();

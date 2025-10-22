@@ -70,9 +70,9 @@ public class LangASTNodeFactory {
         return method;
     }
 
-    public static LangSingleVariableDeclaration createSingleVariableDeclaration(String name, ParserRuleContext ctx) {
+    public static LangSingleVariableDeclaration createSingleVariableDeclaration(String name, LangASTNode defaultValue, ParserRuleContext ctx) {
         LangSimpleName langSimpleName = createSimpleName(name, ctx);
-        LangSingleVariableDeclaration decl = new LangSingleVariableDeclaration(langSimpleName, PositionUtils.getPositionInfo(ctx));
+        LangSingleVariableDeclaration decl = new LangSingleVariableDeclaration(langSimpleName, defaultValue, PositionUtils.getPositionInfo(ctx));
         // Default sane values for non-annotated languages (e.g., C# minimal support)
         decl.setTypeAnnotation(TypeObjectEnum.OBJECT);
         //decl.setParameter(true);

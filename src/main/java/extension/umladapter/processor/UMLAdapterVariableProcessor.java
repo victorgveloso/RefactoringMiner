@@ -18,6 +18,7 @@ public class UMLAdapterVariableProcessor {
                 filePath,
                 param,
                 container,
+                Collections.emptyMap(),
                 fileContent
         );
 

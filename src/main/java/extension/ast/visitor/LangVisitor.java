@@ -116,7 +116,7 @@ public class LangVisitor implements LangASTVisitor {
     public void visit(LangSingleVariableDeclaration langSingleVariableDeclaration) {
         // Create variable declaration for parameters
         VariableDeclaration varDecl = new VariableDeclaration(
-                cu, sourceFolder, filePath, langSingleVariableDeclaration, container, fileContent);
+                cu, sourceFolder, filePath, langSingleVariableDeclaration, container, activeVariableDeclarations, fileContent);
 
         variableDeclarations.add(varDecl);
 
