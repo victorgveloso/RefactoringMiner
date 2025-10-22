@@ -1000,6 +1000,7 @@ public class UMLModelDiff {
 		if(removedClasses.size() <= addedClasses.size()) {
 			removedClassesInOuterLoop(matcher);
 			if(!partialModel()) {
+				Set<UMLClassDiff> classDiffsToBeRemoved = new LinkedHashSet<>();
 				for(UMLClassDiff classDiff : commonClassDiffList) {
 					boolean matchFound = false;
 					for(UMLClassRenameDiff classRenameDiff : classRenameDiffList) {
@@ -1028,12 +1029,14 @@ public class UMLModelDiff {
 										classRenameDiffList.add(classRenameDiff);
 										removedClasses.remove(classRenameDiff.getOriginalClass());
 										addedClassIterator.remove();
+										classDiffsToBeRemoved.add(classDiff);
 									}
 								}
 							}
 						}
 					}
 				}
+				this.commonClassDiffList.removeAll(classDiffsToBeRemoved);
 			}
 		}
 		else {
