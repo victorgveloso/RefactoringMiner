@@ -987,4 +987,55 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159864,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "a26dc5139f0c81712d149b13d19ddc7bee88d550",
+    "url": "https://github.com/dit/dit/commit/a26dc5139f0c81712d149b13d19ddc7bee88d550",
+    "author": "chebee7i",
+    "time": "2/11/15 2:58 AM",
+    "refactorings": [{
+        "type": "Inline Variable",
+        "description": "Inline Variable A in method public build_linear_equality_constraints() from class algorithms.maxentropy.MaximumEntropy",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Inline Variable",
+        "description": "Inline Variable b in method public build_linear_equality_constraints() from class algorithms.maxentropy.MaximumEntropy",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Parameter",
+        "description": "Remove Parameter k in method public __init__(dist, k, prng) from class algorithms.maxentropy.MaximumEntropy",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Change Variable Type",
+        "description": "Change Variable Type opt : MaximumEntropy to opt : MarginalMaximumEntropy in method public marginal_maxent_dists(dist, k_max, jitter, show_progress) from class algorithms.maxentropy.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public maxent_dists(dist, k_max, jitter, show_progress) renamed to public marginal_maxent_dists(dist, k_max, jitter, show_progress) in class algorithms.maxentropy.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Attribute",
+        "description": "Move Attribute public k : Object from class algorithms.maxentropy.MaximumEntropy to public k : Object from class algorithms.maxentropy.MarginalMaximumEntropy",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
