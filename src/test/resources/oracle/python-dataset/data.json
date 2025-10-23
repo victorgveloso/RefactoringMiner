@@ -868,4 +868,52 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159857,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "836278b4f2277333f6668cf9da137fd5a6c4e134",
+    "url": "https://github.com/dit/dit/commit/836278b4f2277333f6668cf9da137fd5a6c4e134",
+    "author": "Autoplectic",
+    "time": "10/26/13 5:45 PM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public test_del() renamed to public test_del1() in class test_npscalardist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159858,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "88a4c124fc1e1ee0b77771ebb63055e51396d779",
+    "url": "https://github.com/dit/dit/commit/88a4c124fc1e1ee0b77771ebb63055e51396d779",
+    "author": "chebee7i",
+    "time": "10/24/14 12:42 PM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public test_perturb() renamed to public test_perturb_one() in class test_pmfops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159859,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "8e663e28df7a02deffe54df97d97e508fec78bab",
+    "url": "https://github.com/dit/dit/commit/8e663e28df7a02deffe54df97d97e508fec78bab",
+    "author": "Autoplectic",
+    "time": "10/4/13 5:34 PM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter crvs in method public common_information(dist, rvs, crvs, rv_names) from class algorithms.common_info.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
