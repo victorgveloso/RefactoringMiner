@@ -120,42 +120,36 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
         TypedargslistContext typedargslist = ctx.parameters().typedargslist();
         if (typedargslist != null) {
             for (Python3Parser.TfpdefContext paramCtx : typedargslist.tfpdef()) {
-                if (typedargslist.STAR() == null){
-                    int index = 0;
-                    for(ParseTree tree : typedargslist.children) {
-                        if(tree.equals(paramCtx)) {
-                            break;
+                int index = 0;
+                boolean isArgs = false;
+                boolean isKwargs = false;
+                for(ParseTree tree : typedargslist.children) {
+                    if (tree.equals(paramCtx)) {
+                        if (index > 0) {
+                            ParseTree previous = typedargslist.children.get(index - 1);
+                            isArgs = previous.getText().equals("*");
+                            isKwargs = previous.getText().equals("**");
                         }
-                        index++;
+                        break;
                     }
-                    LangASTNode defaultValueExpression = null;
-                    if (index + 1 < typedargslist.children.size()) {
-                        ParseTree next = typedargslist.children.get(index + 1);
-                        if(next.getText().equals("=") && index + 2 < typedargslist.children.size()) {
-                            // parameter with default value follows next
-                            ParseTree defaultValue = typedargslist.children.get(index + 2);
-                            defaultValueExpression = mainBuilder.visit(defaultValue);
-                        }
-                    }
-                    LangSingleVariableDeclaration singleVariableDeclaration = 
-                            LangASTNodeFactory.createSingleVariableDeclaration(paramCtx.name().getText(), defaultValueExpression, paramCtx);
-                    singleVariableDeclaration.setTypeAnnotation(TypeObjectEnum.OBJECT);
-                    singleVariableDeclaration.setParameter(true);
-                    langSingleVariableDeclarations.add(singleVariableDeclaration);
+                    index++;
                 }
-            }
-
-            // Check for *args parameter
-            if (typedargslist.STAR() != null && typedargslist.tfpdef(typedargslist.tfpdef().size() - 1) != null) {
-                // Handle *args - the parameter after STAR token
-                Python3Parser.TfpdefContext varargCtx = typedargslist.tfpdef(typedargslist.tfpdef().size() - 1);
-                String varargName = varargCtx.name().getText();
-                LangSingleVariableDeclaration varargDecl = LangASTNodeFactory.createSingleVariableDeclaration(varargName, null, varargCtx);
-                varargDecl.setTypeAnnotation(TypeObjectEnum.OBJECT);
-                varargDecl.setParameter(true);
-                varargDecl.setAttribute(false);
-                varargDecl.setVarArgs(true);  // Set the varargs flag
-                langSingleVariableDeclarations.add(varargDecl);
+                LangASTNode defaultValueExpression = null;
+                if (!isArgs && !isKwargs && index + 1 < typedargslist.children.size()) {
+                    ParseTree next = typedargslist.children.get(index + 1);
+                    if(next.getText().equals("=") && index + 2 < typedargslist.children.size()) {
+                        // parameter with default value follows next
+                        ParseTree defaultValue = typedargslist.children.get(index + 2);
+                        defaultValueExpression = mainBuilder.visit(defaultValue);
+                    }
+                }
+                LangSingleVariableDeclaration singleVariableDeclaration =
+                        LangASTNodeFactory.createSingleVariableDeclaration(paramCtx.name().getText(), defaultValueExpression, paramCtx);
+                singleVariableDeclaration.setTypeAnnotation(TypeObjectEnum.OBJECT);
+                singleVariableDeclaration.setParameter(true);
+                singleVariableDeclaration.setVarArgs(isArgs);
+                singleVariableDeclaration.setKwArgs(isKwargs);
+                langSingleVariableDeclarations.add(singleVariableDeclaration);
             }
         }
 

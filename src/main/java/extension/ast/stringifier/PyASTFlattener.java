@@ -72,6 +72,8 @@ public class PyASTFlattener implements LangASTFlattener {
         builder.append("def ").append(method.getName()).append("(");
         List<LangSingleVariableDeclaration> parameters = method.getParameters();
         for (LangSingleVariableDeclaration param : parameters) {
+            if (param.isVarArgs()) builder.append("*");
+            if (param.isKwArgs()) builder.append("**");
             param.accept(this);
             if (parameters.indexOf(param) < parameters.size() - 1){
                 builder.append(", ");

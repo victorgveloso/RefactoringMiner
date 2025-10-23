@@ -16,6 +16,7 @@ public class LangSingleVariableDeclaration extends LangDeclaration {
     private LangASTNode defaultValue;
     private boolean hasTypeAnnotation;
     private boolean isVarArgs;
+    private boolean isKwArgs;
     private boolean isAttribute;
     private boolean isParameter;
     private boolean isEnumConstant;
@@ -111,11 +112,20 @@ public class LangSingleVariableDeclaration extends LangDeclaration {
         isFinal = aFinal;
     }
 
+    public boolean isKwArgs() {
+        return isKwArgs;
+    }
+
+    public void setKwArgs(boolean kwArgs) {
+        isKwArgs = kwArgs;
+    }
+
     public String toString() {
         return "LangSingleVariableDeclaration{" +
                 "langSimpleName='" + langSimpleName + '\'' +
                 "isParameter='" + isParameter + '\'' +
                 "isVarArgs='" + isVarArgs + '\'' +
+                "isKwArgs='" + isKwArgs + '\'' +
                 '}';
     }
 }
