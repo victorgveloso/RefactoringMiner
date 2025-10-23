@@ -916,4 +916,75 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159860,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "916cda3dad76d51ed63803abe26a16a0cd677f56",
+    "url": "https://github.com/dit/dit/commit/916cda3dad76d51ed63803abe26a16a0cd677f56",
+    "author": "Autoplectic",
+    "time": "10/2/13 9:03 PM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter crvs in method public total_correlation(dist, rvs, crvs, rv_names) from class algorithms.total_correlation.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable one in method public total_correlation(dist, rvs, crvs, rv_names) from class algorithms.total_correlation.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159861,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "967dd8f7aac8c44453bb14e4a710535a2b2d61f1",
+    "url": "https://github.com/dit/dit/commit/967dd8f7aac8c44453bb14e4a710535a2b2d61f1",
+    "author": "chebee7i",
+    "time": "2/11/15 1:46 AM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter union in method public expanded_samplespace(d, alphabets, union) from class algorithms.prune_expand.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159862,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "9847f9672cdcdde38332639f0b3848c2bfb5f40f",
+    "url": "https://github.com/dit/dit/commit/9847f9672cdcdde38332639f0b3848c2bfb5f40f",
+    "author": "chebee7i",
+    "time": "3/5/14 4:00 PM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter inplace in method public simplex_grid(length, depth, base, using, inplace) from class distconst.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159863,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "9a5b0f08dfc6fe74965e1576697697a71ece4934",
+    "url": "https://github.com/dit/dit/commit/9a5b0f08dfc6fe74965e1576697697a71ece4934",
+    "author": "chebee7i",
+    "time": "10/30/13 7:21 PM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public test_named_tempfile() renamed to public test_named_tempfile1() in class test_context.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]

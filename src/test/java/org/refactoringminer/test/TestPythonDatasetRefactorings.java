@@ -26,6 +26,6 @@ public class TestPythonDatasetRefactorings {
 					.or(Refactorings.ExtractVariable.getValue());
 		TestBuilder test = new TestBuilder(detector, REPOS, types);
 		RefactoringPopulator.preparePythonRefactorings(test, types);
-		test.assertExpectationsWithGitHubAPI(107, 3, 1);
+		test.assertExpectationsWithGitHubAPI(112, 3, 1);
 	}
 }
