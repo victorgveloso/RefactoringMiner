@@ -1038,4 +1038,85 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159865,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "b10ca232a490323ce73ac1a2ce4eb5e6d4f826b9",
+    "url": "https://github.com/dit/dit/commit/b10ca232a490323ce73ac1a2ce4eb5e6d4f826b9",
+    "author": "chebee7i",
+    "time": "2/11/15 2:58 AM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public test_partition_set() renamed to public test_partition_set1() in class test_misc.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159866,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "bd21854f4470d9bec9813829f85bfeb74e04a5c4",
+    "url": "https://github.com/dit/dit/commit/bd21854f4470d9bec9813829f85bfeb74e04a5c4",
+    "author": "chebee7i",
+    "time": "9/13/14 4:52 PM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public insert_frv(d, func, index) renamed to public insert_rvf(d, func, index) in class distconst.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_booleanfunctions1() renamed to public test_rvfunctions1() in class test_distcont.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_booleanfunctions2() renamed to public test_rvfunctions2() in class test_distcont.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_booleanfunctions3() renamed to public test_rvfunctions3() in class test_distcont.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_booleanfunctions4() renamed to public test_rvfunctions4() in class test_distcont.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_insert_frv1() renamed to public test_insert_rvf1() in class test_distcont.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_insert_frv2() renamed to public test_insert_rvf2() in class test_distcont.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Class",
+        "description": "Rename Class distconst.BooleanFunctions renamed to distconst.RVFunctions",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
