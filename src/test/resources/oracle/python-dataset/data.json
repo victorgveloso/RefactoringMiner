@@ -869,6 +869,50 @@
     }],
     "refDiffExecutionTime": 0
 }, {
+    "id": 1159856,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "81d24be624d6a0fb05fac14ffac02280ed0b70ad",
+    "url": "https://github.com/dit/dit/commit/81d24be624d6a0fb05fac14ffac02280ed0b70ad",
+    "author": "chebee7i",
+    "time": "10/31/13 1:46 AM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public bindcallargs_32(_fUnCtIoN_, args, kwargs) renamed to public bindcallargs_leq32(_fUnCtIoN_, args, kwargs) in class utils.bindargs.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public bindcallargs_33(_fUnCtIoN_, args, kwargs) renamed to public bindcallargs_geq33(_fUnCtIoN_, args, kwargs) in class utils.bindargs.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable out in method public test_bindcallargs1() from class test_bindargs3.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable out_ in method public test_bindcallargs1() from class test_bindargs3.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable out in method public test_bindcallargs2() from class test_bindargs3.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
     "id": 1159857,
     "repository": "https://github.com/dit/dit.git",
     "sha1": "836278b4f2277333f6668cf9da137fd5a6c4e134",
