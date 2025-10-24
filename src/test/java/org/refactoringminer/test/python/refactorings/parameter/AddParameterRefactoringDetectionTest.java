@@ -204,8 +204,9 @@ public class AddParameterRefactoringDetectionTest {
         """;
 
         String afterPythonCode = """
+        import datetime
         def log_message(message, level, timestamp=True):
-            import datetime
+            # import datetime
             if timestamp:
                 now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 print(f"[{now}] [{level}] {message}")
