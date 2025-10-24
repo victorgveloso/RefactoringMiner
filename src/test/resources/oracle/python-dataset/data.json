@@ -1119,4 +1119,76 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159867,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "be84e57e07b9416ef53f2876004b9fd4834d0321",
+    "url": "https://github.com/dit/dit/commit/be84e57e07b9416ef53f2876004b9fd4834d0321",
+    "author": "chebee7i",
+    "time": "10/28/14 12:42 AM",
+    "refactorings": [{
+        "type": "Extract Method",
+        "description": "Extract Method protected _downsample_componentL1(pmf, i, op, locs) extracted from public downsample_componentL1(pmf, depth, base) in class math.pmfops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable lower in method protected _downsample_componentL1(pmf, i, op, locs) from class math.pmfops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Parameterize Variable",
+        "description": "Parameterize Variable N to subdivisions in method public downsample_componentL1(pmf, subdivisions) from class math.pmfops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Parameterize Variable",
+        "description": "Parameterize Variable N to subdivisions in method public clamped_indexes(pmf, subdivisions) from class math.pmfops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable desired to op in method public downsample_componentL1(pmf, subdivisions) from class math.pmfops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Parameter",
+        "description": "Remove Parameter base in method public downsample(pmf, depth, base, method) from class math.pmfops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Parameter",
+        "description": "Remove Parameter base in method public downsample_componentL1(pmf, depth, base) from class math.pmfops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Parameter",
+        "description": "Remove Parameter base in method public clamped_indexes(pmf, depth, base) from class math.pmfops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter depth to subdivisions in method public downsample(pmf, subdivisions, method) from class math.pmfops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
