@@ -1235,4 +1235,78 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159868,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "bffa2c6f8274d7ea6ba3f001f413cdc93434a826",
+    "url": "https://github.com/dit/dit/commit/bffa2c6f8274d7ea6ba3f001f413cdc93434a826",
+    "author": "chebee7i",
+    "time": "4/14/14 2:57 AM",
+    "refactorings": [{
+        "type": "Remove Parameter",
+        "description": "Remove Parameter trim in method protected _init(outcomes, pmf, base, trim) from class npscalardist.ScalarDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Parameter",
+        "description": "Remove Parameter trim in method protected _init(outcomes, pmf, base, trim) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159869,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "c40a16aac0cc236bbf1f523c400b1b76bd521f95",
+    "url": "https://github.com/dit/dit/commit/c40a16aac0cc236bbf1f523c400b1b76bd521f95",
+    "author": "chebee7i",
+    "time": "1/15/13 4:49 PM",
+    "refactorings": [{
+        "type": "Extract Method",
+        "description": "Extract Method public coalesce(rvs, rv_names, extract) extracted from public marginal(rvs, rv_names) in class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter unique in method public parse_rvs(dist, rvs, rv_names, unique, sort) from class npjdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter sort in method public parse_rvs(dist, rvs, rv_names, unique, sort) from class npjdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable ctor to ctor_i in method public coalesce(rvs, rv_names, extract) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable m_event to c_event in method public coalesce(rvs, rv_names, extract) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable indexes in method public marginalize(rvs, rv_names) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
