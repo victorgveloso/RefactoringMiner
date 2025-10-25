@@ -67,7 +67,7 @@ public class MoveAndRenameAttributeRefactoringDetectionTest {
                 
                 def get_details(self):
                     # return f"{self.company_name} at {self.company_address}"
-                    return "{} at {}".format(self.company_name, self.company_address);
+                    return "{} at {}".format(self.company_name, self.company_address)
             """;
 
         String afterPythonCode = """
@@ -78,7 +78,7 @@ public class MoveAndRenameAttributeRefactoringDetectionTest {
                 
                 def get_details(self):
                     # return f"{self.company_name} at {self.location.address}"
-                    return "{} at {}".format(self.company_name, self.location.address);
+                    return "{} at {}".format(self.company_name, self.location.address)
             
             class CompanyLocation:
                 def __init__(self, address):
