@@ -58,6 +58,7 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Var
 	private String actualSignature;
 	private List<UMLOperation> nestedOperations;
 	private final Constants LANG;
+	private boolean importsTestCase;
 	
 	public UMLOperation(String name, LocationInfo locationInfo) {
 		this.locationInfo = locationInfo;
@@ -250,6 +251,10 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Var
 
 	public OperationBody getBody() {
 		return operationBody;
+	}
+
+	public void setImportsTestCase(boolean importsTestCase) {
+		this.importsTestCase = importsTestCase;
 	}
 
 	public AbstractExpression getDefaultExpression() {
@@ -1145,8 +1150,8 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Var
 	}
 
 	public boolean testMethodCheck(UMLOperation operation) { 
-		boolean thisIsTestCase = this.hasTestAnnotation() || this.name.startsWith("test");
-		boolean otherIsTestCase = operation.hasTestAnnotation() || operation.getName().startsWith("test");
+		boolean thisIsTestCase = this.hasTestAnnotation() || (this.importsTestCase && this.name.startsWith("test"));
+		boolean otherIsTestCase = operation.hasTestAnnotation() || (operation.importsTestCase && operation.getName().startsWith("test"));
 		if(thisIsTestCase && !otherIsTestCase && !operation.hasParameterizedTestAnnotation() && !operation.containsAssertion())
 			return false;
 		if(!thisIsTestCase && !this.hasParameterizedTestAnnotation() && !this.containsAssertion() && otherIsTestCase)
