@@ -93977,6 +93977,13 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
+    }, {
+        "type": "Extract Attribute",
+        "description": "Extract Attribute private tokenChannelStripe : int in class org.neo4j.io.pagecache.impl.SingleFilePageSwapper",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 4635
 }, {
