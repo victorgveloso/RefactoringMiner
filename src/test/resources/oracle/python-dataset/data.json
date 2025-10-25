@@ -1309,4 +1309,92 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159870,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "cb2f63f02d81e6decd55fda364b2215d70b3c090",
+    "url": "https://github.com/dit/dit/commit/cb2f63f02d81e6decd55fda364b2215d70b3c090",
+    "author": "Autoplectic",
+    "time": "10/30/13 8:10 PM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public test_require_keys1() renamed to public test_require_keys2() in class test_misc.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_to_string9() renamed to public test_to_string10() in class test_distribution.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_reorder1() renamed to public test_reorder2() in class test_helpers.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable nan to not_valid in method public test_validate_boolean3() from class test_params.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Change Variable Type",
+        "description": "Change Variable Type d : ScalarDistribution to d : Distribution in method public test_to_string6() from class test_distribution.__module__",
+        "comment": null,
+        "validation": "FP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Change Variable Type",
+        "description": "Change Variable Type d : Distribution to d : ScalarDistribution in method public test_to_string7() from class test_distribution.__module__",
+        "comment": null,
+        "validation": "FP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159871,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "cf4fb1b7812ea03f605c571121156326b2a2facb",
+    "url": "https://github.com/dit/dit/commit/cf4fb1b7812ea03f605c571121156326b2a2facb",
+    "author": "chebee7i",
+    "time": "10/1/13 12:20 PM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter trim in method public __init__(pmf, outcomes, alphabet, base, prng, sort, sparse, trim, validate) from class npscalardist.ScalarDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter trim in method protected _init(pmf, outcomes, alphabet, base, trim) from class npscalardist.ScalarDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter trim in method public __init__(pmf, outcomes, alphabet, base, prng, sort, sparse, trim, validate) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter trim in method protected _init(pmf, outcomes, alphabet, base, trim) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
