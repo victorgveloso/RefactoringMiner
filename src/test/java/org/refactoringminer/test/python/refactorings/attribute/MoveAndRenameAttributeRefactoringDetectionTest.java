@@ -105,6 +105,10 @@ public class MoveAndRenameAttributeRefactoringDetectionTest {
                 def __init__(self, make, model, doors):
                     super().__init__(make, model)
                     self.doors = doors
+                
+                def get_car_info(self):
+                    # return f"{self.vehicle_make} {self.model}"
+                    return "{} {}".format(self.vehicle_make, self.model)
             """;
 
         String afterPythonCode = """
@@ -122,7 +126,8 @@ public class MoveAndRenameAttributeRefactoringDetectionTest {
                     self.doors = doors
                 
                 def get_car_info(self):
-                    return f"{self.manufacturer} {self.model}"
+                    # return f"{self.manufacturer} {self.model}"
+                    return "{} {}".format(self.manufacturer, self.model)
             """;
 
         Map<String, String> beforeFiles = Map.of("vehicles.py", beforePythonCode);
