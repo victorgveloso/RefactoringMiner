@@ -405,6 +405,11 @@ public class LangVisitor implements LangASTVisitor {
             	}
             }
         }
+        else if (expression instanceof LangFieldAccess parentFieldAccess) {
+        	// This is a composite field access self.location.address
+        	LeafExpression fieldAccessExpression = new LeafExpression(cu, sourceFolder, filePath, langFieldAccess, LocationInfo.CodeElementType.FIELD_ACCESS, container);
+            variables.add(fieldAccessExpression);
+        }
         expression.accept(this);
     }
 
