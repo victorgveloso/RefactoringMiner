@@ -406,9 +406,16 @@ public class LangVisitor implements LangASTVisitor {
             }
         }
         else if (expression instanceof LangFieldAccess parentFieldAccess) {
-        	// This is a composite field access self.location.address
-        	LeafExpression fieldAccessExpression = new LeafExpression(cu, sourceFolder, filePath, langFieldAccess, LocationInfo.CodeElementType.FIELD_ACCESS, container);
-            variables.add(fieldAccessExpression);
+            // This is a composite field access self.location.address
+            // Avoid adding self.functionName as a variable
+            if (langFieldAccess.getParent() != null) {
+                String parentAsString = LangVisitor.stringify(langFieldAccess.getParent());
+                String fieldAccessAsString = LangVisitor.stringify(langFieldAccess);
+                if (!parentAsString.contains(fieldAccessAsString + "(")) {
+                    LeafExpression fieldAccessExpression = new LeafExpression(cu, sourceFolder, filePath, langFieldAccess, LocationInfo.CodeElementType.FIELD_ACCESS, container);
+                    variables.add(fieldAccessExpression);
+                }
+            }
         }
         expression.accept(this);
     }
