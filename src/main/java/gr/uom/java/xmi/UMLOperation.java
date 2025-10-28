@@ -911,7 +911,7 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Var
 	}
 
 	public boolean equalsIgnoringParentClassTypeParameterChange(UMLOperation operation, UMLTypeParameterListDiff typeParameterListDiff) {
-		if(this.className.equals(operation.className) && this.name.equals(operation.name) &&
+		if(this.name.equals(operation.name) &&
 				this.isAbstract == operation.isAbstract && equalTypeParameters(operation)) {
 			Set<UMLTypeParameterDiff> set = typeParameterListDiff.getTypeParameterDiffs();
 			UMLParameter thisReturnParameter = this.getReturnParameter();
@@ -945,8 +945,7 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Var
 	}
 
 	public boolean equalsIgnoringAbstraction(UMLOperation operation) {
-		return this.className.equals(operation.className) &&
-				this.name.equals(operation.name) &&
+		return this.name.equals(operation.name) &&
 				equalReturnParameter(operation) &&
 				this.getParameterTypeList().equals(operation.getParameterTypeList()) &&
 				equalTypeParameters(operation);
@@ -955,8 +954,7 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Var
 	public boolean equalsIgnoringVisibility(UMLOperation operation) {
 		boolean thisEmptyBody = this.getBody() == null || this.hasEmptyBody();
 		boolean otherEmptyBody = operation.getBody() == null || operation.hasEmptyBody();
-		return this.className.equals(operation.className) &&
-				this.name.equals(operation.name) &&
+		return this.name.equals(operation.name) &&
 				this.isAbstract == operation.isAbstract &&
 				thisEmptyBody == otherEmptyBody &&
 				equalReturnParameter(operation) &&
@@ -967,8 +965,7 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Var
 	public boolean equalsIgnoringNameCase(UMLOperation operation) {
 		boolean thisEmptyBody = this.getBody() == null || this.hasEmptyBody();
 		boolean otherEmptyBody = operation.getBody() == null || operation.hasEmptyBody();
-		return this.className.equals(operation.className) &&
-				this.name.equalsIgnoreCase(operation.name) &&
+		return this.name.equalsIgnoreCase(operation.name) &&
 				this.visibility.equals(operation.visibility) &&
 				this.isAbstract == operation.isAbstract &&
 				thisEmptyBody == otherEmptyBody &&
@@ -1000,8 +997,7 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Var
 	public boolean equalsIgnoringTypeParameters(UMLOperation operation) {
 		boolean thisEmptyBody = this.getBody() == null || this.hasEmptyBody();
 		boolean otherEmptyBody = operation.getBody() == null || operation.hasEmptyBody();
-		return this.className.equals(operation.className) &&
-			this.name.equals(operation.name) &&
+		return this.name.equals(operation.name) &&
 			this.visibility.equals(operation.visibility) &&
 			this.isAbstract == operation.isAbstract &&
 			thisEmptyBody == otherEmptyBody &&
