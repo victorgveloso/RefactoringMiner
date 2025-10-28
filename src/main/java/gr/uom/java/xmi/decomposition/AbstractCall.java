@@ -1263,7 +1263,7 @@ public abstract class AbstractCall extends LeafExpression {
 	}
 
 	private boolean indexCondition(String statement, int index) {
-		return (arguments().size() <= 2 && (index == 0 || this.getName().equals(LANG.ASSERT_THROWS) || "Assert".equals(this.getExpression()))) || (statement.contains(LANG.TERNARY_CONDITION) && statement.contains(LANG.TERNARY_ELSE));
+		return (arguments().size() <= 2 && (index == 0 || this.getName().equals(LANG.ASSERT_THROWS) || this.getName().startsWith("assume") || "Assert".equals(this.getExpression()))) || (statement.contains(LANG.TERNARY_CONDITION) && statement.contains(LANG.TERNARY_ELSE));
 	}
 
 	public Replacement makeReplacementForReturnedArgument(String statement) {
