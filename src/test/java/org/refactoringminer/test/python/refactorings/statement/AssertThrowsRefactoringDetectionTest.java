@@ -124,7 +124,7 @@ public class AssertThrowsRefactoringDetectionTest {
         for (Refactoring r : refactorings) {
             if (RefactoringType.ASSERT_THROWS.equals(r.getRefactoringType())) {
                 AssertThrowsRefactoring atr = (AssertThrowsRefactoring) r;
-                if (atr.getAssertThrowsCall().arguments().get(0).equals(thrownException)) {
+                if (atr.getCall().arguments().get(0).equals(thrownException)) {
                     return true;
                 }
             }
