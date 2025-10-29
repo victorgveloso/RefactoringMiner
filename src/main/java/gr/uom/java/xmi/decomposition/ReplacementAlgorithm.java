@@ -3096,8 +3096,9 @@ public class ReplacementAlgorithm {
 						}
 					}
 				}
-				if(invocationCoveringTheEntireStatement1.arguments().size() == 1 && invocationCoveringTheEntireStatement1.arguments().get(0).contains(" == ")) {
-					String assertTrueArgument = invocationCoveringTheEntireStatement1.arguments().get(0);
+				int size1 = invocationCoveringTheEntireStatement1.arguments().size();
+				if(size1 <= 2 && invocationCoveringTheEntireStatement1.arguments().get(size1 - 1).contains(" == ")) {
+					String assertTrueArgument = invocationCoveringTheEntireStatement1.arguments().get(size1 - 1);
 					String arg1 = assertTrueArgument.substring(0, assertTrueArgument.indexOf(" == "));
 					String arg2 = assertTrueArgument.substring(assertTrueArgument.indexOf(" == ") + " == ".length(), assertTrueArgument.length());
 					int index1 = invocationCoveringTheEntireStatement2.arguments().indexOf(arg1);
@@ -3110,8 +3111,8 @@ public class ReplacementAlgorithm {
 						return replacementInfo.getReplacements();
 					}
 				}
-				else if(invocationCoveringTheEntireStatement1.arguments().size() == 1 && invocationCoveringTheEntireStatement1.arguments().get(0).contains(".equals(")) {
-					String assertTrueArgument = invocationCoveringTheEntireStatement1.arguments().get(0);
+				else if(size1 <= 2 && invocationCoveringTheEntireStatement1.arguments().get(size1 - 1).contains(".equals(")) {
+					String assertTrueArgument = invocationCoveringTheEntireStatement1.arguments().get(size1 - 1);
 					String arg1 = assertTrueArgument.substring(0, assertTrueArgument.indexOf(".equals("));
 					String arg2 = assertTrueArgument.substring(assertTrueArgument.indexOf(".equals(") + ".equals(".length(), assertTrueArgument.length()-1); // -1 to exclude the closing parenthesis
 					int index1 = invocationCoveringTheEntireStatement2.arguments().indexOf(arg1);
