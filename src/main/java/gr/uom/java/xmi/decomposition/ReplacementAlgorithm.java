@@ -2231,11 +2231,11 @@ public class ReplacementAlgorithm {
 			if(!staticVSNonStatic && modelDiff != null) {
 				if(assignmentInvocationCoveringTheEntireStatement1.identicalName(assignmentInvocationCoveringTheEntireStatement2)) {
 					if(expression1 != null && expression1.length() > 0 && Character.isUpperCase(expression1.charAt(0)) &&
-							expression2 != null && expression2.startsWith(JAVA.THIS_DOT)) {
+							expression2 != null && expression2.startsWith(LANG.THIS_DOT)) {
 						staticVSNonStatic = true;
 					}
 					else if(expression2 != null && expression2.length() > 0 && Character.isUpperCase(expression2.charAt(0)) &&
-							expression1 != null && expression1.startsWith(JAVA.THIS_DOT)) {
+							expression1 != null && expression1.startsWith(LANG.THIS_DOT)) {
 						staticVSNonStatic = true;
 					}
 				}
