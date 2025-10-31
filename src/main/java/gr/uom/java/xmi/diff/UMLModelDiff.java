@@ -4844,6 +4844,10 @@ public class UMLModelDiff {
 													skip = true;
 												}
 											}
+											if(inline.getInlinedOperation().getClassName().startsWith(inline.getTargetOperationBeforeInline().getClassName() + ".") &&
+													!inlineOperationRefactoring.getInlinedOperation().getClassName().startsWith(inlineOperationRefactoring.getTargetOperationBeforeInline().getClassName() + ".")) {
+												skip = true;
+											}
 										}
 									}
 									refactorings.removeAll(refactoringsToBeRemoved);
@@ -4927,6 +4931,10 @@ public class UMLModelDiff {
 														inline.getRefactoringType().equals(RefactoringType.INLINE_OPERATION)) {
 													skip = true;
 												}
+											}
+											if(inline.getInlinedOperation().getClassName().startsWith(inline.getTargetOperationBeforeInline().getClassName() + ".") &&
+													!inlineOperationRefactoring.getInlinedOperation().getClassName().startsWith(inlineOperationRefactoring.getTargetOperationBeforeInline().getClassName() + ".")) {
+												skip = true;
 											}
 										}
 									}
