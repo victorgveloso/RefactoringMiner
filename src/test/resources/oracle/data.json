@@ -229,8 +229,8 @@
         "detectionTools": "RefactoringMiner",
         "validators": null
     }, {
-        "type": "Move Code",
-        "description": "Move Code from public testImagesInsideJavadocJar() : void to protected setUp() : void in class com.intellij.codeInsight.JavaExternalDocumentationTest",
+        "type": "Extract Fixture",
+        "description": "Extract Fixture protected setUp() : void extracted from public testImagesInsideJavadocJar() : void in class com.intellij.codeInsight.JavaExternalDocumentationTest",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
@@ -51704,15 +51704,15 @@
         "detectionTools": "RefactoringMiner",
         "validators": null
     }, {
-        "type": "Move Code",
-        "description": "Move Code from public shouldBeAbleToRestart() : void to public cleanup() : void in class org.neo4j.server.web.TestJetty9WebServer",
+        "type": "Extract Fixture",
+        "description": "Extract Fixture public cleanup() : void extracted from public shouldBeAbleToRestart() : void in class org.neo4j.server.web.TestJetty9WebServer",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
     }, {
-        "type": "Move Code",
-        "description": "Move Code from public shouldBeAbleToUsePortZero() : void to public cleanup() : void in class org.neo4j.server.web.TestJetty9WebServer",
+        "type": "Extract Fixture",
+        "description": "Extract Fixture public cleanup() : void extracted from public shouldBeAbleToUsePortZero() : void in class org.neo4j.server.web.TestJetty9WebServer",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
