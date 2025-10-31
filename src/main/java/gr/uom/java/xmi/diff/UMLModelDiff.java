@@ -4811,7 +4811,9 @@ public class UMLModelDiff {
 					Constants LANG = PathFileUtils.getLang(mapper.getContainer1().getLocationInfo().getFilePath());
 					if(removedOperationInvocations.size() > 0) {
 						for(AbstractCall removedOperationInvocation : removedOperationInvocations) {
-							if(!invocationMatchesWithAddedOperation(removedOperationInvocation, mapper.getContainer1(), mapper.getClassDiff(), mapper.getContainer2().getAllOperationInvocations()) && !setterInBuildChain(removedOperation, removedOperationInvocation, mapper.getContainer1())) {
+							if(!invocationMatchesWithAddedOperation(removedOperationInvocation, mapper.getContainer1(), mapper.getClassDiff(), mapper.getContainer2().getAllOperationInvocations()) &&
+									!setterInBuildChain(removedOperation, removedOperationInvocation, mapper.getContainer1()) &&
+									!refactoringListContainsAnotherMoveRefactoringWithTheSameRemovedOperation(removedOperation)) {
 								List<String> arguments = removedOperationInvocation.arguments();
 								List<String> parameters = removedOperation.getParameterNameList();
 								Map<String, String> parameterToArgumentMap1 = new LinkedHashMap<String, String>();
@@ -4899,7 +4901,8 @@ public class UMLModelDiff {
 					}
 					else if(removedCreations.size() > 0 && !removedOperation.isConstructor()) {
 						for(AbstractCall removedCreation : removedCreations) {
-							if(!invocationMatchesWithAddedOperation(removedCreation, mapper.getContainer1(), mapper.getClassDiff(), mapper.getContainer2().getAllOperationInvocations())) {
+							if(!invocationMatchesWithAddedOperation(removedCreation, mapper.getContainer1(), mapper.getClassDiff(), mapper.getContainer2().getAllOperationInvocations()) &&
+									!refactoringListContainsAnotherMoveRefactoringWithTheSameRemovedOperation(removedOperation)) {
 								List<String> arguments = removedCreation.arguments();
 								List<String> parameters = removedOperation.getParameterNameList();
 								Map<String, String> parameterToArgumentMap1 = new LinkedHashMap<String, String>();
@@ -7297,7 +7300,7 @@ public class UMLModelDiff {
 				return false;
 			}
 		}
-		boolean equalReturnTypeAndTypeParameter = addedOperation.equalReturnParameter(removedOperation) &&
+		boolean equalReturnTypeAndTypeParameter = (addedOperation.equalReturnParameter(removedOperation) || addedOperation.equalReturnParameterWithPluralClassType(removedOperation)) &&
 						addedOperation.getTypeParameters().equals(removedOperation.getTypeParameters());
 		boolean allMappingsAreIdentical = mapper.allMappingsAreIdentical() && !removedOperation.isGetter() && !addedOperation.isGetter();
 		if(addedOperation.getName().equals(removedOperation.getName()) &&
@@ -7433,6 +7436,18 @@ public class UMLModelDiff {
 			if(refactoring instanceof MoveOperationRefactoring) {
 				MoveOperationRefactoring moveRefactoring = (MoveOperationRefactoring)refactoring;
 				if(moveRefactoring.getMovedOperation().equals(addedOperation)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean refactoringListContainsAnotherMoveRefactoringWithTheSameRemovedOperation(UMLOperation removedOperation) {
+		for(Refactoring refactoring : refactorings) {
+			if(refactoring instanceof MoveOperationRefactoring) {
+				MoveOperationRefactoring moveRefactoring = (MoveOperationRefactoring)refactoring;
+				if(moveRefactoring.getOriginalOperation().equals(removedOperation)) {
 					return true;
 				}
 			}
