@@ -12891,27 +12891,6 @@
         "detectionTools": "RefactoringMiner",
         "validators": null
     }, {
-        "type": "Rename Variable",
-        "description": "Rename Variable lg : LevelGraph to g : GraphHopperStorage in method public testSortHighLevelFirst() : void from class com.graphhopper.storage.index.LocationIndexTreeForLevelGraphTest",
-        "comment": null,
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": null
-    }, {
-        "type": "Change Variable Type",
-        "description": "Change Variable Type lg : LevelGraph to g : GraphHopperStorage in method public testSortHighLevelFirst() : void from class com.graphhopper.storage.index.LocationIndexTreeForLevelGraphTest",
-        "comment": null,
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": null
-    }, {
-        "type": "Remove Variable Modifier",
-        "description": "Remove Variable Modifier final in variable lg : LevelGraph in method public testSortHighLevelFirst() : void from class com.graphhopper.storage.index.LocationIndexTreeForLevelGraphTest",
-        "comment": null,
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": null
-    }, {
         "type": "Inline Variable",
         "description": "Inline Variable graph : Graph in method public testCalcIf1EdgeAway() : void from class com.graphhopper.routing.AbstractRoutingAlgorithmTester",
         "comment": null,
@@ -12928,6 +12907,27 @@
     }, {
         "type": "Inline Variable",
         "description": "Inline Variable graph : Graph in method public testCalcIfEmptyWay() : void from class com.graphhopper.routing.AbstractRoutingAlgorithmTester",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable lg : LevelGraph to g : GraphHopperStorage in method public testSortHighLevelFirst() : void from class com.graphhopper.storage.index.LocationIndexTreeForLevelGraphTest",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Change Variable Type",
+        "description": "Change Variable Type lg : LevelGraph to g : GraphHopperStorage in method public testSortHighLevelFirst() : void from class com.graphhopper.storage.index.LocationIndexTreeForLevelGraphTest",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Variable Modifier",
+        "description": "Remove Variable Modifier final in variable lg : LevelGraph in method public testSortHighLevelFirst() : void from class com.graphhopper.storage.index.LocationIndexTreeForLevelGraphTest",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
