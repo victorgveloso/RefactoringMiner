@@ -2923,7 +2923,7 @@ public class ReplacementAlgorithm {
 										Replacement replacement = new MethodInvocationReplacement(
 												invocationCoveringTheEntireStatement1.actualString(), invocation2.actualString(),
 												invocationCoveringTheEntireStatement1, invocation2, ReplacementType.ASSERTION_CONVERSION);
-										//replacementInfo.addReplacement(replacement);
+										replacementInfo.addReplacement(replacement);
 										return replacementInfo.getReplacements();
 									}
 									else if(arg.contains(".")) {
@@ -2932,7 +2932,7 @@ public class ReplacementAlgorithm {
 											Replacement replacement = new MethodInvocationReplacement(
 													invocationCoveringTheEntireStatement1.actualString(), invocation2.actualString(),
 													invocationCoveringTheEntireStatement1, invocation2, ReplacementType.ASSERTION_CONVERSION);
-											//replacementInfo.addReplacement(replacement);
+											replacementInfo.addReplacement(replacement);
 											return replacementInfo.getReplacements();
 										}
 									}
@@ -2940,30 +2940,50 @@ public class ReplacementAlgorithm {
 										String before = arg.substring(0, arg.indexOf(" instanceof "));
 										String after = arg.substring(arg.indexOf(" instanceof ") + " instanceof ".length(), arg.length());
 										if(statement2.getArgumentizedString().contains(before) && statement2.getArgumentizedString().contains(after)) {
+											Replacement replacement = new MethodInvocationReplacement(
+													invocationCoveringTheEntireStatement1.actualString(), invocation2.actualString(),
+													invocationCoveringTheEntireStatement1, invocation2, ReplacementType.ASSERTION_CONVERSION);
+											replacementInfo.addReplacement(replacement);
 											return replacementInfo.getReplacements();
 										}
 									}
 									else if(arg.contains(" > 0")) {
 										String before = arg.substring(0, arg.indexOf(" > 0"));
 										if(statement2.getArgumentizedString().contains(before)) {
+											Replacement replacement = new MethodInvocationReplacement(
+													invocationCoveringTheEntireStatement1.actualString(), invocation2.actualString(),
+													invocationCoveringTheEntireStatement1, invocation2, ReplacementType.ASSERTION_CONVERSION);
+											replacementInfo.addReplacement(replacement);
 											return replacementInfo.getReplacements();
 										}
 									}
 									else if(arg.contains(" < 0")) {
 										String before = arg.substring(0, arg.indexOf(" < 0"));
 										if(statement2.getArgumentizedString().contains(before)) {
+											Replacement replacement = new MethodInvocationReplacement(
+													invocationCoveringTheEntireStatement1.actualString(), invocation2.actualString(),
+													invocationCoveringTheEntireStatement1, invocation2, ReplacementType.ASSERTION_CONVERSION);
+											replacementInfo.addReplacement(replacement);
 											return replacementInfo.getReplacements();
 										}
 									}
 									else if(arg.contains(" == 0")) {
 										String before = arg.substring(0, arg.indexOf(" == 0"));
 										if(statement2.getArgumentizedString().contains(before)) {
+											Replacement replacement = new MethodInvocationReplacement(
+													invocationCoveringTheEntireStatement1.actualString(), invocation2.actualString(),
+													invocationCoveringTheEntireStatement1, invocation2, ReplacementType.ASSERTION_CONVERSION);
+											replacementInfo.addReplacement(replacement);
 											return replacementInfo.getReplacements();
 										}
 									}
 									else if(arg.endsWith(".isEmpty()")) {
 										String before = arg.substring(0, arg.indexOf(".isEmpty()"));
 										if(statement2.getArgumentizedString().contains(before)) {
+											Replacement replacement = new MethodInvocationReplacement(
+													invocationCoveringTheEntireStatement1.actualString(), invocation2.actualString(),
+													invocationCoveringTheEntireStatement1, invocation2, ReplacementType.ASSERTION_CONVERSION);
+											replacementInfo.addReplacement(replacement);
 											return replacementInfo.getReplacements();
 										}
 									}
@@ -3029,7 +3049,7 @@ public class ReplacementAlgorithm {
 										Replacement replacement = new MethodInvocationReplacement(
 												invocation1.actualString(), invocationCoveringTheEntireStatement2.actualString(),
 												invocation1, invocationCoveringTheEntireStatement2, ReplacementType.ASSERTION_CONVERSION);
-										//replacementInfo.addReplacement(replacement);
+										replacementInfo.addReplacement(replacement);
 										return replacementInfo.getReplacements();
 									}
 									else if(arg.contains(".")) {
@@ -3038,7 +3058,7 @@ public class ReplacementAlgorithm {
 											Replacement replacement = new MethodInvocationReplacement(
 													invocation1.actualString(), invocationCoveringTheEntireStatement2.actualString(),
 													invocation1, invocationCoveringTheEntireStatement2, ReplacementType.ASSERTION_CONVERSION);
-											//replacementInfo.addReplacement(replacement);
+											replacementInfo.addReplacement(replacement);
 											return replacementInfo.getReplacements();
 										}
 									}
@@ -3046,30 +3066,50 @@ public class ReplacementAlgorithm {
 										String before = arg.substring(0, arg.indexOf(" instanceof "));
 										String after = arg.substring(arg.indexOf(" instanceof ") + " instanceof ".length(), arg.length());
 										if(statement1.getArgumentizedString().contains(before) && statement1.getArgumentizedString().contains(after)) {
+											Replacement replacement = new MethodInvocationReplacement(
+													invocation1.actualString(), invocationCoveringTheEntireStatement2.actualString(),
+													invocation1, invocationCoveringTheEntireStatement2, ReplacementType.ASSERTION_CONVERSION);
+											replacementInfo.addReplacement(replacement);
 											return replacementInfo.getReplacements();
 										}
 									}
 									else if(arg.contains(" > 0")) {
 										String before = arg.substring(0, arg.indexOf(" > 0"));
 										if(statement1.getArgumentizedString().contains(before)) {
+											Replacement replacement = new MethodInvocationReplacement(
+													invocation1.actualString(), invocationCoveringTheEntireStatement2.actualString(),
+													invocation1, invocationCoveringTheEntireStatement2, ReplacementType.ASSERTION_CONVERSION);
+											replacementInfo.addReplacement(replacement);
 											return replacementInfo.getReplacements();
 										}
 									}
 									else if(arg.contains(" < 0")) {
 										String before = arg.substring(0, arg.indexOf(" < 0"));
 										if(statement1.getArgumentizedString().contains(before)) {
+											Replacement replacement = new MethodInvocationReplacement(
+													invocation1.actualString(), invocationCoveringTheEntireStatement2.actualString(),
+													invocation1, invocationCoveringTheEntireStatement2, ReplacementType.ASSERTION_CONVERSION);
+											replacementInfo.addReplacement(replacement);
 											return replacementInfo.getReplacements();
 										}
 									}
 									else if(arg.contains(" == 0")) {
 										String before = arg.substring(0, arg.indexOf(" == 0"));
 										if(statement1.getArgumentizedString().contains(before)) {
+											Replacement replacement = new MethodInvocationReplacement(
+													invocation1.actualString(), invocationCoveringTheEntireStatement2.actualString(),
+													invocation1, invocationCoveringTheEntireStatement2, ReplacementType.ASSERTION_CONVERSION);
+											replacementInfo.addReplacement(replacement);
 											return replacementInfo.getReplacements();
 										}
 									}
 									else if(arg.endsWith(".isEmpty()")) {
 										String before = arg.substring(0, arg.indexOf(".isEmpty()"));
 										if(statement1.getArgumentizedString().contains(before)) {
+											Replacement replacement = new MethodInvocationReplacement(
+													invocation1.actualString(), invocationCoveringTheEntireStatement2.actualString(),
+													invocation1, invocationCoveringTheEntireStatement2, ReplacementType.ASSERTION_CONVERSION);
+											replacementInfo.addReplacement(replacement);
 											return replacementInfo.getReplacements();
 										}
 									}
