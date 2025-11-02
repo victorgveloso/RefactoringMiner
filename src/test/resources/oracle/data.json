@@ -52514,6 +52514,41 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
+    }, {
+        "type": "Extract And Move Method",
+        "description": "Extract And Move Method protected getHiveReadEntryHelper(mClient IMetaStoreClient, dbName String, tableName String, hiveConfigOverride Map<String,String>) : HiveReadEntry extracted from public load(key String) : HiveReadEntry in class org.apache.drill.exec.store.hive.schema.HiveSchemaFactory.TableLoader & moved to class org.apache.drill.exec.store.hive.DrillHiveMetaStoreClient",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract And Move Method",
+        "description": "Extract And Move Method protected getDatabasesHelper(mClient IMetaStoreClient) : List<String> extracted from public load(key String) : List<String> in class org.apache.drill.exec.store.hive.schema.HiveSchemaFactory.DatabaseLoader & moved to class org.apache.drill.exec.store.hive.DrillHiveMetaStoreClient",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract And Move Method",
+        "description": "Extract And Move Method protected getTableNamesHelper(mClient IMetaStoreClient, dbName String) : List<String> extracted from public load(dbName String) : List<String> in class org.apache.drill.exec.store.hive.schema.HiveSchemaFactory.TableNameLoader & moved to class org.apache.drill.exec.store.hive.DrillHiveMetaStoreClient",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter key : String to tableName : String in method protected getHiveReadEntryHelper(mClient IMetaStoreClient, dbName String, tableName String, hiveConfigOverride Map<String,String>) : HiveReadEntry from class org.apache.drill.exec.store.hive.DrillHiveMetaStoreClient",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter Modifier",
+        "description": "Add Parameter Modifier final in parameter tableName : String in method protected getHiveReadEntryHelper(mClient IMetaStoreClient, dbName String, tableName String, hiveConfigOverride Map<String,String>) : HiveReadEntry from class org.apache.drill.exec.store.hive.DrillHiveMetaStoreClient",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 2022
 }, {
