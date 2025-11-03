@@ -3525,11 +3525,11 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 					}
 				}
 				else {
-					deletedComments.addAll(parentMapper.commentListDiff.getDeletedComments());
+					populateDeletedCommentsWithAnonymousClassDiffs(deletedComments);
 				}
 			}
 			else {
-				deletedComments.addAll(parentMapper.commentListDiff.getDeletedComments());
+				populateDeletedCommentsWithAnonymousClassDiffs(deletedComments);
 			}
 			for(UMLOperationBodyMapper childMapper : parentMapper.getChildMappers()) {
 				if(childMapper.commentListDiff != null)
@@ -3546,6 +3546,18 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 				UMLJavadocDiff childJavadocDiff = new UMLJavadocDiff(parentMapper.container1.getJavadoc(), addedOperation.getJavadoc(), parentMapper.javadocDiff.get());
 				if(childJavadocDiff.getCommonTags().size() > 0 || childJavadocDiff.getCommonDocElements().size() > 0) {
 					this.javadocDiff = Optional.of(childJavadocDiff);
+				}
+			}
+		}
+	}
+
+	private void populateDeletedCommentsWithAnonymousClassDiffs(Set<UMLComment> deletedComments) {
+		deletedComments.addAll(parentMapper.commentListDiff.getDeletedComments());
+		for(UMLAnonymousClassDiff anonymousDiff : parentMapper.getAnonymousClassDiffs()) {
+			for(UMLOperationBodyMapper mapper : anonymousDiff.getOperationBodyMapperList()) {
+				if(operationInvocation != null && mapper.getContainer2().getLocationInfo().subsumes(operationInvocation.getLocationInfo())) {
+					if(mapper.commentListDiff != null)
+						deletedComments.addAll(mapper.commentListDiff.getDeletedComments());
 				}
 			}
 		}
@@ -4006,11 +4018,11 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 						}
 					}
 					else {
-						addedComments.addAll(parentMapper.commentListDiff.getAddedComments());
+						populateAddedCommentsWithAnonymousClassDiffs(addedComments);
 					}
 				}
 				else {
-					addedComments.addAll(parentMapper.commentListDiff.getAddedComments());
+					populateAddedCommentsWithAnonymousClassDiffs(addedComments);
 				}
 				for(UMLOperationBodyMapper childMapper : parentMapper.getChildMappers()) {
 					if(childMapper.commentListDiff != null)
@@ -4018,6 +4030,18 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 				}
 				this.commentListDiff = new UMLCommentListDiff(container1.getComments(), new ArrayList<>(addedComments), this);
 				checkUnmatchedStatementsBeingCommented();
+			}
+		}
+	}
+
+	private void populateAddedCommentsWithAnonymousClassDiffs(Set<UMLComment> addedComments) {
+		addedComments.addAll(parentMapper.commentListDiff.getAddedComments());
+		for(UMLAnonymousClassDiff anonymousDiff : parentMapper.getAnonymousClassDiffs()) {
+			for(UMLOperationBodyMapper mapper : anonymousDiff.getOperationBodyMapperList()) {
+				if(operationInvocation != null && mapper.getContainer1().getLocationInfo().subsumes(operationInvocation.getLocationInfo())) {
+					if(mapper.commentListDiff != null)
+						addedComments.addAll(mapper.commentListDiff.getAddedComments());
+				}
 			}
 		}
 	}
