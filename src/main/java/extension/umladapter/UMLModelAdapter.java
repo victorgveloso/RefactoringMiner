@@ -23,9 +23,13 @@ import gr.uom.java.xmi.decomposition.CompositeStatementObject;
 import gr.uom.java.xmi.decomposition.OperationBody;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
+
+import com.github.gumtreediff.tree.TreeContext;
+import com.github.gumtreediff.gen.treesitterng.PythonTreeSitterNgTreeGenerator;
 
 import static extension.umladapter.UMLAdapterUtil.extractUMLImports;
 import static extension.umladapter.processor.UMLAdapterVariableProcessor.processVariableDeclarations;
@@ -37,16 +41,20 @@ public class UMLModelAdapter {
 
     private static final Logger LOGGER = Logger.getLogger(UMLModelAdapter.class.getName());
 
-
     public UMLModelAdapter(Map<String, String> langSupportedFiles) throws IOException {
-        // Parse files to custom AST
-        Map<String, LangASTNode> langASTMap = parseLangSupportedFiles(langSupportedFiles);
-
-        // Create UML model directly from custom AST
-        umlModel = createUMLModel(langASTMap, langSupportedFiles);
+        this(langSupportedFiles, false);
     }
 
-    private Map<String, LangASTNode> parseLangSupportedFiles(Map<String, String> langSupportedFiles) throws IOException {
+    public UMLModelAdapter(Map<String, String> langSupportedFiles, boolean astDiff) throws IOException {
+        this.umlModel = new UMLModel(Collections.emptySet());
+        // Parse files to custom AST
+        Map<String, LangASTNode> langASTMap = parseLangSupportedFiles(langSupportedFiles, astDiff);
+
+        // Create UML model directly from custom AST
+        populateUMLModel(langASTMap, langSupportedFiles);
+    }
+
+    private Map<String, LangASTNode> parseLangSupportedFiles(Map<String, String> langSupportedFiles, boolean astDiff) throws IOException {
         Map<String, LangASTNode> result = new HashMap<>();
 
         for (Map.Entry<String, String> entry : langSupportedFiles.entrySet()) {
@@ -56,24 +64,25 @@ public class UMLModelAdapter {
                     entry.getValue()); // code content
            // System.out.print("AST Structure: " + ast.toString());
             result.put(entry.getKey(), ast);
+            if (astDiff) {
+                ByteArrayInputStream is = new ByteArrayInputStream(entry.getValue().getBytes());
+                TreeContext treeContext = new PythonTreeSitterNgTreeGenerator().generateFrom().stream(is);
+                this.umlModel.getTreeContextMap().put(entry.getKey(), treeContext);
+            }
         }
 
         return result;
     }
 
-    private UMLModel createUMLModel(Map<String, LangASTNode> astMap, Map<String, String> langSupportedFiles) {
-        UMLModel model = new UMLModel(Collections.emptySet());
-
+    private void populateUMLModel(Map<String, LangASTNode> astMap, Map<String, String> langSupportedFiles) {
         // Process each AST and populate the UML model
         for (Map.Entry<String, LangASTNode> entry : astMap.entrySet()) {
             String filename = entry.getKey();
             LangASTNode ast = entry.getValue();
 
             // Extract UML entities from AST
-            extractUMLEntities(ast, model, filename, langSupportedFiles.get(filename));
+            extractUMLEntities(ast, umlModel, filename, langSupportedFiles.get(filename));
         }
-
-        return model;
     }
 
     private void extractUMLEntities(LangASTNode ast, UMLModel model, String filename, String fileContent) {

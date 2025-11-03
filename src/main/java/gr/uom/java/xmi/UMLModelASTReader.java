@@ -102,7 +102,7 @@ public class UMLModelASTReader {
 
 		if (hasLangSupportedFiles) {
 			try {
-				this.umlModel = new UMLModelAdapter(fileContents).getUMLModel();
+				this.umlModel = new UMLModelAdapter(fileContents, astDiff).getUMLModel();
 			} catch (IOException e) {
 				System.err.println("Error processing language-supported files: " + e.getMessage());
 				// Fall back to Java-only processing

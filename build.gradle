@@ -98,6 +98,7 @@ dependencies {
     implementation 'io.github.java-diff-utils:java-diff-utils:4.15'
     implementation 'com.github.gumtreediff:core:3.0.0'
     implementation 'com.github.gumtreediff:gen.jdt:3.0.0'
+    implementation 'com.github.gumtreediff:gen.treesitter-ng:4.0.0-beta3'
     implementation 'org.jcommander:jcommander:2.0'
     implementation 'org.jsoup:jsoup:1.20.1'
     implementation 'com.perforce:p4java:2024.2.2695691'
