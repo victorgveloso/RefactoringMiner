@@ -30,6 +30,9 @@ public class TreeUtilFunctions {
 		if (locationInfo == null) return null;
 		int start_offset = locationInfo.getStartOffset();
 		int end_offset = locationInfo.getEndOffset();
+		if(end_offset == tree.getEndPos() + 1) {
+			end_offset = tree.getEndPos();
+		}
 		if (tree.getPos() > start_offset || tree.getEndPos() < end_offset)  return (tree.getParent() != null) ? findByLocationInfo(tree.getParent(),locationInfo) : null;
 		return findByLocationInfoNoLookAhead(tree, locationInfo);
 	}
@@ -37,6 +40,9 @@ public class TreeUtilFunctions {
 	public static Tree findByLocationInfoNoLookAhead(Tree tree, LocationInfo locationInfo) {
 		int start_offset = locationInfo.getStartOffset();
 		int end_offset = locationInfo.getEndOffset();
+		if(end_offset == tree.getEndPos() + 1) {
+			end_offset = tree.getEndPos();
+		}
 		Tree treeBetweenPositions = getTreeBetweenPositions(tree, start_offset, end_offset);
 		if (treeBetweenPositions == null) return null;
 		if (isFromType(treeBetweenPositions, Constants.METHOD_INVOCATION_ARGUMENTS))
