@@ -152,9 +152,23 @@ public class ClassDeclarationMatcher extends OptimizationAwareMatcher implements
         UMLType dstParentUML = classDiff.getNewSuperclass();
         if (srcParentUML != null && dstParentUML != null) {
             processLocationInfoProvidersRecursively(srcTree, dstTree, mappingStore, srcParentUML, dstParentUML);
+            processArgumentList(srcTree, dstTree, mappingStore, srcParentUML, dstParentUML);
+
         }
         new KeywordMatcher(Constants.TYPE_INHERITANCE_KEYWORD, EXTENDS_KEYWORD_LABEL).match(srcTree, dstTree, mappingStore);
     }
+
+    private void processArgumentList(Tree srcTree, Tree dstTree, ExtendedMultiMappingStore mappingStore, UMLType left, UMLType right) {
+        Tree srcSubTree = TreeUtilFunctions.findByLocationInfo(srcTree, left.getLocationInfo());
+        Tree dstSubTree = TreeUtilFunctions.findByLocationInfo(dstTree, right.getLocationInfo());
+        if (srcSubTree == null || dstSubTree == null) return;
+        Tree src_argumentList = srcSubTree.getParent();
+        Tree dst_argumentList = dstSubTree.getParent();
+        if (src_argumentList != null && dst_argumentList != null && src_argumentList.getType().name.equals(Constants.ARGUMENT_LIST)
+                && dst_argumentList.getType().name.equals(Constants.ARGUMENT_LIST))
+            mappingStore.addMappingRecursively(src_argumentList,dst_argumentList);
+    }
+
     private void processClassAnnotations(Tree srcTree, Tree dstTree, UMLAnnotationListDiff annotationListDiff, ExtendedMultiMappingStore mappingStore) {
         for (org.apache.commons.lang3.tuple.Pair<UMLAnnotation, UMLAnnotation> umlAnnotationUMLAnnotationPair : annotationListDiff.getCommonAnnotations())
             processLocationInfoProvidersRecursively(srcTree, dstTree, mappingStore, umlAnnotationUMLAnnotationPair.getLeft(), umlAnnotationUMLAnnotationPair.getRight());
