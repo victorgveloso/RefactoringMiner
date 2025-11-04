@@ -108,4 +108,5 @@ public class Constants {
 
     //Python Specific
     public static final String ARGUMENT_LIST = "argument_list";
+    public static final String CLASS_BLOCK = "block"; // Pouria: Might be merged with Block, I have no clue about python
 }
