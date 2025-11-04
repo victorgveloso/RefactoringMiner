@@ -52,11 +52,11 @@ public class CSharpASTFlattener implements LangASTFlattener {
     public void visit(LangTypeDeclaration type) {
         indent();
         builder.append("class ").append(type.getName());
-        List<String> superClasses = type.getSuperClassNames();
+        List<LangSimpleName> superClasses = type.getSuperClassNames();
         if (superClasses != null && !superClasses.isEmpty()) {
             builder.append(" : ");
             for (int i = 0; i < superClasses.size(); i++) {
-                builder.append(superClasses.get(i));
+                builder.append(superClasses.get(i).getIdentifier());
                 if (i < superClasses.size() - 1) builder.append(", ");
             }
         }

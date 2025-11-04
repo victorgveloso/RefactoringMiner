@@ -3,6 +3,7 @@ package extension.ast.node.declaration;
 import extension.ast.node.NodeTypeEnum;
 import extension.ast.node.PositionInfo;
 import extension.ast.node.expression.LangAssignment;
+import extension.ast.node.expression.LangSimpleName;
 import extension.ast.node.metadata.LangAnnotation;
 import extension.ast.node.metadata.comment.LangComment;
 import extension.ast.visitor.LangASTVisitor;
@@ -16,7 +17,7 @@ public class LangTypeDeclaration extends LangDeclaration {
     private String name;
     private List<LangMethodDeclaration> methods = new ArrayList<>();
     private List<LangAssignment> classLevelAssignments = new ArrayList<>();
-    private List<String> superClassNames = new ArrayList<>();
+    private List<LangSimpleName> superClassNames = new ArrayList<>();
     private Visibility visibility;
     private boolean isAbstract;
     private boolean isInterface;
@@ -183,11 +184,11 @@ public class LangTypeDeclaration extends LangDeclaration {
         this.actualSignature = actualSignature;
     }
 
-    public List<String> getSuperClassNames() {
+    public List<LangSimpleName> getSuperClassNames() {
         return superClassNames;
     }
 
-    public void setSuperClassNames(List<String> superClassNames) {
+    public void setSuperClassNames(List<LangSimpleName> superClassNames) {
         this.superClassNames = superClassNames;
     }
 

@@ -178,16 +178,17 @@ public class UMLModelAdapter {
 
         if (!typeDecl.getSuperClassNames().isEmpty()) {
             // Qualify and set the first superclass as the main superclass
-            String primarySuperClassRaw = typeDecl.getSuperClassNames().get(0);
-            String primarySuperClass = UMLAdapterUtil.resolveQualifiedTypeName(primarySuperClassRaw, imports, packageName);
-            UMLType superClassType = UMLType.extractTypeObject(primarySuperClass);
+            LangSimpleName primarySuperClassRaw = typeDecl.getSuperClassNames().get(0);
+            LocationInfo superTypeLocationInfo = new LocationInfo(sourceFolder, filepath, primarySuperClassRaw, LocationInfo.CodeElementType.TYPE);
+            String primarySuperClass = UMLAdapterUtil.resolveQualifiedTypeName(primarySuperClassRaw.getIdentifier(), imports, packageName);
+            UMLType superClassType = UMLType.extractTypeObject(primarySuperClassRaw.getIdentifier(), "[", "]", superTypeLocationInfo);
             umlClass.setSuperclass(superClassType);
             model.addGeneralization(new UMLGeneralization(umlClass, primarySuperClass));
 
             // For additional base classes, also add as generalizations (Python multiple inheritance)
             for (int i = 1; i < typeDecl.getSuperClassNames().size(); i++) {
-                String additionalSuperClassRaw = typeDecl.getSuperClassNames().get(i);
-                String additionalSuperClass = UMLAdapterUtil.resolveQualifiedTypeName(additionalSuperClassRaw, imports, packageName);
+                LangSimpleName additionalSuperClassRaw = typeDecl.getSuperClassNames().get(i);
+                String additionalSuperClass = UMLAdapterUtil.resolveQualifiedTypeName(additionalSuperClassRaw.getIdentifier(), imports, packageName);
                 // Create additional generalization for multiple inheritance support
                 model.addGeneralization(new UMLGeneralization(umlClass, additionalSuperClass));
             }

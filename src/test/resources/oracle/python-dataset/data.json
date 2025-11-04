@@ -1074,8 +1074,15 @@
         "detectionTools": "RefactoringMiner",
         "validators": null
     }, {
-        "type": "Move Attribute",
-        "description": "Move Attribute public k : Object from class algorithms.maxentropy.MaximumEntropy to public k : Object from class algorithms.maxentropy.MarginalMaximumEntropy",
+        "type": "Push Down Attribute",
+        "description": "Push Down Attribute public k : Object from class algorithms.maxentropy.MaximumEntropy to public k : Object from class algorithms.maxentropy.MarginalMaximumEntropy",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Subclass",
+        "description": "Extract Subclass algorithms.maxentropy.MarginalMaximumEntropy from class algorithms.maxentropy.MaximumEntropy",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",

@@ -72,7 +72,7 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
 
     private void setSuperClasses(Python3Parser.ClassdefContext ctx, LangTypeDeclaration typeDeclaration) {
         if (ctx.arglist() != null) {
-            List<String> superClasses = new ArrayList<>();
+            List<LangSimpleName> superClasses = new ArrayList<>();
             Python3Parser.ArglistContext arglist = ctx.arglist();
 
             for (Python3Parser.ArgumentContext argContext : arglist.argument()) {
@@ -81,7 +81,7 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
                 if (argText.contains("metaclass=")) {
                     continue; // Skip metaclass arguments
                 }
-                superClasses.add(argText);
+                superClasses.add(LangASTNodeFactory.createSimpleName(argText, argContext));
             }
             typeDeclaration.setSuperClassNames(superClasses);
         }

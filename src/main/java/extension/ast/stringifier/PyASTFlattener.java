@@ -46,13 +46,13 @@ public class PyASTFlattener implements LangASTFlattener {
 
     @Override
     public void visit(LangTypeDeclaration type) {
-        List<String> superClasses = type.getSuperClassNames();
+        List<LangSimpleName> superClasses = type.getSuperClassNames();
         builder.append("class ").append(type.getName());
         if (!superClasses.isEmpty()) {
             builder.append("(");
         }
-        for(String superClass : superClasses) {
-            builder.append(superClass).append(", ");
+        for(LangSimpleName superClass : superClasses) {
+            builder.append(superClass.getIdentifier()).append(", ");
         }
         if (!superClasses.isEmpty()) {
             builder.append(")");
