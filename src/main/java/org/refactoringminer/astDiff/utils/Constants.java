@@ -9,7 +9,7 @@ public class Constants {
 	// AST node type labels
 	public static final String ASSIGNMENT = "Assignment";
 	public static final String METHOD_INVOCATION = "MethodInvocation";
-	public static final String METHOD_DECLARATION = "function_definition";//"MethodDeclaration";
+	public static final String METHOD_DECLARATION = "MethodDeclaration";
 	public static final String ANNOTATION_TYPE_MEMBER_DECLARATION = "AnnotationTypeMemberDeclaration";
 	public static final String TRY_STATEMENT = "TryStatement";
 	public static final String CATCH_CLAUSE = "CatchClause";
