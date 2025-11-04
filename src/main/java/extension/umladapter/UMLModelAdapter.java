@@ -199,6 +199,25 @@ public class UMLModelAdapter {
         for (LangAssignment classLevelAssignment: typeDecl.getClassLevelAssignments()){
             processClassLevelAssignmentForAttribute(umlClass, classLevelAssignment, sourceFolder, filepath, fileContent);
         }
+        for (LangComment classLevelComment: typeDecl.getComments()) {
+            if (classLevelComment.isBlockComment() || classLevelComment.isDocComment()){
+                umlClass.getComments().add(new UMLComment(classLevelComment.getContent(), new LocationInfo(
+                        typeDecl.getRootCompilationUnit(),
+                        sourceFolder,
+                        filepath,
+                        classLevelComment,
+                        LocationInfo.CodeElementType.BLOCK_COMMENT
+                )));
+            } else if (classLevelComment.isLineComment()){
+                umlClass.getComments().add(new UMLComment(classLevelComment.getContent(), new LocationInfo(
+                        typeDecl.getRootCompilationUnit(),
+                        sourceFolder,
+                        filepath,
+                        classLevelComment,
+                        LocationInfo.CodeElementType.LINE_COMMENT
+                )));
+            }
+        }
 
         // Setters
         umlClass.setActualSignature(typeDecl.getActualSignature());

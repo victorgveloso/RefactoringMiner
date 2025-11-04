@@ -39,6 +39,16 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
         langTypeDeclaration.setActualSignature("class " + ctx.name().getText());
         langTypeDeclaration.setVisibility(Visibility.PUBLIC);
         langTypeDeclaration.setTopLevel(true);
+        
+        LangBlock body = (LangBlock) mainBuilder.visit(ctx.block());
+        String docstring = null;
+        if (!body.getStatements().isEmpty() &&
+                body.getStatements().get(0) instanceof LangExpressionStatement stmt &&
+                stmt.getExpression() instanceof LangStringLiteral str) {
+            docstring = str.getValue();
+            body.getStatements().remove(0);
+        }
+
         setSuperClasses(ctx, langTypeDeclaration);
 
         if (ctx.block() != null && !ctx.block().stmt().isEmpty()) {
@@ -52,7 +62,10 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
                 }
             }
         }
-
+        if (docstring != null) {
+            LangComment comment = LangASTNodeFactory.createComment(ctx, docstring, false, true);
+            langTypeDeclaration.addComment(comment);
+        }
         return langTypeDeclaration;
     }
 
