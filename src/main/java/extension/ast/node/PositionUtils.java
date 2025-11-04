@@ -50,7 +50,7 @@ public class PositionUtils {
     public static int getEndOffset(ParserRuleContext ctx) {
         Token stop = (ctx == null) ? null : ctx.getStop();
         if (stop != null) {
-            return stop.getStopIndex() + 1;  // +1 to make it exclusive end
+            return stop.getStopIndex();  // +1 is not needed
         }
         // Fallback to start offset
         return getStartOffset(ctx);
