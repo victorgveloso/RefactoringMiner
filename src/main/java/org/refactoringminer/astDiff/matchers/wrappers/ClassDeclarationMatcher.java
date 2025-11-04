@@ -175,7 +175,7 @@ public class ClassDeclarationMatcher extends OptimizationAwareMatcher implements
         Tree dst_argumentList = dstSubTree.getParent();
         if (src_argumentList != null && dst_argumentList != null && src_argumentList.getType().name.equals(Constants.ARGUMENT_LIST)
                 && dst_argumentList.getType().name.equals(Constants.ARGUMENT_LIST))
-            mappingStore.addMappingRecursively(src_argumentList,dst_argumentList);
+            mappingStore.addMapping(src_argumentList,dst_argumentList);
     }
 
     private void processClassAnnotations(Tree srcTree, Tree dstTree, UMLAnnotationListDiff annotationListDiff, ExtendedMultiMappingStore mappingStore) {
