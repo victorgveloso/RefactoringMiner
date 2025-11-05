@@ -1801,6 +1801,7 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 		this.modelDiff = classDiff != null ? classDiff.getModelDiff() : null;
 		this.container1 = container1;
 		this.container2 = container2;
+		this.LANG = PathFileUtils.getLang(container1.getLocationInfo().getFilePath());
 		this.mappings = new LinkedHashSet<AbstractCodeMapping>();
 		this.nonMappedLeavesT1 = new ArrayList<AbstractCodeFragment>();
 		this.nonMappedLeavesT2 = new ArrayList<AbstractCodeFragment>();
