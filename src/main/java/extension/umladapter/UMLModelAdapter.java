@@ -147,6 +147,12 @@ public class UMLModelAdapter {
         UMLClass moduleClass = new UMLClass(moduleName, "__module__", locationInfo, true, imports);
         moduleClass.setModule(true);
         moduleClass.setStatic(true);
+        // add compilation unit comments to moduleClass
+        for (LangComment compilationUnitLevelComment : compilationUnit.getComments()) {
+            UMLComment comment = createUMLComment(compilationUnitLevelComment, compilationUnit, sourceFolder, filepath);
+            if (comment != null)
+                moduleClass.getComments().add(comment);
+        }
 
         return moduleClass;
     }
@@ -201,23 +207,9 @@ public class UMLModelAdapter {
             processClassLevelAssignmentForAttribute(umlClass, classLevelAssignment, sourceFolder, filepath, fileContent);
         }
         for (LangComment classLevelComment: typeDecl.getComments()) {
-            if (classLevelComment.isBlockComment() || classLevelComment.isDocComment()){
-                umlClass.getComments().add(new UMLComment(classLevelComment.getContent(), new LocationInfo(
-                        typeDecl.getRootCompilationUnit(),
-                        sourceFolder,
-                        filepath,
-                        classLevelComment,
-                        LocationInfo.CodeElementType.BLOCK_COMMENT
-                )));
-            } else if (classLevelComment.isLineComment()){
-                umlClass.getComments().add(new UMLComment(classLevelComment.getContent(), new LocationInfo(
-                        typeDecl.getRootCompilationUnit(),
-                        sourceFolder,
-                        filepath,
-                        classLevelComment,
-                        LocationInfo.CodeElementType.LINE_COMMENT
-                )));
-            }
+            UMLComment comment = createUMLComment(classLevelComment, typeDecl.getRootCompilationUnit(), sourceFolder, filepath);
+            if (comment != null)
+                umlClass.getComments().add(comment);
         }
 
         // Setters
@@ -480,25 +472,33 @@ public class UMLModelAdapter {
     private static void processComments(LangMethodDeclaration methodDecl, String sourceFolder, String filePath, UMLOperation umlOperation){
         List<UMLComment> comments = new ArrayList<>();
         for (LangComment langComment: methodDecl.getComments()) {
-            if (langComment.isBlockComment() || langComment.isDocComment()){
-                comments.add(new UMLComment(langComment.getContent(), new LocationInfo(
-                        methodDecl.getRootCompilationUnit(),
-                        sourceFolder,
-                        filePath,
-                        langComment,
-                        LocationInfo.CodeElementType.BLOCK_COMMENT
-                )));
-            } else if (langComment.isLineComment()){
-                comments.add(new UMLComment(langComment.getContent(), new LocationInfo(
-                        methodDecl.getRootCompilationUnit(),
-                        sourceFolder,
-                        filePath,
-                        langComment,
-                        LocationInfo.CodeElementType.LINE_COMMENT
-                )));
-            }
+            UMLComment comment = createUMLComment(langComment, methodDecl.getRootCompilationUnit(), sourceFolder, filePath);
+            if (comment != null)
+                comments.add(comment);
         }
         umlOperation.getComments().addAll(comments);
+    }
+
+    private static UMLComment createUMLComment(LangComment langComment, LangCompilationUnit cu, String sourceFolder, String filePath) {
+        if (langComment.isBlockComment() || langComment.isDocComment()){
+            return new UMLComment(langComment.getContent(), new LocationInfo(
+                    cu,
+                    sourceFolder,
+                    filePath,
+                    langComment,
+                    LocationInfo.CodeElementType.BLOCK_COMMENT
+            ));
+        }
+        else if (langComment.isLineComment()) {
+            return new UMLComment(langComment.getContent(), new LocationInfo(
+                    cu,
+                    sourceFolder,
+                    filePath,
+                    langComment,
+                    LocationInfo.CodeElementType.LINE_COMMENT
+            ));
+        }
+        return null;
     }
 
     private static void logMethodDetails(CompositeStatementObject composite, UMLOperation container, List<VariableDeclaration> allMethodVarDecls) {
