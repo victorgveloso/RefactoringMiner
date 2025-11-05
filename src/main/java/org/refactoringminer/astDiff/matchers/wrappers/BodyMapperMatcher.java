@@ -80,17 +80,17 @@ public class BodyMapperMatcher extends OptimizationAwareMatcher {
                 return;
             if (srcStatementNode.getType().name.equals(dstStatementNode.getType().name))
                 mappingStore.addMapping(srcStatementNode,dstStatementNode);
-            if ((srcStatementNode.getType().name.equals(Constants.TRY_STATEMENT) && dstStatementNode.getType().name.equals(Constants.TRY_STATEMENT)) ||
-                    (srcStatementNode.getType().name.equals(Constants.CATCH_CLAUSE) && dstStatementNode.getType().name.equals(Constants.CATCH_CLAUSE))) {
+            if ((srcStatementNode.getType().name.equals(Constants.get().TRY_STATEMENT) && dstStatementNode.getType().name.equals(Constants.get().TRY_STATEMENT)) ||
+                    (srcStatementNode.getType().name.equals(Constants.get().CATCH_CLAUSE) && dstStatementNode.getType().name.equals(Constants.get().CATCH_CLAUSE))) {
                 matchBlocks(srcStatementNode, dstStatementNode, mappingStore);
                 new CompositeMatcher(abstractCodeMapping).match(srcStatementNode,dstStatementNode,mappingStore);
-            } else if (!srcStatementNode.getType().name.equals(Constants.BLOCK) && !dstStatementNode.getType().name.equals(Constants.BLOCK)) {
+            } else if (!srcStatementNode.getType().name.equals(Constants.get().BLOCK) && !dstStatementNode.getType().name.equals(Constants.get().BLOCK)) {
                 new CompositeMatcher(abstractCodeMapping).match(srcStatementNode, dstStatementNode, mappingStore);
             }
         }
     }
     private void matchBlocks(Tree srcStatementNode, Tree dstStatementNode, ExtendedMultiMappingStore mappingStore) {
-        String searchingType = Constants.BLOCK;
+        String searchingType = Constants.get().BLOCK;
         Pair<Tree, Tree> matched = Helpers.findPairOfType(srcStatementNode,dstStatementNode, searchingType);
         if (matched != null)
             mappingStore.addMapping(matched.first,matched.second);
@@ -127,7 +127,7 @@ public class BodyMapperMatcher extends OptimizationAwareMatcher {
             additionallyMatchedStatements(srcTree, dstTree, srcStatementNode, dstStatementNode, abstractCodeMapping, mappingStore);
         }
         optimizeVariableDeclarations(abstractCodeMapping);
-        if (!isPartOfExtractedMethod && srcStatementNode.getType().name.equals(Constants.RETURN_STATEMENT) && dstStatementNode.getType().name.equals(Constants.RETURN_STATEMENT)) {
+        if (!isPartOfExtractedMethod && srcStatementNode.getType().name.equals(Constants.get().RETURN_STATEMENT) && dstStatementNode.getType().name.equals(Constants.get().RETURN_STATEMENT)) {
             optimizationData.getSubtreeMappings().addMapping(srcStatementNode,dstStatementNode);
         }
         if (!abstractCodeMapping.getRefactorings().isEmpty()) {
