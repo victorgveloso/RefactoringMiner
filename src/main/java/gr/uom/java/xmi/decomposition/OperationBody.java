@@ -71,6 +71,7 @@ import extension.base.LangSupportedEnum;
 import static extension.umladapter.UMLModelAdapter.createUMLOperation;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.ModuleContainer;
 import gr.uom.java.xmi.UMLAnonymousClass;
 import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLComment;
@@ -86,6 +87,18 @@ public class OperationBody {
 	private VariableDeclarationContainer container;
 	private int bodyHashCode;
 	private List<UMLComment> comments;
+
+	public OperationBody(LangCompilationUnit cu, String sourceFolder, String filePath, List<LangASTNode> statements, ModuleContainer container, String fileContent) {
+		this.compositeStatement = new CompositeStatementObject(cu, sourceFolder, filePath, cu, 0, CodeElementType.BLOCK, fileContent);
+		this.compositeStatement.setOwner(container);
+		this.comments = container.getComments();
+		this.container = container;
+		this.activeVariableDeclarations = new HashMap<String, Set<VariableDeclaration>>();
+		for(LangASTNode statement : statements) {
+			processStatement(cu, sourceFolder, filePath, compositeStatement, statement, fileContent);
+		}
+		this.activeVariableDeclarations = null;
+	}
 
 	public OperationBody(LangCompilationUnit cu, String sourceFolder, String filePath, LangBlock methodBody, VariableDeclarationContainer container, List<UMLAttribute> attributes, String fileContent) {
 		this.compositeStatement = new CompositeStatementObject(cu, sourceFolder, filePath, methodBody, 0, CodeElementType.BLOCK, fileContent);

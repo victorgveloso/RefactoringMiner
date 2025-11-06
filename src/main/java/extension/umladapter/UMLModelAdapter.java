@@ -104,7 +104,7 @@ public class UMLModelAdapter {
 
     private void handleTopLevelMethods(UMLModel model, String filename, LangCompilationUnit compilationUnit, List<UMLImport> imports, String fileContent) {
         List<LangMethodDeclaration> topLevelMethods = compilationUnit.getMethods();
-        UMLClass moduleClass = createModuleClass(compilationUnit, filename, imports);
+        UMLClass moduleClass = createModuleClass(compilationUnit, filename, imports, fileContent);
 
         moduleClass.setActualSignature(moduleClass.getName());
         moduleClass.setVisibility(Visibility.PUBLIC);
@@ -136,7 +136,7 @@ public class UMLModelAdapter {
         model.addClass(moduleClass);
     }
 
-    private UMLClass createModuleClass(LangCompilationUnit compilationUnit, String filename, List<UMLImport> imports) {
+    private UMLClass createModuleClass(LangCompilationUnit compilationUnit, String filename, List<UMLImport> imports, String fileContent) {
         String moduleName = UMLAdapterUtil.extractModuleName(filename);
         String sourceFolder = UMLAdapterUtil.extractSourceFolder(filename);
         String filepath = UMLAdapterUtil.extractFilePath(filename);
@@ -147,6 +147,19 @@ public class UMLModelAdapter {
         UMLClass moduleClass = new UMLClass(moduleName, "__module__", locationInfo, true, imports);
         moduleClass.setModule(true);
         moduleClass.setStatic(true);
+        if (compilationUnit.getStatements().size() > 0) {
+            ModuleContainer moduleContainer = new ModuleContainer(locationInfo, moduleClass.getName());
+            OperationBody opBody = new OperationBody(
+                    compilationUnit,
+                    sourceFolder,
+                    filepath,
+                    compilationUnit.getStatements(),
+                    moduleContainer,
+                    fileContent
+            );
+        	moduleContainer.addStatements(opBody.getCompositeStatement().getStatements());
+        	moduleClass.setContainer(moduleContainer);
+        }
         // add compilation unit comments to moduleClass
         for (LangComment compilationUnitLevelComment : compilationUnit.getComments()) {
             UMLComment comment = createUMLComment(compilationUnitLevelComment, compilationUnit, sourceFolder, filepath);
