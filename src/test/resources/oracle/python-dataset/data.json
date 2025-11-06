@@ -1418,4 +1418,132 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159872,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "d68d2f5d0cc7a5520081ef2eb67db816c2bf9550",
+    "url": "https://github.com/dit/dit/commit/d68d2f5d0cc7a5520081ef2eb67db816c2bf9550",
+    "author": "chebee7i",
+    "time": "10/6/13 3:05 AM",
+    "refactorings": [{
+        "type": "Rename Variable",
+        "description": "Rename Variable alphabet to sample_space in method public DtoSD(dist, extract) from class convert.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter alphabet to sample_space in method public __init__(outcomes, pmf, sample_space, base, prng, sort, sparse, trim, validate) from class npscalardist.ScalarDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter alphabet to sample_space in method protected _init(outcomes, pmf, sample_space, base, trim) from class npscalardist.ScalarDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter alphabet to sample_space in method public __init__(outcomes, pmf, sample_space, base, prng, sort, sparse, trim, validate) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter alphabet to sample_space in method protected _init(outcomes, pmf, sample_space, base, trim) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter alphabet to sample_space in method protected _make_distribution(outcomes, pmf, base, sample_space, prng, sparse) from class npdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter alphabet to sample_space in method public reorder(outcomes, pmf, sample_space, index) from class helpers.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Method",
+        "description": "Move Method public reorder(pmf, outcomes, alphabet, index) from class npscalardist.__module__ to public reorder(outcomes, pmf, sample_space, index) from class helpers.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public reorder(pmf, outcomes, alphabet, product, index, method) renamed to public reorder_cp(pmf, outcomes, alphabet, product, index, method) in class helpers.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Reorder Parameter",
+        "description": "Reorder Parameter [pmf, outcomes, alphabet, base, prng, sort, sparse, trim, validate] to [outcomes, pmf, sample_space, base, prng, sort, sparse, trim, validate] in method public __init__(outcomes, pmf, sample_space, base, prng, sort, sparse, trim, validate) from class npscalardist.ScalarDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Reorder Parameter",
+        "description": "Reorder Parameter [pmf, outcomes, alphabet, base, trim] to [outcomes, pmf, sample_space, base, trim] in method protected _init(outcomes, pmf, sample_space, base, trim) from class npscalardist.ScalarDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Reorder Parameter",
+        "description": "Reorder Parameter [pmf, outcomes, alphabet, base, prng, sparse] to [outcomes, pmf, sample_space, base, prng, sparse] in method protected _make_distribution(outcomes, pmf, sample_space, base, prng, sparse) from class npscalardist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Reorder Parameter",
+        "description": "Reorder Parameter [pmf, outcomes, alphabet, base, prng, sort, sparse, trim, validate] to [outcomes, pmf, sample_space, base, prng, sort, sparse, trim, validate] in method public __init__(outcomes, pmf, sample_space, base, prng, sort, sparse, trim, validate) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Reorder Parameter",
+        "description": "Reorder Parameter [pmf, outcomes, alphabet, base, trim] to [outcomes, pmf, sample_space, base, trim] in method protected _init(outcomes, pmf, sample_space, base, trim) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Reorder Parameter",
+        "description": "Reorder Parameter [pmf, outcomes, base, alphabet, prng, sparse] to [outcomes, pmf, base, sample_space, prng, sparse] in method protected _make_distribution(outcomes, pmf, base, sample_space, prng, sparse) from class npdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Reorder Parameter",
+        "description": "Reorder Parameter [pmf, outcomes, alphabet, index] to [outcomes, pmf, sample_space, index] in method public reorder(outcomes, pmf, sample_space, index) from class helpers.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter alphabet to sample_space in method protected _make_distribution(outcomes, pmf, sample_space, base, prng, sparse) from class npscalardist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "PyRef",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
