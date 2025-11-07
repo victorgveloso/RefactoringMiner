@@ -1542,7 +1542,7 @@
         "description": "Rename Parameter alphabet to sample_space in method protected _make_distribution(outcomes, pmf, sample_space, base, prng, sparse) from class npscalardist.__module__",
         "comment": null,
         "validation": "TP",
-        "detectionTools": "PyRef",
+        "detectionTools": "PyRef, RefactoringMiner",
         "validators": null
     }],
     "refDiffExecutionTime": 0
