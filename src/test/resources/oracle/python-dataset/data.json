@@ -1583,4 +1583,27 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159874,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "dc7b005397e143ab773380671295dbb7234a1d02",
+    "url": "https://github.com/dit/dit/commit/dc7b005397e143ab773380671295dbb7234a1d02",
+    "author": "chebee7i",
+    "time": "1/12/13 6:04 PM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public is_event(event) renamed to public has_event(event, null) in class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter null in method public has_event(event, null) from class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
