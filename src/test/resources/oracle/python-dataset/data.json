@@ -1814,4 +1814,34 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159881,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "f57c023ff4a9cb26a307d1cb44b87c8e76bcf588",
+    "url": "https://github.com/dit/dit/commit/f57c023ff4a9cb26a307d1cb44b87c8e76bcf588",
+    "author": "Autoplectic",
+    "time": "11/18/13 1:12 PM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public entropy2(dist, rvs, crvs, rv_names) renamed to public entropy(dist, rvs, crvs, rv_names) in class algorithms.entropy2.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public common_information(dist, rvs, crvs, rv_names) renamed to public gk_common_information(dist, rvs, crvs, rv_names) in class algorithms.gk_common_information.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Class",
+        "description": "Move Class algorithms.common_info.__module__ moved to algorithms.gk_common_information.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
