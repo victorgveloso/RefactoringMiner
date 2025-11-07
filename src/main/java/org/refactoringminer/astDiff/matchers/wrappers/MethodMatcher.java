@@ -48,6 +48,13 @@ public class MethodMatcher extends BodyMapperMatcher{
         if (umlOperationBodyMapper.getOperation1() != null & umlOperationBodyMapper.getOperation2() != null) {
             srcOperationNode = TreeUtilFunctions.findByLocationInfo(srcTree, umlOperationBodyMapper.getOperation1().getLocationInfo());
             dstOperationNode = TreeUtilFunctions.findByLocationInfo(dstTree, umlOperationBodyMapper.getOperation2().getLocationInfo());
+            //handle case where class has only a single function and the locationInfo of function declaration is identical with the class block in Python
+            if (srcOperationNode.getType().name.equals("block")) {
+                srcOperationNode = TreeUtilFunctions.findByLocationInfo(srcTree, umlOperationBodyMapper.getOperation1().getLocationInfo(), Constants.get().METHOD_DECLARATION);
+            }
+            if (dstOperationNode.getType().name.equals("block")) {
+                dstOperationNode = TreeUtilFunctions.findByLocationInfo(dstTree, umlOperationBodyMapper.getOperation2().getLocationInfo(), Constants.get().METHOD_DECLARATION);
+            }
             if (srcOperationNode == null || !(srcOperationNode.getType().name.equals(Constants.get().METHOD_DECLARATION) || srcOperationNode.getType().name.equals(Constants.get().ANNOTATION_TYPE_MEMBER_DECLARATION))) return;
             if (dstOperationNode == null || !(dstOperationNode.getType().name.equals(Constants.get().METHOD_DECLARATION) || dstOperationNode.getType().name.equals(Constants.get().ANNOTATION_TYPE_MEMBER_DECLARATION))) return;
             new JavaDocMatcher(optimizationData, umlOperationBodyMapper.getOperation1().getJavadoc(), umlOperationBodyMapper.getOperation2().getJavadoc(), umlOperationBodyMapper.getJavadocDiff())
