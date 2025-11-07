@@ -1183,8 +1183,7 @@ public class StringBasedHeuristics {
 							counter++;
 						}
 						SplitVariableReplacement split = new SplitVariableReplacement(diff1, splitVariables);
-						boolean skip = splitVariables.size() == 1 && splitVariables.contains(diff2);
-						if(!split.getSplitVariables().contains(split.getBefore()) && concat.toString().equals(diff2) && !skip) {
+						if(!split.getSplitVariables().contains(split.getBefore()) && concat.toString().equals(diff2)) {
 							replacementInfo.getReplacements().add(split);
 							return true;
 						}
