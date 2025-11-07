@@ -34,6 +34,6 @@ public class TestPythonDatasetRefactorings {
 					.or(Refactorings.MoveAndRenameMethod.getValue());
 		TestBuilder test = new TestBuilder(detector, REPOS, types);
 		RefactoringPopulator.preparePythonRefactorings(test, types);
-		test.assertExpectationsWithGitHubAPI(207, 4, 1);
+		test.assertExpectationsWithGitHubAPI(209, 4, 1);
 	}
 }

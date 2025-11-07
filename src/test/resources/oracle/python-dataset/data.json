@@ -1791,4 +1791,27 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159880,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "f4942930b973cf481c56f472d92eaaed9979c075",
+    "url": "https://github.com/dit/dit/commit/f4942930b973cf481c56f472d92eaaed9979c075",
+    "author": "chebee7i",
+    "time": "1/15/13 5:47 PM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter show_mask in method public to_string(digits, exact, tol, show_mask, str_events) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter show_mask in method public prepare_string(dist, digits, exact, tol, show_mask, str_events) from class distribution.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
