@@ -1546,4 +1546,20 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159873,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "da97ce945830a040932449caa262b6fe73ee04e1",
+    "url": "https://github.com/dit/dit/commit/da97ce945830a040932449caa262b6fe73ee04e1",
+    "author": "chebee7i",
+    "time": "10/24/14 12:03 PM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter method in method public projections(pmf, depth, base, method) from class math.pmfops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
