@@ -1844,4 +1844,83 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159882,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "fc1952ad8d675e930bbd58757a1c5a4eeadaa269",
+    "url": "https://github.com/dit/dit/commit/fc1952ad8d675e930bbd58757a1c5a4eeadaa269",
+    "author": "chebee7i",
+    "time": "4/13/14 9:26 PM",
+    "refactorings": [{
+        "type": "Extract Class",
+        "description": "Extract Class samplespace.BaseSampleSpace from class samplespace.SampleSpace",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract And Move Method",
+        "description": "Extract And Move Method public __init__(samplespace) extracted from public __init__(samplespace, product) in class samplespace.SampleSpace & moved to class samplespace.BaseSampleSpace",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Method",
+        "description": "Move Method public sort() from class samplespace.SampleSpace to public sort() from class samplespace.BaseSampleSpace",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Method",
+        "description": "Move Method public __contains__(item) from class samplespace.SampleSpace to public __contains__(item) from class samplespace.BaseSampleSpace",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Method",
+        "description": "Move Method public __iter__() from class samplespace.SampleSpace to public __iter__() from class samplespace.BaseSampleSpace",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Method",
+        "description": "Move Method public index(item) from class samplespace.SampleSpace to public index(item) from class samplespace.BaseSampleSpace",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Method",
+        "description": "Move Method public __len__() from class samplespace.SampleSpace to public __len__() from class samplespace.BaseSampleSpace",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Attribute",
+        "description": "Move Attribute public _samplespace : Object from class samplespace.SampleSpace to public _samplespace : Object from class samplespace.BaseSampleSpace",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Attribute",
+        "description": "Move Attribute public _length : Object from class samplespace.SampleSpace to public _length : Object from class samplespace.BaseSampleSpace",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Attribute",
+        "description": "Move Attribute public _set : Object from class samplespace.SampleSpace to public _set : Object from class samplespace.BaseSampleSpace",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]

@@ -32,9 +32,11 @@ public class TestPythonDatasetRefactorings {
 					.or(Refactorings.RenameAttribute.getValue())
 					.or(Refactorings.MoveMethod.getValue())
 					.or(Refactorings.MoveAndRenameMethod.getValue())
-					.or(Refactorings.MoveClass.getValue());
+					.or(Refactorings.MoveClass.getValue())
+					.or(Refactorings.ExtractClass.getValue())
+					.or(Refactorings.ExtractAndMoveMethod.getValue());
 		TestBuilder test = new TestBuilder(detector, REPOS, types);
 		RefactoringPopulator.preparePythonRefactorings(test, types);
-		test.assertExpectationsWithGitHubAPI(212, 4, 1);
+		test.assertExpectationsWithGitHubAPI(222, 4, 1);
 	}
 }
