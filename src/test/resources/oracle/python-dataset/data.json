@@ -1923,4 +1923,48 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159883,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "475506c753c8419090603a63642ee7aae61904e2",
+    "url": "https://github.com/dit/dit/commit/475506c753c8419090603a63642ee7aae61904e2",
+    "author": "chebee7i",
+    "time": "12/17/13 10:53 PM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public get_modecode(line) renamed to public get_mci(line) in class tools.sphinxext.lexers.IPythonConsoleLexer",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public specialized_doctest(decorator, input_lines, found, submitted) renamed to public custom_doctest(decorator, input_lines, found, submitted) in class tools.sphinxext.ipython_directive.EmbeddedSphinxShell",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Method",
+        "description": "Move Method public str_to_array(s) from class tools.sphinxext.ipython_directive.__module__ to public str_to_array(s) from class tools.sphinxext.custom_doctests.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable ipy : IPyLexer to ipy2 : IPyLexer in module tools.sphinxext.ipython_console_highlighting.__module__ from class tools.sphinxext.ipython_console_highlighting.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Class Annotation",
+        "description": "Add Class Annotation @skip_doctest in class tools.sphinxext.lexers.IPythonConsoleLexer",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
