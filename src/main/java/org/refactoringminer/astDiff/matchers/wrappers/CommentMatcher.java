@@ -42,6 +42,8 @@ public class CommentMatcher extends OptimizationAwareMatcher {
                     Tree dstComment = TreeUtilFunctions.findByLocationInfo(dst, commonComment.getRight().getLocationInfo(), Constants.get().LINE_COMMENT, Constants.get().BLOCK_COMMENT);
                     if (srcComment != null && dstComment != null) {
                         mappingStore.addMapping(srcComment, dstComment);
+                        if (TreeUtilFunctions.areBothFromThisType(srcComment.getParent(), dstComment.getParent(), Constants.get().EXPRESSION_STATEMENT))
+                            mappingStore.addMapping(srcComment.getParent(), dstComment.getParent());
                     }
                 }
             }

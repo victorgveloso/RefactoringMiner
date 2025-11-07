@@ -26,6 +26,7 @@ public class Constants {
 			TYPE_DECLARATION = "class_definition";
 			TYPE_DECLARATION_KIND = "class";
 			BLOCK_COMMENT = "string";
+            EXPRESSION_STATEMENT = "expression_statement";
 		}
 		else {
 			// Java values as default
@@ -35,6 +36,7 @@ public class Constants {
 			TYPE_DECLARATION = "TypeDeclaration";
 			TYPE_DECLARATION_KIND = "TYPE_DECLARATION_KIND";
 			BLOCK_COMMENT = "BlockComment";
+            EXPRESSION_STATEMENT = "ExpressionStatement";
 		}
 	}
 
@@ -55,7 +57,7 @@ public class Constants {
     public final String LABELED_STATEMENT = "LabeledStatement";
     public final String SIMPLE_NAME;
     public final String VARIABLE_DECLARATION_STATEMENT = "VariableDeclarationStatement";
-    public final String EXPRESSION_STATEMENT = "ExpressionStatement";
+    public final String EXPRESSION_STATEMENT;
     public final String MODIFIER = "Modifier";
     public final String IMPORT_DECLARATION;
     public final String PRIMITIVE_TYPE = "PrimitiveType";
