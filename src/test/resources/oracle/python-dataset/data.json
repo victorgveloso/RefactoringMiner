@@ -1659,4 +1659,34 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159877,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "eadee5879ee83cdfa18a8c857f75778b463570b1",
+    "url": "https://github.com/dit/dit/commit/eadee5879ee83cdfa18a8c857f75778b463570b1",
+    "author": "chebee7i",
+    "time": "1/11/13 1:27 AM",
+    "refactorings": [{
+        "type": "Rename Parameter",
+        "description": "Rename Parameter logbase to base in method public __init__(pmf, events, eventspace, base, validate, sort, sparse) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter logbase to base in method protected _init(pmf, events, eventspace, base) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter logbase to base in method protected _make_distribution(pmf, events, eventspace, base, sparse) from class npdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
