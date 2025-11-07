@@ -96,9 +96,7 @@ public class UMLModelAdapter {
             }
 
             // Handle top level methods
-            if (compilationUnit.getMethods() != null && !compilationUnit.getMethods().isEmpty()){
-                handleTopLevelMethods(model, filename, compilationUnit, imports, fileContent);
-            }
+            handleTopLevelMethods(model, filename, compilationUnit, imports, fileContent);
         }
     }
 
