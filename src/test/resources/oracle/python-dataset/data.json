@@ -1643,4 +1643,20 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159876,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "e9e208dde1371bd75ac501e44bff6dbc7f1baf36",
+    "url": "https://github.com/dit/dit/commit/e9e208dde1371bd75ac501e44bff6dbc7f1baf36",
+    "author": "chebee7i",
+    "time": "10/1/13 3:45 PM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter merge in method public mixture_distribution(dists, weights, merge) from class distconst.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
