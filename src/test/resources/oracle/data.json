@@ -31468,6 +31468,13 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
+    }, {
+        "type": "Move Code",
+        "description": "Move Code from private writePidFile(event SpringApplicationEvent) : void in class org.springframework.boot.actuate.system.ApplicationPidFileWriter to public getValue(event SpringApplicationEvent) : String in class org.springframework.boot.actuate.system.ApplicationPidFileWriter.SpringProperty",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 1721
 }, {
@@ -51040,6 +51047,13 @@
     }, {
         "type": "Inline Variable",
         "description": "Inline Variable securityGroupsCopy : ListWithAutoConstructFlag<String> in method public setSecurityGroups(securityGroups java.util.Collection<String>) : void from class com.amazonaws.services.elasticfilesystem.model.ModifyMountTargetSecurityGroupsRequest",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Code",
+        "description": "Move Code from public setUp() : void in class com.amazonaws.util.EC2MetadataUtilsTest to public start() : void in class com.amazonaws.util.EC2MetadataUtilsServer",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
@@ -74743,6 +74757,13 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
+    }, {
+        "type": "Move Code",
+        "description": "Move Code from private doSaveContext() : void in class org.springframework.security.web.context.SaveContextOnUpdateOrErrorResponseWrapper to private doOnResponseCommitted() : void in class org.springframework.security.web.context.OnCommittedResponseWrapper",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 4803
 }, {
@@ -75217,6 +75238,13 @@
     }, {
         "type": "Move And Rename Attribute",
         "description": "Move And Rename Attribute private disableSaveOnResponseCommitted : boolean renamed to private disableOnCommitted : boolean and moved from class org.springframework.security.web.context.SaveContextOnUpdateOrErrorResponseWrapper to class org.springframework.security.web.context.OnCommittedResponseWrapper",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Code",
+        "description": "Move Code from private doSaveContext() : void in class org.springframework.security.web.context.SaveContextOnUpdateOrErrorResponseWrapper to private doOnResponseCommitted() : void in class org.springframework.security.web.context.OnCommittedResponseWrapper",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
@@ -87601,6 +87629,13 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
+    }, {
+        "type": "Move Code",
+        "description": "Move Code from private cleanup() : void in class org.terasology.engine.TerasologyEngine to public shutdown() : void in class org.terasology.engine.subsystem.common.ConfigurationSubsystem",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 2583
 }, {
@@ -87928,6 +87963,41 @@
     }, {
         "type": "Extract And Move Method",
         "description": "Extract And Move Method public getHighlight(x float, y float) : Highlight extracted from public getHighlightByTouchPoint(x float, y float) : Highlight in class com.github.mikephil.charting.charts.BarChart & moved to class com.github.mikephil.charting.highlight.BarHighlighter",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Code",
+        "description": "Move Code from protected getHighlight(xPosition double, yPosition double) : Highlight in class com.github.mikephil.charting.charts.BarChart to protected getXIndex(x float) : int in class com.github.mikephil.charting.highlight.BarHighlighter",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Code",
+        "description": "Move Code from protected getHighlight(xPosition double, yPosition double) : Highlight in class com.github.mikephil.charting.charts.BarChart to protected getDataSetIndex(xIndex int, x float, y float) : int in class com.github.mikephil.charting.highlight.BarHighlighter",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Code",
+        "description": "Move Code from public getHighlightByTouchPoint(x float, y float) : Highlight in class com.github.mikephil.charting.charts.BarChart to protected getBase(x float) : float in class com.github.mikephil.charting.highlight.BarHighlighter",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Code",
+        "description": "Move Code from protected getHighlight(xPosition double, yPosition double) : Highlight in class com.github.mikephil.charting.charts.BarChart to protected getClosestStackIndex(e BarEntry, value float) : int in class com.github.mikephil.charting.highlight.BarHighlighter",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Code",
+        "description": "Move Code from protected getHighlight(xPosition double, yPosition double) : Highlight in class com.github.mikephil.charting.charts.BarChart to protected getBase(x float) : float in class com.github.mikephil.charting.highlight.BarHighlighter",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
@@ -93063,6 +93133,13 @@
     }, {
         "type": "Remove Parameter",
         "description": "Remove Parameter maxNrIterations : int in method public runIterations(maxNrIterations int) : int from class org.neo4j.graphalgo.impl.centrality.EigenvectorCentralityPower",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Code",
+        "description": "Move Code from public runIterations(maxNrIterations int) : int in class org.neo4j.graphalgo.impl.centrality.EigenvectorCentralityPower to protected changeSignBasedOnFirstNoneZeroValue() : void in class org.neo4j.graphalgo.impl.centrality.EigenvectorCentralityBase",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
