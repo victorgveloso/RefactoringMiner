@@ -1606,4 +1606,41 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159875,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "dd4861edf062998c0b2027553c966a43ea4e18b3",
+    "url": "https://github.com/dit/dit/commit/dd4861edf062998c0b2027553c966a43ea4e18b3",
+    "author": "chebee7i",
+    "time": "10/17/13 11:56 PM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter alpha in method public random_scalar_distribution(n, alpha, prng) from class distconst.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter alpha in method public random_distribution(outcome_length, alphabet_size, alpha, prng) from class distconst.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable alpha in method public random_scalar_distribution(n, alpha, prng) from class distconst.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable alpha in method public random_distribution(outcome_length, alphabet_size, alpha, prng) from class distconst.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
