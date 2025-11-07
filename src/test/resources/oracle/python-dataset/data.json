@@ -1712,4 +1712,83 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159879,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "f2e62708e84f2de78e957032b5d1cb5544a6320e",
+    "url": "https://github.com/dit/dit/commit/f2e62708e84f2de78e957032b5d1cb5544a6320e",
+    "author": "chebee7i",
+    "time": "5/30/13 3:22 PM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter func in method public exp(x, func) from class math.ops.__module__.exp_func",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter func in method public log(x, func) from class math.ops.__module__.log_func",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter x to ops in method public set_add(ops) from class math.ops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter x to ops in method public set_add_inplace(ops) from class math.ops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter x to ops in method public set_add_reduce(ops) from class math.ops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Parameter",
+        "description": "Remove Parameter y in method public add(x, y) from class math.ops.LogOperations",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Parameter",
+        "description": "Remove Parameter y in method public add_inplace(x, y) from class math.ops.LogOperations",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move And Rename Method",
+        "description": "Move And Rename Method public add(x, y) from class math.ops.LogOperations to public set_add(ops) from class math.ops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move And Rename Method",
+        "description": "Move And Rename Method public add_reduce(x) from class math.ops.LogOperations to public set_add_reduce(ops) from class math.ops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move And Rename Method",
+        "description": "Move And Rename Method public add_inplace(x, y) from class math.ops.LogOperations to public set_add_inplace(ops) from class math.ops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
