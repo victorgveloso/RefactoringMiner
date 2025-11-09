@@ -2027,4 +2027,20 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159886,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "419143187cf53ad9f9539af4e48fb44bc2c51366",
+    "url": "https://github.com/dit/dit/commit/419143187cf53ad9f9539af4e48fb44bc2c51366",
+    "author": "chebee7i",
+    "time": "1/12/13 6:06 PM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public is_numeric() renamed to public is_numerical() in class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
