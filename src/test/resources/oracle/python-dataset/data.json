@@ -1967,4 +1967,34 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159884,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "46aaa81889c17726ef21befa9a037353d7bb1bd3",
+    "url": "https://github.com/dit/dit/commit/46aaa81889c17726ef21befa9a037353d7bb1bd3",
+    "author": "chebee7i",
+    "time": "5/31/13 12:51 AM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter copy in method public set_base(base, copy) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter prng in method protected _make_distribution(pmf, outcomes, alphabet, base, prng, sparse) from class npdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter copy in method public set_base(base, copy) from class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
