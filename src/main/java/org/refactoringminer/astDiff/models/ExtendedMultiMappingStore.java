@@ -260,6 +260,10 @@ public class ExtendedMultiMappingStore extends MultiMappingStore implements Iter
         // find the most parent of both, and compare
         Tree t1_p = TreeUtilFunctions.getParentUntilType(t1, Constants.get().COMPILATION_UNIT);
         Tree t2_p = TreeUtilFunctions.getParentUntilType(t2, Constants.get().COMPILATION_UNIT);
+        if(t1_p == null && t2_p == null) {
+            t1_p = TreeUtilFunctions.getParentUntilType(t1, Constants.get().MODULE);
+            t2_p = TreeUtilFunctions.getParentUntilType(t2, Constants.get().MODULE);
+        }
         return Objects.equals(t1_p, t2_p);
     }
 }

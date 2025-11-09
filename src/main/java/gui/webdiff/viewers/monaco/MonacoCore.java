@@ -302,6 +302,10 @@ public class MonacoCore {
     	Constants.setFilePath(astDiff.getSrcPath());
         Tree t_outerP = TreeUtilFunctions.getParentUntilType(t, Constants.get().COMPILATION_UNIT);
         Tree dst_outerP = TreeUtilFunctions.getParentUntilType(dst, Constants.get().COMPILATION_UNIT);
+        if(t_outerP == null && dst_outerP == null) {
+            t_outerP = TreeUtilFunctions.getParentUntilType(t, Constants.get().MODULE);
+            dst_outerP = TreeUtilFunctions.getParentUntilType(dst, Constants.get().MODULE);
+        }
         if (t_outerP == null || dst_outerP == null) {
             return false;
         }

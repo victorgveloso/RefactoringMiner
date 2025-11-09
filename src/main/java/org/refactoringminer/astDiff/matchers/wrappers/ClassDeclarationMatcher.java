@@ -49,6 +49,8 @@ public class ClassDeclarationMatcher extends OptimizationAwareMatcher implements
             AST_type = Constants.get().ANNOTATION_TYPE_DECLARATION;
         else if (classDiff.getOriginalClass().isRecord())
             AST_type = Constants.get().RECORD_DECLARATION;
+        else if (classDiff.getOriginalClass().isModule())
+        	AST_type = Constants.get().MODULE;
         Tree srcTypeDeclaration = TreeUtilFunctions.findByLocationInfo(srcTree,classDiff.getOriginalClass().getLocationInfo(),AST_type);
         Tree dstTypeDeclaration = TreeUtilFunctions.findByLocationInfo(dstTree,classDiff.getNextClass().getLocationInfo(),AST_type);
         if (srcTypeDeclaration == null || dstTypeDeclaration == null) return;
