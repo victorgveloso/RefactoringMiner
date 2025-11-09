@@ -38,6 +38,6 @@ public class TestPythonDatasetRefactorings {
 					.or(Refactorings.AddClassAnnotation.getValue());
 		TestBuilder test = new TestBuilder(detector, REPOS, types);
 		RefactoringPopulator.preparePythonRefactorings(test, types);
-		test.assertExpectationsWithGitHubAPI(230, 4, 1);
+		test.assertExpectationsWithGitHubAPI(233, 4, 1);
 	}
 }

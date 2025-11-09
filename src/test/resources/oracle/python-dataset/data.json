@@ -1997,4 +1997,34 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159885,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "439b356ec279f85d1814c6197949c68d48924af4",
+    "url": "https://github.com/dit/dit/commit/439b356ec279f85d1814c6197949c68d48924af4",
+    "author": "chebee7i",
+    "time": "2/11/15 1:49 AM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public linear_constraints(pmf, n_variables, n_symbols, m) renamed to public marginal_constraints(pmf, n_variables, n_symbols, m) in class algorithms.maxentropy.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public linear_constraint_rank(dist, m) renamed to public marginal_constraint_rank(dist, m) in class algorithms.maxentropy.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter jitter in method public maxent_dists(dist, k_max, jitter, show_progress) from class algorithms.maxentropy.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
