@@ -2136,4 +2136,43 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159888,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "23b596ed402b8a2ae513a05623bcb6527c8481d8",
+    "url": "https://github.com/dit/dit/commit/23b596ed402b8a2ae513a05623bcb6527c8481d8",
+    "author": "chebee7i",
+    "time": "2/8/15 10:13 PM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter symbols in method public __init__(lookup, n_variables, n_symbols, symbols) from class algorithms.maxentropy.PhantomArray",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public constraint_rank(dist, m) renamed to public linear_constraint_rank(dist, m) in class algorithms.maxentropy.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159889,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "21cc4f498f9caf00f02acf2336881a0015b9bb95",
+    "url": "https://github.com/dit/dit/commit/21cc4f498f9caf00f02acf2336881a0015b9bb95",
+    "author": "chebee7i",
+    "time": "1/15/13 7:29 PM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public is_heterogenous() renamed to public is_homogeneous() in class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
