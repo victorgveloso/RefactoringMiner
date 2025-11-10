@@ -28,6 +28,7 @@ public class TestPythonDatasetRefactorings {
 					.or(Refactorings.InlineVariable.getValue())
 					.or(Refactorings.MoveAttribute.getValue())
 					.or(Refactorings.PushDownAttribute.getValue())
+					.or(Refactorings.PushDownMethod.getValue())
 					.or(Refactorings.ExtractSubclass.getValue())
 					.or(Refactorings.RenameAttribute.getValue())
 					.or(Refactorings.MoveMethod.getValue())
@@ -38,6 +39,6 @@ public class TestPythonDatasetRefactorings {
 					.or(Refactorings.AddClassAnnotation.getValue());
 		TestBuilder test = new TestBuilder(detector, REPOS, types);
 		RefactoringPopulator.preparePythonRefactorings(test, types);
-		test.assertExpectationsWithGitHubAPI(234, 4, 1);
+		test.assertExpectationsWithGitHubAPI(246, 4, 1);
 	}
 }

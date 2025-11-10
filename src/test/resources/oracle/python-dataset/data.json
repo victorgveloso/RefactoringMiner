@@ -2043,4 +2043,97 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159887,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "3d557425fd7bf400ae31c02890335c5330a6c04c",
+    "url": "https://github.com/dit/dit/commit/3d557425fd7bf400ae31c02890335c5330a6c04c",
+    "author": "Autoplectic",
+    "time": "1/5/18 5:56 PM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public test_1(dist) renamed to public test_nimi_1(dist) in class test_necessary_intrinsic_mutual_information.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Method",
+        "description": "Extract Method public lower_intrinsic_mutual_information_directed(dist, X, Y, Z, rv_mode) extracted from public lower_intrinsic_mutual_information(dist, rvs, crvs, rv_mode) in class multivariate.secret_key_agreement.trivial_bounds.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Method",
+        "description": "Extract Method public necessary_intrinsic_mutual_information_directed(dist, X, Y, Z, rv_mode, bound_u, bound_v) extracted from public necessary_intrinsic_mutual_information(dist, rvs, crvs, rv_mode, bound_u, bound_v) in class multivariate.secret_key_agreement.skar_lower_bounds.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable first : NecessaryIntrinsicMutualInformation to nimi : NecessaryIntrinsicMutualInformation in method public necessary_intrinsic_mutual_information_directed(dist, X, Y, Z, rv_mode, bound_u, bound_v) from class multivariate.secret_key_agreement.skar_lower_bounds.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable A to value in method public necessary_intrinsic_mutual_information_directed(dist, X, Y, Z, rv_mode, bound_u, bound_v) from class multivariate.secret_key_agreement.skar_lower_bounds.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable B to value in method public necessary_intrinsic_mutual_information_directed(dist, X, Y, Z, rv_mode, bound_u, bound_v) from class multivariate.secret_key_agreement.skar_lower_bounds.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Change Variable Type",
+        "description": "Change Variable Type first : NecessaryIntrinsicMutualInformation to first in method public necessary_intrinsic_mutual_information(dist, rvs, crvs, rv_mode, bound_u, bound_v) from class multivariate.secret_key_agreement.skar_lower_bounds.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Change Variable Type",
+        "description": "Change Variable Type second : NecessaryIntrinsicMutualInformation to second in method public necessary_intrinsic_mutual_information(dist, rvs, crvs, rv_mode, bound_u, bound_v) from class multivariate.secret_key_agreement.skar_lower_bounds.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move And Rename Class",
+        "description": "Move And Rename Class multivariate.secret_key_agreement.necessary_intrinsic_mutual_information.NecessaryIntrinsicMutualInformation moved and renamed to multivariate.secret_key_agreement.skar_lower_bounds.BaseSKARLowerBounds",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move And Rename Class",
+        "description": "Move And Rename Class multivariate.secret_key_agreement.necessary_intrinsic_mutual_information.__module__ moved and renamed to multivariate.secret_key_agreement.skar_lower_bounds.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Subclass",
+        "description": "Extract Subclass multivariate.secret_key_agreement.skar_lower_bounds.NecessaryIntrinsicMutualInformation from class multivariate.secret_key_agreement.necessary_intrinsic_mutual_information.NecessaryIntrinsicMutualInformation",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Push Down Method",
+        "description": "Push Down Method public objective(x) from class multivariate.secret_key_agreement.necessary_intrinsic_mutual_information.NecessaryIntrinsicMutualInformation to public objective(x) from class multivariate.secret_key_agreement.skar_lower_bounds.NecessaryIntrinsicMutualInformation",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
