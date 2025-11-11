@@ -8669,6 +8669,20 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable pageDownstreamContext : PageDownstreamContext to executionContext : DownstreamExecutionSubContext in method private nodeOperation(request DistributedResultRequest, listener ActionListener<DistributedResultResponse>, retry int) : void from class io.crate.executor.transport.distributed.TransportDistributedResultAction",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Change Variable Type",
+        "description": "Change Variable Type pageDownstreamContext : PageDownstreamContext to executionContext : DownstreamExecutionSubContext in method private nodeOperation(request DistributedResultRequest, listener ActionListener<DistributedResultResponse>, retry int) : void from class io.crate.executor.transport.distributed.TransportDistributedResultAction",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 0
 }, {
@@ -65505,6 +65519,13 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable r : ObjectFilter.FilterResult to entry : ObjectFilter.FilterResult in method private listInternal() : List from class org.infinispan.query.dsl.embedded.impl.BaseEmbeddedQuery",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 6361
 }, {
@@ -110775,6 +110796,20 @@
     }, {
         "type": "Inline Variable",
         "description": "Inline Variable path : Path in method private packValue(obj Object) : void from class org.neo4j.ndp.messaging.v1.PackStreamMessageFormatV1.Writer",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable i : int to item : short in method public pack(obj Object) : void from class org.neo4j.ndp.messaging.v1.Neo4jPack.Packer",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Change Variable Type",
+        "description": "Change Variable Type i : int to item : short in method public pack(obj Object) : void from class org.neo4j.ndp.messaging.v1.Neo4jPack.Packer",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
