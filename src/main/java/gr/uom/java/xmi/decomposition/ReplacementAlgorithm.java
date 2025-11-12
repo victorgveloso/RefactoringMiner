@@ -1277,6 +1277,75 @@ public class ReplacementAlgorithm {
 				return replacementInfo.getReplacements();
 			}
 		}
+		if(!statement1.getComprehensions().isEmpty() && !statement2.getComprehensions().isEmpty() &&
+				statement1.getComprehensions().size() == statement2.getComprehensions().size() &&
+				statement1.comprehensionCoveringEntireFragment() != null && statement2.comprehensionCoveringEntireFragment() != null &&
+				statement1.getAnonymousClassDeclarations().isEmpty() && statement2.getAnonymousClassDeclarations().isEmpty()) {
+			ComprehensionExpression comprehension1 = statement1.getComprehensions().get(0);
+			ComprehensionExpression comprehension2 = statement2.getComprehensions().get(0);
+			int matches = 0;
+			int exactMatches = 0;
+			if(comprehension1.getExpression() != null && comprehension2.getExpression() != null) {
+				if(comprehension1.equalExpression(comprehension2)) {
+					matches++;
+					exactMatches++;
+				}
+				else {
+					for(Replacement r : replacementInfo.getReplacements()) {
+						if(r.getBefore().equals(comprehension1.getExpression().getString()) || r.getAfter().equals(comprehension2.getExpression().getString())) {
+							matches++;
+							break;
+						}
+					}
+				}
+			}
+			if(comprehension1.getKeyExpression() != null && comprehension2.getKeyExpression() != null) {
+				if(comprehension1.equalKeyExpression(comprehension2)) {
+					matches++;
+					exactMatches++;
+				}
+				else {
+					for(Replacement r : replacementInfo.getReplacements()) {
+						if(r.getBefore().equals(comprehension1.getKeyExpression().getString()) || r.getAfter().equals(comprehension2.getKeyExpression().getString())) {
+							matches++;
+							break;
+						}
+					}
+				}
+			}
+			if(comprehension1.getValueExpression() != null && comprehension2.getValueExpression() != null) {
+				if(comprehension1.equalValueExpression(comprehension2)) {
+					matches++;
+					exactMatches++;
+				}
+				else {
+					for(Replacement r : replacementInfo.getReplacements()) {
+						if(r.getBefore().equals(comprehension1.getValueExpression().getString()) || r.getAfter().equals(comprehension2.getValueExpression().getString())) {
+							matches++;
+							break;
+						}
+					}
+				}
+			}
+			if(matches > 0) {
+				if(comprehension1.equalClauses(comprehension2)) {
+					return replacementInfo.getReplacements();
+				}
+				else if(comprehension1.getClauses().size() == comprehension2.getClauses().size()) {
+					List<ComprehensionClause> clauses1 = comprehension1.getClauses();
+					List<ComprehensionClause> clauses2 = comprehension2.getClauses();
+					for(int i=0; i<clauses1.size(); i++) {
+						ComprehensionClause clause1 = clauses1.get(i);
+						ComprehensionClause clause2 = clauses2.get(i);
+						if(!clause1.getString().equals(clause2.getString())) {
+							Replacement r = new Replacement(clause1.getString(), clause2.getString(), ReplacementType.COMPREHENSION_CLAUSE);
+							replacementInfo.addReplacement(r);
+						}
+					}
+					return replacementInfo.getReplacements();
+				}
+			}
+		}
 		if(!statement1.getString().endsWith("=true;\n") && !statement1.getString().endsWith("=false;\n")) {
 			findReplacements(booleanLiterals1, arguments2, replacementInfo, ReplacementType.BOOLEAN_REPLACED_WITH_ARGUMENT, container1, container2, classDiff);
 			findReplacements(booleanLiterals1, variables2, replacementInfo, ReplacementType.BOOLEAN_REPLACED_WITH_VARIABLE, container1, container2, classDiff);

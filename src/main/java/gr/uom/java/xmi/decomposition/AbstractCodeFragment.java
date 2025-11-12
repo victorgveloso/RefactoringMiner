@@ -253,6 +253,21 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 				}
 			}
 		}
+		for(ComprehensionExpression expression : getComprehensions()) {
+			if(expression.getString().equals(s)) {
+				if(!locations.contains(expression.getLocationInfo()))
+					matchingExpressions.add(expression.asLeafExpression());
+				locations.add(expression.getLocationInfo());
+			}
+			for(ComprehensionClause clause : expression.getClauses()) {
+				if(clause.getString().equals(s)) {
+					if(!locations.contains(clause.getLocationInfo()))
+						matchingExpressions.add(clause.asLeafExpression());
+					locations.add(clause.getLocationInfo());
+				}
+				matchingExpressions.addAll(clause.findExpression(s));
+			}
+		}
 		for(LeafExpression expression : getArguments()) {
 			if(expression.getString().equals(s)) {
 				if(!locations.contains(expression.getLocationInfo()))
@@ -545,6 +560,30 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 			else if(ternary.getLocationInfo().getCodeElementType().equals(CodeElementType.SUPER_CONSTRUCTOR_INVOCATION) ||
 					ternary.getLocationInfo().getCodeElementType().equals(CodeElementType.CONSTRUCTOR_INVOCATION)) {
 				return ternary;
+			}
+		}
+		return null;
+	}
+
+	public ComprehensionExpression comprehensionCoveringEntireFragment() {
+		String statement = getString();
+		for(ComprehensionExpression comprehension : getComprehensions()) {
+			String methodInvocation = comprehension.getString();
+			if((methodInvocation + LANG.STATEMENT_TERMINATION).equals(statement) || methodInvocation.equals(statement) || ("!" + methodInvocation).equals(statement)) {
+				return comprehension;
+			}
+			else if((LANG.RETURN_SPACE + methodInvocation + LANG.STATEMENT_TERMINATION).equals(statement)) {
+				return comprehension;
+			}
+			else if(isCastExpressionCoveringEntireFragment(methodInvocation)) {
+				return comprehension;
+			}
+			else if(expressionIsTheInitializerOfVariableDeclaration(methodInvocation)) {
+				return comprehension;
+			}
+			else if(comprehension.getLocationInfo().getCodeElementType().equals(CodeElementType.SUPER_CONSTRUCTOR_INVOCATION) ||
+					comprehension.getLocationInfo().getCodeElementType().equals(CodeElementType.CONSTRUCTOR_INVOCATION)) {
+				return comprehension;
 			}
 		}
 		return null;

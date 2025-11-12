@@ -13,10 +13,10 @@ import gr.uom.java.xmi.LocationInfo.CodeElementType;
 
 public class ComprehensionClause extends LeafExpression {
 	private List<AbstractExpression> targets;
-    private AbstractExpression iterable;
-    private List<AbstractExpression> filters;
-    
-    public ComprehensionClause(LangCompilationUnit cu, String sourceFolder, String filePath, LangComprehensionClause clause, VariableDeclarationContainer container, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String fileContent) {
+	private AbstractExpression iterable;
+	private List<AbstractExpression> filters;
+
+	public ComprehensionClause(LangCompilationUnit cu, String sourceFolder, String filePath, LangComprehensionClause clause, VariableDeclarationContainer container, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String fileContent) {
 		super(cu, sourceFolder, filePath, clause, CodeElementType.COMPREHENSION_CLAUSE, container);
 		this.targets = new ArrayList<>();
 		for(LangASTNode target : clause.getTargets()) {
@@ -29,5 +29,9 @@ public class ComprehensionClause extends LeafExpression {
 		for(LangASTNode filter : clause.getFilters()) {
 			filters.add(new AbstractExpression(cu, sourceFolder, filePath, filter, CodeElementType.COMPREHENSION_CLAUSE_FILTER, container, activeVariableDeclarations, fileContent));
 		}
-    }
+	}
+
+	public LeafExpression asLeafExpression() {
+		return new LeafExpression(getString(), getLocationInfo());
+	}
 }

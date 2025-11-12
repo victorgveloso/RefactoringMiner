@@ -33,4 +33,68 @@ public class ComprehensionExpression extends LeafExpression {
 			clauses.add(new ComprehensionClause(cu, sourceFolder, filePath, clause, container, activeVariableDeclarations, fileContent));
 		}
 	}
+
+	public AbstractExpression getExpression() {
+		return expression;
+	}
+
+	public AbstractExpression getKeyExpression() {
+		return keyExpression;
+	}
+
+	public AbstractExpression getValueExpression() {
+		return valueExpression;
+	}
+
+	public List<ComprehensionClause> getClauses() {
+		return clauses;
+	}
+
+	public LeafExpression asLeafExpression() {
+		return new LeafExpression(getString(), getLocationInfo());
+	}
+
+	public boolean equalExpression(ComprehensionExpression other) {
+		if(this.expression != null && other.expression != null) {
+			return this.expression.getString().equals(other.expression.getString());
+		}
+		else if(this.expression == null && other.expression == null) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean equalKeyExpression(ComprehensionExpression other) {
+		if(this.keyExpression != null && other.keyExpression != null) {
+			return this.keyExpression.getString().equals(other.keyExpression.getString());
+		}
+		else if(this.keyExpression == null && other.keyExpression == null) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean equalValueExpression(ComprehensionExpression other) {
+		if(this.valueExpression != null && other.valueExpression != null) {
+			return this.valueExpression.getString().equals(other.valueExpression.getString());
+		}
+		else if(this.valueExpression == null && other.valueExpression == null) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean equalClauses(ComprehensionExpression other) {
+		if(this.clauses.size() == other.clauses.size()) {
+			int identical = 0;
+			for(int i=0; i<this.clauses.size(); i++) {
+				if(this.clauses.get(i).getString().equals(other.clauses.get(i).getString())) {
+					identical++;
+				}
+			}
+			return identical == this.clauses.size();
+		}
+		return false;
+		
+	}
 }
