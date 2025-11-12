@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @Isolated
 public class ExtractVariableRefactoringDetectionTest {
@@ -141,7 +140,6 @@ public class ExtractVariableRefactoringDetectionTest {
                 "greeting", "f\"Hello {name}\"", "build_message", "MessageBuilder");
     }
 
-    @Disabled // TODO Support list comprehension
     @Test
     void detectsExtractVariable_ListComprehension() throws Exception {
         String beforePythonCode = """
