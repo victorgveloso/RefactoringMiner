@@ -49,6 +49,7 @@ public class AbstractExpression extends AbstractCodeFragment {
 	private List<LeafExpression> patternInstanceofExpressions;
 	private List<TernaryOperatorExpression> ternaryOperatorExpressions;
 	private List<LambdaExpressionObject> lambdas;
+	private List<ComprehensionExpression> comprehensions;
 
 	public AbstractExpression(LangCompilationUnit cu, String sourceFolder, String filePath, LangASTNode langASTNode, CodeElementType codeElementType, VariableDeclarationContainer container, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String fileContent) {
 		super(new LocationInfo(cu, sourceFolder, filePath, langASTNode, codeElementType));
@@ -81,6 +82,7 @@ public class AbstractExpression extends AbstractCodeFragment {
 		this.patternInstanceofExpressions = visitor.getPatternInstanceofExpressions();
 		this.ternaryOperatorExpressions = visitor.getTernaryOperatorExpressions();
 		this.lambdas = visitor.getLambdas();
+		this.comprehensions = visitor.getComprehensions();
 		this.expression = LangVisitor.stringify(langASTNode);
 		this.owner = null;
 		this.lambdaOwner = null;
@@ -117,6 +119,7 @@ public class AbstractExpression extends AbstractCodeFragment {
 		this.patternInstanceofExpressions = visitor.getPatternInstanceofExpressions();
 		this.ternaryOperatorExpressions = visitor.getTernaryOperatorExpressions();
 		this.lambdas = visitor.getLambdas();
+		this.comprehensions = visitor.getComprehensions();
 		this.expression = stringify(expression);
     	this.owner = null;
     	this.lambdaOwner = null;
@@ -302,6 +305,11 @@ public class AbstractExpression extends AbstractCodeFragment {
 	@Override
 	public List<LambdaExpressionObject> getLambdas() {
 		return lambdas;
+	}
+
+	@Override
+	public List<ComprehensionExpression> getComprehensions() {
+		return comprehensions;
 	}
 
 	public VariableDeclaration searchVariableDeclaration(String variableName) {

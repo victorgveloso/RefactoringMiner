@@ -191,6 +191,11 @@ public class LeafExpression extends AbstractCodeFragment {
 	}
 
 	@Override
+	public List<ComprehensionExpression> getComprehensions() {
+		return Collections.emptyList();
+	}
+
+	@Override
 	public VariableDeclaration searchVariableDeclaration(String variableName) {
 		return null;
 	}

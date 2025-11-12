@@ -54,6 +54,7 @@ public class StatementObject extends AbstractStatement {
 	private List<LeafExpression> patternInstanceofExpressions;
 	private List<TernaryOperatorExpression> ternaryOperatorExpressions;
 	private List<LambdaExpressionObject> lambdas;
+	private List<ComprehensionExpression> comprehensions;
 
 	public StatementObject(LangCompilationUnit cu, String sourceFolder, String filePath,
 			LangASTNode statement, int depth, CodeElementType codeElementType,
@@ -90,6 +91,7 @@ public class StatementObject extends AbstractStatement {
 		this.patternInstanceofExpressions = visitor.getPatternInstanceofExpressions();
 		this.ternaryOperatorExpressions = visitor.getTernaryOperatorExpressions();
 		this.lambdas = visitor.getLambdas();
+		this.comprehensions = visitor.getComprehensions();
 		this.statement = LangVisitor.stringify(statement);
 		int start = statement.getStartChar();
 		int end = start + statement.getLength();
@@ -131,6 +133,7 @@ public class StatementObject extends AbstractStatement {
 		this.patternInstanceofExpressions = visitor.getPatternInstanceofExpressions();
 		this.ternaryOperatorExpressions = visitor.getTernaryOperatorExpressions();
 		this.lambdas = visitor.getLambdas();
+		this.comprehensions = visitor.getComprehensions();
 		int start = statement.getStartPosition();
 		int end = start + statement.getLength();
 		if(this.anonymousClassDeclarations.isEmpty()) {
@@ -351,6 +354,11 @@ public class StatementObject extends AbstractStatement {
 	@Override
 	public List<LambdaExpressionObject> getLambdas() {
 		return lambdas;
+	}
+
+	@Override
+	public List<ComprehensionExpression> getComprehensions() {
+		return comprehensions;
 	}
 
 	@Override

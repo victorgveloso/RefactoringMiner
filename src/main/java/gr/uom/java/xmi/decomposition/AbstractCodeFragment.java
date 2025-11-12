@@ -90,6 +90,7 @@ public abstract class AbstractCodeFragment implements LocationInfoProvider {
 	public abstract List<LeafExpression> getPatternInstanceofExpressions();
 	public abstract List<TernaryOperatorExpression> getTernaryOperatorExpressions();
 	public abstract List<LambdaExpressionObject> getLambdas();
+	public abstract List<ComprehensionExpression> getComprehensions();
 	public abstract VariableDeclaration searchVariableDeclaration(String variableName);
 	public abstract VariableDeclaration getVariableDeclaration(String variableName);
 

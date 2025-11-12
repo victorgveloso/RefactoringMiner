@@ -514,6 +514,15 @@ public class CompositeStatementObject extends AbstractStatement {
 	}
 
 	@Override
+	public List<ComprehensionExpression> getComprehensions() {
+		List<ComprehensionExpression> comprehensions = new ArrayList<ComprehensionExpression>();
+		for(AbstractExpression expression : expressionList) {
+			comprehensions.addAll(expression.getComprehensions());
+		}
+		return comprehensions;
+	}
+
+	@Override
 	public List<AbstractCall> getCreations() {
 		List<AbstractCall> list = new ArrayList<>();
 		for(AbstractExpression expression : expressionList) {
