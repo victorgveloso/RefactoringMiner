@@ -643,15 +643,17 @@ public class PyASTFlattener implements LangASTFlattener {
             // Dictionary comprehension: {key: value for ...}
             if (langComprehensionExpression.getKeyExpression() != null) {
                 langComprehensionExpression.getKeyExpression().accept(this);
+                builder.append(": ");
             }
-            builder.append(": ");
             if (langComprehensionExpression.getValueExpression() != null) {
                 langComprehensionExpression.getValueExpression().accept(this);
+                builder.append(" ");
             }
         } else {
             // List, set or generator: expr for ...
             if (langComprehensionExpression.getExpression() != null) {
                 langComprehensionExpression.getExpression().accept(this);
+                builder.append(" ");
             }
         }
 
@@ -669,7 +671,7 @@ public class PyASTFlattener implements LangASTFlattener {
 
     @Override
     public void visit(LangComprehensionExpression.LangComprehensionClause langComprehensionClause) {
-        builder.append(" for ");
+        builder.append("for ");
 
         if (langComprehensionClause.isAsync()) {
             builder.append("async ");

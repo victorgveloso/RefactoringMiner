@@ -59,6 +59,7 @@ public class LangVisitor implements LangASTVisitor {
 	private List<LeafExpression> patternInstanceofExpressions = new ArrayList<>();
     private List<TernaryOperatorExpression> ternaryOperatorExpressions = new ArrayList<TernaryOperatorExpression>();
     private List<LambdaExpressionObject> lambdas = new ArrayList<LambdaExpressionObject>();
+    private List<ComprehensionExpression> comprehensions = new ArrayList<ComprehensionExpression>();
     private DefaultMutableTreeNode root = new DefaultMutableTreeNode();
     private DefaultMutableTreeNode current = root;
     private Map<String, Set<VariableDeclaration>> activeVariableDeclarations; 
@@ -747,6 +748,8 @@ public class LangVisitor implements LangASTVisitor {
 
     @Override
     public void visit(LangComprehensionExpression langComprehensionExpression) {
+    	ComprehensionExpression comprehensionExpression = new ComprehensionExpression(cu, sourceFolder, filePath,
+                langComprehensionExpression, container, activeVariableDeclarations, fileContent);
         if (langComprehensionExpression.getExpression() != null) {
             langComprehensionExpression.getExpression().accept(this);
         }
@@ -760,6 +763,7 @@ public class LangVisitor implements LangASTVisitor {
         for (LangComprehensionExpression.LangComprehensionClause clause : langComprehensionExpression.getClauses()) {
             clause.accept(this);
         }
+        comprehensions.add(comprehensionExpression);
     }
 
     @Override
@@ -906,7 +910,11 @@ public class LangVisitor implements LangASTVisitor {
         return lambdas;
     }
 
-    public DefaultMutableTreeNode getRoot() {
+    public List<ComprehensionExpression> getComprehensions() {
+		return comprehensions;
+	}
+
+	public DefaultMutableTreeNode getRoot() {
         return root;
     }
 
