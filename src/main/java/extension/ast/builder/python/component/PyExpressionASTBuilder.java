@@ -8,6 +8,7 @@ import extension.ast.node.OperatorEnum;
 import extension.ast.node.expression.*;
 import extension.ast.node.literal.LangDictionaryLiteral;
 import extension.ast.node.literal.LangStringLiteral;
+import extension.ast.node.literal.LangTupleLiteral;
 import extension.base.lang.python.Python3Parser;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -45,66 +46,53 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
             return LangASTNodeFactory.createBooleanLiteral(ctx, Boolean.parseBoolean(ctx.getText()));
         }
 
-        // Handle empty dictionary
+        // Handle dictionary literals and dictionary comprehensions
         if (ctx.OPEN_BRACE() != null && ctx.CLOSE_BRACE() != null) {
             if (ctx.dictorsetmaker() == null) {
                 // Empty dictionary
                 return LangASTNodeFactory.createDictionaryLiteral(ctx);
             } else {
-                // Non-empty dictionary
-                LangDictionaryLiteral dict = LangASTNodeFactory.createDictionaryLiteral(ctx);
-                Python3Parser.DictorsetmakerContext dictCtx = ctx.dictorsetmaker();
-                if (dictCtx.test().size() % 2 == 0) {
-                    for (int i = 0; i < dictCtx.test().size(); i += 2) {
-                        LangASTNode key = mainBuilder.visit(dictCtx.test(i));
-                        LangASTNode value = mainBuilder.visit(dictCtx.test(i + 1));
-                        dict.addEntry(key, value);
-                    }
-                }
-                return dict;
+                return mainBuilder.visit(ctx.dictorsetmaker());
             }
         }
 
-        // Handle list literals
+        // Handle list literals and list comprehensions
         if (ctx.getText() != null && PyASTBuilderUtil.isListLiteral(ctx)) {
-            List<LangASTNode> elements = new ArrayList<>();
             if (ctx.testlist_comp() != null) {
-                for (Python3Parser.TestContext testCtx : ctx.testlist_comp().test()) {
-                    LangASTNode element = mainBuilder.visit(testCtx);
-                    if (element != null) {
-                        elements.add(element);
-                    } else {
-                        System.err.println("Warning: Skipping null list element at: " + testCtx.getText());
-                    }
-                }
+                return mainBuilder.visit(ctx.testlist_comp());
+            } else {
+                // Empty list
+                return LangASTNodeFactory.createListLiteral(ctx, new ArrayList<>());
             }
-            return LangASTNodeFactory.createListLiteral(ctx, elements);
         }
 
-        // Handle parenthesized expressions and tuples
+        // Handle parenthesized expressions, tuples, and generator expressions
         if (ctx.OPEN_PAREN() != null && ctx.CLOSE_PAREN() != null) {
             if (ctx.testlist_comp() != null) {
-                List<Python3Parser.TestContext> tests = ctx.testlist_comp().test();
-                if (tests != null && !tests.isEmpty()) {
-                    if (tests.size() == 1) {
-                        LangASTNode innerExpression = mainBuilder.visit(tests.get(0));
-                        return LangASTNodeFactory.createParenthesizedExpression(ctx, innerExpression);
+
+                LangASTNode result = mainBuilder.visit(ctx.testlist_comp());
+
+                // If the result is a comprehension, then it is a generator expression
+                if (result instanceof LangComprehensionExpression comprehension) {
+                    comprehension.setKind(LangComprehensionExpression.LangComprehensionKind.GENERATOR);
+                    return comprehension;
+                }
+
+                // Otherwise handle as regular parenthesized expression or tuple
+                if (result instanceof LangTupleLiteral tuple) {
+                    if (tuple.getElements().size() == 1) {
+                        // Single element in parentheses, create parenthesized expression
+                        return LangASTNodeFactory.createParenthesizedExpression(ctx, tuple.getElements().get(0));
                     } else {
-                        // Tuple literal
-                        List<LangASTNode> elements = new ArrayList<>();
-                        for (Python3Parser.TestContext testCtx : tests) {
-                            LangASTNode element = mainBuilder.visit(testCtx);
-                            if (element != null) {
-                                elements.add(element);
-                            } else {
-                                System.err.println("Warning: Skipping null tuple element at: " + testCtx.getText());
-                            }
-                        }
-                        return LangASTNodeFactory.createTupleLiteral(ctx, elements);
+                        // Multiple elements, return as tuple
+                        return result;
                     }
+                } else {
+                    // Single expression, create parenthesized expression
+                    return LangASTNodeFactory.createParenthesizedExpression(ctx, result);
                 }
             }
-            // Empty parentheses ()
+            // Empty parenthesis
             return LangASTNodeFactory.createParenthesizedExpression(ctx, null);
         }
 
@@ -494,4 +482,137 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
     }
 
 
+    public LangASTNode visitTestlist_comp(Python3Parser.Testlist_compContext ctx) {
+
+        if (ctx.comp_for() != null && !ctx.comp_for().isEmpty()) {
+            // visit the first expression and first comp_for
+            LangASTNode expr = mainBuilder.visit(ctx.test(0));
+
+            // Process all comp_for clauses
+            List<LangComprehensionExpression.LangComprehensionClause> clauses = new ArrayList<>();
+            processComprehensionClauses(ctx.comp_for(), clauses);
+
+            // Determine if this is list or generator based on parent context
+            if (ctx.getParent() instanceof Python3Parser.AtomContext parent) {
+                if (parent.OPEN_BRACK() != null) {
+                    return LangASTNodeFactory.createListComprehension(ctx, expr, clauses);
+                } else {
+                    return LangASTNodeFactory.createGeneratorExpression(ctx, expr, clauses);
+                }
+            }
+
+            // Default
+            return LangASTNodeFactory.createGeneratorExpression(ctx, expr, clauses);
+        }
+
+        // Regular testlist
+        List<LangASTNode> elements = new ArrayList<>();
+        for (Python3Parser.TestContext testCtx : ctx.test()) {
+            elements.add(mainBuilder.visit(testCtx));
+        }
+
+        if (elements.size() == 1) {
+            return elements.get(0);
+        } else {
+            return LangASTNodeFactory.createTupleLiteral(ctx, elements);
+        }
+    }
+
+    public LangASTNode visitDictorsetmaker(Python3Parser.DictorsetmakerContext ctx) {
+
+        if (ctx.comp_for() != null && !ctx.comp_for().isEmpty()) {
+            // Process all comp_for clauses
+            List<LangComprehensionExpression.LangComprehensionClause> clauses = new ArrayList<>();
+            processComprehensionClauses(ctx.comp_for(), clauses);
+
+            if (ctx.COLON() != null && !ctx.COLON().isEmpty()) {
+                // Dictionary comprehension: {key: value for ...}
+                LangASTNode keyExpr = mainBuilder.visit(ctx.test(0));
+                LangASTNode valueExpr = mainBuilder.visit(ctx.test(1));
+                return LangASTNodeFactory.createDictComprehension(ctx, keyExpr, valueExpr, clauses);
+            } else {
+                // Set comprehension: {expr for ...}
+                LangASTNode expr = mainBuilder.visit(ctx.test(0));
+                return LangASTNodeFactory.createSetComprehension(ctx, expr, clauses);
+            }
+        }
+
+        // Regular dictionary or set literal
+        if (ctx.COLON() != null && !ctx.COLON().isEmpty()) {
+            LangDictionaryLiteral dict = LangASTNodeFactory.createDictionaryLiteral(ctx);
+            if (ctx.test().size() % 2 == 0) {
+                for (int i = 0; i < ctx.test().size(); i += 2) {
+                    LangASTNode key = mainBuilder.visit(ctx.test(i));
+                    LangASTNode value = mainBuilder.visit(ctx.test(i + 1));
+                    dict.addEntry(key, value);
+                }
+            }
+            return dict;
+        } else {
+            List<LangASTNode> elements = new ArrayList<>();
+            for (Python3Parser.TestContext testCtx : ctx.test()) {
+                elements.add(mainBuilder.visit(testCtx));
+            }
+            return LangASTNodeFactory.createListLiteral(ctx, elements);
+        }
+    }
+
+
+    private void processComprehensionClauses(Python3Parser.Comp_forContext compFor,
+                                             List<LangComprehensionExpression.LangComprehensionClause> clauses) {
+        if (compFor == null) return;
+
+        boolean isAsync = compFor.ASYNC() != null;
+
+        List<LangASTNode> targets = new ArrayList<>();
+        if (compFor.exprlist() != null) {
+            LangASTNode targetNode = mainBuilder.visit(compFor.exprlist());
+            if (targetNode instanceof LangTupleLiteral tupleLiteral) {
+                targets.addAll(tupleLiteral.getElements());
+            } else {
+                targets.add(targetNode);
+            }
+        }
+
+        LangExpression iterable = null;
+        if (compFor.or_test() != null) {
+            LangASTNode iterableNode = mainBuilder.visit(compFor.or_test());
+            if (iterableNode instanceof LangExpression) {
+                iterable = (LangExpression) iterableNode;
+            }
+        }
+
+        List<LangASTNode> filters = new ArrayList<>();
+
+        // Create clause for current comp_for before processing comp_iter
+        LangComprehensionExpression.LangComprehensionClause clause =
+                LangASTNodeFactory.createComprehensionClause(compFor, isAsync, targets, iterable, filters);
+        clauses.add(clause);
+
+        if (compFor.comp_iter() != null) {
+            // Process comp_iter, handle both filters and nested comp_for
+            processCompIter(compFor.comp_iter(), filters, clauses);
+        }
+    }
+
+    private void processCompIter(Python3Parser.Comp_iterContext compIter,
+                                 List<LangASTNode> currentFilters,
+                                 List<LangComprehensionExpression.LangComprehensionClause> allClauses) {
+        if (compIter == null) return;
+
+        if (compIter.comp_if() != null) {
+            // filter condition
+            LangASTNode condition = mainBuilder.visit(compIter.comp_if().test_nocond());
+            if (condition != null) {
+                currentFilters.add(condition);
+            }
+            // Continue processing nested comp_iter
+            if (compIter.comp_if().comp_iter() != null) {
+                processCompIter(compIter.comp_if().comp_iter(), currentFilters, allClauses);
+            }
+        } else if (compIter.comp_for() != null) {
+            // This is a nested comp_for, process it as a new clause
+            processComprehensionClauses(compIter.comp_for(), allClauses);
+        }
+    }
 }

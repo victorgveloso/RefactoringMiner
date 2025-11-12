@@ -575,6 +575,16 @@ public class CSharpASTFlattener implements LangASTFlattener {
     }
 
     @Override
+    public void visit(LangComprehensionExpression langComprehensionExpression) {
+
+    }
+
+    @Override
+    public void visit(LangComprehensionExpression.LangComprehensionClause langComprehensionClause) {
+
+    }
+
+    @Override
     public void visit(LangParenthesizedExpression langParenthesizedExpression) {
 
     }

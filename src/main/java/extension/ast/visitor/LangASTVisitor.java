@@ -66,4 +66,6 @@ public interface LangASTVisitor {
     void visit(LangSliceExpression langSliceExpression);
     void visit(LangEllipsisLiteral langEllipsisLiteral);
     void visit(LangParenthesizedExpression langParenthesizedExpression);
+    void visit(LangComprehensionExpression langComprehensionExpression);
+    void visit(LangComprehensionExpression.LangComprehensionClause langComprehensionClause);
 }

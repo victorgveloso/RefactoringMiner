@@ -23,6 +23,8 @@ public enum NodeTypeEnum {
     INDEX_ACCESS("LangIndexAccess"),
     SLICE_EXPRESSION("LangSliceExpression"),
     PARENTHESIZED_EXPRESSION("LangParenthesizedExpression"),
+    COMPREHENSION_EXPRESSION("LangComprehensionExpression"),
+    COMPREHENSION_CLAUSE("LangComprehensionClause"),
 
     /** STATEMENTS */
     BLOCK("LangBlock"),

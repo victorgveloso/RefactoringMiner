@@ -745,6 +745,42 @@ public class LangVisitor implements LangASTVisitor {
         }
     }
 
+    @Override
+    public void visit(LangComprehensionExpression langComprehensionExpression) {
+        if (langComprehensionExpression.getExpression() != null) {
+            langComprehensionExpression.getExpression().accept(this);
+        }
+        if (langComprehensionExpression.getKeyExpression() != null) {
+            langComprehensionExpression.getKeyExpression().accept(this);
+        }
+        if (langComprehensionExpression.getValueExpression() != null) {
+            langComprehensionExpression.getValueExpression().accept(this);
+        }
+
+        for (LangComprehensionExpression.LangComprehensionClause clause : langComprehensionExpression.getClauses()) {
+            clause.accept(this);
+        }
+    }
+
+    @Override
+    public void visit(LangComprehensionExpression.LangComprehensionClause langComprehensionClause) {
+        if (langComprehensionClause.getTargets() != null) {
+            for (LangASTNode target : langComprehensionClause.getTargets()) {
+                target.accept(this);
+            }
+        }
+
+        if (langComprehensionClause.getIterable() != null) {
+            langComprehensionClause.getIterable().accept(this);
+        }
+
+        if (langComprehensionClause.getFilters() != null) {
+            for (LangASTNode filter : langComprehensionClause.getFilters()) {
+                filter.accept(this);
+            }
+        }
+    }
+
 
     public LangCompilationUnit getCu() {
         return cu;

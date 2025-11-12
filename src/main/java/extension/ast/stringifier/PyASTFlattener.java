@@ -227,7 +227,9 @@ public class PyASTFlattener implements LangASTFlattener {
         builder.append("[");
         for (LangASTNode expr : langListLiteral.getElements()) {
             expr.accept(this);
-            builder.append(", ");
+            if (expr != langListLiteral.getElements().get(langListLiteral.getElements().size() - 1)) {
+                builder.append(", ");
+            }
         }
         builder.append("]");
     }
@@ -271,7 +273,7 @@ public class PyASTFlattener implements LangASTFlattener {
 
     @Override
     public void visit(LangTupleLiteral langTupleLiteral) {
-        //builder.append("(");
+        builder.append("(");
         List<LangASTNode> elements = langTupleLiteral.getElements();
         int i = 0;
         for (LangASTNode expr : elements) {
@@ -282,7 +284,7 @@ public class PyASTFlattener implements LangASTFlattener {
             }
             i++;
         }
-        //builder.append(")");
+        builder.append(")");
     }
 
     @Override
@@ -627,6 +629,76 @@ public class PyASTFlattener implements LangASTFlattener {
             langParenthesizedExpression.getParenthesizedExpression().accept(this);
         }
         builder.append(")");
+    }
+
+    @Override
+    public void visit(LangComprehensionExpression langComprehensionExpression) {
+        switch (langComprehensionExpression.getKind()) {
+            case LIST -> builder.append("[");
+            case SET, DICT -> builder.append("{");
+            case GENERATOR -> builder.append("(");
+        }
+
+        if (LangComprehensionExpression.LangComprehensionKind.DICT.equals(langComprehensionExpression.getKind())) {
+            // Dictionary comprehension: {key: value for ...}
+            if (langComprehensionExpression.getKeyExpression() != null) {
+                langComprehensionExpression.getKeyExpression().accept(this);
+            }
+            builder.append(": ");
+            if (langComprehensionExpression.getValueExpression() != null) {
+                langComprehensionExpression.getValueExpression().accept(this);
+            }
+        } else {
+            // List, set or generator: expr for ...
+            if (langComprehensionExpression.getExpression() != null) {
+                langComprehensionExpression.getExpression().accept(this);
+            }
+        }
+
+        // Handle comprehension clauses
+        for (LangComprehensionExpression.LangComprehensionClause clause : langComprehensionExpression.getClauses()) {
+            clause.accept(this);
+        }
+
+        switch (langComprehensionExpression.getKind()) {
+            case LIST -> builder.append("]");
+            case SET, DICT -> builder.append("}");
+            case GENERATOR -> builder.append(")");
+        }
+    }
+
+    @Override
+    public void visit(LangComprehensionExpression.LangComprehensionClause langComprehensionClause) {
+        builder.append(" for ");
+
+        if (langComprehensionClause.isAsync()) {
+            builder.append("async ");
+        }
+
+        // Handle targets
+        List<LangASTNode> targets = langComprehensionClause.getTargets();
+        if (targets != null && !targets.isEmpty()) {
+            for (int i = 0; i < targets.size(); i++) {
+                targets.get(i).accept(this);
+                if (i < targets.size() - 1) {
+                    builder.append(", ");
+                }
+            }
+        }
+
+        builder.append(" in ");
+
+        if (langComprehensionClause.getIterable() != null) {
+            langComprehensionClause.getIterable().accept(this);
+        }
+
+        List<LangASTNode> filters = langComprehensionClause.getFilters();
+        if (filters != null && !filters.isEmpty()) {
+            for (LangASTNode filter : filters) {
+                builder.append(" if ");
+                filter.accept(this);
+            }
+        }
     }
 
 }

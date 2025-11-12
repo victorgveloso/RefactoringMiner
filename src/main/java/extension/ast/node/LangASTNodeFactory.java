@@ -191,6 +191,57 @@ public class LangASTNodeFactory {
         return new LangParenthesizedExpression(PositionUtils.getPositionInfo(ctx), expression);
     }
 
+    /** Comprehension Expressions */
+    public static LangComprehensionExpression createComprehensionExpression(ParserRuleContext ctx,
+                                                                            LangComprehensionExpression.LangComprehensionKind kind,
+                                                                            LangASTNode expression,
+                                                                            LangASTNode keyExpression,
+                                                                            LangASTNode valueExpression,
+                                                                            List<LangComprehensionExpression.LangComprehensionClause> clauses) {
+        return new LangComprehensionExpression(PositionUtils.getPositionInfo(ctx), kind, expression, keyExpression, valueExpression, clauses);
+    }
+
+    public static LangComprehensionExpression createListComprehension(ParserRuleContext ctx,
+                                                                      LangASTNode expression,
+                                                                      List<LangComprehensionExpression.LangComprehensionClause> clauses) {
+        return new LangComprehensionExpression(PositionUtils.getPositionInfo(ctx),
+                LangComprehensionExpression.LangComprehensionKind.LIST,
+                expression, null, null, clauses);
+    }
+
+    public static LangComprehensionExpression createSetComprehension(ParserRuleContext ctx,
+                                                                     LangASTNode expression,
+                                                                     List<LangComprehensionExpression.LangComprehensionClause> clauses) {
+        return new LangComprehensionExpression(PositionUtils.getPositionInfo(ctx),
+                LangComprehensionExpression.LangComprehensionKind.SET,
+                expression, null, null, clauses);
+    }
+
+    public static LangComprehensionExpression createDictComprehension(ParserRuleContext ctx,
+                                                                      LangASTNode keyExpression,
+                                                                      LangASTNode valueExpression,
+                                                                      List<LangComprehensionExpression.LangComprehensionClause> clauses) {
+        return new LangComprehensionExpression(PositionUtils.getPositionInfo(ctx),
+                LangComprehensionExpression.LangComprehensionKind.DICT,
+                null, keyExpression, valueExpression, clauses);
+    }
+
+    public static LangComprehensionExpression createGeneratorExpression(ParserRuleContext ctx,
+                                                                        LangASTNode expression,
+                                                                        List<LangComprehensionExpression.LangComprehensionClause> clauses) {
+        return new LangComprehensionExpression(PositionUtils.getPositionInfo(ctx),
+                LangComprehensionExpression.LangComprehensionKind.GENERATOR,
+                expression, null, null, clauses);
+    }
+
+    public static LangComprehensionExpression.LangComprehensionClause createComprehensionClause(ParserRuleContext ctx,
+                                                                                                boolean isAsync,
+                                                                                                List<LangASTNode> targets,
+                                                                                                LangExpression iterable,
+                                                                                                List<LangASTNode> filters) {
+        return new LangComprehensionExpression.LangComprehensionClause(PositionUtils.getPositionInfo(ctx), isAsync, targets, iterable, filters);
+    }
+
     /** Try-Catch-Finally */
     public static LangASTNode createTryStatement(ParserRuleContext ctx, LangBlock tryBlock, List<LangCatchClause> catchClauses, LangBlock elseBlock, LangBlock finallyBlock) {
         return new LangTryStatement(PositionUtils.getPositionInfo(ctx), tryBlock, catchClauses, elseBlock, finallyBlock);
