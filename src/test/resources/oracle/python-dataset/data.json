@@ -2235,4 +2235,90 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159892,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "05279fd755a9d476609718b5b9d48c12223557d3",
+    "url": "https://github.com/dit/dit/commit/05279fd755a9d476609718b5b9d48c12223557d3",
+    "author": "chebee7i",
+    "time": "1/14/13 6:51 PM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public __repr__() renamed to public __str__() in class distribution.BaseDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract And Move Method",
+        "description": "Extract And Move Method public prepare_string(dist, digits, exact, tol) extracted from public to_string(digits, exact, tol) in class distribution.BaseDistribution & moved to class distribution.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter kwargs in method public __init__(args, kwargs) from class exceptions.InvalidEvent",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable bad in method public __init__(args, kwargs) from class exceptions.InvalidEvent",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter eventspace to alphabet in method public __init__(pmf, events, alphabet, base, validate, sort, sparse) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter eventspace to alphabet in method protected _init(pmf, events, alphabet, base) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter eventspace to alphabet in method public reorder(pmf, events, alphabet, index) from class npdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter eventspace to alphabet in method protected _make_distribution(pmf, events, alphabet, base, sparse) from class npdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Reorder Parameter",
+        "description": "Reorder Parameter [events, pmf, eventspace, index] to [pmf, events, alphabet, index] in method public reorder(pmf, events, alphabet, index) from class npdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Attribute",
+        "description": "Rename Attribute _eventspace to alphabet in class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Attribute",
+        "description": "Rename Attribute _eventspace_set to _alphabet_set in class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
