@@ -2374,4 +2374,87 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159895,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "0ba8d52edb7fdfc72af88fbd87359c0096c6b7ec",
+    "url": "https://github.com/dit/dit/commit/0ba8d52edb7fdfc72af88fbd87359c0096c6b7ec",
+    "author": "chebee7i",
+    "time": "6/2/13 12:37 PM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter prng in method public __init__(pmf, outcomes, alphabet, base, prng, sort, sparse, validate) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter prng in method protected _make_distribution(pmf, outcomes, alphabet, base, prng, sparse) from class npjdist.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159896,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "04bbb4e0a4481da4136bbce632bfaaab6be0fded",
+    "url": "https://github.com/dit/dit/commit/04bbb4e0a4481da4136bbce632bfaaab6be0fded",
+    "author": "chebee7i",
+    "time": "1/15/13 3:40 AM",
+    "refactorings": [{
+        "type": "Reorder Parameter",
+        "description": "Reorder Parameter [pmf, events, alphabet, base, validate, sort, sparse] to [pmf, events, alphabet, base, sort, sparse, validate] in method public __init__(pmf, events, alphabet, base, sort, sparse, validate) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Reorder Parameter",
+        "description": "Reorder Parameter [pmf, events, alphabet, base, validate, sort, sparse] to [pmf, events, alphabet, base, sort, sparse, validate] in method public __init__(pmf, events, alphabet, base, sort, sparse, validate) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter str_events in method public to_string(digits, exact, tol, str_events) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter str_events in method public prepare_string(dist, digits, exact, tol, str_events) from class distribution.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable event_class in method public to_string(digits, exact, tol, str_events) from class npjdist.JointDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159897,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "03506ef2d7839511ca4e0f6bee856a248a15f244",
+    "url": "https://github.com/dit/dit/commit/03506ef2d7839511ca4e0f6bee856a248a15f244",
+    "author": "Autoplectic",
+    "time": "10/1/13 5:41 PM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public JSD(dists, weights) renamed to public jensen_shannon_divergence(dists, weights) in class algorithms.jsd.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
