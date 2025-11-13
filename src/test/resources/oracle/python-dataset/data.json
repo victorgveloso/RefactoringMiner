@@ -2198,4 +2198,41 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159891,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "052455d367492b3b2a3607f363958fcd33dbca01",
+    "url": "https://github.com/dit/dit/commit/052455d367492b3b2a3607f363958fcd33dbca01",
+    "author": "chebee7i",
+    "time": "4/13/14 10:27 PM",
+    "refactorings": [{
+        "type": "Remove Parameter",
+        "description": "Remove Parameter sample_space in method protected _init(outcomes, pmf, sample_space, base, trim) from class npscalardist.ScalarDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Parameter",
+        "description": "Remove Parameter sample_space in method protected _init(outcomes, pmf, sample_space, base, trim) from class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Code",
+        "description": "Move Code from protected _init(outcomes, pmf, sample_space, base, trim) to public __init__(outcomes, pmf, sample_space, base, prng, sort, sparse, trim, validate) in class npscalardist.ScalarDistribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Code",
+        "description": "Move Code from protected _init(outcomes, pmf, sample_space, base, trim) to public __init__(outcomes, pmf, sample_space, base, prng, sort, sparse, trim, validate) in class npdist.Distribution",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
