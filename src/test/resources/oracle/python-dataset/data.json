@@ -2321,4 +2321,57 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159893,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "145882bbe3addf859c7ff2ecc36993f6f5506b10",
+    "url": "https://github.com/dit/dit/commit/145882bbe3addf859c7ff2ecc36993f6f5506b10",
+    "author": "chebee7i",
+    "time": "10/29/14 6:39 PM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public perturb(pmf, eps, prng) renamed to public perturb_support(pmf, eps, prng) in class math.pmfops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter subdivisions to locs in method public clamped_indexes(pmf, locs) from class math.pmfops.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable lower in method public clamped_indexes(pmf, locs) from class math.pmfops.__module__",
+        "comment": "<p>Variable upper could be also considered as extracted<br />clamps = np.array([insert_index - 1, insert_index])<br />clamps = np.array([lower, upper])</p>",
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable insert_index to left_index in method public clamped_indexes(pmf, locs) from class math.pmfops.__module__",
+        "comment": "<p>Original assignment becomes two assignments<br />insert_index = np.searchsorted(locs, pmf) --&gt;<br />left_index = np.searchsorted(locs, pmf, 'left')<br />right_index = np.searchsorted(locs, pmf, 'right')</p><div><br /><br /></div>",
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159894,
+    "repository": "https://github.com/dit/dit.git",
+    "sha1": "11bbbd7c46dc8b8039ea5ca0a66287e331c73920",
+    "url": "https://github.com/dit/dit/commit/11bbbd7c46dc8b8039ea5ca0a66287e331c73920",
+    "author": "chebee7i",
+    "time": "11/23/14 12:35 PM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public test_H0() renamed to public test_entropy_pmf1d() in class test_shannon.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
