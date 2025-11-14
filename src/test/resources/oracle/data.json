@@ -12946,6 +12946,13 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
+    }, {
+        "type": "Extract Method",
+        "description": "Extract Method public freeze() : void extracted from public edge(a int, b int) : EdgeSkipIterState in class com.graphhopper.storage.LevelGraphImpl",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 3012
 }, {
@@ -76911,20 +76918,6 @@
         "detectionTools": "RefactoringMiner",
         "validators": "Nikos"
     }, {
-        "type": "Rename Variable",
-        "description": "Rename Variable key : Object to entry : Map.Entry<Object,UpdateResponse> in method public buildRestLiResponseData(request RestRequest, routingResult RoutingResult, result Object, headers Map<String,String>) : RestLiResponseEnvelope from class com.linkedin.restli.internal.server.methods.response.BatchUpdateResponseBuilder",
-        "comment": null,
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": null
-    }, {
-        "type": "Change Variable Type",
-        "description": "Change Variable Type key : Object to entry : Map.Entry<Object,UpdateResponse> in method public buildRestLiResponseData(request RestRequest, routingResult RoutingResult, result Object, headers Map<String,String>) : RestLiResponseEnvelope from class com.linkedin.restli.internal.server.methods.response.BatchUpdateResponseBuilder",
-        "comment": null,
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": null
-    }, {
         "type": "Inline Variable",
         "description": "Inline Variable entityResponse : EntityResponse<? extends RecordTemplate> in method public onResponse(requestContext FilterRequestContext, responseContext FilterResponseContext) : void from class com.linkedin.restli.server.validation.RestLiOutputValidationFilter",
         "comment": null,
@@ -76983,6 +76976,83 @@
     }, {
         "type": "Move And Rename Method",
         "description": "Move And Rename Method public getHttpStatus() : HttpStatus from class com.linkedin.restli.server.filter.FilterResponseContext to public getStatus() : HttpStatus from class com.linkedin.restli.server.RestLiResponseData",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Method",
+        "description": "Extract Method private generateResultEntityResponse(routingResult RoutingResult, responses Map<Object,BatchResponseEntry>, mergedResults Map<Object,UpdateStatus>) : void extracted from public buildRestLiResponseData(request RestRequest, routingResult RoutingResult, result Object, headers Map<String,String>) : AugmentedRestLiResponseData in class com.linkedin.restli.internal.server.methods.response.BatchUpdateResponseBuilder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Method",
+        "description": "Extract Method private buildEntityResponse(routingResult RoutingResult, mergedResponse Map<Object,BatchResponseEntry>) : Map<Object,EntityResponse<RecordTemplate>> extracted from public buildRestLiResponseData(request RestRequest, routingResult RoutingResult, result Object, headers Map<String,String>) : AugmentedRestLiResponseData in class com.linkedin.restli.internal.server.methods.response.BatchGetResponseBuilder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Variable Modifier",
+        "description": "Remove Variable Modifier final in variable results : Map<Object,EntityResponse<RecordTemplate>> in method public buildRestLiResponseData(request RestRequest, routingResult RoutingResult, result Object, headers Map<String,String>) : AugmentedRestLiResponseData from class com.linkedin.restli.internal.server.methods.response.BatchGetResponseBuilder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Variable Modifier",
+        "description": "Remove Variable Modifier final in variable mergedResult : UpdateStatus in method public buildRestLiResponseData(request RestRequest, routingResult RoutingResult, result Object, headers Map<String,String>) : AugmentedRestLiResponseData from class com.linkedin.restli.internal.server.methods.response.BatchUpdateResponseBuilder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable mergedResult : UpdateStatus to status : UpdateStatus in method private generateResultEntityResponse(routingResult RoutingResult, responses Map<Object,BatchResponseEntry>, mergedResults Map<Object,UpdateStatus>) : void from class com.linkedin.restli.internal.server.methods.response.BatchUpdateResponseBuilder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable results : Map<Object,EntityResponse<RecordTemplate>> to entityBatchResponse : Map<Object,EntityResponse<RecordTemplate>> in method private buildEntityResponse(routingResult RoutingResult, mergedResponse Map<Object,BatchResponseEntry>) : Map<Object,EntityResponse<RecordTemplate>> from class com.linkedin.restli.internal.server.methods.response.BatchGetResponseBuilder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable key : Object to entry : Map.Entry<Object,BatchResponseEntry> in method private buildEntityResponse(routingResult RoutingResult, mergedResponse Map<Object,BatchResponseEntry>) : Map<Object,EntityResponse<RecordTemplate>> from class com.linkedin.restli.internal.server.methods.response.BatchGetResponseBuilder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable key : Object to entry : Map.Entry<?,BatchResponseEntry> in method private generateResultEntityResponse(routingResult RoutingResult, responses Map<Object,BatchResponseEntry>, mergedResults Map<Object,UpdateStatus>) : void from class com.linkedin.restli.internal.server.methods.response.BatchUpdateResponseBuilder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Variable Annotation",
+        "description": "Add Variable Annotation @SuppressWarnings(\"unchecked\") in variable entityResponse : EntityResponse<RecordTemplate> in method private buildEntityResponse(routingResult RoutingResult, mergedResponse Map<Object,BatchResponseEntry>) : Map<Object,EntityResponse<RecordTemplate>> from class com.linkedin.restli.internal.server.methods.response.BatchGetResponseBuilder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Change Variable Type",
+        "description": "Change Variable Type key : Object to entry : Map.Entry<?,BatchResponseEntry> in method private generateResultEntityResponse(routingResult RoutingResult, responses Map<Object,BatchResponseEntry>, mergedResults Map<Object,UpdateStatus>) : void from class com.linkedin.restli.internal.server.methods.response.BatchUpdateResponseBuilder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Change Variable Type",
+        "description": "Change Variable Type key : Object to entry : Map.Entry<Object,BatchResponseEntry> in method private buildEntityResponse(routingResult RoutingResult, mergedResponse Map<Object,BatchResponseEntry>) : Map<Object,EntityResponse<RecordTemplate>> from class com.linkedin.restli.internal.server.methods.response.BatchGetResponseBuilder",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
