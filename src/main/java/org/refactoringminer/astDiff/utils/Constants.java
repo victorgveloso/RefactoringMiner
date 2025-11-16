@@ -144,4 +144,5 @@ public class Constants {
     public final String ARGUMENT_LIST = "argument_list";
     public final String CLASS_BLOCK = "block"; // Pouria: Might be merged with Block, I have no clue about python
     public final String MODULE = "module"; // This is the root of all trees in Python
+    public final String DECORATED_METHOD = "decorated_definition";
 }
