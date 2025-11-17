@@ -1959,8 +1959,8 @@
         "detectionTools": "RefactoringMiner",
         "validators": null
     }, {
-        "type": "Rename Variable",
-        "description": "Rename Variable ipy : IPyLexer to ipy2 : IPyLexer in module tools.sphinxext.ipython_console_highlighting.__module__ from class tools.sphinxext.ipython_console_highlighting.__module__",
+        "type": "Rename Attribute",
+        "description": "Rename Attribute ipy : IPyLexer to ipy2 : IPyLexer in class tools.sphinxext.ipython_console_highlighting.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",

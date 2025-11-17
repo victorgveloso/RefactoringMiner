@@ -158,8 +158,12 @@ public class UMLModelAdapter {
                     moduleContainer,
                     fileContent
             );
-        	moduleContainer.addStatements(opBody.getCompositeStatement().getStatements());
-        	moduleClass.setContainer(moduleContainer);
+            moduleContainer.addStatements(opBody.getCompositeStatement().getStatements());
+            moduleClass.setContainer(moduleContainer);
+        }
+        // Handle module-scope assignments as attributes
+        for (LangAssignment moduleLevelAssignment: compilationUnit.getModuleLevelAssignments()){
+            processClassLevelAssignmentForAttribute(moduleClass, moduleLevelAssignment, sourceFolder, filepath, fileContent);
         }
         // add compilation unit comments to moduleClass
         for (LangComment compilationUnitLevelComment : compilationUnit.getComments()) {

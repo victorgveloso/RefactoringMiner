@@ -51,7 +51,7 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
                     if (exprStatement.getExpression() instanceof LangAssignment assignment)
                         langTypeDeclaration.addAssignment(assignment);
                     else if (exprStatement.getExpression() instanceof LangStringLiteral str) {
-                    	LangComment comment = LangASTNodeFactory.createComment(ctx, str.getValue(), false, true);
+                        LangComment comment = LangASTNodeFactory.createComment(ctx, str.getValue(), false, true);
                         langTypeDeclaration.addComment(comment);
                     }
                 }

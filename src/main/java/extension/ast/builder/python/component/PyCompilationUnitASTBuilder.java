@@ -7,7 +7,10 @@ import extension.ast.node.PositionInfo;
 import extension.ast.node.PositionUtils;
 import extension.ast.node.declaration.LangMethodDeclaration;
 import extension.ast.node.declaration.LangTypeDeclaration;
+import extension.ast.node.expression.LangAssignment;
+import extension.ast.node.literal.LangStringLiteral;
 import extension.ast.node.metadata.comment.LangComment;
+import extension.ast.node.statement.LangExpressionStatement;
 import extension.ast.node.statement.LangImportStatement;
 import extension.ast.node.unit.LangCompilationUnit;
 import extension.base.LangSupportedEnum;
@@ -41,6 +44,13 @@ public class PyCompilationUnitASTBuilder extends PyBaseASTBuilder {
                 compilationUnit.addComment((LangComment) stmt);
             } else if (stmt instanceof LangImportStatement){
                 compilationUnit.addImport((LangImportStatement) stmt);
+            } else if (stmt instanceof LangExpressionStatement exprStatement) {
+                if (exprStatement.getExpression() instanceof LangAssignment assignment)
+                    compilationUnit.addAssignment(assignment);
+                else if (exprStatement.getExpression() instanceof LangStringLiteral str) {
+                    LangComment comment = LangASTNodeFactory.createComment(ctx, str.getValue(), false, true);
+                    compilationUnit.addComment(comment);
+                }
             } else {
                 compilationUnit.addStatement(stmt);
             }

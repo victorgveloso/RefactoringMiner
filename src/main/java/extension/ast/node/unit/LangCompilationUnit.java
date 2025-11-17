@@ -5,6 +5,7 @@ import extension.ast.node.NodeTypeEnum;
 import extension.ast.node.PositionInfo;
 import extension.ast.node.declaration.LangMethodDeclaration;
 import extension.ast.node.declaration.LangTypeDeclaration;
+import extension.ast.node.expression.LangAssignment;
 import extension.ast.node.metadata.comment.LangComment;
 import extension.ast.node.statement.LangImportStatement;
 import extension.ast.visitor.LangASTVisitor;
@@ -17,6 +18,7 @@ import java.util.List;
 public class LangCompilationUnit extends LangASTNode {
     private List<LangTypeDeclaration> types = new ArrayList<>();
     private List<LangMethodDeclaration> methods = new ArrayList<>();
+    private List<LangAssignment> moduleLevelAssignments = new ArrayList<>();
     private List<LangASTNode> statements = new ArrayList<>();
     private List<LangImportStatement> imports = new ArrayList<>();
     private List<LangComment> comments = new ArrayList<>();
@@ -48,6 +50,11 @@ public class LangCompilationUnit extends LangASTNode {
         addChild(method);
     }
 
+    public void addAssignment(LangAssignment assignment) {
+        moduleLevelAssignments.add(assignment);
+        addChild(assignment);
+    }
+
     public void addStatement(LangASTNode statement) {
         statements.add(statement);
         addChild(statement);
@@ -76,6 +83,10 @@ public class LangCompilationUnit extends LangASTNode {
 
     public void setMethods(List<LangMethodDeclaration> methods) {
         this.methods = methods;
+    }
+
+    public List<LangAssignment> getModuleLevelAssignments() {
+        return moduleLevelAssignments;
     }
 
     public List<LangASTNode> getStatements() {
