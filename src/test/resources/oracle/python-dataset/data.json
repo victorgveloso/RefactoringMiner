@@ -2457,4 +2457,62 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159898,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "497105f929a7a927ee8807519738f48c49b5a3a1",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/497105f929a7a927ee8807519738f48c49b5a3a1",
+    "author": "depau",
+    "time": "1/9/18 10:04 AM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public __init__(stream_spec, name, incoming_stream_types, outgoing_stream_type, min_inputs, max_inputs, args, kwargs) renamed to public __init_fromscratch__(stream_spec, name, incoming_stream_types, outgoing_stream_type, min_inputs, max_inputs, args, kwargs) in class nodes.Node",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public __init__(name, args, kwargs) renamed to public __init_fromscratch__(name, args, kwargs) in class nodes.InputNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public __init__(stream_spec, name, max_inputs, args, kwargs) renamed to public __init_fromscratch__(stream_spec, name, max_inputs, args, kwargs) in class nodes.FilterNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public __init__(stream, name, args, kwargs) renamed to public __init_fromscratch__(stream, name, args, kwargs) in class nodes.OutputNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public __init__(streams, name) renamed to public __init_fromscratch__(streams, name) in class nodes.MergeOutputsNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public __init__(stream, name, args, kwargs) renamed to public __init_fromscratch__(stream, name, args, kwargs) in class nodes.GlobalNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable o_map to _o_map in method public test_map_same_effect_as_output() from class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
