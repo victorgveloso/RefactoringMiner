@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.refactoringminer.util.PathFileUtils;
+
 public class UMLAttribute implements Comparable<UMLAttribute>, Serializable, VariableDeclarationProvider, VariableDeclarationContainer {
 	private LocationInfo locationInfo;
 	private LocationInfo fieldDeclarationLocationInfo;
@@ -406,6 +408,11 @@ public class UMLAttribute implements Comparable<UMLAttribute>, Serializable, Var
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		Constants LANG = PathFileUtils.getLang(locationInfo.getFilePath());
+		if(LANG.equals(Constants.PYTHON) && type.getClassType().equals("Object")) {
+			sb.append(name);
+			return sb.toString();
+		}
 		sb.append(visibility);
 		sb.append(" ");
 		sb.append(name);
@@ -416,6 +423,11 @@ public class UMLAttribute implements Comparable<UMLAttribute>, Serializable, Var
 
 	public String toQualifiedString() {
 		StringBuilder sb = new StringBuilder();
+		Constants LANG = PathFileUtils.getLang(locationInfo.getFilePath());
+		if(LANG.equals(Constants.PYTHON) && type.getClassType().equals("Object")) {
+			sb.append(name);
+			return sb.toString();
+		}
 		if(!(this instanceof UMLEnumConstant)) {
 			sb.append(visibility);
 			sb.append(" ");

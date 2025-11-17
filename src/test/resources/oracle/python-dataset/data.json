@@ -1096,7 +1096,7 @@
         "validators": null
     }, {
         "type": "Push Down Attribute",
-        "description": "Push Down Attribute public k : Object from class algorithms.maxentropy.MaximumEntropy to public k : Object from class algorithms.maxentropy.MarginalMaximumEntropy",
+        "description": "Push Down Attribute k from class algorithms.maxentropy.MaximumEntropy to k from class algorithms.maxentropy.MarginalMaximumEntropy",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
@@ -1909,21 +1909,21 @@
         "validators": null
     }, {
         "type": "Move Attribute",
-        "description": "Move Attribute public _samplespace : Object from class samplespace.SampleSpace to public _samplespace : Object from class samplespace.BaseSampleSpace",
+        "description": "Move Attribute _samplespace from class samplespace.SampleSpace to _samplespace from class samplespace.BaseSampleSpace",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
     }, {
         "type": "Move Attribute",
-        "description": "Move Attribute public _length : Object from class samplespace.SampleSpace to public _length : Object from class samplespace.BaseSampleSpace",
+        "description": "Move Attribute _length from class samplespace.SampleSpace to _length from class samplespace.BaseSampleSpace",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
     }, {
         "type": "Move Attribute",
-        "description": "Move Attribute public _set : Object from class samplespace.SampleSpace to public _set : Object from class samplespace.BaseSampleSpace",
+        "description": "Move Attribute _set from class samplespace.SampleSpace to _set from class samplespace.BaseSampleSpace",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
@@ -2595,6 +2595,127 @@
     }, {
         "type": "Rename Variable",
         "description": "Rename Variable o_nomap to out in method public test_combined_output() from class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159900,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "5d78a2595d2c11236726e456e4887448751475c7",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/5d78a2595d2c11236726e456e4887448751475c7",
+    "author": "kkroening",
+    "time": "7/9/17 5:50 PM",
+    "refactorings": [{
+        "type": "Rename Variable",
+        "description": "Rename Variable node to stream in method public test_run() from class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable node to stream in method public test_run_dummy_cmd() from class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable node to stream in method public test_run_dummy_cmd_list() from class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable node to stream in method public test_run_failing_cmd() from class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable node to stream in method public test_custom_filter() from class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable node to stream in method public test_custom_filter_fluent() from class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Attribute",
+        "description": "Rename Attribute TEST_INPUT_FILE to TEST_INPUT_FILE1 in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Attribute",
+        "description": "Rename Attribute TEST_OUTPUT_FILE to TEST_OUTPUT_FILE1 in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Attribute",
+        "description": "Extract Attribute TEST_OUTPUT_FILE1 in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter stream to streams in method public __init__(streams, name) from class nodes.MergeOutputsNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter stream_spec in method public get_args(stream_spec, overwrite_output) from class _run.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter overwrite_output in method public get_args(stream_spec, overwrite_output) from class _run.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Parameter",
+        "description": "Remove Parameter stream in method public get_args(stream) from class _run.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter stream_spec in method public run(stream_spec, cmd, kwargs) from class _run.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter kwargs in method public run(stream_spec, cmd, kwargs) from class _run.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Parameter",
+        "description": "Remove Parameter node in method public run(node, cmd) from class _run.__module__",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
