@@ -2515,4 +2515,90 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159899,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "57abf6e86edbf1d9ff1448302d4c8bf970092a03",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/57abf6e86edbf1d9ff1448302d4c8bf970092a03",
+    "author": "kkroening",
+    "time": "3/12/18 12:27 AM",
+    "refactorings": [{
+        "type": "Rename Parameter",
+        "description": "Rename Parameter select to selector in method public stream(label, selector) from class nodes.Node",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public __init_fromscratch__(stream_spec, name, incoming_stream_types, outgoing_stream_type, min_inputs, max_inputs, args, kwargs) renamed to public __init__(stream_spec, name, incoming_stream_types, outgoing_stream_type, min_inputs, max_inputs, args, kwargs) in class nodes.Node",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public __init_fromscratch__(name, args, kwargs) renamed to public __init__(name, args, kwargs) in class nodes.InputNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public __init_fromscratch__(stream_spec, name, max_inputs, args, kwargs) renamed to public __init__(stream_spec, name, max_inputs, args, kwargs) in class nodes.FilterNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public __init_fromscratch__(stream, name, args, kwargs) renamed to public __init__(stream, name, args, kwargs) in class nodes.OutputNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public __init_fromscratch__(streams, name) renamed to public __init__(streams, name) in class nodes.MergeOutputsNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public __init_fromscratch__(stream, name, args, kwargs) renamed to public __init__(stream, name, args, kwargs) in class nodes.GlobalNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Inline Method",
+        "description": "Inline Method protected _get_filter_with_select_example() inlined to public test_filter_with_selector() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_map_same_effect_as_output() renamed to public test_combined_output() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_filter_with_select() renamed to public test_filter_with_selector() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable o_nomap to out in method public test_combined_output() from class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
