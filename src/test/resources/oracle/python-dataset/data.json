@@ -2722,4 +2722,27 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159901,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "3f671218a6a2c6ee50974b96a4ebf2b9fdbfd8b4",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/3f671218a6a2c6ee50974b96a4ebf2b9fdbfd8b4",
+    "author": "depau",
+    "time": "1/9/18 9:47 AM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter downstream_selector in method public visit(upstream_node, upstream_label, downstream_node, downstream_label, downstream_selector) from class dag.__module__.topo_sort",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable (downstream_node,downstream_label) to downstream_info in method public get_outgoing_edges(upstream_node, outgoing_edge_map) from class dag.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
