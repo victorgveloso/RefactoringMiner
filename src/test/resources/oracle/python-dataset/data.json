@@ -1565,13 +1565,6 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
-    }, {
-        "type": "Rename Attribute",
-        "description": "Rename Attribute _alphabet_set to _sample_space_set in class npdist.Distribution",
-        "comment": null,
-        "validation": "TP",
-        "detectionTools": "RefactoringMiner",
-        "validators": null
     }],
     "refDiffExecutionTime": 0
 }, {
