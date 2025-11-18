@@ -1722,6 +1722,16 @@ public class VariableReplacementAnalysis {
 					mergedVariables.add(declaration.getKey());
 					mergedVariableOperations.add(declaration.getValue());
 				}
+				else if(classDiff != null) {
+					String normalizedVariableName = PrefixSuffixUtils.normalize(variableName, LANG);
+					for(UMLAttribute attribute : classDiff.getOriginalClass().getAttributes()) {
+						if(attribute.getName().equals(normalizedVariableName)) {
+							mergedVariables.add(attribute.getVariableDeclaration());
+							mergedVariableOperations.add(operation1);
+							break;
+						}
+					}
+				}
 			}
 			int nestedVariablesUnderSingleVariableDeclaration = 0;
 			if(singleVariableDeclarations.size() == 1) {

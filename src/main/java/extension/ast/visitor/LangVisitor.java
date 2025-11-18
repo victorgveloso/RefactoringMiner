@@ -235,6 +235,9 @@ public class LangVisitor implements LangASTVisitor {
         else if(!"self".equals(langSimpleName.getIdentifier()) && !"cls".equals(langSimpleName.getIdentifier())) {
             variables.add(variable);
         }
+        else if("self".equals(langSimpleName.getIdentifier()) || "cls".equals(langSimpleName.getIdentifier())) {
+        	thisExpressions.add(variable);
+        }
     }
 
     @Override
