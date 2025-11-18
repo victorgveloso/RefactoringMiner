@@ -245,7 +245,7 @@ public abstract class AbstractCall extends LeafExpression {
 							(parameterToArgumentMap.containsKey(expression2) && replacement.getAfter().equals(parameterToArgumentMap.get(expression2))))) {
 						return true;
 					}
-					expression1AfterReplacements = ReplacementUtil.performReplacement(expression1AfterReplacements, expression2, replacement.getBefore(), replacement.getAfter());
+					expression1AfterReplacements = ReplacementUtil.performReplacement(expression1AfterReplacements, expression2, replacement.getBefore(), replacement.getAfter(), LANG);
 				}
 				else if(replacement instanceof MethodInvocationReplacement) {
 					MethodInvocationReplacement methodInvocationReplacement = (MethodInvocationReplacement)replacement;

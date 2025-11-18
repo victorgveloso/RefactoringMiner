@@ -142,7 +142,7 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 	private UMLCommentListDiff commentListDiff;
 	private Set<Pair<AbstractCodeFragment, UMLComment>> commentedCode = new LinkedHashSet<>();
 	private Set<Pair<UMLComment, AbstractCodeFragment>> unCommentedCode = new LinkedHashSet<>();
-	private final Constants LANG;
+	final Constants LANG;
 	
 	public List<AbstractCall> getInvocationsInSourceOperationAfterExtraction() {
 		if(invocationsInSourceOperationAfterExtraction == null) {
@@ -5467,7 +5467,7 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 					for(ListIterator<CompositeStatementObject> innerNodeIterator2 = innerNodes2.listIterator(); innerNodeIterator2.hasNext();) {
 						CompositeStatementObject statement2 = innerNodeIterator2.next();
 						if(!alreadyMatched2(statement2)) {
-							if(statement1.getString().equals(statement2.getString()) || statement1.getArgumentizedString().equals(statement2.getArgumentizedString()) || differOnlyInThis(statement1.getString(), statement2.getString())) {
+							if(statement1.getString().equals(statement2.getString()) || statement1.getArgumentizedString().equals(statement2.getArgumentizedString()) || differOnlyInThis(statement1.getString(), statement2.getString(), LANG)) {
 								ReplacementInfo replacementInfo = initializeReplacementInfo(statement1, statement2, matchingInnerNodes1, matchingInnerNodes2);
 								double score = computeScore(statement1, statement2, Optional.of(replacementInfo), removedOperations, addedOperations, tryWithResourceMigration);
 								if(score > 0 || Math.max(statement1.getStatements().size(), statement2.getStatements().size()) == 0) {
@@ -5830,7 +5830,7 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 					for(ListIterator<CompositeStatementObject> innerNodeIterator1 = innerNodes1.listIterator(); innerNodeIterator1.hasNext();) {
 						CompositeStatementObject statement1 = innerNodeIterator1.next();
 						if(!alreadyMatched1(statement1)) {
-							if(statement1.getString().equals(statement2.getString()) || statement1.getArgumentizedString().equals(statement2.getArgumentizedString()) || differOnlyInThis(statement1.getString(), statement2.getString())) {
+							if(statement1.getString().equals(statement2.getString()) || statement1.getArgumentizedString().equals(statement2.getArgumentizedString()) || differOnlyInThis(statement1.getString(), statement2.getString(), LANG)) {
 								ReplacementInfo replacementInfo = initializeReplacementInfo(statement1, statement2, matchingInnerNodes1, matchingInnerNodes2);
 								double score = computeScore(statement1, statement2, Optional.of(replacementInfo), removedOperations, addedOperations, tryWithResourceMigration);
 								if(score > 0 || Math.max(statement1.getStatements().size(), statement2.getStatements().size()) == 0) {

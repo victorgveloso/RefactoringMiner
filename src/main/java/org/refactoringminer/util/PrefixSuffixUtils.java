@@ -2,6 +2,8 @@ package org.refactoringminer.util;
 
 import static gr.uom.java.xmi.Constants.JAVA;
 
+import gr.uom.java.xmi.Constants;
+
 public class PrefixSuffixUtils {
 
 	public static String longestCommonPrefix(String s1, String s2) {
@@ -37,6 +39,17 @@ public class PrefixSuffixUtils {
 			}
 		}
 		return separatorPos;
+	}
+
+	public static String normalize(String input, Constants LANG) {
+		String output = null;
+		if(input.startsWith(LANG.THIS_DOT)) {
+			output = input.substring(5, input.length());
+		}
+		else {
+			output = input;
+		}
+		return output;
 	}
 
 	public static String normalize(String input) {
