@@ -10,8 +10,6 @@ import gr.uom.java.xmi.decomposition.VariableDeclaration;
 import gr.uom.java.xmi.diff.CodeRange;
 import gr.uom.java.xmi.diff.StringDistance;
 
-import static gr.uom.java.xmi.Constants.JAVA;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -192,11 +190,12 @@ public class UMLAttribute implements Comparable<UMLAttribute>, Serializable, Var
 	}
 
 	public List<AbstractCall> getAllOperationInvocations() {
+		Constants LANG = PathFileUtils.getLang(locationInfo.getFilePath());
 		AbstractExpression initializer = variableDeclaration.getInitializer();
 		if(initializer != null) {
 			List<AbstractCall> list = new ArrayList<>(initializer.getMethodInvocations());
 			for(LambdaExpressionObject lambda : initializer.getLambdas()) {
-				if(lambda.getString().contains(JAVA.LAMBDA_ARROW)) {
+				if(lambda.getString().contains(LANG.LAMBDA_ARROW)) {
 					list.addAll(lambda.getAllOperationInvocations());
 				}
 			}

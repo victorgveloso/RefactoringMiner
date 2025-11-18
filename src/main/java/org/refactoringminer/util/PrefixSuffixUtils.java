@@ -1,7 +1,5 @@
 package org.refactoringminer.util;
 
-import static gr.uom.java.xmi.Constants.JAVA;
-
 import gr.uom.java.xmi.Constants;
 
 public class PrefixSuffixUtils {

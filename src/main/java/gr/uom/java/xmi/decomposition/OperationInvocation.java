@@ -10,7 +10,6 @@ import gr.uom.java.xmi.UMLParameter;
 import gr.uom.java.xmi.UMLType;
 import gr.uom.java.xmi.VariableDeclarationContainer;
 
-import static gr.uom.java.xmi.Constants.JAVA;
 import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.SPLIT_CONCAT_STRING_PATTERN;
 import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.containsMethodSignatureOfAnonymousClass;
 import static gr.uom.java.xmi.decomposition.Visitor.stringify;
@@ -61,7 +60,7 @@ public class OperationInvocation extends AbstractCall {
     private static Map<String, List<String>> PRIMITIVE_TYPE_WIDENING_MAP;
     private static Map<String, List<String>> PRIMITIVE_TYPE_NARROWING_MAP;
     private static List<String> PRIMITIVE_TYPE_LIST;
-    private static final Pattern LAMBDA_ARROW = Pattern.compile(JAVA.LAMBDA_ARROW);
+    private final Pattern LAMBDA_ARROW = Pattern.compile(LANG.LAMBDA_ARROW);
 
     static {
     	PRIMITIVE_TYPE_LIST = new ArrayList<>(Arrays.asList("byte", "short", "int", "long", "float", "double", "char", "boolean"));

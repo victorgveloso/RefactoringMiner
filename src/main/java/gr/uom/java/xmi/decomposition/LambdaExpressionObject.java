@@ -1,7 +1,5 @@
 package gr.uom.java.xmi.decomposition;
 
-import static gr.uom.java.xmi.Constants.JAVA;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -22,6 +20,7 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeMethodReference;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.YieldStatement;
+import org.refactoringminer.util.PathFileUtils;
 
 import extension.ast.node.LangASTNode;
 import extension.ast.node.declaration.LangSingleVariableDeclaration;
@@ -30,6 +29,7 @@ import extension.ast.node.expression.LangLambdaExpression;
 import extension.ast.node.statement.LangBlock;
 import extension.ast.node.unit.LangCompilationUnit;
 import extension.ast.visitor.LangVisitor;
+import gr.uom.java.xmi.Constants;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.diff.CodeRange;
@@ -244,6 +244,7 @@ public class LambdaExpressionObject implements VariableDeclarationContainer, Loc
 	}
 
 	public String toString() {
+		Constants LANG = PathFileUtils.getLang(locationInfo.getFilePath());
 		StringBuilder sb = new StringBuilder();
 		if(hasParentheses) {
 			sb.append("(");
@@ -257,7 +258,7 @@ public class LambdaExpressionObject implements VariableDeclarationContainer, Loc
 			sb.append(")");
 		}
 		if(parameters.size() > 0 || hasParentheses) {
-			sb.append(JAVA.LAMBDA_ARROW);
+			sb.append(LANG.LAMBDA_ARROW);
 		}
 		if(expression != null) {
 			sb.append(expression.getString());
