@@ -40,6 +40,6 @@ public class TestPythonDatasetRefactorings {
 					.or(Refactorings.MoveCode.getValue());
 		TestBuilder test = new TestBuilder(detector, REPOS, types);
 		RefactoringPopulator.preparePythonRefactorings(test, types);
-		test.assertExpectationsWithGitHubAPI(313, 3, 1);
+		test.assertExpectationsWithGitHubAPI(320, 3, 1);
 	}
 }

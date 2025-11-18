@@ -2738,4 +2738,69 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159902,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "3cb952352ff0c937c1da3bf1d80142e0d8ee1e46",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/3cb952352ff0c937c1da3bf1d80142e0d8ee1e46",
+    "author": "depau",
+    "time": "5/25/17 11:18 AM",
+    "refactorings": [{
+        "type": "Extract Variable",
+        "description": "Extract Variable f in method protected _get_filter() from class __init__._DrawBoxNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter start_frame to kwargs in method public __init__(parent, kwargs) from class __init__._TrimNode",
+        "comment": "<p>3 parameters are replaced with kwargs (Merge Parameter)<br />start_frame, end_frame, setpts='PTS-STARTPTS'</p>",
+        "validation": "CTP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter eof_action to kwargs in method public __init__(main_parent, overlay_parent, kwargs) from class __init__._OverlayNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter thickness to kwargs in method public __init__(parent, x, y, width, height, color, kwargs) from class __init__._DrawBoxNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Attribute",
+        "description": "Rename Attribute thickness to kwargs in class __init__._DrawBoxNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Parameter",
+        "description": "Remove Parameter end_frame in method public __init__(parent, start_frame, end_frame, setpts) from class __init__._TrimNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Parameter",
+        "description": "Remove Parameter setpts in method public __init__(parent, start_frame, end_frame, setpts) from class __init__._TrimNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Merge Attribute",
+        "description": "Merge Attribute [start_frame, end_frame, setpts] to kwargs in class __init__._TrimNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
