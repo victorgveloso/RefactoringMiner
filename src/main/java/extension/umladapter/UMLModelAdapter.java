@@ -123,14 +123,6 @@ public class UMLModelAdapter {
             for (LangMethodDeclaration method : topLevelMethods) {
                 UMLOperation operation = createUMLOperation(method, moduleClass.getName(),
                         sourceFolder, filepath, fileContent, language);
-                for (LangAnnotation langAnnotation : method.getAnnotations()) {
-                    operation.addAnnotation(new UMLAnnotation(
-                            method.getRootCompilationUnit(),
-                            sourceFolder,
-                            filepath,
-                            langAnnotation,
-                            fileContent));
-                }
                 moduleClass.addOperation(operation);
             }
         }
