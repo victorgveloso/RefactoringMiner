@@ -3067,6 +3067,7 @@ public class UMLModelDiff {
 
 	private void detectSubRefactorings(UMLClassBaseDiff classDiff, UMLClass addedClass, RefactoringType parentType) throws RefactoringMinerTimedOutException {
 		int refactoringsBefore = refactorings.size();
+		Constants LANG = classDiff.LANG;
 		for(UMLOperation addedOperation : addedClass.getOperations()) {
 			UMLOperation removedOperation = classDiff.containsRemovedOperationWithTheSameSignature(addedOperation);
 			if(parentType.equals(RefactoringType.MERGE_CLASS) && removedOperation == null) {
@@ -3105,8 +3106,8 @@ public class UMLModelDiff {
 					this.refactorings.add(ref);
 					refactorings.addAll(mapper.getRefactorings());
 					for(CandidateAttributeRefactoring candidate : mapper.getCandidateAttributeRenames()) {
-						String before = PrefixSuffixUtils.normalize(candidate.getOriginalVariableName());
-						String after = PrefixSuffixUtils.normalize(candidate.getRenamedVariableName());
+						String before = PrefixSuffixUtils.normalize(candidate.getOriginalVariableName(), LANG);
+						String after = PrefixSuffixUtils.normalize(candidate.getRenamedVariableName(), LANG);
 						if(before.contains(".") && after.contains(".")) {
 							String prefix1 = before.substring(0, before.lastIndexOf(".") + 1);
 							String prefix2 = after.substring(0, after.lastIndexOf(".") + 1);
@@ -5053,12 +5054,13 @@ public class UMLModelDiff {
 	}
 
 	private void extractMergePatterns(UMLClassBaseDiff classDiff, Map<MergeVariableReplacement, Set<CandidateMergeVariableRefactoring>> mergeMap) {
+		Constants LANG = classDiff.LANG;
 		for(CandidateMergeVariableRefactoring candidate : classDiff.getCandidateAttributeMerges()) {
 			Set<String> before = new LinkedHashSet<String>();
 			for(String mergedVariable : candidate.getMergedVariables()) {
-				before.add(PrefixSuffixUtils.normalize(mergedVariable));
+				before.add(PrefixSuffixUtils.normalize(mergedVariable, LANG));
 			}
-			String after = PrefixSuffixUtils.normalize(candidate.getNewVariable());
+			String after = PrefixSuffixUtils.normalize(candidate.getNewVariable(), LANG);
 			MergeVariableReplacement merge = new MergeVariableReplacement(before, after);
 			if(mergeMap.containsKey(merge)) {
 				mergeMap.get(merge).add(candidate);
@@ -5072,9 +5074,10 @@ public class UMLModelDiff {
 	}
 
 	private void extractRenamePatterns(UMLClassBaseDiff classDiff, Map<Replacement, Set<CandidateAttributeRefactoring>> map) {
+		Constants LANG = classDiff.LANG;
 		for(CandidateAttributeRefactoring candidate : classDiff.getCandidateAttributeRenames()) {
-			String before = PrefixSuffixUtils.normalize(candidate.getOriginalVariableName());
-			String after = PrefixSuffixUtils.normalize(candidate.getRenamedVariableName());
+			String before = PrefixSuffixUtils.normalize(candidate.getOriginalVariableName(), LANG);
+			String after = PrefixSuffixUtils.normalize(candidate.getRenamedVariableName(), LANG);
 			if(before.contains(".") && after.contains(".")) {
 				String prefix1 = before.substring(0, before.lastIndexOf(".") + 1);
 				String prefix2 = after.substring(0, after.lastIndexOf(".") + 1);
@@ -5229,8 +5232,8 @@ public class UMLModelDiff {
 										optimizer.optimizeDuplicateMappingsForInline(mapper, refactorings);
 										refactorings.addAll(operationBodyMapper.getRefactoringsAfterPostProcessing());
 										for(CandidateAttributeRefactoring candidate : operationBodyMapper.getCandidateAttributeRenames()) {
-											String before = PrefixSuffixUtils.normalize(candidate.getOriginalVariableName());
-											String after = PrefixSuffixUtils.normalize(candidate.getRenamedVariableName());
+											String before = PrefixSuffixUtils.normalize(candidate.getOriginalVariableName(), LANG);
+											String after = PrefixSuffixUtils.normalize(candidate.getRenamedVariableName(), LANG);
 											if(before.contains(".") && after.contains(".")) {
 												String prefix1 = before.substring(0, before.lastIndexOf(".") + 1);
 												String prefix2 = after.substring(0, after.lastIndexOf(".") + 1);
@@ -5934,6 +5937,7 @@ public class UMLModelDiff {
 	private void createExtractAndMoveMethodRefactoringBasedOnClassName(UMLOperation addedOperation,
 			UMLOperationBodyMapper mapper, String className, List<AbstractCall> addedOperationInvocations,
 			UMLOperationBodyMapper operationBodyMapper, boolean nested) throws RefactoringMinerTimedOutException {
+		Constants LANG = mapper.LANG;
 		if(className.equals(addedOperation.getClassName())) {
 			//extract inside moved or renamed class
 			createExtractAndMoveMethodRefactoring(addedOperation, mapper, addedOperationInvocations, operationBodyMapper, nested);
@@ -5956,8 +5960,8 @@ public class UMLModelDiff {
 			createExtractAndMoveMethodRefactoring(addedOperation, mapper, addedOperationInvocations, operationBodyMapper, nested);
 		}
 		for(CandidateAttributeRefactoring candidate : operationBodyMapper.getCandidateAttributeRenames()) {
-			String before = PrefixSuffixUtils.normalize(candidate.getOriginalVariableName());
-			String after = PrefixSuffixUtils.normalize(candidate.getRenamedVariableName());
+			String before = PrefixSuffixUtils.normalize(candidate.getOriginalVariableName(), LANG);
+			String after = PrefixSuffixUtils.normalize(candidate.getRenamedVariableName(), LANG);
 			if(before.contains(".") && after.contains(".")) {
 				String prefix1 = before.substring(0, before.lastIndexOf(".") + 1);
 				String prefix2 = after.substring(0, after.lastIndexOf(".") + 1);
@@ -7007,6 +7011,7 @@ public class UMLModelDiff {
 	private void createRefactoring(UMLOperation removedOperation, UMLOperation addedOperation,
 			UMLOperationBodyMapper firstMapper, boolean multipleMappers)
 			throws RefactoringMinerTimedOutException {
+		Constants LANG = firstMapper.LANG;
 		Refactoring refactoring = null;
 		if(removedOperation.isConstructor() == addedOperation.isConstructor() &&
 				isSubclassOf(removedOperation.getClassName(), addedOperation.getClassName()) && addedOperation.compatibleSignature(removedOperation, typeParameterToTypeArgumentMap(removedOperation.getClassName(), addedOperation.getClassName())) &&
@@ -7096,8 +7101,8 @@ public class UMLModelDiff {
 				refactorings.addAll(firstMapper.getRefactorings());
 				refactorings.add(refactoring);
 				for(CandidateAttributeRefactoring candidate : firstMapper.getCandidateAttributeRenames()) {
-					String before = PrefixSuffixUtils.normalize(candidate.getOriginalVariableName());
-					String after = PrefixSuffixUtils.normalize(candidate.getRenamedVariableName());
+					String before = PrefixSuffixUtils.normalize(candidate.getOriginalVariableName(), LANG);
+					String after = PrefixSuffixUtils.normalize(candidate.getRenamedVariableName(), LANG);
 					if(before.contains(".") && after.contains(".")) {
 						String prefix1 = before.substring(0, before.lastIndexOf(".") + 1);
 						String prefix2 = after.substring(0, after.lastIndexOf(".") + 1);

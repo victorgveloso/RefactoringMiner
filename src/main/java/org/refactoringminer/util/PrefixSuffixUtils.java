@@ -51,15 +51,4 @@ public class PrefixSuffixUtils {
 		}
 		return output;
 	}
-
-	public static String normalize(String input) {
-		String output = null;
-		if(input.startsWith(JAVA.THIS_DOT)) {
-			output = input.substring(5, input.length());
-		}
-		else {
-			output = input;
-		}
-		return output;
-	}
 }

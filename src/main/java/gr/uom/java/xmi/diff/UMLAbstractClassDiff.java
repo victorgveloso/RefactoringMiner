@@ -76,7 +76,7 @@ public abstract class UMLAbstractClassDiff {
 	private UMLTypeListDiff permittedTypeListDiff;
 	private UMLCommentListDiff commentListDiff;
 	private static final List<String> collectionAPINames = List.of("get", "add", "contains", "put", "putAll", "addAll", "equals");
-	protected final Constants LANG;
+	public final Constants LANG;
 	
 	public UMLAbstractClassDiff(UMLAbstractClass originalClass, UMLAbstractClass nextClass, UMLModelDiff modelDiff) {
 		this.LANG = PathFileUtils.getLang(originalClass.getLocationInfo().getFilePath());
@@ -1267,8 +1267,8 @@ public abstract class UMLAbstractClassDiff {
 		}
 		for(CandidateAttributeRefactoring candidate : mapper.getCandidateAttributeRenames()) {
 			if(!multipleExtractedMethodInvocationsWithDifferentAttributesAsArguments(candidate, refactorings)) {
-				String before = PrefixSuffixUtils.normalize(candidate.getOriginalVariableName());
-				String after = PrefixSuffixUtils.normalize(candidate.getRenamedVariableName());
+				String before = PrefixSuffixUtils.normalize(candidate.getOriginalVariableName(), LANG);
+				String after = PrefixSuffixUtils.normalize(candidate.getRenamedVariableName(), LANG);
 				if(before.contains(".") && after.contains(".")) {
 					String prefix1 = before.substring(0, before.lastIndexOf(".") + 1);
 					String prefix2 = after.substring(0, after.lastIndexOf(".") + 1);
@@ -1293,9 +1293,9 @@ public abstract class UMLAbstractClassDiff {
 			if(movedAttributes != candidate.getMergedVariables().size()) {
 				Set<String> before = new LinkedHashSet<String>();
 				for(String mergedVariable : candidate.getMergedVariables()) {
-					before.add(PrefixSuffixUtils.normalize(mergedVariable));
+					before.add(PrefixSuffixUtils.normalize(mergedVariable, LANG));
 				}
-				String after = PrefixSuffixUtils.normalize(candidate.getNewVariable());
+				String after = PrefixSuffixUtils.normalize(candidate.getNewVariable(), LANG);
 				MergeVariableReplacement merge = new MergeVariableReplacement(before, after);
 				processMerge(mergeMap, merge, candidate);
 			}
@@ -1303,9 +1303,9 @@ public abstract class UMLAbstractClassDiff {
 		for(CandidateSplitVariableRefactoring candidate : mapper.getCandidateAttributeSplits()) {
 			Set<String> after = new LinkedHashSet<String>();
 			for(String splitVariable : candidate.getSplitVariables()) {
-				after.add(PrefixSuffixUtils.normalize(splitVariable));
+				after.add(PrefixSuffixUtils.normalize(splitVariable, LANG));
 			}
-			String before = PrefixSuffixUtils.normalize(candidate.getOldVariable());
+			String before = PrefixSuffixUtils.normalize(candidate.getOldVariable(), LANG);
 			SplitVariableReplacement split = new SplitVariableReplacement(before, after);
 			processSplit(splitMap, split, candidate);
 		}
@@ -1314,7 +1314,7 @@ public abstract class UMLAbstractClassDiff {
 	public int movedAttributeCount(CandidateMergeVariableRefactoring candidate) {
 		UMLAttribute addedAttribute = null;
 		for(UMLAttribute attribute : addedAttributes) {
-			if(attribute.getName().equals(PrefixSuffixUtils.normalize(candidate.getNewVariable()))) {
+			if(attribute.getName().equals(PrefixSuffixUtils.normalize(candidate.getNewVariable(), LANG))) {
 				addedAttribute = attribute;
 				break;
 			}
@@ -1326,7 +1326,7 @@ public abstract class UMLAbstractClassDiff {
 				for(String mergedVariable : candidate.getMergedVariables()) {
 					UMLAttribute removedAttribute = null;
 					for(UMLAttribute attribute : removedAttributes) {
-						if(attribute.getName().equals(PrefixSuffixUtils.normalize(mergedVariable))) {
+						if(attribute.getName().equals(PrefixSuffixUtils.normalize(mergedVariable, LANG))) {
 							removedAttribute = attribute;
 							break;
 						}
@@ -1382,8 +1382,8 @@ public abstract class UMLAbstractClassDiff {
 		for(Replacement replacement : map.keySet()) {
 			Set<CandidateAttributeRefactoring> candidates = map.get(replacement);
 			for(CandidateAttributeRefactoring candidate : candidates) {
-				String originalAttributeName = PrefixSuffixUtils.normalize(candidate.getOriginalVariableName());
-				String renamedAttributeName = PrefixSuffixUtils.normalize(candidate.getRenamedVariableName());
+				String originalAttributeName = PrefixSuffixUtils.normalize(candidate.getOriginalVariableName(), LANG);
+				String renamedAttributeName = PrefixSuffixUtils.normalize(candidate.getRenamedVariableName(), LANG);
 				UMLOperationBodyMapper candidateMapper = null;
 				for(UMLOperationBodyMapper mapper : operationBodyMapperList) {
 					if(mapper.getMappings().containsAll(candidate.getReferences())) {

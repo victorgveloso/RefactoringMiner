@@ -142,7 +142,7 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 	private UMLCommentListDiff commentListDiff;
 	private Set<Pair<AbstractCodeFragment, UMLComment>> commentedCode = new LinkedHashSet<>();
 	private Set<Pair<UMLComment, AbstractCodeFragment>> unCommentedCode = new LinkedHashSet<>();
-	final Constants LANG;
+	public final Constants LANG;
 	
 	public List<AbstractCall> getInvocationsInSourceOperationAfterExtraction() {
 		if(invocationsInSourceOperationAfterExtraction == null) {
