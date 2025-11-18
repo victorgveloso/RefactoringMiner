@@ -27,6 +27,8 @@ public class Constants {
 			TYPE_DECLARATION_KIND = "class";
 			BLOCK_COMMENT = "string";
             EXPRESSION_STATEMENT = "expression_statement";
+            TRY_STATEMENT = "try_statement";
+            CATCH_CLAUSE = "except_clause";
 		}
 		else {
 			// Java values as default
@@ -37,6 +39,8 @@ public class Constants {
 			TYPE_DECLARATION_KIND = "TYPE_DECLARATION_KIND";
 			BLOCK_COMMENT = "BlockComment";
             EXPRESSION_STATEMENT = "ExpressionStatement";
+            TRY_STATEMENT = "TryStatement";
+            CATCH_CLAUSE = "CatchClause";
 		}
 	}
 
@@ -45,8 +49,8 @@ public class Constants {
     public final String METHOD_INVOCATION = "MethodInvocation";
     public final String METHOD_DECLARATION;
     public final String ANNOTATION_TYPE_MEMBER_DECLARATION = "AnnotationTypeMemberDeclaration";
-    public final String TRY_STATEMENT = "TryStatement";
-    public final String CATCH_CLAUSE = "CatchClause";
+    public final String TRY_STATEMENT;
+    public final String CATCH_CLAUSE;
     public final String BLOCK = "Block";
     public final String VARIABLE_DECLARATION_FRAGMENT = "VariableDeclarationFragment";
     public final String FIELD_DECLARATION = "FieldDeclaration";
@@ -143,6 +147,8 @@ public class Constants {
     //Python Specific
     public final String ARGUMENT_LIST = "argument_list";
     public final String CLASS_BLOCK = "block"; // Pouria: Might be merged with Block, I have no clue about python
+    public final String TRY_KEYWORD = "try";
+    public final String EXCEPT_KEYWORD = "except";
     public final String MODULE = "module"; // This is the root of all trees in Python
     public final String DECORATED_METHOD = "decorated_definition";
 }

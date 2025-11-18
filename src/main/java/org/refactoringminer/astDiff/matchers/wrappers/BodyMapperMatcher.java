@@ -94,6 +94,28 @@ public class BodyMapperMatcher extends OptimizationAwareMatcher {
         Pair<Tree, Tree> matched = Helpers.findPairOfType(srcStatementNode,dstStatementNode, searchingType);
         if (matched != null)
             mappingStore.addMapping(matched.first,matched.second);
+        if (matched == null) {
+        	Pair<Tree, Tree> blocks = Helpers.findPairOfType(srcStatementNode,dstStatementNode, Constants.get().CLASS_BLOCK);
+        	if (blocks != null) {
+        		mappingStore.addMapping(blocks.first,blocks.second);
+        	}
+        	Pair<Tree, Tree> trys = Helpers.findPairOfType(srcStatementNode,dstStatementNode, Constants.get().TRY_KEYWORD);
+        	if (trys != null) {
+        		mappingStore.addMapping(trys.first,trys.second);
+        	}
+        	Pair<Tree, Tree> catches = Helpers.findPairOfType(srcStatementNode,dstStatementNode, Constants.get().CATCH_CLAUSE);
+        	if (catches != null) {
+        		mappingStore.addMapping(catches.first,catches.second);
+        		Pair<Tree, Tree> exceptions = Helpers.findPairOfType(catches.first,catches.second, Constants.get().SIMPLE_NAME);
+        		if (exceptions != null) {
+        			mappingStore.addMapping(exceptions.first,exceptions.second);
+        		}
+        		Pair<Tree, Tree> catch_blocks = Helpers.findPairOfType(catches.first,catches.second, Constants.get().CLASS_BLOCK);
+        		if (catch_blocks != null) {
+        			mappingStore.addMapping(catch_blocks.first,catch_blocks.second);
+        		}
+        	}
+        }
     }
 
     private void processLeafMapping(Tree srcTree, Tree dstTree, AbstractCodeMapping abstractCodeMapping, ExtendedMultiMappingStore mappingStore, boolean isPartOfExtractedMethod) {

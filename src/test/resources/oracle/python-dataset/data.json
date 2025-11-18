@@ -2803,4 +2803,20 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159903,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "17995f5ff3ab77f3b6736783c4b180283ec0fc15",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/17995f5ff3ab77f3b6736783c4b180283ec0fc15",
+    "author": "Jacotsu",
+    "time": "10/9/20 10:53 AM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter cwd in method public test__run_async(mocker, pipe_stdin, pipe_stdout, pipe_stderr, cwd) from class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
