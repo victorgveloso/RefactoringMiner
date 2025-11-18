@@ -1226,6 +1226,45 @@ public class StringBasedHeuristics {
 					mergeFound = true;
 				}
 			}
+			else if(replacement.getType().equals(ReplacementType.VARIABLE_REPLACED_WITH_ARRAY_ACCESS)) {
+				String key = replacement.getAfter();
+				int index = s1.indexOf(key);
+				if(index != -1) {
+					if(!s1.endsWith(key) && s1.charAt(index+key.length()) == ',') {
+						s1 = s1.substring(0, index) + s1.substring(index+key.length()+1, s1.length());
+					}
+					else if(index > 0 && s1.charAt(index-1) == ',') {
+						s1 = s1.substring(0, index-1) + s1.substring(index+key.length(), s1.length());
+					}
+					String reservedTokens1 = ReplacementUtil.keepReservedTokens(s1);
+					String reservedTokens2 = ReplacementUtil.keepReservedTokens(s2);
+					boolean containsArrayAccess2 = reservedTokens2.contains("([])") || reservedTokens2.contains("(.[])");
+					boolean containsArrayAccess1 = reservedTokens1.contains("([])") || reservedTokens1.contains("(.[])") || reservedTokens1.contains("[]");
+					if(containsArrayAccess2 && !containsArrayAccess1 &&
+							reservedTokens1.contains("(") && reservedTokens1.contains(")")) {
+						Set<Replacement> replacements = new LinkedHashSet<Replacement>();
+						replacements.add(replacement);
+						commonVariableReplacementMap.put(key, replacements);
+						int indexOfOpen = s1.indexOf("(");
+						int lastIndexOfClose = s1.lastIndexOf(")");
+						if(indexOfOpen != -1 && lastIndexOfClose != -1 && indexOfOpen < s1.length()-1 && indexOfOpen < lastIndexOfClose) {
+							String args = s1.substring(indexOfOpen + 1, lastIndexOfClose);
+							if(args.contains(",")) {
+								String[] arguments = args.split(",");
+								for(String arg : arguments) {
+									Replacement r = new Replacement(arg, key, replacement.getType());
+									replacements.add(r);
+								}
+							}
+							else {
+								Replacement r = new Replacement(args, key, replacement.getType());
+								replacements.add(r);
+							}
+							mergeFound = true;
+						}
+					}
+				}
+			}
 			else if(replacement.getType().equals(ReplacementType.VARIABLE_REPLACED_WITH_THIS_EXPRESSION)) {
 				String key = replacement.getAfter();
 				int index = s1.indexOf(key);
