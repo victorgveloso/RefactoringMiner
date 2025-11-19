@@ -51,6 +51,9 @@ public class PyCompilationUnitASTBuilder extends PyBaseASTBuilder {
                     LangComment comment = LangASTNodeFactory.createComment(ctx, str.getValue(), false, true);
                     compilationUnit.addComment(comment);
                 }
+                else {
+                    compilationUnit.addStatement(stmt);
+                }
             } else {
                 compilationUnit.addStatement(stmt);
             }
