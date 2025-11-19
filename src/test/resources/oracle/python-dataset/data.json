@@ -2826,4 +2826,20 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159904,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "6169b89321c16b847524112fba887bcd35a399ea",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/6169b89321c16b847524112fba887bcd35a399ea",
+    "author": "kkroening",
+    "time": "3/11/18 11:03 PM",
+    "refactorings": [{
+        "type": "Rename Parameter",
+        "description": "Rename Parameter item to index in method public __getitem__(index) from class nodes.Stream",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
