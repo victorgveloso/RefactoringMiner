@@ -291,6 +291,12 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
 
             // Process arguments if any
             List<LangASTNode> arguments = new ArrayList<>();
+            if (decoratorCtx.arglist() != null) {
+                for (Python3Parser.ArgumentContext argContext : decoratorCtx.arglist().argument()) {
+                    LangASTNode node = mainBuilder.visit(argContext);
+                    arguments.add(node);
+                }
+            }
 
             // Create the annotation
             LangAnnotation annotation = LangASTNodeFactory.createAnnotation(decoratorCtx, decoratorSimpleName, arguments);

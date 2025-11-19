@@ -88,51 +88,20 @@ public class OperationBody {
 	private int bodyHashCode;
 	private List<UMLComment> comments;
 
-	public OperationBody(LangCompilationUnit cu, String sourceFolder, String filePath, List<LangASTNode> statements, ModuleContainer container, String fileContent) {
+	// constructor for module class
+	public OperationBody(LangCompilationUnit cu, String sourceFolder, String filePath, List<LangASTNode> statements, ModuleContainer container, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String fileContent) {
 		this.compositeStatement = new CompositeStatementObject(cu, sourceFolder, filePath, cu, 0, CodeElementType.BLOCK, fileContent);
 		this.compositeStatement.setOwner(container);
 		this.comments = container.getComments();
 		this.container = container;
-		this.activeVariableDeclarations = new HashMap<String, Set<VariableDeclaration>>();
+		this.activeVariableDeclarations = new HashMap<>(activeVariableDeclarations);
 		for(LangASTNode statement : statements) {
 			processStatement(cu, sourceFolder, filePath, compositeStatement, statement, fileContent);
 		}
 		this.activeVariableDeclarations = null;
 	}
 
-	public OperationBody(LangCompilationUnit cu, String sourceFolder, String filePath, LangBlock methodBody, VariableDeclarationContainer container, List<UMLAttribute> attributes, String fileContent) {
-		this.compositeStatement = new CompositeStatementObject(cu, sourceFolder, filePath, methodBody, 0, CodeElementType.BLOCK, fileContent);
-		this.compositeStatement.setOwner(container);
-		this.comments = container.getComments();
-		this.container = container;
-		this.bodyHashCode = LangVisitor.stringify(methodBody).hashCode();
-		this.activeVariableDeclarations = new HashMap<String, Set<VariableDeclaration>>();
-		for(UMLAttribute attribute : attributes) {
-			addInActiveVariableDeclarations(attribute.getVariableDeclaration());
-		}
-		addAllInActiveVariableDeclarations(container != null ? container.getParameterDeclarationList() : Collections.emptyList());
-		if(container.isDeclaredInAnonymousClass()) {
-			UMLAnonymousClass anonymousClassContainer = container.getAnonymousClassContainer().get();
-			for(VariableDeclarationContainer parentContainer : anonymousClassContainer.getParentContainers()) {
-				for(VariableDeclaration parameterDeclaration : parentContainer.getParameterDeclarationList()) {
-					if(parameterDeclaration.isFinal()) {
-						addInActiveVariableDeclarations(parameterDeclaration);
-					}
-				}
-			}
-		}
-		for(LangASTNode statement : methodBody.getStatements()) {
-			processStatement(cu, sourceFolder, filePath, compositeStatement, statement, fileContent);
-		}
-		for(AbstractCall invocation : getAllOperationInvocations()) {
-			if(invocation.isAssertion()) {
-				containsAssertion = true;
-				break;
-			}
-		}
-		this.activeVariableDeclarations = null;
-	}
-
+	// constructor for regular functions and lambdas
 	public OperationBody(LangCompilationUnit cu, String sourceFolder, String filePath, LangBlock methodBody, VariableDeclarationContainer container, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, String fileContent) {
 		this.compositeStatement = new CompositeStatementObject(cu, sourceFolder, filePath, methodBody, 0, CodeElementType.BLOCK, fileContent);
 		this.compositeStatement.setOwner(container);
@@ -643,7 +612,7 @@ public class OperationBody {
 		else if(statement instanceof LangMethodDeclaration) {
 			LangMethodDeclaration methodDecl = (LangMethodDeclaration)statement;
 			String className = container.getClassName() + "." + container.getName();
-			UMLOperation nested = createUMLOperation(methodDecl, className, sourceFolder, filePath, fileContent, LangSupportedEnum.fromFileName(filePath));
+			UMLOperation nested = createUMLOperation(methodDecl, className, sourceFolder, filePath, fileContent, activeVariableDeclarations, LangSupportedEnum.fromFileName(filePath));
 			if(container instanceof UMLOperation) {
 				((UMLOperation)container).addNestedOperation(nested);
 			}

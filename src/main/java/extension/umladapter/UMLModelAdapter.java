@@ -122,7 +122,7 @@ public class UMLModelAdapter {
             String filepath = UMLAdapterUtil.extractFilePath(filename);
             for (LangMethodDeclaration method : topLevelMethods) {
                 UMLOperation operation = createUMLOperation(method, moduleClass.getName(),
-                        sourceFolder, filepath, fileContent, language);
+                        sourceFolder, filepath, fileContent, convertToVariableDeclarationMap(moduleClass.getFieldDeclarationMap().values()), language);
                 moduleClass.addOperation(operation);
             }
         }
@@ -140,6 +140,10 @@ public class UMLModelAdapter {
         UMLClass moduleClass = new UMLClass(moduleName, "__module__", locationInfo, true, imports);
         moduleClass.setModule(true);
         moduleClass.setStatic(true);
+        // Handle module-scope assignments as attributes
+        for (LangAssignment moduleLevelAssignment: compilationUnit.getModuleLevelAssignments()){
+            processClassLevelAssignmentForAttribute(moduleClass, moduleLevelAssignment, sourceFolder, filepath, fileContent);
+        }
         if (compilationUnit.getStatements().size() > 0) {
             ModuleContainer moduleContainer = new ModuleContainer(locationInfo, moduleClass.getName());
             OperationBody opBody = new OperationBody(
@@ -148,14 +152,11 @@ public class UMLModelAdapter {
                     filepath,
                     compilationUnit.getStatements(),
                     moduleContainer,
+                    convertToVariableDeclarationMap(moduleClass.getFieldDeclarationMap().values()),
                     fileContent
             );
             moduleContainer.addStatements(opBody.getCompositeStatement().getStatements());
             moduleClass.setContainer(moduleContainer);
-        }
-        // Handle module-scope assignments as attributes
-        for (LangAssignment moduleLevelAssignment: compilationUnit.getModuleLevelAssignments()){
-            processClassLevelAssignmentForAttribute(moduleClass, moduleLevelAssignment, sourceFolder, filepath, fileContent);
         }
         // add compilation unit comments to moduleClass
         for (LangComment compilationUnitLevelComment : compilationUnit.getComments()) {
@@ -234,7 +235,7 @@ public class UMLModelAdapter {
         umlClass.setRecord(typeDecl.isRecord());
 
         for (LangMethodDeclaration methodDecl : typeDecl.getMethods()) {
-            UMLOperation umlOperation = createUMLOperation(methodDecl, umlClass.getName(), sourceFolder, filepath, fileContent, language);
+            UMLOperation umlOperation = createUMLOperation(methodDecl, umlClass.getName(), sourceFolder, filepath, fileContent, convertToVariableDeclarationMap(umlClass.getFieldDeclarationMap().values()), language);
             umlClass.addOperation(umlOperation);
             if ("__init__".equals(methodDecl.getName())) {
                 List<UMLAttribute> attributes = getAttributes(methodDecl, sourceFolder, filepath, umlOperation, fileContent);
@@ -250,7 +251,7 @@ public class UMLModelAdapter {
         return umlClass;
     }
 
-    public static UMLOperation createUMLOperation(LangMethodDeclaration methodDecl, String className, String sourceFolder, String filePath, String fileContent, LangSupportedEnum language) {
+    public static UMLOperation createUMLOperation(LangMethodDeclaration methodDecl, String className, String sourceFolder, String filePath, String fileContent, Map<String, Set<VariableDeclaration>> activeVariableDeclarations, LangSupportedEnum language) {
         int startSignatureOffset = methodDecl.getStartChar();
         LocationInfo locationInfo = new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.METHOD_DECLARATION);
 
@@ -333,7 +334,7 @@ public class UMLModelAdapter {
                 filePath,
                 methodDecl.getBody(),
                 umlOperation,
-                getAttributes(methodDecl, sourceFolder, filePath, umlOperation, fileContent),
+                activeVariableDeclarations,
                 fileContent
         );
 
@@ -345,6 +346,21 @@ public class UMLModelAdapter {
         String text = fileContent.substring(startSignatureOffset, endSignatureOffset);
         umlOperation.setActualSignature(text);
         return umlOperation;
+    }
+
+    private static Map<String, Set<VariableDeclaration>> convertToVariableDeclarationMap(Collection<VariableDeclaration> allVariableDeclarations) {
+        Map<String, Set<VariableDeclaration>> variableDeclarationMap = new LinkedHashMap<String, Set<VariableDeclaration>>();
+        for(VariableDeclaration declaration : allVariableDeclarations) {
+            if(variableDeclarationMap.containsKey(declaration.getVariableName())) {
+                variableDeclarationMap.get(declaration.getVariableName()).add(declaration);
+            }
+            else {
+                Set<VariableDeclaration> variableDeclarations = new LinkedHashSet<VariableDeclaration>();
+                variableDeclarations.add(declaration);
+                variableDeclarationMap.put(declaration.getVariableName(), variableDeclarations);
+            }
+        }
+        return variableDeclarationMap;
     }
 
     private static List<UMLAttribute> getAttributes(LangMethodDeclaration methodDecl, String sourceFolder, String filePath, UMLOperation umlOperation, String fileContent) {

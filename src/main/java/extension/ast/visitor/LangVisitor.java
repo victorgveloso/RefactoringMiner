@@ -329,7 +329,7 @@ public class LangVisitor implements LangASTVisitor {
 
         if (langAssignment.getLeftSide() instanceof LangSimpleName) {
             String varName = ((LangSimpleName) langAssignment.getLeftSide()).getIdentifier();
-            if (!activeVariableDeclarations.containsKey(varName)) {
+            if (addVariableDeclaration(varName)) {
                 VariableDeclaration varDecl = new VariableDeclaration(cu, sourceFolder, filePath,
                         langAssignment, container, varName, activeVariableDeclarations, fileContent);
                 variableDeclarations.add(varDecl);
@@ -339,7 +339,7 @@ public class LangVisitor implements LangASTVisitor {
             for(LangASTNode element : tuple.getElements()) {
                 if(element instanceof LangSimpleName simpleName) {
                     String varName = simpleName.getIdentifier();
-                    if (!activeVariableDeclarations.containsKey(varName)) {
+                    if (addVariableDeclaration(varName)) {
                         VariableDeclaration varDecl = new VariableDeclaration(cu, sourceFolder, filePath,
                                 langAssignment, container, varName, activeVariableDeclarations, fileContent);
                         variableDeclarations.add(varDecl);
@@ -347,6 +347,24 @@ public class LangVisitor implements LangASTVisitor {
                 }
                 // TODO handle scenarios, where element is not SimpleName
             }
+        }
+    }
+
+    private boolean addVariableDeclaration(String varName) {
+        if(!activeVariableDeclarations.containsKey(varName)) {
+            return true;
+        }
+        else {
+            Set<VariableDeclaration> variables = activeVariableDeclarations.get(varName);
+            boolean attribute = false;
+            boolean parameter = false;
+            for(VariableDeclaration variable : variables) {
+                if(variable.isAttribute())
+                    attribute = true;
+                if(variable.isParameter())
+                    parameter = true;
+            }
+            return attribute && !parameter;
         }
     }
 
