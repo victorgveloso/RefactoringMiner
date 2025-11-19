@@ -2817,6 +2817,13 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
+    }, {
+        "type": "Add Method Annotation",
+        "description": "Add Method Annotation @pytest.mark.parametrize(\"cwd\", (None, \"/tmp\")) in method public test__run_async(mocker, pipe_stdin, pipe_stdout, pipe_stderr, cwd) from class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 0
 }]
