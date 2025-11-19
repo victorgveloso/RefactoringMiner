@@ -3371,4 +3371,27 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159907,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "881ae4efff9e3c0d987217f9437a254730315b87",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/881ae4efff9e3c0d987217f9437a254730315b87",
+    "author": "kkroening",
+    "time": "6/3/19 2:11 AM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter use_shorthand in method public test_filter_with_selector(use_shorthand) from class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Method Annotation",
+        "description": "Add Method Annotation @pytest.mark.parametrize(\"use_shorthand\", (true, false)) in method public test_filter_with_selector(use_shorthand) from class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
