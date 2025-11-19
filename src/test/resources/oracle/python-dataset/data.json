@@ -2842,4 +2842,76 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159905,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "637a2a5bc3d2ac3ee2edb9b6a4ec9aa635998f27",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/637a2a5bc3d2ac3ee2edb9b6a4ec9aa635998f27",
+    "author": "kkroening",
+    "time": "5/28/17 5:12 AM",
+    "refactorings": [{
+        "type": "Extract Method",
+        "description": "Extract Method public filter_(parent_node, filter_name, args, kwargs) extracted from public setpts(parent_node, expr) in class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Method",
+        "description": "Extract Method public filter_(parent_node, filter_name, args, kwargs) extracted from public trim(parent_node, kwargs) in class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Method",
+        "description": "Extract Method public filter_multi(parent_nodes, filter_name, args, kwargs) extracted from public overlay(main_parent_node, overlay_parent_node, eof_action, kwargs) in class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Method",
+        "description": "Extract Method public filter_(parent_node, filter_name, args, kwargs) extracted from public drawbox(parent_node, x, y, width, height, color, thickness, kwargs) in class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Method",
+        "description": "Extract Method public filter_multi(parent_nodes, filter_name, args, kwargs) extracted from public concat(parent_nodes, kwargs) in class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Method",
+        "description": "Extract Method public filter_(parent_node, filter_name, args, kwargs) extracted from public zoompan(parent_node, kwargs) in class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Method",
+        "description": "Extract Method public filter_(parent_node, filter_name, args, kwargs) extracted from public hue(parent_node, kwargs) in class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Method",
+        "description": "Extract Method public filter_(parent_node, filter_name, args, kwargs) extracted from public colorchannelmixer(parent_node, args, kwargs) in class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Change Variable Type",
+        "description": "Change Variable Type node : FilterNode to node in method public test_custom_filter() from class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
