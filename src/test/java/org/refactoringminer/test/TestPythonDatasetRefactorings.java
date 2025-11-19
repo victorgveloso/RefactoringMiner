@@ -38,9 +38,10 @@ public class TestPythonDatasetRefactorings {
 					.or(Refactorings.ExtractAndMoveMethod.getValue())
 					.or(Refactorings.AddClassAnnotation.getValue())
 					.or(Refactorings.MoveCode.getValue())
-					.or(Refactorings.AddMethodAnnotation.getValue());
+					.or(Refactorings.AddMethodAnnotation.getValue())
+					.or(Refactorings.RemoveMethodAnnotation.getValue());
 		TestBuilder test = new TestBuilder(detector, REPOS, types);
 		RefactoringPopulator.preparePythonRefactorings(test, types);
-		test.assertExpectationsWithGitHubAPI(332, 3, 1);
+		test.assertExpectationsWithGitHubAPI(395, 3, 1);
 	}
 }
