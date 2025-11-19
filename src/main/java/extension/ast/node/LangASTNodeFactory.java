@@ -17,6 +17,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class LangASTNodeFactory {
 
@@ -406,6 +407,19 @@ public class LangASTNodeFactory {
         LangAnnotation annotation = new LangAnnotation(name, PositionUtils.getPositionInfo(ctx));
         if (arguments != null) {
             annotation.setArguments(arguments);
+        }
+        return annotation;
+    }
+
+    public static LangAnnotation createAnnotation(ParserRuleContext ctx, LangSimpleName name, Map<String, LangASTNode> memberValuePairs, List<LangASTNode> arguments) {
+        LangAnnotation annotation = new LangAnnotation(name, PositionUtils.getPositionInfo(ctx));
+        if (arguments != null) {
+            annotation.setArguments(arguments);
+        }
+        if (memberValuePairs != null) {
+            for(Map.Entry<String, LangASTNode> entry : memberValuePairs.entrySet()) {
+                annotation.addMemberValuePair(entry.getKey(), entry.getValue());
+            }
         }
         return annotation;
     }

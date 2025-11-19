@@ -20,7 +20,9 @@ import extension.base.lang.python.Python3Parser.TypedargslistContext;
 import gr.uom.java.xmi.Visibility;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -291,15 +293,22 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
 
             // Process arguments if any
             List<LangASTNode> arguments = new ArrayList<>();
+            Map<String, LangASTNode> memberValuePairs = new LinkedHashMap<>();
             if (decoratorCtx.arglist() != null) {
                 for (Python3Parser.ArgumentContext argContext : decoratorCtx.arglist().argument()) {
-                    LangASTNode node = mainBuilder.visit(argContext);
-                    arguments.add(node);
+                    if(argContext.children.size() == 3 && argContext.children.get(1).getText().equals("=")) {
+                        LangASTNode value = mainBuilder.visit(argContext.children.get(2));
+                        memberValuePairs.put(argContext.children.get(0).getText(), value);
+                    }
+                    else {
+                        LangASTNode node = mainBuilder.visit(argContext);
+                        arguments.add(node);
+                    }
                 }
             }
 
             // Create the annotation
-            LangAnnotation annotation = LangASTNodeFactory.createAnnotation(decoratorCtx, decoratorSimpleName, arguments);
+            LangAnnotation annotation = LangASTNodeFactory.createAnnotation(decoratorCtx, decoratorSimpleName, memberValuePairs, arguments);
             annotations.add(annotation);
 
         }
