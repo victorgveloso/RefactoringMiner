@@ -36,6 +36,9 @@ public class UMLAnnotationListDiff {
 						found = true;
 						break;
 					}
+					if(matchedAnnotations.contains(Pair.of(annotation1, annotation2))) {
+						found = true;
+					}
 				}
 			}
 			if(!found) {
@@ -57,6 +60,9 @@ public class UMLAnnotationListDiff {
 						matchedAnnotations.add(Pair.of(annotation1, annotation2));
 						found = true;
 						break;
+					}
+					if(matchedAnnotations.contains(Pair.of(annotation1, annotation2))) {
+						found = true;
 					}
 				}
 			}
