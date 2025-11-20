@@ -3659,4 +3659,97 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159911,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "ac57e2df132d4ea05dacee642de74d057bd98f5d",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/ac57e2df132d4ea05dacee642de74d057bd98f5d",
+    "author": "kkroening",
+    "time": "5/20/18 4:13 AM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public test_run_multi_output() renamed to public test_run__multi_output() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_run_dummy_cmd() renamed to public test_run__dummy_cmd() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_run_dummy_cmd_list() renamed to public test_run__dummy_cmd_list() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_custom_filter() renamed to public test_filter__custom() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_custom_filter_fluent() renamed to public test_filter__custom_fluent() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter kwargs to overwrite_output in method public compile(stream_spec, cmd, overwrite_output) from class _run.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move And Rename Class",
+        "description": "Move And Rename Class _probe.ProbeException moved and renamed to _run.Error",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter stream_spec in method public __init__(stream_spec, stdout, stderr) from class _run.Error",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter stdout in method public __init__(stream_spec, stdout, stderr) from class _run.Error",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter stderr in method public __init__(stream_spec, stdout, stderr) from class _run.Error",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Parameter",
+        "description": "Remove Parameter stderr_output in method public __init__(stderr_output) from class _probe.ProbeException",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Attribute",
+        "description": "Rename Attribute stderr_output to stdout in class _run.Error",
+        "comment": "<p>self.stderr_output is replaced by two attributes&nbsp;self.stdout and&nbsp;self.stderr</p><div><div>class ProbeException(Exception):</div><div>def__init__(self, stderr_output):</div><div>super(ProbeException, self).__init__('ffprobe error')</div><div>self.stderr_output = stderr_output</div><div>--&gt;</div><div><div><div>class Error(Exception):</div><div>def__init__(self, stream_spec, stdout, stderr):</div><div>super(Error, self).__init__('ffmpeg error (see stderr output for detail)')</div><div>self.stream_spec = stream_spec</div><div>self.stdout = stdout</div><div>self.stderr = stderr</div></div></div></div>",
+        "validation": "CTP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }],
+    "refDiffExecutionTime": 0
 }]
