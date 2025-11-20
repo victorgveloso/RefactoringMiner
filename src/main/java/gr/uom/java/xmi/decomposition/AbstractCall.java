@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import extension.ast.node.LangASTNode;
 import extension.ast.node.unit.LangCompilationUnit;
+import gr.uom.java.xmi.Constants;
 import gr.uom.java.xmi.LeafType;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLType;
@@ -75,6 +76,9 @@ public abstract class AbstractCall extends LeafExpression {
 
 	public boolean isSuperCall() {
 		if(expression != null && expression.equals("super")) {
+			return true;
+		}
+		if(LANG.equals(Constants.PYTHON) && expression != null &&  expression.startsWith("super(")) {
 			return true;
 		}
 		if(getName().equals("super")) {

@@ -3752,4 +3752,71 @@
         "validators": "Nikos"
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159912,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "c162eab2a9d4af50653d460cf2ed30eff00f4475",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/c162eab2a9d4af50653d460cf2ed30eff00f4475",
+    "author": "kkroening",
+    "time": "5/9/18 2:26 AM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public test_filter_with_bad_selectors() renamed to public test_get_item_with_bad_selectors() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159913,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "f3b32d6d41d65701aa65bae951518e1ec387b483",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/f3b32d6d41d65701aa65bae951518e1ec387b483",
+    "author": "kkroening",
+    "time": "5/14/17 6:18 AM",
+    "refactorings": [{
+        "type": "Rename Class",
+        "description": "Rename Class __init__._TrimFilterNode renamed to __init__._TrimNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parents to parent in method public __init__(parent) from class __init__._GlobalNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parents to parent in method public __init__(parent, filename) from class __init__._FileOutputNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parents to parent in method public __init__(parent, start_frame, end_frame, setpts) from class __init__._TrimNode",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable args in method public test_get_args_complex_filter() from class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable out to overlay_file in method protected _get_complex_filter_example() from class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "FP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
