@@ -152,44 +152,35 @@ public class UMLAdapterUtil {
                     LocationInfo.CodeElementType.IMPORT_DECLARATION
             );
 
-            // Determine the full import name
-            String importName;
-
             if (importStmt.isFromImport()) {
                 // Handle 'from' imports (from X import Y)
                 if (importStmt.isWildcardImport()) {
                     // from module import *
-                    importName = importStmt.getModuleName();
+                    String importName = importStmt.getModuleName();
+                    // isOnDemand is true for wildcard imports
+                    // isStatic is false since Python doesn't have static imports like Java
+                    UMLImport umlImport = new UMLImport(importName, importStmt.isWildcardImport(), false, locationInfo);
+                    umlImports.add(umlImport);
                 } else {
                     // from module import specific items
                     // Create separate UMLImport for each imported item
-                    for (LangImportStatement.ImportItem item : importStmt.getImports()) {
+                    for (LangImportStatement.LangImportItem item : importStmt.getImports()) {
                         String fullImportName = importStmt.getModuleName() + "." + item.getName();
                         // isOnDemand is false because we're importing specific items
                         // isStatic is false since Python doesn't have static imports like Java
                         UMLImport umlImport = new UMLImport(fullImportName, false, false, locationInfo);
                         umlImports.add(umlImport);
                     }
-                    continue; // Skip the outer import creation since we created individual imports
                 }
             } else {
-                importName = importStmt.getModuleName();
-
                 // If there are aliases, create separate imports for each
                 if (!importStmt.getImports().isEmpty()) {
-                    for (LangImportStatement.ImportItem item : importStmt.getImports()) {
+                    for (LangImportStatement.LangImportItem item : importStmt.getImports()) {
                         UMLImport umlImport = new UMLImport(item.getName(), false, false, locationInfo);
                         umlImports.add(umlImport);
                     }
-                    continue; // Skip the outer import creation
                 }
             }
-
-            // Create the UMLImport
-            // isOnDemand is true for wildcard imports
-            // isStatic is false since Python doesn't have static imports like Java
-            UMLImport umlImport = new UMLImport(importName, importStmt.isWildcardImport(), false, locationInfo);
-            umlImports.add(umlImport);
         }
 
         return umlImports;

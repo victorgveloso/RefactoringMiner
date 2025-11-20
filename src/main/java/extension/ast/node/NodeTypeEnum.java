@@ -11,6 +11,7 @@ public enum NodeTypeEnum {
 
     /** EXPRESSIONS */
     SIMPLE_NAME("LangSimpleName"),
+    IMPORT_ITEM("LangImportItem"),
     INFIX_EXPRESSION("LangInfixExpression"),
     ASSIGNMENT("LangAssignment"),
     METHOD_INVOCATION("LangMethodInvocation"),

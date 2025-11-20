@@ -313,9 +313,9 @@ public class PyASTFlattener implements LangASTFlattener {
                 importBuilder.append("*");
             } else {
                 // Flatten list of specific imports
-                List<LangImportStatement.ImportItem> imports = langImportStatement.getImports();
+                List<LangImportStatement.LangImportItem> imports = langImportStatement.getImports();
                 for (int i = 0; i < imports.size(); i++) {
-                    LangImportStatement.ImportItem item = imports.get(i);
+                    LangImportStatement.LangImportItem item = imports.get(i);
 
                     // Add the imported name
                     importBuilder.append(item.getName());
@@ -336,9 +336,9 @@ public class PyASTFlattener implements LangASTFlattener {
             importBuilder.append("import ");
 
             // Flatten list of modules being imported
-            List<LangImportStatement.ImportItem> imports = langImportStatement.getImports();
+            List<LangImportStatement.LangImportItem> imports = langImportStatement.getImports();
             for (int i = 0; i < imports.size(); i++) {
-                LangImportStatement.ImportItem item = imports.get(i);
+                LangImportStatement.LangImportItem item = imports.get(i);
 
                 importBuilder.append(item.getName());
 
@@ -356,6 +356,11 @@ public class PyASTFlattener implements LangASTFlattener {
 
         importBuilder.append("\n");
         builder.append(importBuilder);
+    }
+
+    @Override
+    public void visit(LangImportStatement.LangImportItem langImportItem) {
+    	
     }
 
     @Override

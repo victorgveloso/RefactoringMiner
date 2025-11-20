@@ -2,6 +2,7 @@ package extension.ast.node.statement;
 
 import extension.ast.node.NodeTypeEnum;
 import extension.ast.node.PositionInfo;
+import extension.ast.node.expression.LangExpression;
 import extension.ast.visitor.LangASTVisitor;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public class LangImportStatement extends LangStatement {
     private String moduleName;                        // The module being imported from
-    private List<ImportItem> imports = new ArrayList<>();  // The items being imported
+    private List<LangImportItem> imports = new ArrayList<>();  // The items being imported
     private boolean isFromImport = false;             // Whether this is a 'from' import
     private boolean isWildcardImport = false;         // Whether this is a 'from module import *'
     private int relativeLevel = 0;
@@ -19,18 +20,13 @@ public class LangImportStatement extends LangStatement {
         super(NodeTypeEnum.IMPORT_STATEMENT);
     }
 
-    public LangImportStatement(String moduleName, String importedName, String alias, int relativeLevel, PositionInfo positionInfo) {
+    public LangImportStatement(String moduleName, int relativeLevel, PositionInfo positionInfo, List<LangImportItem> importItems, boolean isWildcard) {
         super(NodeTypeEnum.IMPORT_STATEMENT, positionInfo);
         this.moduleName = moduleName;
         this.isFromImport = true;
         this.relativeLevel = relativeLevel;
-
-        if ("*".equals(importedName)) {
-            this.isWildcardImport = true;
-        } else {
-            ImportItem item = new ImportItem(importedName, alias);
-            this.imports.add(item);
-        }
+        this.imports = importItems;
+        this.isWildcardImport = isWildcard;
     }
 
 
@@ -38,41 +34,15 @@ public class LangImportStatement extends LangStatement {
         super(NodeTypeEnum.IMPORT_STATEMENT, positionInfo);
     }
 
-    public LangImportStatement(String moduleName, String alias, PositionInfo positionInfo) {
+    public LangImportStatement(PositionInfo positionInfo, List<LangImportItem> importItems) {
         super(NodeTypeEnum.IMPORT_STATEMENT, positionInfo);
-        this.moduleName = moduleName;
         this.isFromImport = false;
-
-        ImportItem importItem = new ImportItem(moduleName, alias);
-        this.imports.add(importItem);
-    }
-
-    public LangImportStatement(String moduleName, List<ImportItem> imports, PositionInfo positionInfo) {
-        super(NodeTypeEnum.IMPORT_STATEMENT, positionInfo);
-        this.moduleName = moduleName;
-        this.isFromImport = true;
-        this.imports.addAll(imports);
-    }
-
-    public LangImportStatement(String moduleName, boolean isWildcard, PositionInfo positionInfo) {
-        super(NodeTypeEnum.IMPORT_STATEMENT, positionInfo);
-        this.moduleName = moduleName;
-        this.isFromImport = true;
-        this.isWildcardImport = isWildcard;
+        this.imports = importItems;
     }
 
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-    }
-
-    public void addImport(String name, String alias) {
-        ImportItem item = new ImportItem(name, alias);
-        imports.add(item);
-    }
-
-    public void addImport(ImportItem item) {
-        imports.add(item);
     }
 
     public String getModuleName() {
@@ -83,12 +53,8 @@ public class LangImportStatement extends LangStatement {
         this.moduleName = moduleName;
     }
 
-    public List<ImportItem> getImports() {
+    public List<LangImportItem> getImports() {
         return Collections.unmodifiableList(imports);
-    }
-
-    public void setImports(List<ImportItem> imports) {
-        this.imports = imports;
     }
 
     public boolean isFromImport() {
@@ -128,11 +94,12 @@ public class LangImportStatement extends LangStatement {
     /**
      * Represents an individual imported item, which can be a module, class, function, etc.
      */
-    public static class ImportItem {
+    public static class LangImportItem extends LangExpression {
         private String name;   // Name of the imported item
         private String alias;  // Optional alias for the imported item
 
-        public ImportItem(String name, String alias) {
+        public LangImportItem(String name, String alias, PositionInfo positionInfo) {
+        	super(NodeTypeEnum.IMPORT_ITEM, positionInfo);
             this.name = name;
             this.alias = alias;
         }
@@ -159,6 +126,11 @@ public class LangImportStatement extends LangStatement {
                     "name='" + name + '\'' +
                     ", alias='" + alias + '\'' +
                     '}';
+        }
+
+        @Override
+        public void accept(LangASTVisitor visitor) {
+            visitor.visit(this);
         }
     }
 }

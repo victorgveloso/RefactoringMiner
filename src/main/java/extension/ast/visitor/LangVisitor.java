@@ -474,6 +474,11 @@ public class LangVisitor implements LangASTVisitor {
     }
 
     @Override
+    public void visit(LangImportStatement.LangImportItem langImportItem) {
+
+    }
+
+    @Override
     public void visit(LangPrefixExpression langPrefixExpression) {
         // Add prefix expressions
         LeafExpression prefixExpr = new LeafExpression(cu, sourceFolder, filePath,

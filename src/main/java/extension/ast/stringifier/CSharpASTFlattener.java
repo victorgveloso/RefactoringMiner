@@ -311,10 +311,10 @@ public class CSharpASTFlattener implements LangASTFlattener {
     @Override
     public void visit(LangImportStatement imp) {
         // Represent C# using directives
-        List<LangImportStatement.ImportItem> imports = imp.getImports();
+        List<LangImportStatement.LangImportItem> imports = imp.getImports();
         if (imports != null && !imports.isEmpty()) {
             for (int i = 0; i < imports.size(); i++) {
-                LangImportStatement.ImportItem item = imports.get(i);
+                LangImportStatement.LangImportItem item = imports.get(i);
                 builder.append("using ").append(item.getName());
                 if (item.getAlias() != null && !item.getAlias().isEmpty()) {
                     builder.append(" = ").append(item.getAlias());
@@ -324,6 +324,11 @@ public class CSharpASTFlattener implements LangASTFlattener {
         } else if (imp.getModuleName() != null) {
             builder.append("using ").append(imp.getModuleName()).append(";\n");
         }
+    }
+
+    @Override
+    public void visit(LangImportStatement.LangImportItem langImportItem) {
+    	
     }
 
     @Override
