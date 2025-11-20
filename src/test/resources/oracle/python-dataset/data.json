@@ -3515,4 +3515,27 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159909,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "8ff9f408c66db2760dd74eb82b2f4a3273841b2f",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/8ff9f408c66db2760dd74eb82b2f4a3273841b2f",
+    "author": "kkroening",
+    "time": "5/27/17 11:53 PM",
+    "refactorings": [{
+        "type": "Inline Method",
+        "description": "Inline Method public file_input(filename) inlined to public input(filename) in class _ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Inline Method",
+        "description": "Inline Method public file_output(parent_node, filename) inlined to public output(parent_node, filename) in class _ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
