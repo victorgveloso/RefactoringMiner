@@ -168,7 +168,11 @@ public class UMLAdapterUtil {
                         String fullImportName = importStmt.getModuleName() + "." + item.getName();
                         // isOnDemand is false because we're importing specific items
                         // isStatic is false since Python doesn't have static imports like Java
-                        UMLImport umlImport = new UMLImport(fullImportName, false, false, locationInfo);
+                        UMLImport umlImport = new UMLImport(fullImportName, false, false, new LocationInfo(
+                                sourceFolder,
+                                filepath,
+                                item,
+                                LocationInfo.CodeElementType.IMPORT_DECLARATION));
                         umlImports.add(umlImport);
                     }
                 }
@@ -176,7 +180,11 @@ public class UMLAdapterUtil {
                 // If there are aliases, create separate imports for each
                 if (!importStmt.getImports().isEmpty()) {
                     for (LangImportStatement.LangImportItem item : importStmt.getImports()) {
-                        UMLImport umlImport = new UMLImport(item.getName(), false, false, locationInfo);
+                        UMLImport umlImport = new UMLImport(item.getName(), false, false, new LocationInfo(
+                                sourceFolder,
+                                filepath,
+                                item,
+                                LocationInfo.CodeElementType.IMPORT_DECLARATION));
                         umlImports.add(umlImport);
                     }
                 }

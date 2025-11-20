@@ -151,4 +151,10 @@ public class Constants {
     public final String EXCEPT_KEYWORD = "except";
     public final String MODULE = "module"; // This is the root of all trees in Python
     public final String DECORATED_METHOD = "decorated_definition";
+    public final String IMPORT_FROM_STATEMENT = "import_from_statement";
+    public final String FUTURE_IMPORT_STATEMENT = "future_import_statement";
+    public final String RELATIVE_IMPORT = "relative_import";
+    public final String FROM_KEYWORD = "from";
+    public final String FUTURE = "__future__";
+    public final String RELATIVE_IMPORT_DOTTED_NAME = "dotted_name";
 }
