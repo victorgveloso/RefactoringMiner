@@ -3538,4 +3538,125 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159910,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "9a487e8603bf881519cd04afe34c1272adfa7d15",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/9a487e8603bf881519cd04afe34c1272adfa7d15",
+    "author": "kkroening",
+    "time": "5/20/18 4:29 AM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public test_get_args_simple() renamed to public test__get_args__simple() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_get_args_complex_filter() renamed to public test__get_args__complex_filter() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_compile() renamed to public test__compile() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_run() renamed to public test__run() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_run__capture_out(mocker, capture_stdout, capture_stderr) renamed to public test__run__capture_out(mocker, capture_stdout, capture_stderr) in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_run__input_output(mocker) renamed to public test__run__input_output(mocker) in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_run__error(mocker, capture_stdout, capture_stderr) renamed to public test__run__error(mocker, capture_stdout, capture_stderr) in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_run__multi_output() renamed to public test__run__multi_output() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_run__dummy_cmd() renamed to public test__run__dummy_cmd() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_run__dummy_cmd_list() renamed to public test__run__dummy_cmd_list() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_filter__custom() renamed to public test__filter__custom() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_filter__custom_fluent() renamed to public test__filter__custom_fluent() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_merge_outputs() renamed to public test__merge_outputs() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_ffprobe() renamed to public test__probe() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public test_ffprobe_exception() renamed to public test__probe__exception() in class test_ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter stream_spec to cmd in method public __init__(cmd, stdout, stderr) from class _run.Error",
+        "comment": null,
+        "validation": "FP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
