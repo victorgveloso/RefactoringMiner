@@ -3819,4 +3819,43 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159914,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "f5f7ee20730f2beca5db80933f11d880e1f22a0c",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/f5f7ee20730f2beca5db80933f11d880e1f22a0c",
+    "author": "kkroening",
+    "time": "1/7/18 7:43 AM",
+    "refactorings": [{
+        "type": "Rename Variable",
+        "description": "Rename Variable args to kwargs in module split_silence.__module__ from class split_silence.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter verbose in method public split_audio(in_filename, out_pattern, silence_threshold, silence_duration, start_time, end_time, verbose) from class split_silence.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159915,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "f818cffc557e032e5a61949ced8bcda96d616660",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/f818cffc557e032e5a61949ced8bcda96d616660",
+    "author": "kkroening",
+    "time": "1/7/18 5:28 AM",
+    "refactorings": [{
+        "type": "Extract Method",
+        "description": "Extract Method public compile(stream_spec, cmd, kwargs) extracted from public run(stream_spec, cmd, kwargs) in class _run.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
