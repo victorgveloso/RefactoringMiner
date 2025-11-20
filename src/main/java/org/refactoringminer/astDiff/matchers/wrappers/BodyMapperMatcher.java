@@ -80,7 +80,26 @@ public class BodyMapperMatcher extends OptimizationAwareMatcher {
                 return;
             if (srcStatementNode.getType().name.equals(dstStatementNode.getType().name))
                 mappingStore.addMapping(srcStatementNode,dstStatementNode);
-            if ((srcStatementNode.getType().name.equals(Constants.get().TRY_STATEMENT) && dstStatementNode.getType().name.equals(Constants.get().TRY_STATEMENT)) ||
+            if ((srcStatementNode.getType().name.equals(Constants.get().IF_STATEMENT) && dstStatementNode.getType().name.equals(Constants.get().IF_STATEMENT))) {
+                Pair<Tree, Tree> matched = Helpers.findPairOfType(srcStatementNode,dstStatementNode, Constants.get().ELSE_IF);
+                if (matched != null) {
+                    mappingStore.addMapping(matched.first,matched.second);
+                    Pair<Tree, Tree> elifs = Helpers.findPairOfType(matched.first,matched.second, Constants.get().ELIF_KEYWORD);
+                    if (elifs != null) {
+                        mappingStore.addMapping(elifs.first,elifs.second);
+                    }
+                }
+                matched = Helpers.findPairOfType(srcStatementNode,dstStatementNode, Constants.get().ELSE);
+                if (matched != null) {
+                    mappingStore.addMapping(matched.first,matched.second);
+                    Pair<Tree, Tree> elses = Helpers.findPairOfType(matched.first,matched.second, Constants.get().ELSE_KEYWORD);
+                    if (elses != null) {
+                        mappingStore.addMapping(elses.first,elses.second);
+                    }
+                }
+                new CompositeMatcher(abstractCodeMapping).match(srcStatementNode,dstStatementNode,mappingStore);
+            }
+            else if ((srcStatementNode.getType().name.equals(Constants.get().TRY_STATEMENT) && dstStatementNode.getType().name.equals(Constants.get().TRY_STATEMENT)) ||
                     (srcStatementNode.getType().name.equals(Constants.get().CATCH_CLAUSE) && dstStatementNode.getType().name.equals(Constants.get().CATCH_CLAUSE))) {
                 matchBlocks(srcStatementNode, dstStatementNode, mappingStore);
                 new CompositeMatcher(abstractCodeMapping).match(srcStatementNode,dstStatementNode,mappingStore);

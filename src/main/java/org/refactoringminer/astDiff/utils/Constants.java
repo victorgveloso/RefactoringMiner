@@ -29,6 +29,7 @@ public class Constants {
             EXPRESSION_STATEMENT = "expression_statement";
             TRY_STATEMENT = "try_statement";
             CATCH_CLAUSE = "except_clause";
+            IF_STATEMENT = "if_statement";
 		}
 		else {
 			// Java values as default
@@ -41,6 +42,7 @@ public class Constants {
             EXPRESSION_STATEMENT = "ExpressionStatement";
             TRY_STATEMENT = "TryStatement";
             CATCH_CLAUSE = "CatchClause";
+            IF_STATEMENT = "IfStatement";
 		}
 	}
 
@@ -101,7 +103,7 @@ public class Constants {
     public final String EMPTY_STATEMENT = "EmptyStatement";
     public final String ENHANCED_FOR_STATEMENT = "EnhancedForStatement";
     public final String FOR_STATEMENT = "ForStatement";
-    public final String IF_STATEMENT = "IfStatement";
+    public final String IF_STATEMENT;
     public final String RETURN_STATEMENT = "ReturnStatement";
     public final String SUPER_CONSTRUCTOR_INVOCATION = "SuperConstructorInvocation";
     public final String SWITCH_CASE = "SwitchCase";
@@ -157,4 +159,8 @@ public class Constants {
     public final String FROM_KEYWORD = "from";
     public final String FUTURE = "__future__";
     public final String RELATIVE_IMPORT_DOTTED_NAME = "dotted_name";
+    public final String ELSE_IF = "elif_clause";
+    public final String ELSE = "else_clause";
+    public final String ELIF_KEYWORD = "elif";
+    public final String ELSE_KEYWORD = "else";
 }
