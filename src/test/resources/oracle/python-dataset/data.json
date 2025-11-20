@@ -3394,4 +3394,125 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159908,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "8d142c5fa9560497010e37517c331a34e5f370d0",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/8d142c5fa9560497010e37517c331a34e5f370d0",
+    "author": "kkroening",
+    "time": "5/27/17 11:16 PM",
+    "refactorings": [{
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parent to parent_node in method public overwrite_output(parent_node) from class _ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parents to parent_nodes in method public merge_outputs(parent_nodes) from class _ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parent to parent_node in method public file_output(parent_node, filename) from class _ffmpeg.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parent to parent_node in method public setpts(parent_node, expr) from class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parent to parent_node in method public trim(parent_node, kwargs) from class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter main_parent to main_parent_node in method public overlay(main_parent_node, overlay_parent_node, eof_action, kwargs) from class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter overlay_parent to overlay_parent_node in method public overlay(main_parent_node, overlay_parent_node, eof_action, kwargs) from class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parent to parent_node in method public hflip(parent_node) from class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parent to parent_node in method public vflip(parent_node) from class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parent to parent_node in method public drawbox(parent_node, x, y, width, height, color, thickness, kwargs) from class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parents to parent_nodes in method public concat(parent_nodes, kwargs) from class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parent to parent_node in method public zoompan(parent_node, kwargs) from class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parent to parent_node in method public hue(parent_node, kwargs) from class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parent to parent_node in method public colorchannelmixer(parent_node, args, kwargs) from class _filters.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parent to node in method public get_args(node) from class _run.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter parent to node in method public run(node, cmd) from class _run.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
