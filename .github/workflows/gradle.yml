@@ -23,7 +23,7 @@ jobs:
       actions: write
 
     env:
-      OAuthToken: ${{ secrets.OAUTHTOKEN }} 
+      OAuthToken: ${{ secrets.OAUTHTOKEN }}
 
     steps:
     - uses: actions/checkout@v4
@@ -38,7 +38,26 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@ec92e829475ac0c2315ea8f9eced72db85bb337a # v3.0.0
 
-    - name: Build with Gradle Wrapper
+    # ---------------------------------------------------------
+    # OPTION 1: WINDOWS SPECIFIC EXECUTION
+    # Uses PowerShell syntax and .bat wrapper
+    # ---------------------------------------------------------
+    - name: Build with Gradle (Windows)
+      if: runner.os == 'Windows'
+      shell: powershell
+      run: |
+        if ("${{ github.event_name }}" -eq 'pull_request') {
+          .\gradlew.bat build -x javadoc -Pnotoken -Pselfhosted
+        } else {
+          .\gradlew.bat build -x javadoc -Pselfhosted
+        }
+
+    # ---------------------------------------------------------
+    # OPTION 2: LINUX / MACOS SPECIFIC EXECUTION
+    # Uses Bash syntax and shell script wrapper
+    # ---------------------------------------------------------
+    - name: Build with Gradle (Linux/macOS)
+      if: runner.os != 'Windows'
       run: |
         if [ "${{ github.event_name }}" == 'pull_request' ]; then
           ./gradlew build -x javadoc -Pnotoken -Pselfhosted
@@ -62,7 +81,7 @@ jobs:
         reporter: 'java-junit'
         list-tests: failed
         fail-on-error: false
-    
+
 #    - name: Test Report to Gist
 #      uses: gaelgirodon/ci-badges-action@v1
 #      with:
