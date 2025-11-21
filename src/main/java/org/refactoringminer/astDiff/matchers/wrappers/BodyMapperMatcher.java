@@ -3,6 +3,7 @@ package org.refactoringminer.astDiff.matchers.wrappers;
 import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.utils.Pair;
 import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.decomposition.*;
 import gr.uom.java.xmi.decomposition.replacement.CompositeReplacement;
 import gr.uom.java.xmi.decomposition.replacement.Replacement;
@@ -70,17 +71,38 @@ public class BodyMapperMatcher extends OptimizationAwareMatcher {
         CompositeStatementObjectMapping compositeStatementObjectMapping = (CompositeStatementObjectMapping) abstractCodeMapping;
         Tree srcStatementNode = TreeUtilFunctions.findByLocationInfo(srcTree,compositeStatementObjectMapping.getFragment1().getLocationInfo());
         Tree dstStatementNode = TreeUtilFunctions.findByLocationInfo(dstTree,compositeStatementObjectMapping.getFragment2().getLocationInfo());
-        //if (srcStatementNode.getMetrics().hash == dstStatementNode.getMetrics().hash)
-        //{
-        //	mappingStore.addMappingRecursively(srcStatementNode, dstStatementNode);
-        //}
-        //else
+        //handle case where the parent block has only a single statement and the locationInfo of compositeStatement is identical with the parent block locationInfo in Python
+        //the solution uses reflection to obtain the value of Constants value from the CodeElementType constant name
+        if (srcStatementNode.getType().name.equals(Constants.get().CLASS_BLOCK) && !compositeStatementObjectMapping.getFragment1().getLocationInfo().getCodeElementType().equals(CodeElementType.BLOCK)) {
+            String astTypeName = compositeStatementObjectMapping.getFragment1().getLocationInfo().getCodeElementType().name();
+            try {
+                java.lang.reflect.Field publicField = Constants.class.getField(astTypeName);
+                String value = (String) publicField.get(Constants.get());
+                Tree tmp = TreeUtilFunctions.findByLocationInfo(srcTree,compositeStatementObjectMapping.getFragment1().getLocationInfo(), value);
+                if(tmp != null)
+                    srcStatementNode = tmp;
+            } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+                //e.printStackTrace();
+            }
+        }
+        if (dstStatementNode.getType().name.equals(Constants.get().CLASS_BLOCK) && !compositeStatementObjectMapping.getFragment2().getLocationInfo().getCodeElementType().equals(CodeElementType.BLOCK)) {
+            String astTypeName = compositeStatementObjectMapping.getFragment2().getLocationInfo().getCodeElementType().name();
+            try {
+                java.lang.reflect.Field publicField = Constants.class.getField(astTypeName);
+                String value = (String) publicField.get(Constants.get());
+                Tree tmp = TreeUtilFunctions.findByLocationInfo(dstTree,compositeStatementObjectMapping.getFragment2().getLocationInfo(), value);
+                if(tmp != null)
+                    dstStatementNode = tmp;
+            } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+                //e.printStackTrace();
+            }
+        }
         {
             if (srcStatementNode == null || dstStatementNode == null)
                 return;
             if (srcStatementNode.getType().name.equals(dstStatementNode.getType().name))
                 mappingStore.addMapping(srcStatementNode,dstStatementNode);
-            if ((srcStatementNode.getType().name.equals(Constants.get().IF_STATEMENT) && dstStatementNode.getType().name.equals(Constants.get().IF_STATEMENT))) {
+            if (srcStatementNode.getType().name.equals(Constants.get().IF_STATEMENT) && dstStatementNode.getType().name.equals(Constants.get().IF_STATEMENT)) {
                 Pair<Tree, Tree> matched = Helpers.findPairOfType(srcStatementNode,dstStatementNode, Constants.get().ELSE_IF);
                 if (matched != null) {
                     mappingStore.addMapping(matched.first,matched.second);
@@ -108,6 +130,7 @@ public class BodyMapperMatcher extends OptimizationAwareMatcher {
             }
         }
     }
+
     private void matchBlocks(Tree srcStatementNode, Tree dstStatementNode, ExtendedMultiMappingStore mappingStore) {
         String searchingType = Constants.get().BLOCK;
         Pair<Tree, Tree> matched = Helpers.findPairOfType(srcStatementNode,dstStatementNode, searchingType);

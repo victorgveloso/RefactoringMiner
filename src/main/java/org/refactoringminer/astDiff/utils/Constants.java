@@ -30,6 +30,7 @@ public class Constants {
             TRY_STATEMENT = "try_statement";
             CATCH_CLAUSE = "except_clause";
             IF_STATEMENT = "if_statement";
+            WHILE_STATEMENT = "while_statement";
 		}
 		else {
 			// Java values as default
@@ -43,6 +44,7 @@ public class Constants {
             TRY_STATEMENT = "TryStatement";
             CATCH_CLAUSE = "CatchClause";
             IF_STATEMENT = "IfStatement";
+            WHILE_STATEMENT = "WhileStatement";
 		}
 	}
 
@@ -110,7 +112,7 @@ public class Constants {
     public final String SWITCH_STATEMENT = "SwitchStatement";
     public final String SYNCHRONIZED_STATEMENT = "SynchronizedStatement";
     public final String THROW_STATEMENT = "ThrowStatement";
-    public final String WHILE_STATEMENT = "WhileStatement";
+    public final String WHILE_STATEMENT;
     public final String CONDITIONAL_EXPRESSION = "ConditionalExpression";
 
     public final String INFIX_EXPRESSION = "InfixExpression";

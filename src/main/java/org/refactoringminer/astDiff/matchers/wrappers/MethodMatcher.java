@@ -49,10 +49,10 @@ public class MethodMatcher extends BodyMapperMatcher{
             srcOperationNode = TreeUtilFunctions.findByLocationInfo(srcTree, umlOperationBodyMapper.getOperation1().getLocationInfo());
             dstOperationNode = TreeUtilFunctions.findByLocationInfo(dstTree, umlOperationBodyMapper.getOperation2().getLocationInfo());
             //handle case where class has only a single function and the locationInfo of function declaration is identical with the class block in Python
-            if (srcOperationNode.getType().name.equals("block")) {
+            if (srcOperationNode.getType().name.equals(Constants.get().CLASS_BLOCK)) {
                 srcOperationNode = TreeUtilFunctions.findByLocationInfo(srcTree, umlOperationBodyMapper.getOperation1().getLocationInfo(), Constants.get().METHOD_DECLARATION);
             }
-            if (dstOperationNode.getType().name.equals("block")) {
+            if (dstOperationNode.getType().name.equals(Constants.get().CLASS_BLOCK)) {
                 dstOperationNode = TreeUtilFunctions.findByLocationInfo(dstTree, umlOperationBodyMapper.getOperation2().getLocationInfo(), Constants.get().METHOD_DECLARATION);
             }
             if (srcOperationNode.getParent() != null && srcOperationNode.getParent().getType().name.equals(Constants.get().DECORATED_METHOD)) {
