@@ -129,9 +129,25 @@ public class BodyMapperMatcher extends OptimizationAwareMatcher {
         		if (exceptions != null) {
         			mappingStore.addMapping(exceptions.first,exceptions.second);
         		}
+        		Pair<Tree, Tree> attributeExceptions = Helpers.findPairOfType(catches.first,catches.second, Constants.get().ATTRIBUTE_EXCEPTION);
+        		if (attributeExceptions != null) {
+        			mappingStore.addMappingRecursively(attributeExceptions.first,attributeExceptions.second);
+        		}
         		Pair<Tree, Tree> catch_blocks = Helpers.findPairOfType(catches.first,catches.second, Constants.get().CLASS_BLOCK);
         		if (catch_blocks != null) {
         			mappingStore.addMapping(catch_blocks.first,catch_blocks.second);
+        		}
+        	}
+        	Pair<Tree, Tree> finallys = Helpers.findPairOfType(srcStatementNode,dstStatementNode, Constants.get().FINALLY_CLAUSE);
+        	if (finallys != null) {
+        		mappingStore.addMapping(finallys.first,finallys.second);
+        		Pair<Tree, Tree> finally_keywords = Helpers.findPairOfType(finallys.first,finallys.second, Constants.get().FINALLY_KEYWORD);
+            	if (finally_keywords != null) {
+            		mappingStore.addMapping(finally_keywords.first,finally_keywords.second);
+            	}
+        		Pair<Tree, Tree> finally_blocks = Helpers.findPairOfType(finallys.first,finallys.second, Constants.get().CLASS_BLOCK);
+        		if (finally_blocks != null) {
+        			mappingStore.addMapping(finally_blocks.first,finally_blocks.second);
         		}
         	}
         }

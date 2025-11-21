@@ -151,6 +151,9 @@ public class Constants {
     public final String CLASS_BLOCK = "block"; // Pouria: Might be merged with Block, I have no clue about python
     public final String TRY_KEYWORD = "try";
     public final String EXCEPT_KEYWORD = "except";
+    public final String ATTRIBUTE_EXCEPTION = "attribute";
+    public final String FINALLY_CLAUSE = "finally_clause";
+    public final String FINALLY_KEYWORD = "finally";
     public final String MODULE = "module"; // This is the root of all trees in Python
     public final String DECORATED_METHOD = "decorated_definition";
     public final String IMPORT_FROM_STATEMENT = "import_from_statement";
