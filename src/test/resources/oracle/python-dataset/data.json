@@ -3865,4 +3865,27 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159916,
+    "repository": "https://github.com/asyml/texar.git",
+    "sha1": "005bf9164b063c47e354e170ae40ec1e1b94fae4",
+    "url": "https://github.com/asyml/texar/commit/005bf9164b063c47e354e170ae40ec1e1b94fae4",
+    "author": "ZhitingHu",
+    "time": "9/28/17 6:58 PM",
+    "refactorings": [{
+        "type": "Rename Class",
+        "description": "Rename Class data.database.TextDataBase renamed to data.database.MonoTextDataBase",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method public default_text_dataset_hparams() renamed to public default_text_database_hparams() in class data.database.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
