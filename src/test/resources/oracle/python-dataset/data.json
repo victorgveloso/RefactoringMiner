@@ -3888,4 +3888,34 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159917,
+    "repository": "https://github.com/asyml/texar.git",
+    "sha1": "01e28359f84a4f833b3b2c5991e8a903bbc8b3f3",
+    "url": "https://github.com/asyml/texar/commit/01e28359f84a4f833b3b2c5991e8a903bbc8b3f3",
+    "author": "ZhitingHu",
+    "time": "8/16/18 4:16 PM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter dropout_input in method protected _get_dropout_layer(hparams, ids_rank, dropout_input, dropout_strategy) from class modules.embedders.embedder_base.EmbedderBase",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Split Conditional",
+        "description": "Split Conditional if(dropout_layer && st != \"item_type\") to [if(dropout_layer), if(st != \"item_type\")] in method protected _build(positions, sequence_length, mode, kwargs) from class modules.embedders.position_embedders.PositionEmbedder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Split Conditional",
+        "description": "Split Conditional if(dropout_layer && self._hparams.dropout_strategy != \"item_type\") to [if(dropout_layer), if(self._hparams.dropout_strategy != \"item_type\")] in method protected _build(ids, soft_ids, mode, kwargs) from class modules.embedders.embedders.WordEmbedder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]

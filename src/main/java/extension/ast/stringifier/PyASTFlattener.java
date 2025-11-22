@@ -117,7 +117,7 @@ public class PyASTFlattener implements LangASTFlattener {
     public void visit(LangInfixExpression expr) {
         expr.getLeft().accept(this);
         builder.append(" "); 
-        builder.append(expr.getOperator().getSymbol());
+        builder.append(expr.getOperator().getJavaSymbol());
         builder.append(" ");
         expr.getRight().accept(this);
     }

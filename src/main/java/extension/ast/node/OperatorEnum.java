@@ -74,6 +74,16 @@ public enum OperatorEnum {
         return symbol;
     }
 
+    public String getJavaSymbol() {
+        if (symbol.equals(AND.symbol)) {
+            return "&&";
+        }
+        else if (symbol.equals(OR.symbol)) {
+            return "||";
+        }
+        return symbol;
+    }
+
     public OperatorCategory getCategory() {
         return category;
     }
