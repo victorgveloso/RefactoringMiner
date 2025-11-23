@@ -3918,4 +3918,55 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159918,
+    "repository": "https://github.com/asyml/texar.git",
+    "sha1": "05d52b6b1b9c2f54835363b022037743f778ad83",
+    "url": "https://github.com/asyml/texar/commit/05d52b6b1b9c2f54835363b022037743f778ad83",
+    "author": "ZhitingHu",
+    "time": "5/29/18 10:44 PM",
+    "refactorings": [{
+        "type": "Extract Variable",
+        "description": "Extract Variable mode_tensor in method public global_mode() from class context.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move And Rename Method",
+        "description": "Move And Rename Method protected _build_output_layer(hparams) from class modules.encoders.rnn_encoders.UnidirectionalRNNEncoder to protected _build_dense_output_layer(hparams) from class modules.encoders.rnn_encoders.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Method Annotation",
+        "description": "Remove Method Annotation @staticmethod in method protected _build_output_layer(hparams) from class modules.encoders.rnn_encoders.UnidirectionalRNNEncoder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Variable",
+        "description": "Extract Variable layer_hparams in method protected _build_dense_output_layer(hparams) from class modules.encoders.rnn_encoders.__module__",
+        "comment": "<div><div>layer_hparams = []<br />--&gt;<br /><div><div>dense_layers = []</div></div></div></div>",
+        "validation": "CTP",
+        "detectionTools": "RefactoringMiner",
+        "validators": "Nikos"
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter time_major in method protected _build(inputs, sequence_length, initial_state, time_major, mode, kwargs) from class modules.encoders.rnn_encoders.UnidirectionalRNNEncoder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter mode in method protected _build(inputs, sequence_length, initial_state, time_major, mode, kwargs) from class modules.encoders.rnn_encoders.UnidirectionalRNNEncoder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
