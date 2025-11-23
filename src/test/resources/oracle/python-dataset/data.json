@@ -3969,4 +3969,48 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159919,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "19555472029f57ce2c9caabe757425d8201c0324",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/19555472029f57ce2c9caabe757425d8201c0324",
+    "author": "kkroening",
+    "time": "7/6/17 4:24 AM",
+    "refactorings": [{
+        "type": "Extract Method",
+        "description": "Extract Method protected _get_node_color(node) extracted from public view(downstream_nodes, kwargs) in class _view.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Parameter",
+        "description": "Remove Parameter downstream_nodes in method public view(downstream_nodes, kwargs) from class _view.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter streams in method public view(streams, kwargs) from class _view.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Method Annotation",
+        "description": "Add Method Annotation @stream_operator in method public view(streams, kwargs) from class _view.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Method Annotation",
+        "description": "Remove Method Annotation @operator in method public view(downstream_nodes, kwargs) from class _view.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
