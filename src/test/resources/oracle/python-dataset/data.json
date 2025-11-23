@@ -4013,4 +4013,87 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159920,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "4f97d1d679c3d7aeab703925c665df2370f08980",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/4f97d1d679c3d7aeab703925c665df2370f08980",
+    "author": "kkroening",
+    "time": "6/28/18 2:35 AM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter detail in method public view(stream_spec, detail, filename, pipe, kwargs) from class _view.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter filename in method public view(stream_spec, detail, filename, pipe, kwargs) from class _view.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter pipe in method public view(stream_spec, detail, filename, pipe, kwargs) from class _view.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159921,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "646a0dcae86db06d153765a2e233199c05ab81b5",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/646a0dcae86db06d153765a2e233199c05ab81b5",
+    "author": "depau",
+    "time": "1/9/18 9:47 AM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter upstream_selector in method public __init__(upstream_node, upstream_label, node_types, upstream_selector) from class nodes.Stream",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter select in method public stream(label, select) from class nodes.Node",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter upstream_selector in method public __init__(upstream_node, upstream_label, upstream_selector) from class nodes.FilterableStream",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Parameter",
+        "description": "Rename Parameter label to item in method public __getitem__(item) from class nodes.Node",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159922,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "8a761f055dd2149aaf15a3a35fc5ed3cb9d8f197",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/8a761f055dd2149aaf15a3a35fc5ed3cb9d8f197",
+    "author": "kkroening",
+    "time": "7/6/17 5:35 AM",
+    "refactorings": [{
+        "type": "Rename Parameter",
+        "description": "Rename Parameter streams to stream_spec in method public view(stream_spec, kwargs) from class _view.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
