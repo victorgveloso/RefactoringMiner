@@ -92,6 +92,10 @@ public class ImportMatcher implements TreeMatcher {
                     mappingStore.addMappingRecursively(relatives.first,relatives.second);
                 }
             }
+            com.github.gumtreediff.utils.Pair<Tree, Tree> lineContinuations = Helpers.findPairOfType(srcImportStatement.getParent(),dstImportStatement.getParent(), Constants.get().LINE_CONTINUATION);
+            if (lineContinuations != null) {
+                mappingStore.addMappingRecursively(lineContinuations.first,lineContinuations.second);
+            }
         }
         else if (srcImportStatement.getParent() != null && dstImportStatement.getParent() != null &&
                 srcImportStatement.getParent().getType().name.equals(Constants.get().IMPORT_DECLARATION) &&

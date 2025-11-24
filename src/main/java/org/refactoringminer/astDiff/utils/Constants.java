@@ -164,6 +164,7 @@ public class Constants {
     public final String FUTURE_IMPORT_STATEMENT = "future_import_statement";
     public final String RELATIVE_IMPORT = "relative_import";
     public final String FROM_KEYWORD = "from";
+    public final String LINE_CONTINUATION = "line_continuation";
     public final String FUTURE = "__future__";
     public final String RELATIVE_IMPORT_DOTTED_NAME = "dotted_name";
     public final String ELSE_IF = "elif_clause";
