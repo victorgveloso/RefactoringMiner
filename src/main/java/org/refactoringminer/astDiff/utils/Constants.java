@@ -31,6 +31,7 @@ public class Constants {
             CATCH_CLAUSE = "except_clause";
             IF_STATEMENT = "if_statement";
             WHILE_STATEMENT = "while_statement";
+            FOR_STATEMENT = "for_statement";
 		}
 		else {
 			// Java values as default
@@ -45,6 +46,7 @@ public class Constants {
             CATCH_CLAUSE = "CatchClause";
             IF_STATEMENT = "IfStatement";
             WHILE_STATEMENT = "WhileStatement";
+            FOR_STATEMENT = "ForStatement";
 		}
 	}
 
@@ -104,7 +106,7 @@ public class Constants {
     public final String DO_STATEMENT = "DoStatement";
     public final String EMPTY_STATEMENT = "EmptyStatement";
     public final String ENHANCED_FOR_STATEMENT = "EnhancedForStatement";
-    public final String FOR_STATEMENT = "ForStatement";
+    public final String FOR_STATEMENT;
     public final String IF_STATEMENT;
     public final String RETURN_STATEMENT = "ReturnStatement";
     public final String SUPER_CONSTRUCTOR_INVOCATION = "SuperConstructorInvocation";

@@ -68,8 +68,14 @@ public class MethodMatcher extends BodyMapperMatcher{
             mappingStore.addMapping(srcOperationNode, dstOperationNode);
         } else {
             //Static Initializers
-            srcOperationNode = TreeUtilFunctions.findByLocationInfo(srcTree, umlOperationBodyMapper.getContainer1().getLocationInfo());
-            dstOperationNode = TreeUtilFunctions.findByLocationInfo(dstTree, umlOperationBodyMapper.getContainer2().getLocationInfo());
+            if(srcTree.getType().name.equals(Constants.get().MODULE))
+                srcOperationNode = srcTree;
+            else
+                srcOperationNode = TreeUtilFunctions.findByLocationInfo(srcTree, umlOperationBodyMapper.getContainer1().getLocationInfo());
+            if(dstTree.getType().name.equals(Constants.get().MODULE))
+                dstOperationNode = dstTree;
+            else
+                dstOperationNode = TreeUtilFunctions.findByLocationInfo(dstTree, umlOperationBodyMapper.getContainer2().getLocationInfo());
             if (srcOperationNode != null & dstOperationNode != null) {
                 if (srcOperationNode.getType().name.equals(Constants.get().INITIALIZER) && dstOperationNode.getType().name.equals(Constants.get().INITIALIZER)) {
                     mappingStore.addMapping(srcOperationNode, dstOperationNode);
