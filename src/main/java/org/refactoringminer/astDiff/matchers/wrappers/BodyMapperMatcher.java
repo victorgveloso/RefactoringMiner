@@ -121,6 +121,13 @@ public class BodyMapperMatcher extends OptimizationAwareMatcher {
                 }
                 new CompositeMatcher(abstractCodeMapping).match(srcStatementNode,dstStatementNode,mappingStore);
             }
+            else if (srcStatementNode.getType().name.equals(Constants.get().WHILE_STATEMENT) && dstStatementNode.getType().name.equals(Constants.get().WHILE_STATEMENT)) {
+                Pair<Tree, Tree> matched = Helpers.findPairOfType(srcStatementNode,dstStatementNode, Constants.get().WHILE_KEYWORD);
+                if (matched != null) {
+                    mappingStore.addMapping(matched.first,matched.second);
+                }
+                new CompositeMatcher(abstractCodeMapping).match(srcStatementNode,dstStatementNode,mappingStore);
+            }
             else if ((srcStatementNode.getType().name.equals(Constants.get().TRY_STATEMENT) && dstStatementNode.getType().name.equals(Constants.get().TRY_STATEMENT)) ||
                     (srcStatementNode.getType().name.equals(Constants.get().CATCH_CLAUSE) && dstStatementNode.getType().name.equals(Constants.get().CATCH_CLAUSE))) {
                 matchBlocks(srcStatementNode, dstStatementNode, mappingStore);

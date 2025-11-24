@@ -168,4 +168,5 @@ public class Constants {
     public final String ELSE = "else_clause";
     public final String ELIF_KEYWORD = "elif";
     public final String ELSE_KEYWORD = "else";
+    public final String WHILE_KEYWORD = "while";
 }
