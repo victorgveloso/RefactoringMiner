@@ -43,6 +43,6 @@ public class TestPythonDatasetRefactorings {
 					.or(Refactorings.SplitConditional.getValue());
 		TestBuilder test = new TestBuilder(detector, REPOS, types);
 		RefactoringPopulator.preparePythonRefactorings(test, types);
-		test.assertExpectationsWithGitHubAPI(487, 5, 2);
+		test.assertExpectationsWithGitHubAPI(489, 5, 2);
 	}
 }

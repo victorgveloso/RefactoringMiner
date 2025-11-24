@@ -4216,4 +4216,27 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159927,
+    "repository": "https://github.com/asyml/texar.git",
+    "sha1": "14dbd00c23dcb75089440d576c7da78558bb628a",
+    "url": "https://github.com/asyml/texar/commit/14dbd00c23dcb75089440d576c7da78558bb628a",
+    "author": "haoransh",
+    "time": "11/29/18 1:55 AM",
+    "refactorings": [{
+        "type": "Rename Parameter",
+        "description": "Rename Parameter position_size to positions in method protected _build(positions) from class modules.embedders.position_embedders.SinusoidsPositionEmbedder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Remove Parameter",
+        "description": "Remove Parameter dim in method protected _build(position_size, dim) from class modules.embedders.position_embedders.SinusoidsPositionEmbedder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
