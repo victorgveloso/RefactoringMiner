@@ -4096,4 +4096,64 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159923,
+    "repository": "https://github.com/kkroening/ffmpeg-python.git",
+    "sha1": "f6d014540a3fc0c24037cdc5e871903ad21d5cff",
+    "url": "https://github.com/kkroening/ffmpeg-python/commit/f6d014540a3fc0c24037cdc5e871903ad21d5cff",
+    "author": "depau",
+    "time": "1/9/18 9:47 AM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter upstream_selector in method public __init__(upstream_node, upstream_label, upstream_selector) from class nodes.OutputStream",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159924,
+    "repository": "https://github.com/asyml/texar.git",
+    "sha1": "0b1470bc7003225c306d6a5841c3b92406373dd5",
+    "url": "https://github.com/asyml/texar/commit/0b1470bc7003225c306d6a5841c3b92406373dd5",
+    "author": "ZhitingHu",
+    "time": "3/14/18 1:23 AM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Rename Parameter pooling_hparams to pool_hparams in method protected _build_conv1d_hparams(pool_hparams) from class modules.encoders.conv_encoders.SimpleConv1DEncoder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Variable",
+        "description": "Rename Variable conv_hparams to conv_pool_hparams in method protected _build_conv1d_hparams(pool_hparams) from class modules.encoders.conv_encoders.SimpleConv1DEncoder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter mode in method protected _build(inputs, mode) from class modules.networks.FeedForwardNetwork",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Inline Variable",
+        "description": "Inline Variable ks_i in method protected _build_conv1d_hparams(pooling_hparams) from class modules.encoders.conv_encoders.SimpleConv1DEncoder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Rename Method",
+        "description": "Rename Method protected _build_pooling_hparams() to protected _build_pool_hparams() in class modules.encoders.conv_encoders.SimpleConv1DEncoder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "PyRef",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
