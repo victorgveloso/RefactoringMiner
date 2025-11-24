@@ -4156,4 +4156,64 @@
         "validators": null
     }],
     "refDiffExecutionTime": 0
+}, {
+    "id": 1159925,
+    "repository": "https://github.com/asyml/texar.git",
+    "sha1": "13608828e7f18419a60e1cbd244c2af070d5737c",
+    "url": "https://github.com/asyml/texar/commit/13608828e7f18419a60e1cbd244c2af070d5737c",
+    "author": "shore",
+    "time": "12/22/17 1:23 AM",
+    "refactorings": [{
+        "type": "Rename Method",
+        "description": "Rename Method public normalize(inputs, epsilon, scope, reuse) renamed to public layer_normalize(inputs, epsilon, scope, reuse) in class core.layers.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Inline Variable",
+        "description": "Inline Variable inputs_shape in method public normalize(inputs, epsilon, scope, reuse) from class core.layers.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Move Class",
+        "description": "Move Class transformer.__module__ moved to transformer.transformer.__module__",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
+}, {
+    "id": 1159926,
+    "repository": "https://github.com/asyml/texar.git",
+    "sha1": "13e644561a3f8f11babe91a1407dea1635d62337",
+    "url": "https://github.com/asyml/texar/commit/13e644561a3f8f11babe91a1407dea1635d62337",
+    "author": "ZhitingHu",
+    "time": "8/22/18 8:05 PM",
+    "refactorings": [{
+        "type": "Add Parameter",
+        "description": "Add Parameter initial_state_major in method protected _build(inputs, order, medium, sequence_length_major, sequence_length_minor, initial_state_major, initial_state_minor, tiled_initial_state_minor, kwargs) from class modules.encoders.hierarchical_encoders.HierarchicalRNNEncoder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter initial_state_minor in method protected _build(inputs, order, medium, sequence_length_major, sequence_length_minor, initial_state_major, initial_state_minor, tiled_initial_state_minor, kwargs) from class modules.encoders.hierarchical_encoders.HierarchicalRNNEncoder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Add Parameter",
+        "description": "Add Parameter tiled_initial_state_minor in method protected _build(inputs, order, medium, sequence_length_major, sequence_length_minor, initial_state_major, initial_state_minor, tiled_initial_state_minor, kwargs) from class modules.encoders.hierarchical_encoders.HierarchicalRNNEncoder",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }],
+    "refDiffExecutionTime": 0
 }]
