@@ -158,7 +158,7 @@ publishing {
 }
 
 signing {
-    sign publishing.publications.mavenJava
+    required { !gradle.taskGraph.hasTask("publishToMavenLocal") }
 }
 
 tasks.withType(Sign) {
