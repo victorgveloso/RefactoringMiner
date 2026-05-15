@@ -78,4 +78,108 @@ public class TestOperationDiffMother {
                 "        exampleObj.exampleMethod(42);\n" +
                 "    }";
     }
+
+
+    static String createExampleTestFile_MultipleClasses_TopLevel() {
+        return """
+                package base;
+                import org.junit.jupiter.api.Test;
+                import org.junit.jupiter.api.BeforeEach;
+                import static org.junit.jupiter.api.Assertions.assertTrue;
+                
+                public class FirstTest {
+                    boolean value;
+                
+                    @BeforeEach
+                    void setUp() {
+                        value = true;
+                    }
+                
+                    @Test
+                    void testOne() {
+                        assertTrue(value);
+                    }
+                }
+                
+                class SecondTest {
+                    boolean value;
+                
+                    @BeforeEach
+                    void setUp() {
+                        value = true;
+                    }
+                
+                    @Test
+                    void testTwo() {
+                        assertTrue(value);
+                    }
+                }""";
+    }
+
+    static String createExampleTestFile_MultipleClasses_Nested_NewParent() {
+        return """
+                package base;
+                import org.junit.jupiter.api.Test;
+                import org.junit.jupiter.api.BeforeEach;
+                import org.junit.jupiter.api.Nested;
+                import static org.junit.jupiter.api.Assertions.assertTrue;
+                
+                public class BothTests {
+                    bool value;
+                
+                    @BeforeEach
+                    void setUp() {
+                        value = true;
+                    }
+                
+                    @Nested
+                    class FirstTest {
+                        @Test
+                        void testOne() {
+                            assertTrue(value);
+                        }
+                    }
+                
+                    @Nested
+                    class SecondTest {
+                        @Test
+                        void testTwo() {
+                            assertTrue(value);
+                        }
+                    }
+                }""";
+    }
+
+    static String createExampleTestFile_MultipleClasses_Nested_ReuseClass() {
+        return """
+                package base;
+                import org.junit.jupiter.api.Test;
+                import org.junit.jupiter.api.BeforeEach;
+                import org.junit.jupiter.api.Nested;
+                import static org.junit.jupiter.api.Assertions.assertTrue;
+                
+                public class FirstTest {
+                    bool value;
+                
+                    @BeforeEach
+                    void setUp() {
+                        value = true;
+                    }
+                
+                    @Test
+                    void testOne() {
+                        assertTrue(value);
+                    }
+                
+                    @Nested
+                    class SecondTest {
+                        @Test
+                        void testTwo() {
+                            assertTrue(value);
+                        }
+                    }
+                }""";
+    }
+
+
 }

@@ -3,6 +3,7 @@ package org.refactoringminer.test;
 import gr.uom.java.xmi.LocationInfoProvider;
 import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLClass;
+import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLModelASTReader;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.annotation.source.MethodSourceAnnotation;
@@ -16,15 +17,23 @@ import gr.uom.java.xmi.diff.*;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Description;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.core.CombinableMatcher;
 import org.junit.Assume;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.refactoringminer.api.ModelDiffRefactoringHandler;
 import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringMinerTimedOutException;
 import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 
@@ -34,6 +43,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.refactoringminer.utils.Assertions.assertHasSameElementsAs;
 import static org.refactoringminer.test.TestJavadocDiff.generateClassDiff;
@@ -527,6 +537,71 @@ public class TestRelatedStatementMappingsTest {
                 mapperInfo(parameterizedTestRefactoring.getBodyMapper().getMappings(), parameterizedTestRefactoring.getRemovedOperation(), parameterizedTestRefactoring.getParameterizedTestOperation());
             }
         });
+    }
+
+    static public Stream<Arguments> testNestExample() {
+        return Stream.of(
+                Arguments.of(TestOperationDiffMother.createExampleTestFile_MultipleClasses_Nested_NewParent()),
+                Arguments.of(TestOperationDiffMother.createExampleTestFile_MultipleClasses_Nested_ReuseClass())
+        );
+    }
+
+    private static class RefactoringTypeMatcher extends BaseMatcher<RefactoringType> {
+        private final RefactoringType expectedType;
+
+        public RefactoringTypeMatcher(RefactoringType type) {
+            this.expectedType = type;
+        }
+
+        @Override
+        public boolean matches(Object item) {
+            return item instanceof Refactoring && ((MoveClassRefactoring) item).getRefactoringType().equals(expectedType);
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("whose refactoring type is " + expectedType.getDisplayName());
+        }
+    }
+
+    private static org.hamcrest.Matcher<RefactoringType> hasRefactoringType(RefactoringType operand) {
+        return new RefactoringTypeMatcher(operand);
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    public void testNestExample(String nestedClasses) throws RefactoringMinerTimedOutException {
+        String originalTopLevelClasses = TestOperationDiffMother.createExampleTestFile_MultipleClasses_TopLevel();
+        UMLModel before = new UMLModelASTReader(Map.of("testClasses.java", originalTopLevelClasses), Set.of(), false).getUmlModel();
+        UMLModel after = new UMLModelASTReader(Map.of("testClasses.java", nestedClasses), Set.of(), false).getUmlModel();
+        UMLModelDiff diff = before.diff(after);
+        MatcherAssert.assertThat(diff.getRefactorings(), CoreMatchers.allOf(
+            CoreMatchers.hasItem(CoreMatchers.instanceOf(AddClassAnnotationRefactoring.class)),
+            CoreMatchers.hasItem(
+                CoreMatchers.allOf(
+                    CoreMatchers.instanceOf(MoveClassRefactoring.class),
+                    hasRefactoringType(RefactoringType.NEST_TEST_CLASS)
+                )
+            )
+        ));
+    }
+
+    @ParameterizedTest
+    @MethodSource("testNestExample")
+    public void testDenestExample(String nestedClasses) throws RefactoringMinerTimedOutException {
+        String originalTopLevelClasses = TestOperationDiffMother.createExampleTestFile_MultipleClasses_TopLevel();
+        UMLModel before = new UMLModelASTReader(Map.of("testClasses.java", nestedClasses), Set.of(), false).getUmlModel();
+        UMLModel after = new UMLModelASTReader(Map.of("testClasses.java", originalTopLevelClasses), Set.of(), false).getUmlModel();
+        UMLModelDiff diff = before.diff(after);
+        MatcherAssert.assertThat(diff.getRefactorings(), CoreMatchers.allOf(
+                CoreMatchers.hasItem(CoreMatchers.instanceOf(RemoveClassAnnotationRefactoring.class)),
+                CoreMatchers.hasItem(
+                        CoreMatchers.allOf(
+                                CoreMatchers.instanceOf(MoveClassRefactoring.class),
+                                hasRefactoringType(RefactoringType.DENEST_TEST_CLASS)
+                        )
+                )
+        ));
     }
 
     @BeforeEach

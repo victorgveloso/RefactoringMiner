@@ -1,5 +1,6 @@
 package gr.uom.java.xmi.diff;
 
+import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLClass;
 
 import java.util.ArrayList;
@@ -44,6 +45,14 @@ public class MoveClassRefactoring implements PackageLevelRefactoring {
 	}
 
 	public RefactoringType getRefactoringType() {
+		if (movedClass.getAnnotations().stream().anyMatch(UMLAnnotation::isNested) &&
+			originalClass.getAnnotations().stream().noneMatch(UMLAnnotation::isNested)) {
+			return RefactoringType.NEST_TEST_CLASS;
+		}
+		if (originalClass.getAnnotations().stream().anyMatch(UMLAnnotation::isNested) &&
+				movedClass.getAnnotations().stream().noneMatch(UMLAnnotation::isNested)) {
+			return RefactoringType.DENEST_TEST_CLASS;
+		}
 		return RefactoringType.MOVE_CLASS;
 	}
 

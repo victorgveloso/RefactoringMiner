@@ -104,7 +104,11 @@ public class UMLAnnotation implements Serializable, LocationInfoProvider {
 		// Marker annotation - no additional processing needed
 	}
 
-	public String getTypeName() {
+    public boolean isNested() {
+		return isMarkerAnnotation() && getTypeName().equals("Nested");
+	}
+
+    public String getTypeName() {
 		return typeName;
 	}
 

@@ -120,7 +120,9 @@ public enum RefactoringType {
 	REPLACE_ASSERTION_WITH_ASSUMPTION("Replace Assertion With Assumption", "Replace Assertion With Assumption (.+) to (.+) in method (.+) from class (.+)"),
 	REPLACE_IGNORE_WITH_ASSUMPTION("Replace Ignore With Assumption", "Replace Ignore With Assumption (.+) to (.+) in method (.+) from class (.+)"),
 	EXTRACT_FIXTURE("Extract Fixture", "Extract Fixture (.+) extracted from (.+) in class (.+)"),
-	MOVE_ANNOTATION("Move Annotation", "Move Annotation (.+) from (.+) to (.+)");
+	MOVE_ANNOTATION("Move Annotation", "Move Annotation (.+) from (.+) to (.+)"),
+	NEST_TEST_CLASS("Nest Test Class", "Nest Test Class (.+) into (.+)"),
+	DENEST_TEST_CLASS("Denest Test Class", "Denest Test Class (.+) from (.+)");
 
 	private String displayName;
 	private Pattern regex;
@@ -234,7 +236,9 @@ public enum RefactoringType {
 		REPLACE_ASSERTION_WITH_ASSUMPTION,
 		REPLACE_IGNORE_WITH_ASSUMPTION,
 		EXTRACT_FIXTURE,
-		MOVE_ANNOTATION
+		MOVE_ANNOTATION,
+		NEST_TEST_CLASS,
+		DENEST_TEST_CLASS
 	};
 
 	private RefactoringType(String displayName, String regex, int ... aggregateGroups) {
