@@ -184,6 +184,11 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 	public boolean isAnonymousCollapse() {
 		return anonymousCollapse;
 	}
+ 	private ArrayList<AbstractCodeFragment> trueStreamAPICalls = new ArrayList<>();
+
+	public ArrayList<AbstractCodeFragment> getTrueStreamAPICalls() {
+		return trueStreamAPICalls;
+	}
 
 	private static Set<AbstractCodeFragment> statementsWithStreamAPICalls(List<AbstractCodeFragment> leaves, Constants LANG) {
 		Set<AbstractCodeFragment> streamAPICalls = new LinkedHashSet<AbstractCodeFragment>();
@@ -197,8 +202,22 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 					invocation.actualString().contains(LANG.METHOD_REFERENCE))) {
 				for(AbstractCall inv : statement.getMethodInvocations()) {
 					if(streamAPIName(inv.getName())) {
+						for (LeafExpression variable : statement.getVariables()) {
+							CompositeStatementObject parent = statement.getParent();
+							Optional<VariableDeclaration> first = parent.getAllVariableDeclarations().stream().filter(d -> d.getVariableName().equals(variable.getString())).findFirst();
+							if (first.isPresent()) {
+								if (first.get().getType().toQualifiedString().equals("Stream")) {
+									System.out.println("We FOund it!");
+									trueStreamAPICalls.add(statement);
+								}
+								else if (inv.getName().equals("stream")) {
+									System.out.println("We found it too!");
+									trueStreamAPICalls.add(statement);
+								}
+							}
+						}
 						streamAPICalls.add(statement);
-						break;
+//						break;
 					}
 				}
 			}
@@ -2576,7 +2595,7 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 									}
 								}
 							}
-							ReplacePipelineWithLoopRefactoring ref = new ReplacePipelineWithLoopRefactoring(additionallyMatchedStatements1, additionallyMatchedStatements2, container1, container2);
+							ReplacePipelineWithLoopRefactoring ref = new ReplacePipelineWithLoopRefactoring(additionallyMatchedStatements1, additionallyMatchedStatements2, container1, container2, this.trueStreamAPICalls);
 							for(LeafMapping leafMapping : leafMappings) {
 								ref.addSubExpressionMapping(leafMapping);
 							}
