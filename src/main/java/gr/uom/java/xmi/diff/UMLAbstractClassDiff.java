@@ -5,6 +5,7 @@ import static gr.uom.java.xmi.decomposition.Visitor.stringify;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -2298,6 +2299,209 @@ public abstract class UMLAbstractClassDiff {
 		return attribute != null ? attribute.getVariableDeclaration().getInitializer().getString() : null;
 	}
 
+	//finds removedOperation's terminal statement, if it is a bare assertFalse(X)/assertTrue(X) assertion
+	private static StatementObject findTerminalAssertBooleanStatement(UMLOperation removedOperation) {
+		if(removedOperation.getBody() == null) {
+			return null;
+		}
+		for(AbstractStatement statement : removedOperation.getBody().getCompositeStatement().getStatements()) {
+			if(statement instanceof StatementObject && ((StatementObject)statement).isLastStatement()) {
+				AbstractCall call = ((StatementObject)statement).invocationCoveringEntireFragment();
+				if(call != null && (call.getName().equals("assertFalse") || call.getName().equals("assertTrue"))) {
+					return (StatementObject)statement;
+				}
+			}
+		}
+		return null;
+	}
+
+	//collects string literals and constant-attribute-resolved values referenced as call arguments within removedOperation's body,
+	//keyed by their original source text (e.g. "INPUT_A" -> "a"), so a Replacement linking the original identifier to the
+	//matched provider parameter can be attached to the mapping afterwards
+	private Map<String, String> resolveOwnValues(UMLOperation removedOperation) {
+		Map<String, String> values = new LinkedHashMap<String, String>();
+		for(LeafExpression literal : removedOperation.getAllStringLiterals()) {
+			values.put(literal.getString(), literal.getString());
+		}
+		for(AbstractCall call : removedOperation.getAllOperationInvocations()) {
+			for(String arg : call.arguments()) {
+				String resolved = resolveConstantLiteralValue(arg, originalClass);
+				if(resolved != null) {
+					values.put(arg, resolved);
+				}
+			}
+		}
+		return values;
+	}
+
+	//finds the index of the @MethodSource/@CsvSource provider row of addedOperation that contains (exactly, modulo
+	//quoting) ALL of the given resolved values, or null if no such row exists
+	private Integer findMatchingRow(UMLOperation addedOperation, Collection<String> resolvedValues) {
+		if(resolvedValues.isEmpty()) {
+			return null;
+		}
+		List<List<String>> parameterValues = getParameterValues(addedOperation);
+		for(int row = 0; row < parameterValues.size(); row++) {
+			List<String> rowValues = parameterValues.get(row);
+			boolean allFound = true;
+			for(String value : resolvedValues) {
+				boolean found = false;
+				for(String rowValue : rowValues) {
+					if(rowValue.equals(value) || sanitizeStringLiteral(rowValue).equals(value)) {
+						found = true;
+						break;
+					}
+				}
+				if(!found) {
+					allFound = false;
+					break;
+				}
+			}
+			if(allFound) {
+				return row;
+			}
+		}
+		return null;
+	}
+
+	//finds an if(param){...}else{...} statement in addedOperation's body whose condition is a bare reference to one of
+	//addedOperation's boolean-typed parameters
+	private static CompositeStatementObject findBooleanConditionedIfStatement(UMLOperation addedOperation) {
+		if(addedOperation.getBody() == null) {
+			return null;
+		}
+		List<String> parameterNames = addedOperation.getParameterNameList();
+		List<UMLType> parameterTypes = addedOperation.getParameterTypeList();
+		Set<String> booleanParameterNames = new LinkedHashSet<String>();
+		for(int i = 0; i < parameterNames.size() && i < parameterTypes.size(); i++) {
+			if(parameterTypes.get(i).toString().equals("boolean")) {
+				booleanParameterNames.add(parameterNames.get(i));
+			}
+		}
+		if(booleanParameterNames.isEmpty()) {
+			return null;
+		}
+		return findBooleanConditionedIfStatement(addedOperation.getBody().getCompositeStatement(), booleanParameterNames);
+	}
+
+	private static CompositeStatementObject findBooleanConditionedIfStatement(CompositeStatementObject composite, Set<String> booleanParameterNames) {
+		if(composite.getLocationInfo().getCodeElementType().equals(LocationInfo.CodeElementType.IF_STATEMENT)) {
+			for(AbstractExpression expression : composite.getExpressions()) {
+				if(booleanParameterNames.contains(expression.getString())) {
+					return composite;
+				}
+			}
+		}
+		for(AbstractStatement statement : composite.getStatements()) {
+			if(statement instanceof CompositeStatementObject) {
+				CompositeStatementObject found = findBooleanConditionedIfStatement((CompositeStatementObject)statement, booleanParameterNames);
+				if(found != null) {
+					return found;
+				}
+			}
+		}
+		return null;
+	}
+
+	//within an if-statement composite (then-branch at index 0, else-branch at index 1), finds an assertion-family
+	//leaf statement in the branch selected by conditionValue
+	private static AbstractCodeFragment findAssertionStatementInBranch(CompositeStatementObject ifStatement, boolean conditionValue) {
+		List<AbstractStatement> branches = ifStatement.getStatements();
+		int branchIndex = conditionValue ? 0 : 1;
+		if(branchIndex >= branches.size() || !(branches.get(branchIndex) instanceof CompositeStatementObject)) {
+			return null;
+		}
+		CompositeStatementObject branch = (CompositeStatementObject)branches.get(branchIndex);
+		for(AbstractCodeFragment leaf : branch.getLeaves()) {
+			AbstractCall call = leaf.invocationCoveringEntireFragment();
+			if(call != null && (call.getName().equals("assertEquals") || call.getName().equals("assertThrows") ||
+					call.getName().equals("assertTrue") || call.getName().equals("assertFalse"))) {
+				return leaf;
+			}
+		}
+		return null;
+	}
+
+	//matches a removed @Test operation to an added @ParameterizedTest operation purely by VALUE correspondence
+	//(resolved constants/literals referenced in the removed operation's body, plus the boolean implied by a covering
+	//assertFalse/assertTrue assertion matched against a provider row and an if/else branch selection in the added
+	//operation), bypassing structural statement-mapping quality. Used when the underlying production call was
+	//rewritten enough that normal statement mapping finds too little overlap to be trusted.
+	private boolean valueBasedParameterizeTestMatch(UMLOperation removedOperation, UMLOperation addedOperation, UMLOperationBodyMapper operationBodyMapper) {
+		if(!removedOperation.hasTestAnnotation() || !addedOperation.hasParameterizedTestAnnotation()) {
+			return false;
+		}
+		StatementObject terminalStatement = findTerminalAssertBooleanStatement(removedOperation);
+		if(terminalStatement == null) {
+			return false;
+		}
+		AbstractCall terminalCall = terminalStatement.invocationCoveringEntireFragment();
+		Map<String, String> resolvedValues = resolveOwnValues(removedOperation);
+		Integer matchedRow = findMatchingRow(addedOperation, resolvedValues.values());
+		if(matchedRow == null) {
+			return false;
+		}
+		CompositeStatementObject ifStatement = findBooleanConditionedIfStatement(addedOperation);
+		if(ifStatement == null) {
+			return false;
+		}
+		//the matched row must ALSO agree, at the boolean parameter driving the if/else, with the boolean implied by
+		//assertFalse/assertTrue - otherwise the resolved values only coincidentally overlap with this row (e.g. the
+		//underlying behavior was redesigned and the same input text now means something different)
+		List<String> parameterNames = addedOperation.getParameterNameList();
+		List<UMLType> parameterTypes = addedOperation.getParameterTypeList();
+		String booleanParameterName = null;
+		for(AbstractExpression expression : ifStatement.getExpressions()) {
+			int index = parameterNames.indexOf(expression.getString());
+			if(index >= 0 && index < parameterTypes.size() && parameterTypes.get(index).toString().equals("boolean")) {
+				booleanParameterName = expression.getString();
+				break;
+			}
+		}
+		if(booleanParameterName == null) {
+			return false;
+		}
+		boolean impliedBoolean = terminalCall.getName().equals("assertTrue");
+		List<String> matchedRowValues = getParameterValues(addedOperation).get(matchedRow);
+		int booleanParameterIndex = parameterNames.indexOf(booleanParameterName);
+		String impliedBooleanLiteral = impliedBoolean ? "true" : "false";
+		if(booleanParameterIndex >= matchedRowValues.size() || !matchedRowValues.get(booleanParameterIndex).equals(impliedBooleanLiteral)) {
+			return false;
+		}
+		AbstractCodeFragment targetStatement = findAssertionStatementInBranch(ifStatement, impliedBoolean);
+		if(targetStatement == null) {
+			return false;
+		}
+		//remove any pre-existing mapping already found (by the generic body-matching algorithm) for this same source
+		//statement - e.g. a spurious "renamed method invocation" match pairing assertFalse/assertTrue with an unrelated
+		//assertEquals call - since it would otherwise inflate this candidate's mapping/replacement counts inconsistently
+		//with sibling candidates and skew the later mapper-quality clustering
+		List<AbstractCodeMapping> conflicting = new ArrayList<AbstractCodeMapping>();
+		for(AbstractCodeMapping existing : operationBodyMapper.getMappings()) {
+			if(existing.getFragment1().equals(terminalStatement)) {
+				conflicting.add(existing);
+			}
+		}
+		for(AbstractCodeMapping c : conflicting) {
+			operationBodyMapper.removeMapping(c);
+		}
+		LeafMapping leafMapping = new LeafMapping(terminalStatement, targetStatement, removedOperation, addedOperation);
+		//attach Replacements linking each resolved identifier to the matched row's corresponding parameter, so the normal
+		//row-matching mechanism (matchParamsWithReplacements) can also identify the correct row downstream
+		List<String> rowValues = matchedRowValues;
+		for(Map.Entry<String, String> entry : resolvedValues.entrySet()) {
+			for(int i = 0; i < rowValues.size() && i < parameterNames.size(); i++) {
+				String rowValue = rowValues.get(i);
+				if(rowValue.equals(entry.getValue()) || sanitizeStringLiteral(rowValue).equals(entry.getValue())) {
+					leafMapping.addReplacement(new Replacement(entry.getKey(), parameterNames.get(i), Replacement.ReplacementType.VARIABLE_NAME));
+					break;
+				}
+			}
+		}
+		operationBodyMapper.addMapping(leafMapping);
+		return true;
+	}
+
 	private static void matchParamsWithReplacement(String before, List<List<String>> testParameters, Map<Integer, Integer> matchingTestParameters, UMLAbstractClass originalClass) {
 		String paramsWithoutDoubleQuotes = sanitizeStringLiteral(before);
 		String resolvedConstantValue = resolveConstantLiteralValue(before, originalClass);
@@ -4123,6 +4327,9 @@ public abstract class UMLAbstractClassDiff {
 					removedOperation.testMethodCheck(addedOperation)) {
 				mapperSet.add(operationBodyMapper);
 			}
+		}
+		if(mappings <= 1 && valueBasedParameterizeTestMatch(removedOperation, addedOperation, operationBodyMapper)) {
+			mapperSet.add(operationBodyMapper);
 		}
 	}
 

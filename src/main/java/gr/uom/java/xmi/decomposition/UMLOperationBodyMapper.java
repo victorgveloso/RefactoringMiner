@@ -4878,14 +4878,36 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 		detectReplaceAssertionRefactorings();
 	}
 
+	//resolves the call a fragment "is", whether it's a statement entirely consisting of one call
+	//(invocationCoveringEntireFragment) or a bare LeafExpression wrapping that same call
+	private static AbstractCall resolveCoveringCall(AbstractCodeFragment fragment) {
+		AbstractCall call = fragment.invocationCoveringEntireFragment();
+		if(call != null) {
+			return call;
+		}
+		List<AbstractCall> invocations = fragment.getMethodInvocations();
+		return invocations.size() == 1 ? invocations.get(0) : null;
+	}
+
 	private void detectReplaceAssertionRefactorings() {
 		for(AbstractCodeMapping mapping : this.mappings) {
-			AbstractCall call1 = mapping.getFragment1().invocationCoveringEntireFragment();
-			AbstractCall call2 = mapping.getFragment2().invocationCoveringEntireFragment();
+			AbstractCall call1 = resolveCoveringCall(mapping.getFragment1());
+			AbstractCall call2 = resolveCoveringCall(mapping.getFragment2());
 			if(call1 == null || call2 == null) {
 				continue;
 			}
-			if(!(call1.getName().equals("assertFalse") || call1.getName().equals("assertTrue")) || !call2.getName().equals("assertEquals")) {
+			if(!(call1.getName().equals("assertFalse") || call1.getName().equals("assertTrue"))) {
+				continue;
+			}
+			if(call2.getName().equals("assertThrows")) {
+				//assertFalse/assertTrue merged into an if/else-branch selection, where the false/true branch
+				//throws instead of asserting equality (see UMLAbstractClassDiff.valueBasedParameterizeTestMatch,
+				//which is the only place that constructs this specific assertFalse/assertTrue<->assertThrows mapping)
+				ReplaceAssertionRefactoring refactoring = new ReplaceAssertionRefactoring(Collections.singleton(mapping), call2, container1, container2);
+				refactorings.add(refactoring);
+				continue;
+			}
+			if(!call2.getName().equals("assertEquals")) {
 				continue;
 			}
 			int size1 = call1.arguments().size();
@@ -4915,11 +4937,57 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 					matched = parameterRowConfirmsBooleanValue((UMLClassBaseDiff)classDiff, paramCandidate, booleanLiteral);
 				}
 			}
+			if(!matched) {
+				//assertFalse/assertTrue merged into an if/else-branch selection, where this assertEquals is unrelated to the
+				//assertion's own argument (e.g. it verifies a completely different value produced when the boolean is true) -
+				//see UMLAbstractClassDiff.valueBasedParameterizeTestMatch, the only place constructing this kind of mapping
+				matched = withinBooleanConditionedBranch(mapping.getFragment2(), call1.getName().equals("assertTrue"));
+			}
 			if(matched) {
 				ReplaceAssertionRefactoring refactoring = new ReplaceAssertionRefactoring(Collections.singleton(mapping), call2, container1, container2);
 				refactorings.add(refactoring);
 			}
 		}
+	}
+
+	//checks whether fragment2 lies within the then-branch (impliedBoolean=true) or else-branch (impliedBoolean=false)
+	//of an if(param){...}else{...} statement in container2, where param is one of container2's boolean parameters
+	private boolean withinBooleanConditionedBranch(AbstractCodeFragment fragment2, boolean impliedBoolean) {
+		if(!(fragment2 instanceof AbstractStatement)) {
+			return false;
+		}
+		List<String> parameterNames = container2.getParameterNameList();
+		List<UMLType> parameterTypes = container2.getParameterTypeList();
+		Set<String> booleanParameterNames = new LinkedHashSet<String>();
+		for(int i = 0; i < parameterNames.size() && i < parameterTypes.size(); i++) {
+			if(parameterTypes.get(i).toString().equals("boolean")) {
+				booleanParameterNames.add(parameterNames.get(i));
+			}
+		}
+		if(booleanParameterNames.isEmpty()) {
+			return false;
+		}
+		CompositeStatementObject previous = fragment2 instanceof CompositeStatementObject ? (CompositeStatementObject)fragment2 : null;
+		CompositeStatementObject current = ((AbstractStatement)fragment2).getParent();
+		while(current != null) {
+			if(current.getLocationInfo().getCodeElementType().equals(CodeElementType.IF_STATEMENT)) {
+				boolean conditionIsBooleanParameter = false;
+				for(AbstractExpression expression : current.getExpressions()) {
+					if(booleanParameterNames.contains(expression.getString())) {
+						conditionIsBooleanParameter = true;
+						break;
+					}
+				}
+				if(conditionIsBooleanParameter) {
+					List<AbstractStatement> branches = current.getStatements();
+					int branchIndex = impliedBoolean ? 0 : 1;
+					return previous != null && branchIndex < branches.size() && branches.get(branchIndex).equals(previous);
+				}
+			}
+			previous = current;
+			current = current.getParent();
+		}
+		return false;
 	}
 
 	//resolves, for this specific merged/removed operation (container1), which @MethodSource/@CsvSource provider row it was matched
