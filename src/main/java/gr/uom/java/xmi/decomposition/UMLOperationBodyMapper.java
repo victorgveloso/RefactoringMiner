@@ -8920,10 +8920,11 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 			List<String> parameterNames = parameterNameList2;
 			List<List<String>> parameterValues = ((UMLClassBaseDiff)classDiff).getParameterValues((UMLOperation)container2);
 			List<List<LeafExpression>> parameterValuesAsLeafExpressions = ((UMLClassBaseDiff)classDiff).getParameterValuesAsLeafExpressions((UMLOperation)container2);
+			UMLAbstractClass originalClass = classDiff.getOriginalClass();
 			Set<Replacement> replacements = new LinkedHashSet<Replacement>();
 			List<LeafMapping> leafMappings = new ArrayList<LeafMapping>();
 			for(AbstractCodeMapping mapping : mappingSet) {
-				Map<Integer, Integer> matchingTestParameters = matchParamsWithReplacements(parameterValues, parameterNames, mapping.getReplacements());
+				Map<Integer, Integer> matchingTestParameters = matchParamsWithReplacements(parameterValues, parameterNames, mapping.getReplacements(), originalClass);
 				Integer index = null;
 				int max = -1;
 				for(Integer key : matchingTestParameters.keySet()) {
@@ -8951,7 +8952,7 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 				}
 				replacements.addAll(mapping.getReplacements());
 			}
-			Map<Integer, Integer> matchingTestParameters = matchParamsWithReplacements(parameterValues, parameterNames, replacements);
+			Map<Integer, Integer> matchingTestParameters = matchParamsWithReplacements(parameterValues, parameterNames, replacements, originalClass);
 			int max = matchingTestParameters.isEmpty() ? 0 : Collections.max(matchingTestParameters.values());
 			if(max >= 1) {
 				for(LeafMapping leafMapping : leafMappings) {
