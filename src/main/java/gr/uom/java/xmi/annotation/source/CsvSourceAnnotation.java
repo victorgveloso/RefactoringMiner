@@ -85,7 +85,4 @@ public class CsvSourceAnnotation extends SourceAnnotation implements NormalAnnot
         return result;
     }
 
-    public List<List<LeafExpression>> getTestParameterLeafExpressions() {
-        return testParameterLeafExpressions;
-    }
 }
