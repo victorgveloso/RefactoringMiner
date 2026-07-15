@@ -3613,6 +3613,34 @@ public class ReplacementAlgorithm {
 					}
 				}
 			}
+			if((invocationCoveringTheEntireStatement1.getName().equals("assertFalse") || invocationCoveringTheEntireStatement1.getName().equals("assertTrue")) &&
+					invocationCoveringTheEntireStatement2.getName().equals("assertEquals")) {
+				int size1 = invocationCoveringTheEntireStatement1.arguments().size();
+				List<String> args2 = invocationCoveringTheEntireStatement2.arguments();
+				if(size1 >= 1 && size1 <= 2 && args2.size() == 2) {
+					String booleanLiteral = invocationCoveringTheEntireStatement1.getName().equals("assertFalse") ? "false" : "true";
+					String otherArg2 = null;
+					if(args2.get(0).equals(booleanLiteral) || args2.get(1).equals(booleanLiteral)) {
+						otherArg2 = args2.get(0).equals(booleanLiteral) ? args2.get(1) : args2.get(0);
+					}
+					else if(parameterNameList2.contains(args2.get(0))) {
+						otherArg2 = args2.get(1);
+					}
+					else if(parameterNameList2.contains(args2.get(1))) {
+						otherArg2 = args2.get(0);
+					}
+					if(otherArg2 != null) {
+						String assertArgument = invocationCoveringTheEntireStatement1.arguments().get(size1 - 1);
+						if(otherArg2.equals(assertArgument) || StringDistance.editDistance(otherArg2, assertArgument) <= 2) {
+							Replacement replacement = new MethodInvocationReplacement(
+									invocationCoveringTheEntireStatement1.actualString(), invocationCoveringTheEntireStatement2.actualString(),
+									invocationCoveringTheEntireStatement1, invocationCoveringTheEntireStatement2, ReplacementType.ASSERTION_CONVERSION);
+							replacementInfo.addReplacement(replacement);
+							return replacementInfo.getReplacements();
+						}
+					}
+				}
+			}
 			//assertTrue() to assertNull() conversion
 			if(invocationCoveringTheEntireStatement1.getName().equals("assertTrue") && invocationCoveringTheEntireStatement2.getName().equals("assertNull")) {
 				if(invocationCoveringTheEntireStatement1.arguments().size() == 1 && invocationCoveringTheEntireStatement1.arguments().get(0).contains(" == null") && invocationCoveringTheEntireStatement2.arguments().size() == 1) {

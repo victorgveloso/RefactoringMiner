@@ -59,6 +59,7 @@ import gr.uom.java.xmi.diff.ReferenceBasedRefactoring;
 import gr.uom.java.xmi.diff.RemoveParameterRefactoring;
 import gr.uom.java.xmi.diff.RenameVariableRefactoring;
 import gr.uom.java.xmi.diff.ReplaceAnonymousWithLambdaRefactoring;
+import gr.uom.java.xmi.diff.ReplaceAssertionRefactoring;
 import gr.uom.java.xmi.diff.ReplaceLoopWithPipelineRefactoring;
 import gr.uom.java.xmi.diff.ReplacePipelineWithLoopRefactoring;
 import gr.uom.java.xmi.diff.SplitConditionalRefactoring;
@@ -4874,6 +4875,75 @@ public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper
 		createAssertRefactorings(assertTimeout1, assertTimeoutMappings, assertTimeoutCalls, (set, assertTimeoutCall) -> new AssertTimeoutRefactoring(set, assertTimeoutCall, container1, container2));
 		createAssertRefactorings(assertThatThrownBy1, assertThatThrownByMappings, assertThatThrownByCalls, (set, assertThrowsCall) -> new AssertThrowsRefactoring(set, assertThrowsCall, container1, container2));
 		createAssertRefactorings(assume1, assumeMappings, assumeCalls, (set, assumeCall) -> new AssumeRefactoring(set, assumeCall, container1, container2));
+		detectReplaceAssertionRefactorings();
+	}
+
+	private void detectReplaceAssertionRefactorings() {
+		for(AbstractCodeMapping mapping : this.mappings) {
+			AbstractCall call1 = mapping.getFragment1().invocationCoveringEntireFragment();
+			AbstractCall call2 = mapping.getFragment2().invocationCoveringEntireFragment();
+			if(call1 == null || call2 == null) {
+				continue;
+			}
+			if(!(call1.getName().equals("assertFalse") || call1.getName().equals("assertTrue")) || !call2.getName().equals("assertEquals")) {
+				continue;
+			}
+			int size1 = call1.arguments().size();
+			List<String> args2 = call2.arguments();
+			if(size1 < 1 || size1 > 2 || args2.size() != 2) {
+				continue;
+			}
+			String booleanLiteral = call1.getName().equals("assertFalse") ? "false" : "true";
+			String assertArgument = call1.arguments().get(size1 - 1);
+			boolean matched = false;
+			if(args2.get(0).equals(booleanLiteral) || args2.get(1).equals(booleanLiteral)) {
+				String otherArg2 = args2.get(0).equals(booleanLiteral) ? args2.get(1) : args2.get(0);
+				matched = otherArg2.equals(assertArgument) || StringDistance.editDistance(otherArg2, assertArgument) <= 2;
+			}
+			else if(classDiff instanceof UMLClassBaseDiff) {
+				String paramCandidate = null;
+				String otherArg2 = null;
+				if(parameterNameList2.contains(args2.get(0))) {
+					paramCandidate = args2.get(0);
+					otherArg2 = args2.get(1);
+				}
+				else if(parameterNameList2.contains(args2.get(1))) {
+					paramCandidate = args2.get(1);
+					otherArg2 = args2.get(0);
+				}
+				if(paramCandidate != null && (otherArg2.equals(assertArgument) || StringDistance.editDistance(otherArg2, assertArgument) <= 2)) {
+					matched = parameterRowConfirmsBooleanValue((UMLClassBaseDiff)classDiff, paramCandidate, booleanLiteral);
+				}
+			}
+			if(matched) {
+				ReplaceAssertionRefactoring refactoring = new ReplaceAssertionRefactoring(Collections.singleton(mapping), call2, container1, container2);
+				refactorings.add(refactoring);
+			}
+		}
+	}
+
+	//resolves, for this specific merged/removed operation (container1), which @MethodSource/@CsvSource provider row it was matched
+	//against, and checks whether that row's value bound to parameterName equals expectedBooleanLiteral ("true"/"false")
+	private boolean parameterRowConfirmsBooleanValue(UMLClassBaseDiff classDiff, String parameterName, String expectedBooleanLiteral) {
+		int paramIndex = parameterNameList2.indexOf(parameterName);
+		if(paramIndex < 0) {
+			return false;
+		}
+		List<List<String>> parameterValues = classDiff.getParameterValues((UMLOperation)container2);
+		Map<Integer, Integer> matchingTestParameters = matchParamsWithReplacements(parameterValues, parameterNameList2, this.getReplacements(), classDiff.getOriginalClass());
+		Integer index = null;
+		int max = -1;
+		for(Integer key : matchingTestParameters.keySet()) {
+			if(matchingTestParameters.get(key) > max) {
+				max = matchingTestParameters.get(key);
+				index = key;
+			}
+		}
+		if(index == null || parameterValues.size() <= index || parameterValues.get(index).size() <= paramIndex) {
+			return false;
+		}
+		String rowValue = parameterValues.get(index).get(paramIndex);
+		return rowValue.equals(expectedBooleanLiteral);
 	}
 
 	private void createAssertRefactorings(int assertCountBefore, Map<String, Set<AbstractCodeMapping>> assertMappings,
