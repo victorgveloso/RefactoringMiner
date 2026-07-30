@@ -536,6 +536,7 @@ public class TestRelatedStatementMappingsTest {
             "https://github.com/apache/directory-ldap-api.git, 8965a541bbeefd49028a5405264e40aed69ac5d0, directory-ldap-api-8965a541bbeefd49028a5405264e40aed69ac5d0-dataprovider.txt",
 //            "https://github.com/apache/zookeeper.git, c42c8c94085ed1d94a22158fbdfe2945118a82bc, zookeeper-c42c8c94085ed1d94a22158fbdfe2945118a82bc-dataprovider.txt", //FIXME: slow test 46 seconds in Mac M4
 //            "https://github.com/cloudfoundry-incubator/multiapps.git, 82c2cc85b8b7790470c8380b82aad27abffc290b, multiapps-82c2cc85b8b7790470c8380b82aad27abffc290b-dataprovider.txt", //FIXME: slow test 120 seconds in Mac M4
+            "https://github.com/greenjoe/lambdaFromString.git, 0cbf3774c6f508c21cbb789bfe285117499f1e31, lambdaFromString-0cbf3774c6f508c21cbb789bfe285117499f1e31-dataprovider.txt",
     })
     public void testDataProviderLiteralMappings(String url, String commit, String testResultFileName) {
         testRefactoringMappings(url, commit, testResultFileName, ref -> {
