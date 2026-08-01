@@ -195,6 +195,18 @@ public class ObjectCreation extends AbstractCall {
 			else if(expression instanceof MethodInvocation) {
 				literals.add(new LeafExpression(cu, sourceFolder, filePath, expression, CodeElementType.METHOD_INVOCATION, container));
 			}
+			else if(expression instanceof ArrayCreation) {
+				literals.add(new LeafExpression(cu, sourceFolder, filePath, expression, CodeElementType.ARRAY_CREATION, container));
+			}
+			else if(expression instanceof ClassInstanceCreation) {
+				literals.add(new LeafExpression(cu, sourceFolder, filePath, expression, CodeElementType.CLASS_INSTANCE_CREATION, container));
+			}
+			else {
+				//catch-all for any other compound row element (infix/cast/ternary/lambda/parenthesized/this-expression/etc.) -
+				//mirrors the breadth of AbstractCodeFragment.findExpression's own search on the JUnit5 side, so a row's
+				//"complex object" parameters are captured and matched by text rather than silently dropped
+				literals.add(new LeafExpression(cu, sourceFolder, filePath, expression, CodeElementType.EXPRESSION, container));
+			}
 		}
 	}
 
