@@ -10,8 +10,8 @@ import java.nio.file.Path;
 public class RunWithTwoDirectories {
     public static void main(String[] args) throws IOException {
         final String projectRoot = System.getProperty("user.dir");
-        String folder1 = projectRoot + "/tmp/v1/";
-        String folder2 = projectRoot + "/tmp/v2/";
+        String folder1 = "/Users/victor/IdeaProjects/RefactoringMiner/tmp/v1/";
+        String folder2 = "/Users/victor/IdeaProjects/RefactoringMiner/tmp/v2/";
 
         ProjectASTDiff projectASTDiff = new GitHistoryRefactoringMinerImpl().diffAtDirectories(Path.of(folder1), Path.of(folder2));
         new WebDiff(projectASTDiff).openInBrowser();
