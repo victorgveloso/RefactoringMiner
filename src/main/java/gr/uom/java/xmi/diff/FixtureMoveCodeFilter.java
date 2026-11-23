@@ -77,16 +77,41 @@ public class FixtureMoveCodeFilter {
 	public Set<Refactoring> filter(Set<Refactoring> refactorings) {
 		Set<Refactoring> kept = new LinkedHashSet<>();
 		for(Refactoring r : refactorings) {
-			if(!targetsFixture(r) || valid((MoveCodeRefactoring)r)) {
+			if(!targetsFixture(r)) {
 				kept.add(r);
+				continue;
 			}
+			MoveCodeRefactoring move = (MoveCodeRefactoring)r;
+			if(!valid(move)) {
+				continue;
+			}
+			//whether the fixture is new is decided by the code before the commit, not by the operation it was matched with:
+			//code moved into a new fixture is an Extract Fixture, into a fixture that existed a Move Code
+			boolean targetExisted = existedAsFixture(move.getTargetContainer());
+			boolean extract = move.getRefactoringType().equals(RefactoringType.EXTRACT_FIXTURE) || move.getRefactoringType().equals(RefactoringType.SPLIT_FIXTURE);
+			if(targetExisted && extract) {
+				move = retype(move, MoveCodeRefactoring.Type.MOVE_BETWEEN_EXISTING);
+			}
+			else if(!targetExisted && !extract) {
+				move = retype(move, MoveCodeRefactoring.Type.MOVE_TO_ADDED);
+			}
+			kept.add(move);
 		}
 		return kept;
+	}
+
+	private static MoveCodeRefactoring retype(MoveCodeRefactoring move, MoveCodeRefactoring.Type type) {
+		MoveCodeRefactoring retyped = new MoveCodeRefactoring(move.getSourceContainer(), move.getTargetContainer(), move.getBodyMapper(), type);
+		if(move.getLambdaMapper().isPresent()) {
+			retyped.setLambdaMapper(move.getLambdaMapper().get());
+		}
+		return retyped;
 	}
 
 	private boolean valid(MoveCodeRefactoring move) {
 		VariableDeclarationContainer source = move.getSourceContainer();
 		VariableDeclarationContainer target = move.getTargetContainer();
+		boolean sourceIsFixture = source.isSetUpMethod() || source.isTearDownMethod();
 		//code of a fixture in a new fixture is a Split Fixture (MoveCodeRefactoring types it), validated as any other move
 		List<String> sourceBefore = statements(source);
 		VariableDeclarationContainer sourceNext = counterpart(source, childClasses);
@@ -114,12 +139,20 @@ public class FixtureMoveCodeFilter {
 				continue;
 			}
 			double similarity = similarity(s1, s2);
+			if(!s1.equals(s2) && similarity < 0.75) {
+				continue; //too different to be the same statement, edited on the way
+			}
 			if(!s1.equals(s2) && (closer(sourceAdded, s1, similarity) || closer(targetRemoved, s2, similarity))) {
 				continue; //edited in place, in the source or in the target
 			}
 			return true;
 		}
 		return false;
+	}
+
+	private boolean existedAsFixture(VariableDeclarationContainer target) {
+		VariableDeclarationContainer previous = counterpart(target, parentClasses);
+		return previous != null && (previous.isSetUpMethod() || previous.isTearDownMethod());
 	}
 
 	//a statement, not a block or a bare expression
@@ -195,9 +228,18 @@ public class FixtureMoveCodeFilter {
 		return result;
 	}
 
+	//2 * (longest common subsequence) / (total length): the share of the two statements they have in common, in order
 	private static double similarity(String a, String b) {
-		int max = Math.max(a.length(), b.length());
-		return max == 0 ? 1.0 : 1.0 - (double)StringDistance.editDistance(a, b) / max;
+		if(a.isEmpty() && b.isEmpty())
+			return 1.0;
+		int[] previous = new int[b.length() + 1], current = new int[b.length() + 1];
+		for(int i = 1; i <= a.length(); i++) {
+			for(int j = 1; j <= b.length(); j++) {
+				current[j] = a.charAt(i - 1) == b.charAt(j - 1) ? previous[j - 1] + 1 : Math.max(previous[j], current[j - 1]);
+			}
+			int[] swap = previous; previous = current; current = swap;
+		}
+		return 2.0 * previous[b.length()] / (a.length() + b.length());
 	}
 
 	//a statement of the list at least as close to s as the paired statement, and similar enough to be its edited version
