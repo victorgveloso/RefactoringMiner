@@ -149,6 +149,14 @@ public class FixtureMoveCodeFilter {
 			return validInitializerMove(move, attribute);
 		}
 		boolean sourceIsFixture = source.isSetUpMethod() || source.isTearDownMethod();
+		String sourceClass = simpleName(source.getClassName()), targetClass = simpleName(target.getClassName());
+		boolean crossClass = !sourceClass.equals(targetClass);
+		if(!crossClass && !source.getClassName().equals(target.getClassName()) && source.getName().equals(target.getName())) {
+			return false; //the same fixture of a class moved to another file
+		}
+		//between classes, only code moved verbatim counts, unless it comes from the superclass (pushed down): the same edit
+		//made in sibling classes pairs statements that are alike but were never moved
+		boolean fromSuperclass = crossClass && extendsClass(target.getClassName(), sourceClass);
 		//code of a fixture in a new fixture is a Split Fixture (MoveCodeRefactoring types it), validated as any other move
 		List<String> sourceBefore = statements(source);
 		VariableDeclarationContainer sourceNext = counterpart(source, childClasses);
@@ -179,6 +187,10 @@ public class FixtureMoveCodeFilter {
 				continue;
 			}
 			double similarity = similarity(s1, s2);
+			if(crossClass && !fromSuperclass && !s1.equals(s2)) {
+				debug(move, s1, s2, "edited between classes");
+				continue;
+			}
 			if(!s1.equals(s2) && similarity < 0.75) {
 				debug(move, s1, s2, "similarity " + similarity);
 				continue; //too different to be the same statement, edited on the way
@@ -217,6 +229,16 @@ public class FixtureMoveCodeFilter {
 	private static void debug(MoveCodeRefactoring move, String s1, String s2, String reason) {
 		if(DEBUG)
 			System.err.println("[fixture filter] " + move.getSourceContainer().getName() + " -> " + move.getTargetContainer().getName() + ": " + reason + ": " + s1 + " -> " + s2);
+	}
+
+	private static String simpleName(String className) {
+		return className.substring(className.lastIndexOf('.') + 1);
+	}
+
+	private boolean extendsClass(String className, String superclassSimpleName) {
+		UMLClass umlClass = childClasses.get(className);
+		return umlClass != null && umlClass.getSuperclass() != null &&
+				simpleName(umlClass.getSuperclass().getClassType()).equals(superclassSimpleName);
 	}
 
 	private boolean existedAsFixture(VariableDeclarationContainer target) {
