@@ -112,8 +112,8 @@ public class FixtureMoveCodeFilter {
 	private boolean valid(MoveCodeRefactoring move) {
 		VariableDeclarationContainer source = move.getSourceContainer();
 		VariableDeclarationContainer target = move.getTargetContainer();
-		if(source instanceof UMLAttribute) {
-			return true; //a field initializer that became an assignment in the fixture, paired by the field's name
+		if(source instanceof UMLAttribute attribute) {
+			return validInitializerMove(move, attribute);
 		}
 		boolean sourceIsFixture = source.isSetUpMethod() || source.isTearDownMethod();
 		//code of a fixture in a new fixture is a Split Fixture (MoveCodeRefactoring types it), validated as any other move
@@ -155,6 +155,26 @@ public class FixtureMoveCodeFilter {
 				continue; //edited in place, in the source or in the target
 			}
 			return true;
+		}
+		return false;
+	}
+
+	//a field initializer that became an assignment in the fixture, paired by the field's name: the value assigned must be the
+	//initializer, possibly edited (not a parameter of the fixture, i.e., this.server = server; for a field = new MockWebServer())
+	private boolean validInitializerMove(MoveCodeRefactoring move, UMLAttribute attribute) {
+		AbstractExpression initializer = attribute.getVariableDeclaration().getInitializer();
+		if(initializer == null) {
+			return false;
+		}
+		String s1 = normalize(initializer.getString());
+		for(AbstractCodeMapping mapping : move.getMappings()) {
+			String s2 = normalize(mapping.getFragment2().getString());
+			int equals = s2.indexOf('=');
+			String value = equals >= 0 ? s2.substring(equals + 1) : s2;
+			if(value.equals(s1) || similarity(s1, value) >= 0.75) {
+				return true;
+			}
+			debug(move, s1, s2, "not the initializer");
 		}
 		return false;
 	}

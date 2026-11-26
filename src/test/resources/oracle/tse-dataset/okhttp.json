@@ -467,6 +467,11 @@
           "type": "RENAME_METHOD",
           "description": "Rename Method\tpublic checkPlatforms() : void renamed to public setUp() : void in class okhttp3.mockwebserver.MockWebServerTest",
           "validation": true
+        },
+        {
+          "type": "MOVE_CODE",
+          "description": "Move Code\tfrom private dns : Dns to public setUp(server MockWebServer) : void in class okhttp3.dnsoverhttps.DnsOverHttpsTest",
+          "validation": true
         }
       ]
     },

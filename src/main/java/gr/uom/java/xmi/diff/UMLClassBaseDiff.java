@@ -1035,6 +1035,9 @@ public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements C
 	//a field initializer moved into a fixture, i.e., private Monitor monitor = new Monitor(...); becoming monitor = new Monitor(...);
 	//in a set-up method: the field lost its initializer (or was removed) and a fixture gained an assignment to it
 	private void checkForFieldInitializersMovedToFixtures() throws RefactoringMinerTimedOutException {
+		if(!LANG1.equals(Constants.JAVA) || !LANG2.equals(Constants.JAVA)) {
+			return; //fixtures are recognized for Java only
+		}
 		Map<String, UMLAttribute> initializedBefore = new LinkedHashMap<>();
 		for(UMLAttributeDiff attributeDiff : attributeDiffList) {
 			if(attributeDiff.getRemovedAttribute().getVariableDeclaration().getInitializer() != null &&

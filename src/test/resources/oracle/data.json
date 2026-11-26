@@ -34103,6 +34103,13 @@
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
         "validators": null
+    }, {
+        "type": "Extract Fixture",
+        "description": "Extract Fixture public setup() : void extracted from private cursor : PhysicalTransactionCursor<ReadableVersionableLogChannel> in class org.neo4j.kernel.impl.transaction.PhysicalTransactionCursorTest",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
     }],
     "refDiffExecutionTime": 11758
 }, {
@@ -63801,6 +63808,13 @@
     }, {
         "type": "Replace Attribute With Variable",
         "description": "Replace Attribute With Variable currGroupSize : int to innerValueCount : int in method public flattenRecords(recordCount int, firstOutputIndex int) : int from class org.apache.drill.exec.physical.impl.flatten.FlattenTemplate",
+        "comment": null,
+        "validation": "TP",
+        "detectionTools": "RefactoringMiner",
+        "validators": null
+    }, {
+        "type": "Extract Fixture",
+        "description": "Extract Fixture public init() : void extracted from package allocator : TopLevelAllocator in class org.apache.drill.exec.record.vector.TestValueVector",
         "comment": null,
         "validation": "TP",
         "detectionTools": "RefactoringMiner",
