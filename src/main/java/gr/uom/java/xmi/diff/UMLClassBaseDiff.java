@@ -856,11 +856,13 @@ public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements C
 			}
 		}
 		//a test or helper that became a fixture, re-annotated or renamed and annotated, i.e., init() renamed to @Before setUp():
-		//its code is extracted into a fixture (a JUnit 3 setUp()/tearDown() annotated is a fixture migration instead)
+		//its code is extracted into a fixture (a JUnit 3 setUp()/tearDown() annotated is a fixture migration instead);
+		//fixtures are recognized for Java only, the other languages keep the move code sources of the fixtures alone
 		for(UMLOperationBodyMapper mapper : operationBodyMapperList) {
 			VariableDeclarationContainer container1 = mapper.getContainer1();
 			VariableDeclarationContainer container2 = mapper.getContainer2();
-			if(container1 instanceof UMLOperation && container2 instanceof UMLOperation &&
+			if(LANG1.equals(Constants.JAVA) && LANG2.equals(Constants.JAVA) &&
+					container1 instanceof UMLOperation && container2 instanceof UMLOperation &&
 					!container1.isSetUpMethod() && !container1.isTearDownMethod() &&
 					(container2.isSetUpMethod() || container2.isTearDownMethod()) &&
 					!container1.getName().equals("setUp") && !container1.getName().equals("tearDown") &&
@@ -870,7 +872,8 @@ public abstract class UMLClassBaseDiff extends UMLAbstractClassDiff implements C
 		}
 		//a removed test or helper whose code moved into a fixture: into an added fixture (Extract Fixture) or an existing one
 		for(UMLOperation removedOperation : removedOperations) {
-			if(removedOperation.isSetUpMethod() || removedOperation.isTearDownMethod() || removedOperation.isConstructor()) {
+			if(!LANG1.equals(Constants.JAVA) || !LANG2.equals(Constants.JAVA) ||
+					removedOperation.isSetUpMethod() || removedOperation.isTearDownMethod() || removedOperation.isConstructor()) {
 				continue;
 			}
 			for(UMLOperation addedOperation : addedOperations) {

@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
 
+import gr.uom.java.xmi.Constants;
 import gr.uom.java.xmi.UMLClass;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLOperation;
@@ -63,9 +64,11 @@ public class FixtureMoveCodeFilter {
 				childClasses.put(c.getName(), c);
 	}
 
+	//only Java fixtures are validated: the fixtures of the other languages (pytest fixtures, a JavaScript prepare()) keep the
+	//Move Code refactorings RefactoringMiner reported before
 	public static boolean targetsFixture(Refactoring r) {
-		if(r instanceof MoveCodeRefactoring move) {
-			VariableDeclarationContainer target = move.getTargetContainer();
+		if(r instanceof MoveCodeRefactoring move && move.getTargetContainer() instanceof UMLOperation target &&
+				target.getLANG().equals(Constants.JAVA)) {
 			return target.isSetUpMethod() || target.isTearDownMethod();
 		}
 		return false;

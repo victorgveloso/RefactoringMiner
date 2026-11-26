@@ -8487,7 +8487,8 @@ public class UMLModelDiff {
 	private void checkForCodeOfMovedTestsInFixtures() throws RefactoringMinerTimedOutException {
 		List<Refactoring> moveCodeRefactorings = new ArrayList<>();
 		for(Refactoring r : new ArrayList<>(refactorings)) {
-			if(r instanceof MoveOperationRefactoring move && move.getBodyMapper() != null) {
+			if(r instanceof MoveOperationRefactoring move && move.getBodyMapper() != null &&
+					move.getMovedOperation().getLANG().equals(Constants.JAVA)) {
 				UMLOperationBodyMapper movedMapper = move.getBodyMapper();
 				if(movedMapper.nonMappedElementsT1() == 0 || movedMapper.getClassDiff() == null) {
 					continue;
